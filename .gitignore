@@ -102,4 +102,6 @@ google467e081a4b8a1013.html
 # .htaccess
 # -----------------------
 .htaccess
+.htaccess_original
+.htaccess.bk
 php.ini
