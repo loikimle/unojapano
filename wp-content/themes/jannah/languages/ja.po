@@ -1,0 +1,50 @@
+#: framework/functions/general-functions.php:1984
+#: framework/functions/post-functions.php:957
+#: templates/loops/loop-content.php:30
+msgid "Read More &raquo;"
+msgstr "続きを読む &raquo;"
+
+#: framework/functions/general-functions.php:1919
+#: framework/functions/post-functions.php:35 framework/widgets/twitter.php:128
+#, php-format
+msgid "%s ago"
+msgstr "%s前"
+
+#: framework/functions/general-functions.php:1953
+#: framework/functions/post-functions.php:796
+msgid "Less than a minute"
+msgstr "読み終わるまでの時間：１分弱"
+
+#: framework/functions/general-functions.php:1954
+#: framework/functions/post-functions.php:799
+#, php-format
+msgid "%s hours read"
+msgstr "読み終わるまでの時間：%s時間"
+
+#: framework/functions/general-functions.php:1955
+#: framework/functions/post-functions.php:802
+msgid "1 minute read"
+msgstr "読み終わるまでの時間：１分"
+
+#: framework/functions/general-functions.php:1956
+#: framework/functions/post-functions.php:805
+#, php-format
+msgid "%s minutes read"
+msgstr "読み終わるまでの時間：%s分"
+
+#: framework/functions/general-functions.php:1959
+#: framework/functions/post-actions.php:578
+#: framework/plugins/class-tielabs-amp.php:218
+#: templates/single-post/related.php:84
+msgid "Related Articles"
+msgstr "関連記事"
+
+#: framework/admin/theme-options/posts.php:532
+#: framework/functions/general-functions.php:1951
+#: templates/single-post/fly-box.php:55
+msgid "Check Also"
+msgstr "関連記事"
+
+#: framework/functions/post-actions.php:420
+msgid "Leave a Reply"
+msgstr "コメントを残す"

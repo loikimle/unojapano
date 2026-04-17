@@ -1,0 +1,177 @@
+# Copyright (C) 2021 LearnDash
+# This file is distributed under the same license as the LearnDash LMS plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: LearnDash LMS 3.4.0.7\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/dev.master\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-04-20T15:13:03+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.4.0\n"
+"X-Domain: learndash\n"
+
+msgctxt "placeholder Quiz"
+msgid "Start %s"
+msgstr "Bắt Đầu"
+
+msgid "Time limit"
+msgstr "Thời gian"
+
+msgid "Current"
+msgstr "Chưa trả lời"
+
+msgid "Answered"
+msgstr "Đã Trả Lời"
+
+msgctxt "placeholder: Quiz"
+msgid "%s Summary"
+msgstr "Xem lại câu hỏi"
+
+msgctxt "placeholder: Quiz"
+msgid "Finish %s"
+msgstr "Nộp bài"
+
+msgctxt "placeholder: Quiz"
+msgid "View %s Statistics"
+msgstr "Xem phân tích bài làm"
+
+msgid "Result"
+msgstr "Kết Quả"
+
+msgctxt "placeholders: quiz count completed, quiz count total, questions"
+msgid "%1$s of %2$s %3$s completed"
+msgstr "%1$s trên %2$s câu hỏi đã hoàn thành"
+
+msgid "Questions"
+msgstr "Câu hỏi"
+
+msgid "Review"
+msgstr "Xem lại"
+
+msgctxt "placeholder: Quiz"
+msgid "%s complete. Results are being recorded."
+msgstr "Hoàn thành bài thi. Đang lưu kết quả..."
+
+msgid "Results"
+msgstr "Kết quả"
+
+msgctxt "placeholder: correct answer, question count, questions"
+msgid "%1$s of %2$s %3$s answered correctly"
+msgstr "Bạn đã trả lời đúng %1$s trên %2$s câu hỏi"
+
+msgctxt "placeholder: quiz time."
+msgid "Your time: %s"
+msgstr "Thời gian hoàn thành: %s"
+
+msgctxt "placeholder: points earned, points total"
+msgid "You have reached %1$s of %2$s point(s), (%3$s)"
+msgstr "Bạn đúng được %1$s trên %2$s câu hỏi, (%3$s)"
+
+msgctxt "Restart Quiz Button Label"
+msgid "Restart %s"
+msgstr "Thi lại"
+
+msgctxt "View Questions Button Label"
+msgid "View %s"
+msgstr "Xem lại kết quả"
+
+msgid "Correct"
+msgstr "Đúng"
+
+msgid "Incorrect"
+msgstr "Sai"
+
+msgctxt "placeholder: questions, quiz"
+msgid "You must answer all %1$s before you can complete the %2$s."
+msgstr "Bạn phải hoàn thành tất cả câu hỏi"
+
+msgctxt "Quiz Summary"
+msgid "%s Summary"
+msgstr "Hoàn thành bài thi"
+
+msgid "Completed"
+msgstr "Đã hoàn thành"
+
+msgid "Next Test"
+msgstr "Bài thi tiếp theo"
+
+msgid "View Taken Tests"
+msgstr "Xem Đề Đã Thi"
+
+msgctxt "placeholder: quizzes"
+msgid "You have taken the following %s:"
+msgstr "Danh sách đề đã thi:"
+
+msgid "page"
+msgstr "Trang"
+
+msgid "Statistics"
+msgstr "Xem phân tích"
+
+msgid "Score "
+msgstr "Trả lời đúng "
+
+msgid " out of "
+msgstr " trên "
+
+msgid " question(s)"
+msgstr " câu hỏi"
+
+msgid " . Points: "
+msgstr ". Điểm:"
+
+msgid " on "
+msgstr " vào "
+
+msgid "Close"
+msgstr "Đóng"
+
+msgid "Question"
+msgstr "Câu hỏi"
+
+msgctxt "placeholder: Quiz Category"
+msgid "Category: %s"
+msgstr "Đề thi: %s"
+
+msgid "Hints used"
+msgstr "Gợi ý sử dụng"
+
+msgid "Time"
+msgstr "Thời gian"
+
+msgid "Points scored"
+msgstr "Điểm đạt được"
+
+msgid "Total"
+msgstr "Tổng điểm"
+
+msgid "Sub-Total: "
+msgstr "Tổng cộng: "
+
+msgctxt "placeholder: user name"
+msgid "User statistics: %s"
+msgstr "Thí sinh: %s"
+
+msgid "(view)"
+msgstr "(xem)"
+
+msgctxt "Total points"
+msgid "TOTAL:"
+msgstr "Tổng kết:"
+
+msgctxt "placeholder: quiz"
+msgid "You must sign in or sign up to start the %s."
+msgstr "Vui lòng đăng nhập hoặc đăng ký để tiếp tục."
+
+msgid "You must first complete the following:"
+msgstr "Phần thi cần hoàn thành trước:"
+
+msgid "Points"
+msgstr "Điểm"
+
+msgid "<p>Please log in or sign up to continue.</p><a href=\"https://unojapano.com/en/log-in\">Log in</a><a href=\"https://unojapano.com/en/signup\">Sign up</a>"
+msgstr "<p>Vui lòng đăng nhập hoặc đăng ký để tiếp tục.</p><a href=\"https://unojapano.com/log-in\">Đăng nhập</a><a href=\"https://unojapano.com/signup\">Đăng ký</a>"

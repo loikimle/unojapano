@@ -1,0 +1,151 @@
+.wdm-ldgr-setting-div {
+    margin-top: 50px;
+}
+
+.wdm-ldgr-setting-div th {
+    text-align: left;
+}
+
+.wdm-ldgr-setting-div th,
+.wdm-ldgr-setting-div td {
+    /*padding-top: .8em;*/
+    padding-bottom: 1.8em;
+}
+
+.wdm-switch {
+    position: relative;
+    display: inline-block;
+    /*width: 60px;
+  height: 34px;*/
+    width: 55px;
+    height: 27px;
+}
+
+.wdm-switch input {
+    display: none;
+}
+
+.wdm-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.wdm-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    /*height: 26px;
+  width: 26px;*/
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.wdm-slider {
+    background-color: #2196F3;
+}
+
+input:focus+.wdm-slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.wdm-slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded wdm-sliders */
+.wdm-slider.round {
+    border-radius: 34px;
+}
+
+.wdm-slider.round:before {
+    border-radius: 50%;
+}
+
+.wdm_help_text {
+    color: #808080;
+    font-weight: normal;
+    font-style: italic;
+}
+
+.ldgr-user-redirects-settings div {
+    padding-left: 5%;
+}
+
+.ldgr-user-redirects-settings label {
+    font-weight: bold;
+}
+
+.accordion .wdm-switch {
+    margin-right: 20px;
+}
+
+div.ldgr-settings div {
+    padding: 20px;
+    font-weight: bold;
+}
+
+div.ldgr-settings input {
+    font-weight: normal;
+}
+
+div.ldgr-settings em {
+    font-weight: normal;
+    font-size: 12px;
+}
+
+div.ldgr-recaptcha-settings p {
+    padding: 20px 0;
+    margin: 0;
+}
+
+div.ldgr-settings {
+    width: 75%;
+    position: relative;
+}
+
+div.ldgr-settings .wdm-switch {
+    position: absolute;
+    right: 0;
+}
+
+div.ldgr-leader-logo {
+    margin-bottom: 20px;
+}
+
+div.ldgr-leader-logo img {
+    max-width: 250px;
+}
+
+#ldgr_recaptcha_site_key {
+    margin-left: 15px;
+}
+
+div.ldgr-settings div.ldgr-enrollment-message div, div.ldgr-settings div.ldgr-gdpr-checkbox-message div{
+    padding: 2px 0;
+}
+
+div.ldgr-enrollment-message-label p {
+    padding-top: 10px;
+}
+
+div.ldgr-settings select#ldgr_group_code_enrollment_page, div.ldgr-settings select#ldgr_group_code_redirect_page {
+    position: absolute;
+    right: 0;
+}
+
+.ldgr-hide {
+    display: none;
+}

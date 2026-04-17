@@ -1,0 +1,31 @@
+div.ldgr-group-code-metabox-details table {
+    width: 100%;
+}
+
+div.ldgr-group-code-metabox-details th {
+    text-align: left;
+    padding: 10px;
+}
+
+input.ldgr-code-date-range-from, input.ldgr-code-date-range-to {
+    background: #fff;
+}
+
+div.ldgr-group-code-metabox-details span.dashicons-info {
+    margin-left: 10px;
+    font-size: 16px;
+}
+span.ldgr-tooltip {
+    visibility: hidden;
+    position: absolute;
+    padding: 5px 10px;
+    background: black;
+    color: #fff;
+    border-color: black;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+span.dashicons-info:hover + span.ldgr-tooltip {
+    visibility: visible;
+}

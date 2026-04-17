@@ -1,0 +1,1739 @@
+# Copyright (C) 2021 WisdmLabs
+# This file is distributed under the same license as the LearnDash Group Registration plugin.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: LearnDash Group Registration 4.1.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ld-group-registration\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-02-17 16:05+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: Poedit 2.4.1\n"
+"X-Domain: wdm_ld_group\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_n:1,2;_ex:1,2c;esc_html_e;esc_attr_e\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: modules/js\n"
+"X-Poedit-SearchPathExcluded-1: modules/css\n"
+"X-Poedit-SearchPathExcluded-2: modules/media\n"
+
+#: includes/class-ld-group-registration-activator.php:40
+msgid "Groups Dashboard"
+msgstr ""
+
+#: includes/class-ld-group-registration-activator.php:86
+msgid "LearnDash LMS plugin is not active. In order to make the 'LearnDash Group Registration' plugin work, you need to install and activate LearnDash LMS first."
+msgstr ""
+
+#: includes/class-ld-group-registration-activator.php:97
+msgid "WooCommerce plugin is not active. In order to make the 'LearnDash Group Registration' plugin work, you need to install and activate WooCommerce first."
+msgstr ""
+
+#: includes/class-ld-group-registration-activator.php:109
+msgid "LearnDash WooCommerce Integration plugin is not active. In order to make the 'LearnDash Group Registration' plugin work, you need to install and activate LearnDash WooCommerce Integration  first."
+msgstr ""
+
+#: includes/class-ld-group-registration-activator.php:119
+msgid "LearnDash EDD Integration plugin is not active. In order to make the 'LearnDash Group Registration' plugin work, you need to install and activate LearnDash EDD Integration first."
+msgstr ""
+
+#: includes/class-ld-group-registration-activator.php:129
+msgid "LearnDash WooCommerce Integration or LearnDash EDD Integration plugin is not active. In order to make the 'LearnDash Group Registration' plugin work, you need to install and activate LearnDash WooCommerce Integration or LearnDash EDD Integration first."
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:73
+#: licensing/class-wdm-add-license-data.php:74 licensing/license-page.php:2
+msgid "WisdmLabs License Options"
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:144
+msgid "Deactivate"
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:150
+msgid "Renew"
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:159
+msgid "Activate"
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:173
+msgid "Once you renew the License, you must Deactivate Plugin and then Activate it again."
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:239
+msgid "Your license key is activated("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:243
+msgid "No response from server. Please try again later.("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:244
+msgid "License Activation Failed. Please try again or contact support on support@wisdmlabs.com("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:245
+msgid "Please enter license key.("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:246
+#: licensing/class-wdm-add-license-data.php:251
+#, php-format
+msgid "Your License Key is already activated at : %s Please deactivate the license from one of the above site(s) to successfully activate it on your current site.("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:246
+msgid "No Activations Left.("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:247
+msgid "Your license key has Expired. Please, Renew it.("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:248
+msgid "Your License key is disabled("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:249
+msgid "Please enter valid license key("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:250
+msgid "Please try to activate license again. If it does not activate, contact support on support@wisdmlabs.com("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:251
+msgid "Site inactive (Press Activate license to activate plugin("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:252
+msgid "License Key is deactivated("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:253
+#, php-format
+msgid "Following Error Occurred: %s. Please contact support on support@wisdmlabs.com if you are not sure why this error is occurring("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:254
+msgid "There was an error while connecting to the server. please try again later.("
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:295
+#: modules/templates/license-page.php:126
+msgid "Active"
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:300
+#: modules/classes/class-ld-group-registration-group-code.php:1302
+msgid "Expired"
+msgstr ""
+
+#: licensing/class-wdm-add-license-data.php:305
+#: licensing/class-wdm-add-license-data.php:312
+#: modules/templates/license-page.php:132
+#: modules/templates/license-page.php:140
+msgid "Not Active"
+msgstr ""
+
+#: licensing/class-wdm-send-customer-data.php:149
+msgid "Be a part of WisdmLabs' Product Improvement Plan."
+msgstr ""
+
+#: licensing/license-page.php:28
+msgid "Allow WisdmLabs to collect non-sensitive diagnostic data and usage information."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-edd.php:36
+#: modules/classes/class-ld-group-registration-woocommerce.php:122
+#: modules/classes/class-ld-group-registration-woocommerce.php:157
+#: modules/classes/class-ld-group-registration-woocommerce.php:388
+#: modules/classes/class-ld-group-registration-woocommerce.php:523
+#: modules/classes/class-ld-group-registration-woocommerce.php:972
+msgid "Group Registration"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-edd.php:38
+msgid " - "
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-edd.php:55
+#: modules/classes/class-ld-group-registration-woocommerce.php:733
+msgid "Group purchase"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-edd.php:177
+#: modules/classes/class-ld-group-registration-woocommerce.php:314
+#: modules/templates/ldgr-edd-group-registration-metabox.template.php:61
+#: modules/templates/ldgr-woocommerce-group-registration-metabox.template.php:61
+msgid "Individual"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-edd.php:185
+#: modules/classes/class-ld-group-registration-woocommerce.php:316
+#: modules/templates/ldgr-edd-group-registration-metabox.template.php:66
+#: modules/templates/ldgr-group-code-details-metabox.php:43
+#: modules/templates/ldgr-group-users/ldgr-group-users-select-wrapper.template.php:29
+#: modules/templates/ldgr-woocommerce-group-registration-metabox.template.php:68
+msgid "Group"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-edd.php:211
+#: modules/classes/class-ld-group-registration-woocommerce.php:335
+msgid "Enroll Me"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-edd.php:220
+#: modules/classes/class-ld-group-registration-woocommerce.php:339
+msgid "This will add Group Leader as Group Member & will charge for it."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-edd.php:365
+#: modules/classes/class-ld-group-registration-woocommerce.php:164
+#: modules/classes/class-ld-group-registration-woocommerce.php:171
+#: modules/classes/class-ld-group-registration-woocommerce.php:917
+#: modules/classes/class-ld-group-registration-woocommerce.php:1064
+#: modules/templates/ldgr-group-name-box.template.php:16
+#: modules/templates/ldgr-group-users/ldgr-group-users-select-wrapper.template.php:82
+msgid "Group Name"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-edd.php:366
+msgid "Enter a name for your group"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:208
+#: modules/classes/class-ld-group-registration-group-code-registration.php:690
+msgid "User registrations are currently disabled on this website. Please contact admin for more details"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:256
+#: modules/classes/class-ld-group-registration-group-code-registration.php:778
+msgid "Some error occurred while creating user and enrolling user in group. Please contact admin"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:283
+#: modules/classes/class-ld-group-registration-group-code.php:533
+msgid "Empty Form Details"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:297
+msgid "Empty First Name and/or Last Name"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:302
+msgid "Empty Username or entered username already exists, please enter another"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:307
+msgid "Please enter a valid email address."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:312
+msgid "Email address already registered, please login to continue."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:317
+msgid "Password must not be empty and both passwords must be exactly the same"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:322
+#: modules/classes/class-ld-group-registration-group-code-registration.php:740
+msgid "Please enter valid group code"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:340
+msgid "Please enter valid Group Code"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:345
+msgid "Group Code not activated, please try again later"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:351
+msgid "No more enrollments allowed for this Group Code"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:357
+msgid "No groups found related to this group code, please contact group leader or administrator"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:364
+msgid "No available seats found in the group, please contact group leader or administrator"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:373
+msgid "This Group Code is scheduled to be activated at a later time, please try again later"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:379
+msgid "Sorry but this Group Code has expired"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:389
+msgid "IP Address validation failed"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:403
+msgid "Domain name validation failed"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:714
+msgid "Please login first to use the group code"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:727
+msgid "Administrators already have access to all groups"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:766
+msgid "You are already enrolled in the group"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:804
+msgid "Invalid Captcha, please check the reCAPTCHA checkbox"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:812
+msgid "Incomplete captcha configuration, please contact admin"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:833
+msgid "The reCAPTCHA validation with some error, please try again"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:841
+msgid "The reCAPTCHA validation failed, please try again"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code-registration.php:988
+msgid "Congratulations, you have successfully been enrolled in the respective group"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:39
+msgctxt "Post type general name"
+msgid "Group Codes"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:40
+msgctxt "Post type singular name"
+msgid "Group Code"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:41
+msgctxt "Admin Menu text"
+msgid "Group Codes"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:42
+msgctxt "Add New on Toolbar"
+msgid "Group Code"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:43
+msgid "Add New"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:44
+msgid "Add New Group Code"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:45
+msgid "New Group Code"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:46
+msgid "Edit Group Code"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:47
+msgid "View Group Code"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:48
+msgid "All Group Codes"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:49
+msgid "Search Group Codes"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:50
+msgid "Parent Group Codes:"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:51
+msgid "No group codes found."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:52
+msgid "No group codes found in Trash."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:53
+msgctxt "Overrides the “Featured Image” phrase for this post type. Added in 4.3"
+msgid "Group Code Cover Image"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:54
+msgctxt "Overrides the “Set featured image” phrase for this post type. Added in 4.3"
+msgid "Set cover image"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:55
+msgctxt "Overrides the “Remove featured image” phrase for this post type. Added in 4.3"
+msgid "Remove cover image"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:56
+msgctxt "Overrides the “Use as featured image” phrase for this post type. Added in 4.3"
+msgid "Use as cover image"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:57
+msgctxt "The post type archive label used in nav menus. Default “Post Archives”. Added in 4.4"
+msgid "Group Code archives"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:58
+msgctxt "Overrides the “Insert into post”/”Insert into page” phrase (used when inserting media into a post). Added in 4.4"
+msgid "Insert into book"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:59
+msgctxt "Overrides the “Uploaded to this post”/”Uploaded to this page” phrase (used when viewing media attached to a post). Added in 4.4"
+msgid "Uploaded to this book"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:60
+msgctxt "Screen reader text for the filter links heading on the post type listing screen. Default “Filter posts list”/”Filter pages list”. Added in 4.4"
+msgid "Filter group codes list"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:61
+msgctxt "Screen reader text for the pagination heading on the post type listing screen. Default “Posts list navigation”/”Pages list navigation”. Added in 4.4"
+msgid "Group Codes list navigation"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:62
+msgctxt "Screen reader text for the items list heading on the post type listing screen. Default “Posts list”/”Pages list”. Added in 4.4"
+msgid "Group Codes list"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:67
+msgid "Group Codes for enrolling users in LearnDash Groups."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:143
+#: modules/classes/class-ld-group-registration-group-code.php:144
+#: modules/classes/class-ld-group-registration-group-code.php:226
+#: modules/classes/class-ld-group-registration-group-code.php:1145
+#: modules/templates/group-code-screens/ldgr-group-code-enrollment-form.template.php:32
+#: modules/templates/group-code-screens/ldgr-group-code-registration-form.template.php:84
+#: modules/templates/ldgr-group-code-settings.template.php:19
+msgid "Group Code"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:162
+msgid "Group Code Details"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:419
+msgid "Are you sure you want to delete this group code ?"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:420
+msgid "Copied \"__ldgr_code__\" to clipboard"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:473
+#: modules/classes/class-ld-group-registration-groups.php:1583
+msgid "Some error occurred"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:513
+msgid "New Group Code successfully created"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:539
+msgid "Invalid or Duplicate Group Code"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:546
+msgid "Invalid From or To Date"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:551
+msgid "Invalid Group"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:556
+msgid "Not more seats or max limit for seats reached."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:563
+msgid "Please enter a valid IP Address for validation"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:568
+msgid "Please enter a valid Domain name for validation"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:816
+#: modules/classes/class-ld-group-registration-group-code.php:970
+msgid "Some error occurred, group code not updated"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:862
+msgid "Some error occurred, group code not found"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:941
+msgid "Some error occurred, Group Code ID not set."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:1009
+msgid "Group Code updated successfully!!"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:1044
+#: modules/classes/class-ld-group-registration-group-code.php:1058
+msgid "Some error occurred, group code not deleted"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:1068
+msgid "Group code successfully deleted !!"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:1266
+#: modules/classes/class-ld-group-registration-group-code.php:1286
+msgid "Days"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:1270
+#: modules/classes/class-ld-group-registration-group-code.php:1290
+msgid "Hours"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:1275
+#: modules/classes/class-ld-group-registration-group-code.php:1295
+msgid "Minutes"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:1278
+#, php-format
+msgid "Live in %1$s %2$s"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-group-code.php:1299
+#, php-format
+msgid "Expires in %1$s %2$s"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:47
+msgid "Previous"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:48
+msgid "First"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:49
+msgid "Last"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:50
+msgid "Next"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:51
+msgid "No data available in table"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:52
+#: modules/classes/class-ld-group-registration-groups.php:1541
+msgid "No matching records found"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:53
+msgid "Search:"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:54
+#: modules/classes/class-ld-group-registration-groups.php:1543
+msgid "Processing..."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:55
+#: modules/classes/class-ld-group-registration-groups.php:1544
+#: modules/templates/ldgr-group-users/tabs/group-codes-tab.template.php:86
+msgid "Loading..."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:58
+#, php-format
+msgid "Show %s entries"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:61
+msgid "Showing 0 to 0 of 0 entries"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:64
+#: modules/classes/class-ld-group-registration-groups.php:1550
+#, php-format
+msgid "(filtered from %s total entries)"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:69
+#, php-format
+msgid "Showing %1$s to %2$s of %3$s entries"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:74
+msgid ": activate to sort column descending"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:75
+msgid ": activate to sort column ascending"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:101
+msgid "Please login to perform action"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:105
+msgid "You are not the authorised user to perform this action"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:109
+msgid "Oops, something went wrong"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:128
+msgid "No request found"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:144
+msgid "Request accepted successfully"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:156
+#: modules/classes/class-ld-group-registration-groups.php:424
+msgid "User Removal request from group"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:193
+msgid "Request rejected successfully"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:277
+#: modules/templates/ldgr-group-registrations-left-metabox.template.php:14
+msgid "Group Registrations left"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:319
+#: modules/classes/class-ld-group-registration-groups.php:1537
+msgid "No user selected"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:366
+#: modules/classes/class-ld-group-registration-groups.php:404
+#: modules/classes/class-ld-group-registration-groups.php:469
+#: modules/classes/class-ld-group-registration-groups.php:1337
+msgid "Oops Something went wrong"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:393
+#: modules/classes/class-ld-group-registration-groups.php:1249
+#: modules/classes/class-ld-group-registration-reports.php:111
+msgid "You are not the owner of this group"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:402
+msgid "User removed from the Group Successfully"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:466
+msgid "Removal request sent Successfully"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:473
+#: modules/classes/class-ld-group-registration-groups.php:476
+#: modules/classes/class-ld-group-registration-groups.php:1341
+#: modules/classes/class-ld-group-registration-groups.php:1344
+#: modules/classes/class-ld-group-registration-groups.php:1357
+#: modules/classes/class-ld-group-registration-groups.php:1367
+#: modules/classes/class-ld-group-registration-reports.php:164
+msgid "You don't have privilege to do this action"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:531
+#: modules/classes/class-ld-group-registration-groups.php:544
+#: modules/classes/class-ld-group-registration-groups.php:727
+#: modules/classes/class-ld-group-registration-groups.php:780
+msgid "ERROR"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:680
+#: modules/classes/class-ld-group-registration-groups.php:875
+#, php-format
+msgid "%s has been enrolled"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:684
+#, php-format
+msgid "%s is already enrolled to group"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:689
+#, php-format
+msgid "Invalid E-mail address : %s "
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:732
+msgid "SUCCESS"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:779
+msgid "You don't have permission to perform this action."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:974
+msgid "Please Login to view this page"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:983
+msgid "You are not the leader of any group"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:996
+msgid "You do not have privilege to view this page."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1059
+#: modules/classes/class-ld-group-registration-groups.php:1067
+#, php-format
+msgid "<p>Your %s subscription put on the hold. Please contact admin.</p>"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1061
+#, php-format
+msgid "<p>Your %s subscription has been cancelled. Please contact admin.</p>"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1063
+#, php-format
+msgid "<p>Your %s subscription has been expired. Please contact admin.</p>"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1065
+#, php-format
+msgid "<p> Your %s subscription status is pending. Please contact admin.</p>"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1087
+msgid "Add New Users"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1099
+msgid "Group Leader"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1331
+msgid "Re Invitation mail has been sent successfully."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1422
+#: modules/templates/ldgr-group-users/tabs/enrolled-users-tab.template.php:36
+msgid "Re-Invite"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1432
+#: modules/templates/ldgr-group-users/tabs/enrolled-users-tab.template.php:62
+msgid "Remove"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1435
+#: modules/classes/class-ld-group-registration-groups.php:1532
+#: modules/templates/ldgr-group-users/tabs/enrolled-users-tab.template.php:65
+msgid "Request sent"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1533
+#: modules/templates/group-code-screens/ldgr-view-group-code-single.template.php:39
+msgid "Delete"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1534
+msgid "User limit exceeded"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1535
+msgid "the student"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1536
+msgid "the students"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1538
+msgid ""
+"Are you sure you want to remove the following user from the group? \n"
+"\n"
+"\t {user}"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1539
+msgid "Are you sure you want to remove the selected users from the group?"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1540
+msgid "Only CSV file allowed!"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1542
+msgid "Search"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1545
+msgid "No user is enrolled"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1547
+#, php-format
+msgid "Show %s Users"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1548
+msgid "of"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1581
+msgid "Please enter a valid group name"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1582
+msgid "Some error occurred, group id not found. Please refresh the page and try again"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1601
+msgid "Group name or Group ID not found"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1618
+msgid "Group name could not be updated. Please try again later or contact admin"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1627
+msgid "Group name updated successfully!!"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1762
+msgid "Enrolled Users"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1768
+msgid "Enroll New User"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1779
+msgid "Report"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1897
+msgid "No files chosen to upload!"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1900
+msgid "Only CSV file is allowed!"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1942
+msgid "Value is not in a proper format, check sample file for format!"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1947
+msgid "One of the value is missing!"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-groups.php:1969
+msgid "Your group Limit exceeded!!"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-reports.php:57
+#, php-format
+msgid "Please select a %s"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-reports.php:250
+msgid "certificate"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-settings.php:26
+#: modules/classes/class-ld-group-registration-settings.php:27
+msgid "Group Registration Settings"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-settings.php:54
+msgid "General Settings"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-settings.php:55
+msgid "Email Settings"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-settings.php:189
+msgid "Settings saved."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-settings.php:194
+msgid "Note: Any empty fields will be replaced by defaults"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-settings.php:420
+msgid "Settings"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-settings.php:493
+#: modules/templates/ldgr-feedback-form.template.php:8
+msgid "Feedback"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-settings.php:497
+msgid "Other Extensions"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-subscriptions.php:30
+msgid "No Related Courses"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-subscriptions.php:39
+msgid "Related courses"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-subscriptions.php:42
+msgid "You can select multiple courses to sell together holding the SHIFT key when clicking."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-subscriptions.php:66
+msgid "Available as Package"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-subscriptions.php:68
+msgid "Enable this option if you want to provide fix package to your customers for Group Purchase."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-subscriptions.php:76
+msgid "No. of Group Member"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-subscriptions.php:79
+msgid "Enter the maximum Group Members allowed for the package."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-unlimited-members.php:82
+#: modules/classes/class-ld-group-registration-unlimited-members.php:174
+#: modules/classes/class-ld-group-registration-unlimited-members.php:200
+#: modules/templates/ldgr-woocommerce-group-registration-metabox.template.php:102
+msgid "Unlimited Members"
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-woocommerce.php:66
+msgid "Product already exists in cart."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-woocommerce.php:71
+msgid "Only 1 quantity allowed."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-woocommerce.php:76
+msgid "Select type of product."
+msgstr ""
+
+#: modules/classes/class-ld-group-registration-woocommerce.php:124
+#: modules/classes/class-ld-group-registration-woocommerce.php:130
+msgid "-  "
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:14
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:14
+msgid "Back"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:19
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:19
+#: modules/templates/ldgr-group-users/tabs/group-codes-tab.template.php:33
+msgid "Code"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:22
+msgid "Generate"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:27
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:27
+msgid "From :"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:31
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:31
+msgid "To :"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:38
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:38
+#: modules/templates/ldgr-group-code-details-metabox.php:60
+msgid "Number of Enrollments"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:51
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:55
+#: modules/templates/ldgr-group-code-details-metabox.php:84
+msgid "Validation Rules"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:58
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:62
+#: modules/templates/ldgr-group-code-details-metabox.php:97
+msgid "IP Address"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:60
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:64
+#: modules/templates/ldgr-group-code-details-metabox.php:99
+msgid "Enter IP address to validate during enrollment ( eg. 10.10.10.10 )"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:66
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:70
+#: modules/templates/ldgr-group-code-details-metabox.php:109
+msgid "Domain Name"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:68
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:72
+#: modules/templates/ldgr-group-code-details-metabox.php:111
+msgid "Enter email domain name to validate during enrollment ( eg. gmail.com )"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:80
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:84
+#: modules/templates/ldgr-group-users/tabs/group-codes-tab.template.php:36
+msgid "Status"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-create-group-code-screen.template.php:89
+#: modules/templates/group-code-screens/ldgr-group-code-enrollment-form.template.php:55
+#: modules/templates/group-code-screens/ldgr-group-code-registration-form.template.php:107
+msgid "Submit"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:22
+msgid "Regenerate"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:46
+msgid "Number of Enrolled Users :"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-edit-group-code-screen.template.php:95
+#: modules/templates/ldgr-group-users/ldgr-group-users-select-wrapper.template.php:90
+msgid "Update"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-group-code-enrollment-form.template.php:61
+#: modules/templates/group-code-screens/ldgr-group-code-registration-form.template.php:111
+msgid "Please wait..."
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-group-code-registration-form.template.php:33
+msgid "First Name"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-group-code-registration-form.template.php:40
+msgid "Last Name"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-group-code-registration-form.template.php:47
+#: modules/templates/ldgr-group-registrations-left-metabox.template.php:30
+msgid "Username"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-group-code-registration-form.template.php:54
+msgid "User Email"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-group-code-registration-form.template.php:61
+msgid "User Password"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-group-code-registration-form.template.php:68
+msgid "Confirm Password"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-view-group-code-single.template.php:18
+#, php-format
+msgid "%d users enrolled"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-view-group-code-single.template.php:25
+msgid "Copy"
+msgstr ""
+
+#: modules/templates/group-code-screens/ldgr-view-group-code-single.template.php:33
+msgid "Edit"
+msgstr ""
+
+#: modules/templates/ldgr-detailed-course-report.template.php:66
+msgid "Certificate"
+msgstr ""
+
+#: modules/templates/ldgr-detailed-course-report.template.php:67
+msgid "Score"
+msgstr ""
+
+#: modules/templates/ldgr-detailed-course-report.template.php:68
+msgid "Statistics"
+msgstr ""
+
+#: modules/templates/ldgr-detailed-course-report.template.php:69
+msgid "Date"
+msgstr ""
+
+#: modules/templates/ldgr-edd-group-registration-metabox.template.php:19
+#: modules/templates/ldgr-woocommerce-group-registration-metabox.template.php:24
+msgid "Enable Group registration"
+msgstr ""
+
+#: modules/templates/ldgr-edd-group-registration-metabox.template.php:39
+msgid "Allow users to check 'Enable Group Registration' on the Front End"
+msgstr ""
+
+#: modules/templates/ldgr-edd-group-registration-metabox.template.php:55
+msgid "Default Option : "
+msgstr ""
+
+#: modules/templates/ldgr-edd-group-registration-metabox.template.php:75
+msgid "Ask Group Leader to pay for course"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-details-metabox.php:22
+msgid "From Date"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-details-metabox.php:32
+msgid "To Date"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-details-metabox.php:72
+msgid "Number of Enrolled Users"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:26
+msgid "Enable group code"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:33
+#, php-format
+msgid "How does it work ? Learn more %s"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:39
+msgid "Enable reCAPTCHA v2 Checkbox for group code registration and enrollment form"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:46
+#, php-format
+msgid "Learn more about reCAPTCHA and get your site keys from %s"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:53
+msgid "Enter your reCAPTCHA Site Key"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:59
+msgid "Enter your reCAPTCHA Secret Key"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:67
+msgid "Select page for group code enrollments/registrations"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:70
+#: modules/templates/ldgr-group-code-settings.template.php:106
+msgid "Select a page"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:80
+msgid "Page used to enroll and/or register users via group codes. Add <code>[ldgr-group-code-registration-form]</code> inside the page if not added already"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:86
+msgid "Enable redirects on successfull enrollment"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:93
+msgid "Enable to redirect users on successfull enrollment to the selected page"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:96
+msgid "Disable to display a custom message on successful enrollment"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:103
+msgid "Select page for users to be redirect on successful enrollments/registrations"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:116
+msgid "Page users will be redirected to on successful enrollment/registeration via group codes. If not set, users will be redirected to home page."
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:124
+msgid "Message on group code enrollment or registration"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:127
+msgid "Available Placeholders"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:149
+msgid "Enable GDPR check for group code registration/enrollment form"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:160
+msgid "Enter the GDPR agreement message to be displayed on the group registration and enrollment form"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:163
+msgid "You can make use of <code>{privacy_policy}</code> to display the privacy policy page link"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:185
+#: modules/templates/wdm-email-setting.php:443
+msgid "Save"
+msgstr ""
+
+#: modules/templates/ldgr-group-code-settings.template.php:191
+#, php-format
+msgid "Please enable user registrations for the website from %s to use Group Codes"
+msgstr ""
+
+#: modules/templates/ldgr-group-name-box.template.php:23
+#: modules/templates/ldgr-group-name-box.template.php:35
+msgid "Enter a name for your Group"
+msgstr ""
+
+#: modules/templates/ldgr-group-registrations-left-metabox.template.php:20
+msgid "User Removal Request"
+msgstr ""
+
+#: modules/templates/ldgr-group-registrations-left-metabox.template.php:24
+msgid "Bulk Accept"
+msgstr ""
+
+#: modules/templates/ldgr-group-registrations-left-metabox.template.php:25
+msgid "Bulk Reject"
+msgstr ""
+
+#: modules/templates/ldgr-group-registrations-left-metabox.template.php:31
+#: modules/templates/ldgr-group-users/tabs/enrolled-users-tab.template.php:20
+msgid "Action"
+msgstr ""
+
+#: modules/templates/ldgr-group-registrations-left-metabox.template.php:58
+msgid "Accept"
+msgstr ""
+
+#: modules/templates/ldgr-group-registrations-left-metabox.template.php:65
+msgid "Reject"
+msgstr ""
+
+#: modules/templates/ldgr-group-report-table.template.php:17
+#: modules/templates/ldgr-group-users/tabs/enrolled-users-tab.template.php:18
+msgid "Name"
+msgstr ""
+
+#: modules/templates/ldgr-group-report-table.template.php:23
+msgid "Email ID"
+msgstr ""
+
+#: modules/templates/ldgr-group-report-table.template.php:29
+#, php-format
+msgid "%s Progress"
+msgstr ""
+
+#: modules/templates/ldgr-group-report-table.template.php:36
+msgid "Rewards"
+msgstr ""
+
+#: modules/templates/ldgr-group-report.template.php:58
+#, php-format
+msgid "No %s associated with selected group!"
+msgstr ""
+
+#: modules/templates/ldgr-group-report.template.php:76
+#: modules/templates/ldgr-group-report.template.php:88
+#, php-format
+msgid "Select %s"
+msgstr ""
+
+#: modules/templates/ldgr-group-report.template.php:113
+msgid "Show Report"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/ldgr-group-users-select-wrapper.template.php:50
+msgid "Users Registration Left"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/ldgr-group-users-select-wrapper.template.php:59
+msgid "Unlimited"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/ldgr-group-users-select-wrapper.template.php:99
+msgid "Associated Courses"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/ldgr-group-users-select-wrapper.template.php:111
+msgid "No Courses Found."
+msgstr ""
+
+#: modules/templates/ldgr-group-users/tabs/enrolled-users-tab.template.php:13
+msgid "Bulk Remove"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/tabs/enrolled-users-tab.template.php:19
+msgid "Email"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/tabs/group-codes-tab.template.php:19
+msgid "Create Group Code"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/tabs/group-codes-tab.template.php:26
+msgid "Share this link with students to Enroll/Register using Group Codes"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/tabs/group-codes-tab.template.php:34
+msgid "Summary"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/tabs/group-codes-tab.template.php:35
+msgid "Actions"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/tabs/group-codes-tab.template.php:55
+msgid "No group codes found"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/tabs/new-users-tab.template.php:40
+msgid "Choose File"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/tabs/new-users-tab.template.php:44
+msgid "File Name:"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/tabs/new-users-tab.template.php:47
+msgid "File Size:"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/tabs/new-users-tab.template.php:95
+msgid "Add"
+msgstr ""
+
+#: modules/templates/ldgr-group-users/tabs/new-users-tab.template.php:99
+#: modules/templates/ldgr-group-users/tabs/new-users-tab.template.php:101
+msgid "Clear"
+msgstr ""
+
+#: modules/templates/ldgr-woocommerce-group-registration-metabox.template.php:43
+msgid "Allow users to check <strong><em>'Enable Group Registration'</em></strong> on the Front End"
+msgstr ""
+
+#: modules/templates/ldgr-woocommerce-group-registration-metabox.template.php:52
+msgid "What would be the default option ? "
+msgstr ""
+
+#: modules/templates/ldgr-woocommerce-group-registration-metabox.template.php:84
+msgid "Ask Group Leader to pay for course access"
+msgstr ""
+
+#: modules/templates/ldgr-woocommerce-group-registration-metabox.template.php:113
+msgid "Label for unlimited members"
+msgstr ""
+
+#: modules/templates/ldgr-woocommerce-group-registration-metabox.template.php:119
+msgid "Price for unlimited members"
+msgstr ""
+
+#: modules/templates/license-page.php:35
+msgid "Your license key is activated."
+msgstr ""
+
+#: modules/templates/license-page.php:39
+msgid "No response from server. Please try again later."
+msgstr ""
+
+#: modules/templates/license-page.php:40
+msgid "License Activation Failed. Please try again or contact support on support@wisdmlabs.com"
+msgstr ""
+
+#: modules/templates/license-page.php:41
+msgid "Please enter license key."
+msgstr ""
+
+#: modules/templates/license-page.php:42 modules/templates/license-page.php:47
+#, php-format
+msgid "Your License Key is already activated at : %s Please deactivate the license from one of the above site(s) to successfully activate it on your current site."
+msgstr ""
+
+#: modules/templates/license-page.php:42
+msgid "No Activations Left."
+msgstr ""
+
+#: modules/templates/license-page.php:43
+msgid "Your license key has Expired. Please, Renew it."
+msgstr ""
+
+#: modules/templates/license-page.php:44
+msgid "Your License key is disabled"
+msgstr ""
+
+#: modules/templates/license-page.php:45
+msgid "Please enter valid license key"
+msgstr ""
+
+#: modules/templates/license-page.php:46
+msgid "Please try to activate license again. If it does not activate, contact support on support@wisdmlabs.com"
+msgstr ""
+
+#: modules/templates/license-page.php:47
+msgid "Site inactive (Press Activate license to activate plugin)"
+msgstr ""
+
+#: modules/templates/license-page.php:48
+msgid "License Key is deactivated"
+msgstr ""
+
+#: modules/templates/license-page.php:49
+#, php-format
+msgid "Following Error Occurred: %s. Please contact support on support@wisdmlabs.com if you are not sure why this error is occurring"
+msgstr ""
+
+#: modules/templates/license-page.php:86
+#, php-format
+msgid "%s License Options"
+msgstr ""
+
+#: modules/templates/license-page.php:94
+msgid "License Key"
+msgstr ""
+
+#: modules/templates/license-page.php:119
+msgid "License Status"
+msgstr ""
+
+#: modules/templates/license-page.php:150
+#: modules/templates/license-page.php:175
+msgid "Activate License"
+msgstr ""
+
+#: modules/templates/license-page.php:159
+msgid "Deactivate License"
+msgstr ""
+
+#: modules/templates/license-page.php:165
+msgid "Renew License"
+msgstr ""
+
+#: modules/templates/other-extensions.php:14
+msgid "Check Out Our Other Extensions"
+msgstr ""
+
+#: modules/templates/other-extensions.php:31
+msgid "Click here to know more"
+msgstr ""
+
+#: modules/templates/other-extensions.php:52
+msgid "You have all of our extensions. Thank you for your support!"
+msgstr ""
+
+#: modules/templates/other-extensions.php:59
+msgid "Browse all our extensions"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:6
+msgid "Group Registration Email Setting"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:12
+msgid "Admin Email Setting"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:20
+msgid "Email(s) : "
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:24
+msgid "Enter email address(s) to whom admin emails should go. Add multiple as comma separated. <br/> Default : Admin Email"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:38
+msgid "When admin accepts the user removal request (Group Leader) "
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:44
+#: modules/templates/wdm-email-setting.php:100
+#: modules/templates/wdm-email-setting.php:156
+#: modules/templates/wdm-email-setting.php:213
+#: modules/templates/wdm-email-setting.php:272
+#: modules/templates/wdm-email-setting.php:335
+#: modules/templates/wdm-email-setting.php:393
+msgid "Subject : "
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:48
+msgid "Enter Subject for Email sent to Group Leader when Admin accepts removal request <br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:53
+#: modules/templates/wdm-email-setting.php:109
+#: modules/templates/wdm-email-setting.php:165
+#: modules/templates/wdm-email-setting.php:222
+#: modules/templates/wdm-email-setting.php:281
+#: modules/templates/wdm-email-setting.php:344
+#: modules/templates/wdm-email-setting.php:402
+msgid "Body : "
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:70
+msgid "Enter Content for Email sent to Group Leader(s) when Admin accepts removal request <br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:74
+#: modules/templates/wdm-email-setting.php:130
+#: modules/templates/wdm-email-setting.php:186
+#: modules/templates/wdm-email-setting.php:243
+#: modules/templates/wdm-email-setting.php:302
+#: modules/templates/wdm-email-setting.php:365
+#: modules/templates/wdm-email-setting.php:423
+msgid "Available Variables"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:76
+#: modules/templates/wdm-email-setting.php:132
+#: modules/templates/wdm-email-setting.php:188
+#: modules/templates/wdm-email-setting.php:245
+#: modules/templates/wdm-email-setting.php:304
+#: modules/templates/wdm-email-setting.php:367
+#: modules/templates/wdm-email-setting.php:425
+msgid "Displays Group Title"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:77
+#: modules/templates/wdm-email-setting.php:133
+#: modules/templates/wdm-email-setting.php:189
+msgid "Displays User Email who is removed from Group"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:78
+#: modules/templates/wdm-email-setting.php:134
+#: modules/templates/wdm-email-setting.php:191
+#: modules/templates/wdm-email-setting.php:311
+#: modules/templates/wdm-email-setting.php:432
+msgid "Displays Group Leaders Name"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:94
+msgid "When admin rejects the user removal request (Group Leader) "
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:104
+msgid "Enter Subject for Email sent to Group Leader(s) when Admin rejects removal request <br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:126
+msgid "Enter Content for Email sent to Group Leader(s) when Admin rejects removal request <br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:150
+msgid "When Group Leader requests to remove user (Admin) "
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:160
+msgid "Enter Subject for Email sent to Admin when Group Leader request to remove user<br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:182
+msgid "Enter Content for Email sent to Admin when Group Leader request to remove user<br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:190
+msgid "Displays Group Edit Link"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:207
+msgid "When User gets added into Group (User) "
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:217
+#: modules/templates/wdm-email-setting.php:239
+msgid "Enter Subject for Email sent to User when added in a group <br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:246
+#: modules/templates/wdm-email-setting.php:310
+#: modules/templates/wdm-email-setting.php:431
+msgid "Displays Course List"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:247
+msgid "Displays Group Leader Name"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:248
+#: modules/templates/wdm-email-setting.php:306
+#: modules/templates/wdm-email-setting.php:428
+msgid "Displays User's First Name"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:249
+#: modules/templates/wdm-email-setting.php:307
+#: modules/templates/wdm-email-setting.php:429
+msgid "Displays User's Last Name"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:250
+#: modules/templates/wdm-email-setting.php:312
+#: modules/templates/wdm-email-setting.php:433
+msgid "Displays Login URL"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:266
+msgid "When User accounts get created and added into Group (User) "
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:276
+msgid "Enter Subject for Email sent to User when when User accounts get created and added into Group <br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:298
+msgid "Enter Content for Email sent to User when when User accounts get created and added into Group <br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:305
+#: modules/templates/wdm-email-setting.php:368
+#: modules/templates/wdm-email-setting.php:427
+msgid "Displays Site Name"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:308
+#: modules/templates/wdm-email-setting.php:369
+#: modules/templates/wdm-email-setting.php:430
+msgid "Displays User's Email"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:309
+msgid "Displays User's Password"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:313
+#: modules/templates/wdm-email-setting.php:426
+msgid "Displays Reset Password link for user"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:329
+msgid "When User account gets created (Admin) "
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:339
+msgid "Enter Subject for Email sent to Admin when User account gets created <br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:361
+msgid "Enter Content for Email sent to Admin when User account gets created <br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:370
+msgid "Displays User's Login"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:387
+msgid "When Group Leader sends ReInvite Email (User) "
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:397
+msgid "Enter Subject for Email sent to user to Re-Invite. <br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-email-setting.php:419
+msgid "Enter Content for Email sent to user to Re-Invite. <br/> Default : leave blank"
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:11
+msgid "Allow Group Leader to Remove Members from the Group (without Admin Approval) : "
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:17
+msgid "It allows the Group Leader to remove a member from group without sending a request to the admin."
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:37
+msgid "Fix Group Limit : "
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:43
+msgid "Restrict users to be added to a group on removing currently added users."
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:63
+msgid "Allow Group Leader to ReInvite Group Users : "
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:69
+msgid "Enable this option if you want to allow Group Leader to ReInvite Group Users via email. It allows user to reset password."
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:91
+msgid "Display the Courses associated with Group : "
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:97
+msgid "Enable this option if you want to display the Courses of a Group on Group Registration page."
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:120
+msgid "Redirect users after successfull login : "
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:128
+msgid "Enable this option if you wish to redirect users to specific pages after login."
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:148
+msgid "Redirect Group Leader"
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:155
+#: modules/templates/wdm-global-setting.php:171
+msgid "&mdash; Select &mdash;"
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:164
+msgid "Redirect Group User"
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:188
+msgid "Enter a label for Unlimited Members: "
+msgstr ""
+
+#: modules/templates/wdm-global-setting.php:196
+msgid "This label will be used on the product, cart and checkout pages for referring the unlimited seats options"
+msgstr ""

@@ -1,0 +1,252 @@
+#ldgr-group-code-container-head, .ldgr-back-to-view, #ldgr-add-group-code {
+    float: right;
+    margin-bottom: 20px;
+}
+
+#ldgr-group-code-create-form, #ldgr-group-code-edit-form {
+    clear: both;
+}
+
+.ldgr-switch {
+    position: relative;
+    display: inline-block;
+    width: 55px;
+    height: 27px;
+    margin: 0;
+}
+
+.ldgr-switch input {
+    display: none;
+    visibility: hidden;
+}
+
+.ldgr-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.ldgr-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    /*height: 26px;
+  width: 26px;*/
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.ldgr-switch-slider {
+    background-color: #2196F3;
+}
+
+input:focus+.ldgr-switch-slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.ldgr-switch-slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded ldgr-switch-sliders */
+.ldgr-switch-slider.round {
+    border-radius: 34px;
+}
+
+.ldgr-switch-slider.round:before {
+    border-radius: 50%;
+}
+
+table#ldgr-group-code-table  td.group-code-actions {
+    /* text-align: center; */
+    display: flex;
+    border: none;
+}
+
+td.group-code-actions span {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.ldgr-group-code-messages {
+    float: left;
+    display: none;
+    width: 70%;
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+
+.ldgr-group-code-container-head {
+    clear: both;
+}
+
+.ldgr-group-code-messages.success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+}
+
+.ldgr-group-code-messages.error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.ldgr-message-close {
+    padding: .75rem 1.25rem;
+    color: inherit;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.ldgr-message-text {
+    display: inline-block;
+}
+
+.group-code-status {
+    display: flex;
+}
+
+div.group-code-status span {
+    margin: 0;
+}
+
+div.group-code-status label.ldgr-switch {
+    width: 45px;
+    height: 22px;
+}
+
+div.group-code-status label.ldgr-switch span.ldgr-switch-slider:before {
+    width: 15px;
+    height: 15px;
+}
+
+div.group-code-status input:checked+.ldgr-switch-slider:before {
+    transform: translateX(22px);
+}
+
+.group-code-status .dashicons-update{
+    opacity: 0;
+}
+
+.group-code-status .dashicons-update.spin, .ldgr-black-screen .dashicons-update.spin, .ldgr-form .dashicons-update.spin {
+    animation: dashicons-spin 1s infinite;
+    animation-timing-function: linear;
+ }
+ 
+@keyframes dashicons-spin {
+    0% {
+       transform: rotate( 0deg );
+    }
+    100% {
+       transform: rotate( 360deg );
+    }
+}
+
+.ldgr-disable {
+    pointer-events: none;
+}
+
+.ldgr-group-code-tab {
+    position: relative;
+}
+
+.ldgr-black-screen{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: black;
+    top: 0;
+    left: 0;
+    opacity: 0.5;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    display: none;
+}
+
+/* Elumine hide slider */
+.wdm-checkbox + .ldgr-switch-slider{
+    display: none;
+}
+
+.ldgr-form input[type="text"], .ldgr-form input[type="number"], .ldgr-form textarea{
+	padding: 7px;
+	border: none;
+	margin: 0 10px;
+	background-color: #ffffff;
+}
+
+.ldgr-form p{
+	margin-bottom: 25px
+}
+
+.ldgr-form select{
+	min-width: 150px;
+}
+
+.ldgr-form .wdm-checkbox{
+	border: 1px solid #b7b1b1;
+	background-color: #fff;
+}
+
+tr.ldgr-empty-list{
+    text-align: center;
+}
+
+.ldgr-form .dashicons-update {
+    opacity: 0;
+    vertical-align: middle;
+}
+
+.ldgr-code-validation {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.ldgr-code-validation div {
+    display: flex;
+    width: 50%;
+    flex-direction: column;
+}
+
+span.ldgr-tooltip {
+    visibility: hidden;
+    position: absolute;
+    padding: 5px 10px;
+    background: black;
+    color: #fff;
+    border-color: black;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+span.dashicons-info:hover + span.ldgr-tooltip, span.dashicons-admin-links:hover + span.ldgr-tooltip {
+    visibility: visible;
+}
+
+div.ldgr-code-validation span.dashicons-info {
+    position: relative;
+}
+
+td.group-code-actions a.group-code-edit, td.group-code-actions a.group-code-delete, td.group-code-actions a.group-code-copy, div.ldgr-group-code-reg-form-details .dashicons {
+    text-decoration: none;
+}

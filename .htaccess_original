@@ -1,0 +1,152 @@
+# BEGIN HMWP_RULES
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+RewriteRule ^([_0-9a-zA-Z-]+/)?account/lost-password$ /wp-login.php?action=lostpassword [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?signup$ /wp-login.php?action=register [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?account/user-logout$ /wp-login.php?action=logout [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/d0f4711431/(.*) /wp-content/plugins/hide-my-wp/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/198aea64f4/(.*) /wp-content/plugins/sitepress-multilingual-cms/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/7c0ca1bd8f/(.*) /wp-content/plugins/wp-seo-multilingual/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/9a7da1ae4d/(.*) /wp-content/plugins/advanced-custom-fields-pro/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/5ba99db075/(.*) /wp-content/plugins/cloudflare/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/8f0ea95c40/(.*) /wp-content/plugins/dw-question-answer-pro/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/d2e12f6784/(.*) /wp-content/plugins/dw-tinymce-imgur-upload/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/60162bdd79/(.*) /wp-content/plugins/easy-wp-smtp/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/ccc473c329/(.*) /wp-content/plugins/elementor-pro/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/f65f29574d/(.*) /wp-content/plugins/elementor/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/9097659473/(.*) /wp-content/plugins/essential-addons-for-elementor-lite/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/61f43aa9db/(.*) /wp-content/plugins/if-menu/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/aa6267319d/(.*) /wp-content/plugins/ld-group-registration/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/a26dfaa429/(.*) /wp-content/plugins/learndash-elementor/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/5eebd943b0/(.*) /wp-content/plugins/learndash-woocommerce/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/ab2212816b/(.*) /wp-content/plugins/ninjateam-messenger-customer-chat/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/4291ea3dfe/(.*) /wp-content/plugins/sfwd-lms/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/60deaea166/(.*) /wp-content/plugins/tidio-live-chat/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/2774aac7e9/(.*) /wp-content/plugins/user-registration-advanced-fields/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/db539db3e0/(.*) /wp-content/plugins/user-registration-content-restriction/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/9c382234f8/(.*) /wp-content/plugins/user-registration-customize-my-account/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/9121fcb185/(.*) /wp-content/plugins/user-registration-extras/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/68fe04a9ce/(.*) /wp-content/plugins/user-registration-mailchimp/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/c68cc68ef1/(.*) /wp-content/plugins/user-registration-social-connect/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/213698419a/(.*) /wp-content/plugins/user-registration-woocommerce/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/707278687c/(.*) /wp-content/plugins/user-registration/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/a7cea85a48/(.*) /wp-content/plugins/visitors-traffic-real-time-statistics-pro/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/64661b86c7/(.*) /wp-content/plugins/woo-checkout-field-editor-pro/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/f90117f5fb/(.*) /wp-content/plugins/woocommerce-multilingual/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/39d10ee62c/(.*) /wp-content/plugins/woocommerce/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/c3bb27d53a/(.*) /wp-content/plugins/wordpress-seo-premium/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/f9c7f63a6a/(.*) /wp-content/plugins/wordpress-seo/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/ffee7df689/(.*) /wp-content/plugins/wp-rocket/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/6a4dc3c413/(.*) /wp-content/plugins/wpml-string-translation/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/bc2108c530/(.*) /wp-content/plugins/wpml-translation-management/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/bf00b03c06/(.*) /wp-content/plugins/wpseo-local/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/(.*) /wp-content/plugins/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/assets/1c7c4f63aa/(.*) /wp-content/themes/jannah/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/assets/2a1f472209/(.*) /wp-content/themes/uno-japano/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/assets/(.*) /wp-content/themes/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?files/(.*) /wp-content/uploads/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/(.*) /wp-content/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?lib/(.*) /wp-includes/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?comments/(.*) /wp-comments-post.php$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?profile/(.*) /author/$2 [QSA,L]
+</IfModule>
+
+
+# END HMWP_RULES
+# BEGIN LSCACHE
+## LITESPEED WP CACHE PLUGIN - Do not edit the contents of this block! ##
+<IfModule LiteSpeed>
+RewriteEngine on
+CacheLookup on
+RewriteRule .* - [E=Cache-Control:no-autoflush]
+RewriteRule \.object-cache\.ini - [F,L]
+
+### marker CACHE RESOURCE start ###
+RewriteRule wp-content/.*/[^/]*(responsive|css|js|dynamic|loader|fonts)\.php - [E=cache-control:max-age=3600]
+### marker CACHE RESOURCE end ###
+
+### marker FAVICON start ###
+RewriteRule favicon\.ico$ - [E=cache-control:max-age=86400]
+### marker FAVICON end ###
+
+### marker DROPQS start ###
+CacheKeyModify -qs:fbclid
+CacheKeyModify -qs:gclid
+CacheKeyModify -qs:utm*
+CacheKeyModify -qs:_ga
+### marker DROPQS end ###
+
+</IfModule>
+## LITESPEED WP CACHE PLUGIN - Do not edit the contents of this block! ##
+# END LSCACHE
+# BEGIN NON_LSCACHE
+## LITESPEED WP CACHE PLUGIN - Do not edit the contents of this block! ##
+## LITESPEED WP CACHE PLUGIN - Do not edit the contents of this block! ##
+# END NON_LSCACHE
+# BEGIN WordPress
+# The directives (lines) between "BEGIN WordPress" and "END WordPress" are
+# dynamically generated, and should only be modified via WordPress filters.
+# Any changes to the directives between these markers will be overwritten.
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteBase /
+RewriteRule ^index\.php$ - [L]
+RewriteRule ^en/wp-login.php /wp-login.php [QSA,L]
+RewriteRule ^ja/wp-login.php /wp-login.php [QSA,L]
+RewriteRule ^vi/wp-login.php /wp-login.php [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?account/lost-password$ /wp-login.php?action=lostpassword [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?signup$ /wp-login.php?action=register [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?account/user-logout$ /wp-login.php?action=logout [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/d0f4711431/(.*) /wp-content/plugins/hide-my-wp/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/198aea64f4/(.*) /wp-content/plugins/sitepress-multilingual-cms/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/7c0ca1bd8f/(.*) /wp-content/plugins/wp-seo-multilingual/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/9a7da1ae4d/(.*) /wp-content/plugins/advanced-custom-fields-pro/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/5ba99db075/(.*) /wp-content/plugins/cloudflare/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/8f0ea95c40/(.*) /wp-content/plugins/dw-question-answer-pro/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/d2e12f6784/(.*) /wp-content/plugins/dw-tinymce-imgur-upload/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/60162bdd79/(.*) /wp-content/plugins/easy-wp-smtp/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/ccc473c329/(.*) /wp-content/plugins/elementor-pro/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/f65f29574d/(.*) /wp-content/plugins/elementor/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/9097659473/(.*) /wp-content/plugins/essential-addons-for-elementor-lite/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/61f43aa9db/(.*) /wp-content/plugins/if-menu/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/aa6267319d/(.*) /wp-content/plugins/ld-group-registration/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/a26dfaa429/(.*) /wp-content/plugins/learndash-elementor/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/5eebd943b0/(.*) /wp-content/plugins/learndash-woocommerce/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/ab2212816b/(.*) /wp-content/plugins/ninjateam-messenger-customer-chat/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/4291ea3dfe/(.*) /wp-content/plugins/sfwd-lms/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/60deaea166/(.*) /wp-content/plugins/tidio-live-chat/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/2774aac7e9/(.*) /wp-content/plugins/user-registration-advanced-fields/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/db539db3e0/(.*) /wp-content/plugins/user-registration-content-restriction/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/9c382234f8/(.*) /wp-content/plugins/user-registration-customize-my-account/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/9121fcb185/(.*) /wp-content/plugins/user-registration-extras/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/68fe04a9ce/(.*) /wp-content/plugins/user-registration-mailchimp/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/c68cc68ef1/(.*) /wp-content/plugins/user-registration-social-connect/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/213698419a/(.*) /wp-content/plugins/user-registration-woocommerce/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/707278687c/(.*) /wp-content/plugins/user-registration/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/a7cea85a48/(.*) /wp-content/plugins/visitors-traffic-real-time-statistics-pro/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/64661b86c7/(.*) /wp-content/plugins/woo-checkout-field-editor-pro/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/f90117f5fb/(.*) /wp-content/plugins/woocommerce-multilingual/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/39d10ee62c/(.*) /wp-content/plugins/woocommerce/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/c3bb27d53a/(.*) /wp-content/plugins/wordpress-seo-premium/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/f9c7f63a6a/(.*) /wp-content/plugins/wordpress-seo/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/ffee7df689/(.*) /wp-content/plugins/wp-rocket/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/6a4dc3c413/(.*) /wp-content/plugins/wpml-string-translation/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/bc2108c530/(.*) /wp-content/plugins/wpml-translation-management/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/bf00b03c06/(.*) /wp-content/plugins/wpseo-local/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/modules/(.*) /wp-content/plugins/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/assets/1c7c4f63aa/(.*) /wp-content/themes/jannah/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/assets/2a1f472209/(.*) /wp-content/themes/uno-japano/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/assets/(.*) /wp-content/themes/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?files/(.*) /wp-content/uploads/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?inc/(.*) /wp-content/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?lib/(.*) /wp-includes/$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?comments/(.*) /wp-comments-post.php$2 [QSA,L]
+RewriteRule ^([_0-9a-zA-Z-]+/)?profile/(.*) /author/$2 [QSA,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.php [L]
+</IfModule>
+
+# END WordPress

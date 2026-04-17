@@ -1,0 +1,9 @@
+<wpml-config>
+	<admin-texts>
+		<key name="user_registration_social_login_with_facebook_text" />
+		<key name="user_registration_social_login_with_twitter_text" />
+		<key name="user_registration_social_login_with_google_text" />
+		<key name="user_registration_social_login_with_linkedin_text" />
+		
+	</admin-texts>
+</wpml-config>

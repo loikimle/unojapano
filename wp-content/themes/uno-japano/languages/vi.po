@@ -1,0 +1,54 @@
+#: framework/functions/general-functions.php:1984
+#: framework/functions/post-functions.php:957
+#: templates/loops/loop-content.php:30
+msgid "Read More &raquo;"
+msgstr "Tiếp Tục &raquo;"
+
+#: framework/functions/general-functions.php:1919
+#: framework/functions/post-functions.php:35 framework/widgets/twitter.php:128
+#, php-format
+msgid "%s ago"
+msgstr "%s trước"
+
+#: framework/functions/general-functions.php:1953
+#: framework/functions/post-functions.php:796
+msgid "Less than a minute"
+msgstr "Ít hơn một phút"
+
+#: framework/functions/general-functions.php:1954
+#: framework/functions/post-functions.php:799
+#, php-format
+msgid "%s hours read"
+msgstr "%s giờ đọc"
+
+#: framework/functions/general-functions.php:1955
+#: framework/functions/post-functions.php:802
+msgid "1 minute read"
+msgstr "Một phút đọc"
+
+#: framework/functions/general-functions.php:1956
+#: framework/functions/post-functions.php:805
+#, php-format
+msgid "%s minutes read"
+msgstr "%s phút đọc"
+
+#: framework/functions/general-functions.php:1959
+#: framework/functions/post-actions.php:578
+#: framework/plugins/class-tielabs-amp.php:218
+#: templates/single-post/related.php:84
+msgid "Related Articles"
+msgstr "Bài viết liên quan"
+
+#: framework/admin/theme-options/posts.php:532
+#: framework/functions/general-functions.php:1951
+#: templates/single-post/fly-box.php:55
+msgid "Check Also"
+msgstr "Bài viết tương tự"
+
+#: framework/functions/post-actions.php:420
+msgid "Leave a Reply"
+msgstr "Bình Luận"
+
+msgid "This content is password protected, you need a password to see it. <br>Please join our Discord server to get the password: <a href="https://discord.gg/cuQGhGwD9A">https://discord.gg/cuQGhGwD9A</a>"
+msgstr "Nội dung này được bảo mật. Hãy nhập mật khẩu để xem tiếp. <br>Mật khẩu được chia sẻ trong cộng đồng Discord của chúng tôi: <a href="https://discord.gg/cuQGhGwD9A">https://discord.gg/cuQGhGwD9A</a>"
+

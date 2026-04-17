@@ -1,0 +1,220 @@
+#wdm-ldgr-overlay {
+	position: fixed;
+	display: none;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.5);
+	z-index: 2;
+	cursor: pointer;
+}
+
+#wdm-center-align{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	font-size: 50px;
+	color: white;
+	transform: translate(-50%,-50%);
+	-ms-transform: translate(-50%,-50%);
+}
+
+.details-control {
+    padding: 0.7%;
+    text-align: center;
+}
+
+dd.course_progress {
+    display: block;
+    margin: 10px auto;
+    padding: 0;
+    position: relative;
+    width: 90%;
+    background-color: #F5F5F5;
+    border: medium none;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+    height: 20px;
+    overflow: hidden;
+}
+dd.course_progress div.course_progress_blue {
+    display: block;
+    position: relative;
+    text-align: right;
+    width: 75%;
+    background-color: #5CB85C ;
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.15) inset;
+    color: #FFFFFF;
+    float: left;
+    font-size: 12px;
+    height: 100% ;
+    transition: width 0.6s ease 0s;
+}
+
+.learndash_profile_quizzes {
+    display: table;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.clear_both {
+    clear: both;
+}
+
+.learndash_profile_quizzes>div {
+    display: table-row;
+}
+
+.learndash_profile_quiz_heading {
+    background-color: #f3f3f3;
+    padding: 1% 2%;
+}
+
+.learndash_profile_quizzes>div>div {
+	display: table-cell;
+	padding: 5px 0;
+}
+
+.learndash_profile_quizzes .learndash_profile_quiz_heading .certificate, .learndash_profile_quizzes .scores, .learndash_profile_quizzes .statistics {
+    vertical-align: middle;
+}
+
+.learndash_profile_quizzes .certificate, .learndash_profile_quizzes .quiz_date, .learndash_profile_quizzes .scores, .learndash_profile_quizzes .statistics {
+    text-align: center;
+}
+
+.quiz_title {
+    width: 45%;
+    line-height: 25px;
+    padding-left: 12px;
+}
+
+.certificate {
+    width: 15%;
+}
+
+.scores {
+    width: 10%;
+}
+
+.quiz_date {
+    width: 20%;
+}
+
+.learndash_profile_quizzes .passed_icon {
+	background: url("../media/check.png") no-repeat left bottom;
+	display: inline-block;
+	width: 13px;
+	height: 13px;
+	margin-left: 3%;
+	margin-right: 3%;
+
+}
+.learndash_profile_quizzes .failed_icon {
+	background: url("../media/cross.png") no-repeat left bottom;
+	display: inline-block;
+	width: 13px;
+	height: 13px;
+	margin-left: 3%;
+	margin-right: 3%;
+}
+.learndash_profile_quizzes .pending_icon {
+	background: url("../media/pending.png") no-repeat left bottom;
+	display: inline-block;
+	width: 13px;
+	height: 13px;
+	margin-left: 3%;
+	margin-right: 3%;
+}
+
+.list_arrow.expand {
+    background: url("../media/gray_arrow_expand.png") no-repeat scroll 0 50% transparent;
+	padding: 5px;
+}
+.active .list_arrow.expand {
+    background: url("../media/green_arrow_expand.png") no-repeat scroll 0 50% transparent;
+	padding: 5px;
+}
+.active .list_arrow.collapse {
+    background: url("../media/green_arrow_collapse.png") no-repeat scroll 0 50% transparent;
+	padding: 5px;
+}
+
+.list_arrow.collapse {
+    background: url("../media/gray_arrow_collapse.png") no-repeat scroll 0 50% transparent;
+	padding: 5px;
+}
+.list_arrow.collapse.lesson_completed {
+    background: url("../media/green_arrow_collapse.png") no-repeat scroll 0 50% transparent;
+	padding: 5px;
+}
+
+.lesson_incomplete.list_arrow.collapse {
+    background: url("../media/gray_arrow_collapse.png") no-repeat scroll 0 50% transparent;
+	padding: 5px;
+}
+
+.list_arrow.expand.lesson_completed {
+    background: url("../media/green_arrow_expand.png") no-repeat scroll 0 50% transparent;
+	padding: 5px;
+}
+
+.lesson_incomplete.list_arrow.expand {
+    background: url("../media/gray_arrow_expand.png") no-repeat scroll 0 50% transparent;
+	padding: 5px;
+}
+.rtl .active .list_arrow.collapse, .rtl .list_arrow.collapse.lesson_completed {
+	background-image: url("../media/green_arrow_collapse_rtl.png");
+}
+.rtl .list_arrow.collapse, .rtl .lesson_incomplete.list_arrow.collapse {
+    background-image: url("../media/gray_arrow_collapse_rtl.png");	
+}
+
+.certificate_icon {
+    background: url("../media/certificate-icon-small.png") no-repeat scroll 0 0 transparent;
+    width: 23px;
+    height: 23px; 
+    margin: auto;
+	background-size: 23px;
+}
+
+.certificate_icon_large {
+    background: url("../media/certificate-icon-large.png") no-repeat scroll 0 0 transparent;
+    width: 53px;
+    height: 53px; 
+    margin: auto;
+	background-size: 40px;
+}
+
+.statistic_icon {
+    background: url("../media/statistics-icon-small.png") no-repeat scroll 0 0 transparent;
+    width: 23px;
+    height: 23px;
+    margin: auto;
+	background-size: 23px;
+}
+
+.learndash_profile_quizzes .certificate {
+	vertical-align: middle;
+}
+
+.learndash_profile_quizzes .statistics {
+	vertical-align: middle;
+}
+
+.learndash_profile_quizzes .scores {
+	vertical-align: middle;
+}
+
+.learndash_profile_quizzes .learndash_profile_quiz_heading .certificate {
+	vertical-align: middle;
+}
+.learndash_profile_quizzes .scores, .learndash_profile_quizzes .quiz_date, .learndash_profile_quizzes .certificate, .learndash_profile_quizzes .statistics {
+	text-align: center;
+}
+.learndash_profile_quizzes .passed .scores {
+	color: green;
+}

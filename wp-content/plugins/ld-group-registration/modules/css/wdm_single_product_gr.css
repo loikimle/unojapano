@@ -1,0 +1,48 @@
+.single-product .wdm_group_registration label{
+	display: inline;
+	margin-right: 10px;
+}
+
+.single-product .wdm_group_registration input[type="radio"],.single-product .cart .wdm-enroll-me-div input[type="checkbox"]{
+	width: auto;
+	float: none;
+	height: auto;
+}
+
+.single-product .cart .wdm-enroll-me-div{
+	display: flex;
+	align-items: center;
+}
+
+.single-product form.cart div.ldgr_group_name {
+	margin: 15px 0;
+}
+
+.single-product form.cart div.ldgr_group_name input {
+	width: 100%;
+}
+
+.quantity {
+	overflow: hidden;
+	transition: width 0.5s ease-in-out;
+}
+
+.ldgr_variations .ldgr_variation_group_options{
+	display: none;
+}
+
+.ldgr_variations .ldgr_default_variation {
+	display: block;
+}
+
+#ldgr-unlimited-member-check {
+	width: inherit;
+}
+
+div.ldgr-unlimited-member-options {
+	padding: 20px 0;
+}
+
+div.ldgr-unlimited-member-options label {
+	display: inline;
+}
