@@ -42,17 +42,16 @@ if ( ! class_exists( 'Gutentor_Featured_N5_T8' ) ) {
 		 */
 		public static function get_instance() {
 
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
-
 		}
 
 		/**
@@ -73,7 +72,7 @@ if ( ! class_exists( 'Gutentor_Featured_N5_T8' ) ) {
 			while ( $the_query->have_posts() ) :
 				$the_query->the_post();
 				if ( $index === 0 ) {
-					$output .= "<div class='" . apply_filters( 'gutentor_post_module_p2_grid_class', 'grid-lg-6 grid-md-6 grid-12', $attributes ) . "'>";
+					$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_post_module_p2_grid_class', 'grid-lg-6 grid-md-6 grid-12', $attributes ) ) . "'>";
 				}
 				if ( $index === 0 || $index === 1 || $index === 2 ) {
 					$output .= $this->featured_post_type_template( get_post(), $attributes, $index );
@@ -82,7 +81,7 @@ if ( ! class_exists( 'Gutentor_Featured_N5_T8' ) ) {
 					$output .= '</div>';
 				}
 				if ( $index === 3 ) {
-					$output .= "<div class='" . apply_filters( 'gutentor_post_module_p2_grid_class', 'grid-lg-6 grid-md-6 grid-12', $attributes ) . "'>";
+					$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_post_module_p2_grid_class', 'grid-lg-6 grid-md-6 grid-12', $attributes ) ) . "'>";
 				}
 				if ( $index === 3 || $index === 4 ) {
 					$output .= $this->featured_post_type_template( get_post(), $attributes, $index );
@@ -90,7 +89,7 @@ if ( ! class_exists( 'Gutentor_Featured_N5_T8' ) ) {
 				if ( $index === 4 ) {
 					$output .= '</div>';
 				}
-				$index++;
+				++$index;
 			endwhile;
 			return $output;
 		}
@@ -112,7 +111,7 @@ if ( ! class_exists( 'Gutentor_Featured_N5_T8' ) ) {
 			$index = 0;
 			foreach ( $terms as $term ) {
 				if ( $index === 0 ) {
-					$output .= "<div class='" . apply_filters( 'gutentor_term_module_t2_grid_class', 'grid-lg-6 grid-md-6 grid-12', $attributes ) . "'>";
+					$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_term_module_t2_grid_class', 'grid-lg-6 grid-md-6 grid-12', $attributes ) ) . "'>";
 				}
 				if ( $index === 0 || $index === 1 || $index === 2 ) {
 					$output .= $this->t2_single_article( $term, $attributes, $index );
@@ -121,7 +120,7 @@ if ( ! class_exists( 'Gutentor_Featured_N5_T8' ) ) {
 					$output .= '</div>';
 				}
 				if ( $index === 3 ) {
-					$output .= "<div class='" . apply_filters( 'gutentor_term_module_t2_grid_class', 'grid-lg-6 grid-md-6 grid-12', $attributes ) . "'>";
+					$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_term_module_t2_grid_class', 'grid-lg-6 grid-md-6 grid-12', $attributes ) ) . "'>";
 				}
 				if ( $index === 3 || $index === 4 ) {
 					$output .= $this->t2_single_article( $term, $attributes, $index );
@@ -129,7 +128,7 @@ if ( ! class_exists( 'Gutentor_Featured_N5_T8' ) ) {
 				if ( $index === 4 ) {
 					$output .= '</div>';
 				}
-				$index++;
+				++$index;
 			}
 			return $output;
 		}

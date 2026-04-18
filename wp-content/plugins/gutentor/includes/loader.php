@@ -47,7 +47,6 @@ class Gutentor_Loader {
 
 		$this->actions = array();
 		$this->filters = array();
-
 	}
 
 	/**
@@ -103,7 +102,6 @@ class Gutentor_Loader {
 		);
 
 		return $hooks;
-
 	}
 
 	/**

@@ -21,6 +21,7 @@ error_log
 .env
 .env.*
 wp-config.php
+hidemywp.conf
 
 # -----------------------
 # WordPress Core

@@ -58,7 +58,6 @@ class Gutentor_Tracking {
 		$this->agents_opt_key = 'agent_' . md5( $this->remote_url );/*unique per remote url*/
 
 		$this->init();
-
 	}
 
 	/**
@@ -96,14 +95,12 @@ class Gutentor_Tracking {
 
 		if ( ! $active_agent ) {
 			$active_agent = $this->slug;
-		} else {
-			if ( is_array( $installed_agents ) && ! empty( $installed_agents ) ) {
+		} elseif ( is_array( $installed_agents ) && ! empty( $installed_agents ) ) {
 				$highest_ver = $this->version;
-				foreach ( $installed_agents as $agent => $agent_ver ) {
-					if ( version_compare( $agent_ver, $highest_ver ) > 0 ) {
-						$highest_ver  = $agent_ver;
-						$active_agent = $agent;
-					}
+			foreach ( $installed_agents as $agent => $agent_ver ) {
+				if ( version_compare( $agent_ver, $highest_ver ) > 0 ) {
+					$highest_ver  = $agent_ver;
+					$active_agent = $agent;
 				}
 			}
 		}
@@ -128,7 +125,6 @@ class Gutentor_Tracking {
 			return true;
 		}
 		return false;
-
 	}
 
 	/**
@@ -161,7 +157,7 @@ class Gutentor_Tracking {
 		if ( ! empty( $secret_key ) ) {
 			// secret_key already exists.
 			// do nothing.
-			 return;
+			return;
 		}
 
 		// authenticate with engine.
@@ -170,7 +166,6 @@ class Gutentor_Tracking {
 		$get_secret_key = $this->do_post( true, true );
 
 		$this->update_secret_key( $get_secret_key );
-
 	}
 
 	/**
@@ -239,18 +234,30 @@ class Gutentor_Tracking {
 		if ( ! class_exists( 'WP_Debug_Data' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
 		}
+
+		// Ensure get_core_updates is available (needed by WP_Debug_Data::debug_data).
+		if ( ! function_exists( 'get_core_updates' ) ) {
+			include_once ABSPATH . 'wp-admin/includes/update.php';
+		}
+
 		$data = array();
 
-		if ( method_exists( 'WP_Debug_Data', 'debug_data' ) ) {
+		if ( method_exists( 'WP_Debug_Data', 'debug_data' ) && function_exists( 'get_core_updates' ) ) {
 			$data['data'] = WP_Debug_Data::debug_data();
 		} else {
 			$data['data'] = array();
 		}
 		$data['admin_email'] = get_bloginfo( 'admin_email' );
 		$user                = get_user_by( 'email', $data['admin_email'] );
-		$data['nicename']    = $user->data->user_nicename;
-		$data['site_url']    = get_bloginfo( 'url' );
-		$data['version']     = get_bloginfo( 'version' );
+
+		if ( $user && isset( $user->data->user_nicename ) ) {
+			$data['nicename'] = $user->data->user_nicename;
+		} else {
+			$data['nicename'] = 'Unknown';
+		}
+
+		$data['site_url'] = get_bloginfo( 'url' );
+		$data['version']  = get_bloginfo( 'version' );
 
 		$data['sender'] = $this->slug;
 
@@ -327,7 +334,6 @@ class Gutentor_Tracking {
 				$this->update_secret_key( wp_remote_retrieve_body( $response ) );
 			}
 		}
-
 	}
 
 	/**
@@ -343,7 +349,6 @@ class Gutentor_Tracking {
 		}
 
 		return $g_options;
-
 	}
 
 	/**
@@ -385,7 +390,7 @@ class Gutentor_Tracking {
 	 */
 	public function schedule_send() {
 		if ( isset( $_GET['acmeit_verify_user_secret_key_rand_3022'] ) ) {
-            die( 'equal' );
+			die( 'equal' );
 		}
 		if ( wp_doing_cron() ) {
 			add_action( 'gutentor_weekly_scheduled_events', array( $this, 'do_post' ) );
@@ -411,7 +416,6 @@ class Gutentor_Tracking {
 	 */
 	public function get_last_send() {
 		return $this->get_opt_data( $this->last_send_opt_key );
-
 	}
 
 	/**
@@ -432,7 +436,6 @@ class Gutentor_Tracking {
 	 */
 	public function get_hide_tracking_notice() {
 		return $this->get_opt_data( $this->hide_notice_opt_key );
-
 	}
 
 	/**
@@ -461,7 +464,6 @@ class Gutentor_Tracking {
 			return false;
 		}
 		return true;
-
 	}
 
 	/**

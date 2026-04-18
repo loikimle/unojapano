@@ -86,6 +86,5 @@ class Gutentor_Cron {
 			wp_schedule_event( time(), 'daily', 'gutentor_daily_scheduled_events' );
 		}
 	}
-
 }
 $gutentor_cron = new Gutentor_Cron();

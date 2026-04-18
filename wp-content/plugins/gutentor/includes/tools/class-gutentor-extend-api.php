@@ -42,7 +42,6 @@ if ( ! class_exists( 'Gutentor_Extend_Api' ) ) {
 			add_filter( 'gutentor_rest_prepare_data_product', array( $this, 'add_product_data' ), 10, 3 );
 			add_filter( 'gutentor_rest_prepare_data_download', array( $this, 'add_edd_download_data' ), 10, 3 );
 			add_filter( 'woocommerce_loop_add_to_cart_link', array( $this, 'alter_cart_link' ), 10, 3 );
-
 		}
 
 		/**
@@ -58,7 +57,6 @@ if ( ! class_exists( 'Gutentor_Extend_Api' ) ) {
 			$comments_count           = wp_count_comments( $post->ID );
 			$data['gutentor_comment'] = $comments_count->total_comments;
 			return $data;
-
 		}
 
 		/**
@@ -77,7 +75,7 @@ if ( ! class_exists( 'Gutentor_Extend_Api' ) ) {
 			$newness_days = 30;
 			$created      = strtotime( $product->get_date_created() );
 			if ( ( time() - ( 60 * 60 * 24 * $newness_days ) ) < $created ) {
-				return apply_filters( 'gutentor_woocommerce_new_badge', '<span class="' . $class . '">' . esc_html__( 'New!', 'gutentor' ) . '</span>', $post, $product );
+				return apply_filters( 'gutentor_woocommerce_new_badge', '<span class="' . esc_attr( $class ) . '">' . esc_html__( 'New!', 'gutentor' ) . '</span>', $post, $product );
 
 			}
 			return '';
@@ -99,7 +97,7 @@ if ( ! class_exists( 'Gutentor_Extend_Api' ) ) {
 			$newness_days = 30;
 			$created      = strtotime( $download->post_date );
 			if ( ( time() - ( 60 * 60 * 24 * $newness_days ) ) < $created ) {
-				return apply_filters( 'gutentor_edd_new_badge', '<span class="' . $class . '">' . esc_html__( 'New!', 'gutentor' ) . '</span>', $post, $download );
+				return apply_filters( 'gutentor_edd_new_badge', '<span class="' . esc_attr( $class ) . '">' . esc_html__( 'New!', 'gutentor' ) . '</span>', $post, $download );
 
 			}
 			return '';
@@ -195,7 +193,6 @@ if ( ! class_exists( 'Gutentor_Extend_Api' ) ) {
 			$data['product_placeholder_url'] = WC()->plugin_url() . '/assets/images/placeholder.png';
 
 			return $data;
-
 		}
 
 		/**
@@ -258,7 +255,6 @@ if ( ! class_exists( 'Gutentor_Extend_Api' ) ) {
 			$data['download_placeholder_url']     = GUTENTOR_URL . 'assets/img/default-image.jpg';
 
 			return $data;
-
 		}
 
 		/**
@@ -298,10 +294,7 @@ if ( ! class_exists( 'Gutentor_Extend_Api' ) ) {
 			class="' . gutentor_concat_space( $default_class, $woo_class, GutentorButtonOptionsClasses( $icon_options ) ) . '" ' . ( isset( $args['attributes'] ) ? wc_implode_html_attributes( $args['attributes'] ) : '' ) . '>
 			' . $icon . '<span>' . esc_html( $product->add_to_cart_text() ) . '</span></a>';
 			return $output;
-
 		}
-
-
 	}
 }
 Gutentor_Extend_Api::get_instance()->run();

@@ -13,7 +13,6 @@ if ( ! class_exists( 'Gutentor_P5' ) ) {
 	 */
 	class Gutentor_P5 extends Gutentor_Block_Base {
 
-
 		/**
 		 * Name of the block.
 		 *
@@ -33,17 +32,30 @@ if ( ! class_exists( 'Gutentor_P5' ) ) {
 		 * @since 1.0.1
 		 */
 		public static function get_instance() {
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
+		}
 
+		/**
+		 * Set register_block_type_args variable on parent
+		 * Used for blog template loading
+		 *
+		 * @since      1.0.1
+		 * @package    Gutentor
+		 * @author     Gutentor <info@gutentor.com>
+		 */
+		public function register_block_type_args() {
+			$this->register_block_type_args = array(
+				'view_script_handles' => array( 'acmeticker' ),
+			);
 		}
 
 		/**
@@ -88,10 +100,10 @@ if ( ! class_exists( 'Gutentor_P5' ) ) {
 					'type'    => 'string',
 					'default' => 'category',
 				),
-                'pTaxOperator'                        => array(
-                    'type'    => 'string',
-                    'default' => 'IN',
-                ),
+				'pTaxOperator'                    => array(
+					'type'    => 'string',
+					'default' => 'IN',
+				),
 				'pTaxTerm'                        => array(
 					'type'  => 'array',
 					'items' => array(
@@ -159,7 +171,7 @@ if ( ! class_exists( 'Gutentor_P5' ) ) {
 				),
 				'p5NewsTxt'                       => array(
 					'type'    => 'string',
-					'default' => __( 'News' ),
+					'default' => __( 'News', 'gutentor' ),
 				),
 				'p5Speed'                         => array(
 					'type'    => 'number',
@@ -208,9 +220,9 @@ if ( ! class_exists( 'Gutentor_P5' ) ) {
 			if ( isset( $attributes['pTaxType'] ) && ! empty( $attributes['pTaxType'] ) &&
 				isset( $attributes['pTaxTerm'] ) && ! empty( $attributes['pTaxTerm'] ) ) {
 
-				$args['taxonomy'] = $attributes['pTaxType'];
-                $args['taxOperator'] = $attributes['pTaxOperator'] ? $attributes['pTaxOperator'] : 'IN';
-                if ( is_array( $attributes['pTaxTerm'] ) ) {
+				$args['taxonomy']    = $attributes['pTaxType'];
+				$args['taxOperator'] = $attributes['pTaxOperator'] ? $attributes['pTaxOperator'] : 'IN';
+				if ( is_array( $attributes['pTaxTerm'] ) ) {
 					$p1_terms = array();
 					foreach ( $attributes['pTaxTerm'] as $p1_term ) {
 						$p1_terms [] = $p1_term['value'];
@@ -247,12 +259,13 @@ if ( ! class_exists( 'Gutentor_P5' ) ) {
 
 			$the_query = new WP_Query( gutentor_get_query( $args ) );
 			if ( $the_query->have_posts() ) :
-				$output .= '<' . $tag . ' class="' . apply_filters( 'gutentor_post_module_main_wrap_class', gutentor_concat_space( 'gutentor-post-module', 'gutentor-post-module-p5', 'section-' . $gID, $template, $align, $default_class ), $attributes ) . '" id="' . esc_attr( $blockID ) . '" data-gbid="' . esc_attr( $gID ) . '" ' . GutentorAnimationOptionsDataAttr( $blockComponentAnimation ) . '' . gutentor_get_html_attr( apply_filters( 'gutentor_edit_news_ticker_data_attr', array(), $attributes ) ) . '>' . "\n";
+				$tag     = gutentor_get_module_tag( $tag );
+				$output .= '<' . esc_attr( $tag ) . ' class="' . esc_attr( apply_filters( 'gutentor_post_module_main_wrap_class', gutentor_concat_space( 'gutentor-post-module', 'gutentor-post-module-p5', 'section-' . $gID, $template, $align, $default_class ), $attributes ) ) . '" id="' . esc_attr( $blockID ) . '" data-gbid="' . esc_attr( $gID ) . '" ' . GutentorAnimationOptionsDataAttr( $blockComponentAnimation ) . '' . gutentor_get_html_attr( apply_filters( 'gutentor_edit_news_ticker_data_attr', array(), $attributes ) ) . '>' . "\n";
 				$output .= apply_filters( 'gutentor_post_module_before_container', '', $attributes );
-				$output .= "<div class='" . apply_filters( 'gutentor_post_module_p5_newsticker_wrap_class', 'gutentor-news-ticker', $attributes ) . "'>";
+				$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_post_module_p5_newsticker_wrap_class', 'gutentor-news-ticker', $attributes ) ) . "'>";
 				$output .= apply_filters( 'gutentor_post_module_before_block_items', '', $attributes );
 				if ( $attributes['p5OnNewsTxt'] ) {
-					$output .= "<div class='gutentor-news-ticker-label'>" . $news_ticker_header . '</div>';/*.ul*/
+					$output .= "<div class='gutentor-news-ticker-label'>" . esc_html( $news_ticker_header ) . '</div>';/*.ul*/
 				}
 				$output .= "<div class='gutentor-news-ticker-box'>";
 				$output .= "<div class='gutentor-news-ticker-wrap'>";
@@ -288,7 +301,7 @@ if ( ! class_exists( 'Gutentor_P5' ) ) {
 				$output .= apply_filters( 'gutentor_post_module_after_block_items', '', $attributes );
 				$output .= '</div>';/*.grid-container*/
 				$output .= apply_filters( 'gutentor_post_module_after_container', '', $attributes );
-				$output .= '</' . $tag . '>';/*.gutentor-blog-post-wrapper*/
+				$output .= '</' . esc_attr( $tag ) . '>';/*.gutentor-blog-post-wrapper*/
 			endif;
 
 			// Restore original Post Data

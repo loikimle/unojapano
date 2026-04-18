@@ -81,12 +81,12 @@ if ( ! class_exists( 'Gutentor_Templateberg' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 			if ( is_plugin_active_for_network( $plugin ) || is_plugin_active( $plugin ) ) {
-				// Plugin is activated
+				// Plugin is activated.
 				return $status;
 			}
 
 			if ( ! current_user_can( 'install_plugins' ) ) {
-				$status['errorMessage'] = __( 'Sorry, you are not allowed to install plugins on this site.', 'templateberg' );
+				$status['errorMessage'] = __( 'Sorry, you are not allowed to install plugins on this site.', 'gutentor' );
 				return $status;
 			}
 
@@ -153,7 +153,7 @@ if ( ! class_exists( 'Gutentor_Templateberg' ) ) {
 				global $wp_filesystem;
 
 				$status['errorCode']    = 'unable_to_connect_to_filesystem';
-				$status['errorMessage'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'templateberg' );
+				$status['errorMessage'] = __( 'Unable to connect to the filesystem. Please confirm your credentials.', 'gutentor' );
 
 				// Pass through the error from WP_Filesystem if one was raised.
 				if ( $wp_filesystem instanceof WP_Filesystem_Base && is_wp_error( $wp_filesystem->errors ) && $wp_filesystem->errors->get_error_code() ) {
@@ -260,15 +260,15 @@ if ( ! class_exists( 'Gutentor_Templateberg' ) ) {
 		 * @return object
 		 */
 		public static function get_instance() {
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
 		}
 

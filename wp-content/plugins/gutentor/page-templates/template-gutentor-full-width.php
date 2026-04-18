@@ -6,20 +6,19 @@
  *
  * @package Gutentor
  */
-if( gutentor_is_fse_template()){
- ?><!doctype html>
-    <html <?php language_attributes(); ?>>
-    <head>
-        <meta charset="<?php bloginfo( 'charset' ); ?>"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1"/>
-        <link rel="profile" href="https://gmpg.org/xfn/11"/>
-        <?php wp_head(); ?>
-    </head>
-    <body <?php body_class(); ?>>
-    <?php
-}
-else{
-    get_header();
+if ( gutentor_is_fse_template() ) {
+	?><!doctype html>
+	<html <?php language_attributes(); ?>>
+	<head>
+		<meta charset="<?php bloginfo( 'charset' ); ?>"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<link rel="profile" href="https://gmpg.org/xfn/11"/>
+		<?php wp_head(); ?>
+	</head>
+	<body <?php body_class(); ?>>
+	<?php
+} else {
+	get_header();
 }
 do_action( 'gutentor_template_before_loop' );
 /* Start the Loop */
@@ -34,13 +33,12 @@ while ( have_posts() ) :
 
 endwhile; // End of the loop.
 do_action( 'gutentor_template_after_loop' );
-if( gutentor_is_fse_template()){
-    wp_footer();
-    ?>
-    </body>
-    </html>
-<?php
-}
-else{
-    get_footer();
+if ( gutentor_is_fse_template() ) {
+	wp_footer();
+	?>
+	</body>
+	</html>
+	<?php
+} else {
+	get_footer();
 }

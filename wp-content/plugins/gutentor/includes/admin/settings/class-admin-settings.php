@@ -4,7 +4,6 @@
  *
  * @since 3.0.3
  */
-
 if ( ! class_exists( 'Gutentor_Admin_Settings' ) ) {
 	/**
 	 * Class Gutentor_Admin_Settings.
@@ -21,7 +20,6 @@ if ( ! class_exists( 'Gutentor_Admin_Settings' ) ) {
 			add_filter( 'use_block_editor_for_post_type', array( $this, 'enable_gutenberg_post_type' ), 999, 2 );
 
 			add_action( 'init', array( $this, 'add_page_templates_in_post_types' ), 999 );
-
 		}
 
 
@@ -124,8 +122,6 @@ if ( ! class_exists( 'Gutentor_Admin_Settings' ) ) {
 				'gutentor_tax_term_color',
 				'gutentor_tax_term_image',
 				'gutentor_dynamic_style_location',
-				'gutentor_force_load_block_assets',
-				'gutentor_load_optimized_css',
 				'gutentor_color_palatte_options',
 				'gutentor_color_palatte',
 				'gutentor_gt_apply_options',
@@ -143,8 +139,6 @@ if ( ! class_exists( 'Gutentor_Admin_Settings' ) ) {
 				delete_option( $key );
 				if ( 'gutentor_map_api' == $key ) {
 					$key = 'map-api';
-				} elseif ( 'gutentor_force_load_block_assets' == $key ) {
-					$key = 'assets-on-global';
 				} elseif ( 'gutentor_disable_wide_width_editor' == $key ) {
 					$key = 'wide-width-editor';
 				} elseif ( 'gutentor_tax_term_color' == $key && $gutentor_get_options[ $key ] ) {
@@ -167,8 +161,6 @@ if ( ! class_exists( 'Gutentor_Admin_Settings' ) ) {
 						'download_category',
 						'download_tag',
 					);
-				} elseif ( 'gutentor_load_optimized_css' == $key ) {
-					$key = 'load-optimized-css';
 				} elseif ( 'gutentor_dynamic_style_location' == $key ) {
 					$key = 'dynamic-res-location';
 				} elseif ( 'gutentor_gt_apply_options' == $key ) {
@@ -260,7 +252,7 @@ if ( ! class_exists( 'Gutentor_Admin_Settings' ) ) {
 			if ( isset( $gutentor_settings['editor-in-pt'] ) ) {
 				$gutenberg_enable_post_types = $gutentor_settings['editor-in-pt'];
 				if ( is_array( $gutenberg_enable_post_types ) &&
-                    in_array( $post_type, $gutenberg_enable_post_types ) ) {
+					in_array( $post_type, $gutenberg_enable_post_types ) ) {
 					return true;
 				}
 			}

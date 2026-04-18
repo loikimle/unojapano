@@ -24,17 +24,16 @@ if ( ! class_exists( 'Gutentor_T1_Templates' ) ) {
 		 */
 		public static function get_instance() {
 
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
-
 		}
 
 		/**
@@ -84,8 +83,8 @@ if ( ! class_exists( 'Gutentor_T1_Templates' ) ) {
 								$output .= $this->get_term_button( $term, $attributes );
 							break;
 						default:
-                            $output .= $this->get_term_dynamic_element( $element,$term, $attributes );
-                            break;
+							$output .= $this->get_term_dynamic_element( $element, $term, $attributes );
+							break;
 					}
 				endforeach;
 			endif;
@@ -131,15 +130,14 @@ if ( ! class_exists( 'Gutentor_T1_Templates' ) ) {
 						case 'button':
 							$output .= $this->get_term_button( $term, $attributes );
 							break;
-                        default:
-                            $output .= $this->get_term_dynamic_element( $element,$term, $attributes );
-                            break;
+						default:
+							$output .= $this->get_term_dynamic_element( $element, $term, $attributes );
+							break;
 					}
 				endforeach;
 			endif;
 			$output .= '</div>';/*.gutentor-term-content*/
 			return $output;
-
 		}
 
 		/**
@@ -162,7 +160,7 @@ if ( ! class_exists( 'Gutentor_T1_Templates' ) ) {
 				$custom_style   = "style='background-image:url(" . esc_url( is_array( $url ) && ! empty( $url ) ? $url[0] : '' ) . ")'";
 			}
 			$query_sorting = array_key_exists( 'blockSortableItems', $attributes ) ? $attributes['blockSortableItems'] : false;
-			$output        = "<div class='" . apply_filters( 'gutentor_term_module_t1_template2_item_height', gutentor_concat_space( 'gtf-item-height', $bg_image_class, $overlay ), $attributes ) . "' " . $custom_style . '>';
+			$output        = "<div class='" . esc_attr( apply_filters( 'gutentor_term_module_t1_template2_item_height', gutentor_concat_space( 'gtf-item-height', $bg_image_class, $overlay ), $attributes ) ) . "' " . $custom_style . '>';
 			$output       .= '<div class="gtf-content">';
 			if ( $query_sorting ) :
 				foreach ( $query_sorting as $element ) :
@@ -182,9 +180,9 @@ if ( ! class_exists( 'Gutentor_T1_Templates' ) ) {
 						case 'button':
 							$output .= $this->get_term_button( $term, $attributes );
 							break;
-                        default:
-                            $output .= $this->get_term_dynamic_element( $element,$term, $attributes );
-                            break;
+						default:
+							$output .= $this->get_term_dynamic_element( $element, $term, $attributes );
+							break;
 					}
 				endforeach;
 			endif;
@@ -221,7 +219,6 @@ if ( ! class_exists( 'Gutentor_T1_Templates' ) ) {
 		 * @param {array}  $attributes
 		 * @return {mix}
 		 */
-
 		public function load_blog_post_template( $data, $term, $attributes, $index ) {
 
 			$output              = $data;
@@ -233,7 +230,7 @@ if ( ! class_exists( 'Gutentor_T1_Templates' ) ) {
 			} else {
 				$no_thumb = 'gtf-no-thumb';
 			}
-			$output .= "<article class='" . apply_filters( 'gutentor_term_module_article_class', gutentor_concat_space( 'gutentor-term', 'gtf-item-' . $index, $no_thumb ), $attributes ) . "'>";
+			$output .= "<article class='" . esc_attr( apply_filters( 'gutentor_term_module_article_class', gutentor_concat_space( 'gutentor-term', 'gtf-item-' . $index, $no_thumb ), $attributes ) ) . "'>";
 			$output .= "<div class='gtf-item'>";
 			if ( method_exists( $this, $template ) ) {
 				$output .= $this->$template( $data, $term, $attributes );
@@ -244,7 +241,6 @@ if ( ! class_exists( 'Gutentor_T1_Templates' ) ) {
 			$output .= '</article>';
 			return $output;
 		}
-
 	}
 }
 Gutentor_T1_Templates::get_instance()->run();

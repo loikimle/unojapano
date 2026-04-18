@@ -30,6 +30,6 @@ class Gutentor_Activator {
 	public static function activate() {
 		update_option( '__gutentor_do_redirect', true );
 
-        gutentor_add_installed_time();
+		gutentor_add_installed_time();
 	}
 }

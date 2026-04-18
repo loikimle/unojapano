@@ -27,13 +27,13 @@ if ( ! class_exists( 'Gutentor_Helper' ) ) {
 			'icon-box'           => 'gutentor/icon-box',
 			'image-box'          => 'gutentor/image-box',
 			'image-slider'       => 'gutentor/image-slider',
-			'list'              => 'gutentor/list',
-			'notification'      => 'gutentor/notification',
+			'list'               => 'gutentor/list',
+			'notification'       => 'gutentor/notification',
 			'opening-hours'      => 'gutentor/opening-hours',
 			'pricing'            => 'gutentor/pricing',
 			'progress-bar'       => 'gutentor/progress-bar',
 			'restaurant-menu'    => 'gutentor/restaurant-menu',
-			'show-more'             => 'gutentor/show-more',
+			'show-more'          => 'gutentor/show-more',
 			'social'             => 'gutentor/social',
 			'tabs'               => 'gutentor/tabs',
 			'team'               => 'gutentor/team',
@@ -41,6 +41,7 @@ if ( ! class_exists( 'Gutentor_Helper' ) ) {
 			'timeline'           => 'gutentor/timeline',
 			'video-popup'        => 'gutentor/video-popup',
 		);
+
 		public static function enqueue( $scripts ) {
 
 			// Do not enqueue anything if no array is supplied.
@@ -62,7 +63,7 @@ if ( ! class_exists( 'Gutentor_Helper' ) ) {
 					$version = $script['version'];
 				}
 
-				// Enqueue each vendor's style
+				// Enqueue each vendor's style.
 				if ( isset( $script['style'] ) ) {
 
 					$path = GUTENTOR_URL . $script['style'];
@@ -77,7 +78,7 @@ if ( ! class_exists( 'Gutentor_Helper' ) ) {
 					wp_enqueue_style( $script['handler'], $path, $dependency, $version );
 				}
 
-				// Enqueue each vendor's script
+				// Enqueue each vendor's script.
 				if ( isset( $script['script'] ) ) {
 
 					if ( $script['script'] === true || $script['script'] === 1 ) {
@@ -132,17 +133,15 @@ if ( ! class_exists( 'Gutentor_Helper' ) ) {
 		 * Updates an option from the admin settings page.
 		 *
 		 * @param string $key       The option key.
-		 * @param mixed  $value     The value to update.
 		 * @param bool   $network   Whether to allow the network admin setting to be overridden on subsites.
 		 * @return void
 		 */
-		public static function update_option( $key, $blocks, $network_override = false ) {
+		public static function update_option( $key, $blocks ) {
 
 			$g_options         = gutentor_get_options();
 			$g_options[ $key ] = $blocks;
 
 			update_option( 'gutentor_settings_options', $g_options );
-
 		}
 	}
 }

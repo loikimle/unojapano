@@ -23,17 +23,16 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 		 * @since 1.0.1
 		 */
 		public static function get_base_instance() {
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
-
 		}
 
 		/**
@@ -49,15 +48,14 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 		public function get_title( $post, $attributes ) {
 			$output = '';
 			if ( isset( $attributes['pOnTitle'] ) && $attributes['pOnTitle'] ) {
-				$title_tag = $attributes['pTitleTag'];
-				$output   .= '<' . $title_tag . ' class="gutentor-post-title">';
+				$title_tag = gutentor_get_title_tag( $attributes['pTitleTag'] );
+				$output   .= '<' . esc_attr( $title_tag ) . ' class="gutentor-post-title">';
 				$output   .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">';
 				$output   .= get_the_title();
 				$output   .= '</a>';
-				$output   .= '</' . $title_tag . '>';
+				$output   .= '</' . esc_attr( $title_tag ) . '>';
 			}
 			return $output;
-
 		}
 
 		/**
@@ -84,10 +82,10 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 						global $wp_rewrite;
 						$rel     = ( is_object( $wp_rewrite ) && $wp_rewrite->using_permalinks() ) ? 'rel="category tag"' : 'rel="category"';
 						$i       = 0;
-						$output .= '<div class="g-dynamic-el gutentor-categories ' . $selector . '">';
+						$output .= '<div class="g-dynamic-el gutentor-categories ' . esc_attr( $selector ) . '">';
 						foreach ( $terms as $term ) {
 							if ( 0 <= $i ) {
-								$output .= '<a href="' . get_term_link( $term->term_id ) . ' " class="post-category gutentor-cat-' . $term->slug . '" ' . $rel . '>' . $term->name . '</a>';
+								$output .= '<a href="' . get_term_link( $term->term_id ) . ' " class="post-category gutentor-cat-' . esc_attr( $term->slug ) . '" ' . esc_attr( $rel ) . '>' . esc_html( $term->name ) . '</a>';
 							}
 							$output .= ' ';
 							++$i;
@@ -96,43 +94,41 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					endif;
 				}
 				if ( strpos( $itemVal, 'meta/' ) !== false ) {
-					$output .= '<div class="g-dynamic-el '.$selector.'">';
-					$output .= is_array( $terms ) && array_key_exists( $itemVal, $terms ) ? $terms[ $itemVal ] : '';
+					$output .= '<div class="g-dynamic-el ' . esc_attr( $selector ) . '">';
+					$output .= is_array( $terms ) && array_key_exists( $itemVal, $terms ) ? wp_kses_post( $terms[ $itemVal ] ) : '';
 					$output .= '</div>';
 				}
 			}
 			return $output;
-
 		}
 
 
-        /**
-         * get_term_dynamic_element
-         *
-         * @static
-         * @access public
-         * @param {array} $element
-         * @param {array} $post
-         * @param {array} $attributes
-         * @return string
-         * @since 2.0.1
-         */
-        public function get_term_dynamic_element( $element, $post, $attributes ) {
-            $output  = '';
-            $on      = ( isset( $element['on'] ) && $element['on'] );
-            $itemVal = ( isset( $element['itemValue'] ) && $element['itemValue'] ) ? $element['itemValue'] : false;
-            $selector = 'g-'.str_replace( '/', '-', $itemVal );
-            if ( $on && $itemVal ) {
-                $terms    = gutentor_get_term_dynamic_element( $post );
-                if ( strpos( $itemVal, 'meta/' ) !== false ) {
-                    $output .= '<div class="g-dynamic-el '.$selector.'">';
-                    $output .= is_array( $terms ) && array_key_exists( $itemVal, $terms ) ? $terms[ $itemVal ] : '';
-                    $output .= '</div>';
-                }
-            }
-            return $output;
-
-        }
+		/**
+		 * get_term_dynamic_element
+		 *
+		 * @static
+		 * @access public
+		 * @param {array} $element
+		 * @param {array} $post
+		 * @param {array} $attributes
+		 * @return string
+		 * @since 2.0.1
+		 */
+		public function get_term_dynamic_element( $element, $post, $attributes ) {
+			$output   = '';
+			$on       = ( isset( $element['on'] ) && $element['on'] );
+			$itemVal  = ( isset( $element['itemValue'] ) && $element['itemValue'] ) ? $element['itemValue'] : false;
+			$selector = 'g-' . str_replace( '/', '-', $itemVal );
+			if ( $on && $itemVal ) {
+				$terms = gutentor_get_term_dynamic_element( $post );
+				if ( strpos( $itemVal, 'meta/' ) !== false ) {
+					$output .= '<div class="g-dynamic-el ' . esc_attr( $selector ) . '">';
+					$output .= is_array( $terms ) && array_key_exists( $itemVal, $terms ) ? wp_kses_post( $terms[ $itemVal ] ) : '';
+					$output .= '</div>';
+				}
+			}
+			return $output;
+		}
 
 
 		/**
@@ -153,11 +149,10 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			if ( $attributes['PExcerptLen'] > 0 && $attributes['pOnDesc'] ) {
 				$in_words = ( isset( $attributes['pExcerptLenInWords'] ) && $attributes['pExcerptLenInWords'] );
 				$output  .= '<div class="gutentor-post-desc">';
-				$output  .= gutentor_get_excerpt_by_id( $post->ID, $attributes['PExcerptLen'], $in_words );
+				$output  .= wp_kses_post( gutentor_get_excerpt_by_id( $post->ID, $attributes['PExcerptLen'], $in_words ) );
 				$output  .= '</div>';
 			}
 			return $output;
-
 		}
 
 		/**
@@ -184,11 +179,11 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					if ( 'bg-image' == $image_display && $enable_image_display ) {
 						$url = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), $attributes['pFImgSize'] );
 						if ( $url ) {
-							$image_output .= '<div class="' . gutentor_concat_space( 'gutentor-bg-image', $overlay ) . '" style="background-image:url(' . esc_url( $url[0] ) . ')">';
+							$image_output .= '<div class="' . esc_attr( gutentor_concat_space( 'gutentor-bg-image', $overlay ) ) . '" style="background-image:url(' . esc_url( $url[0] ) . ')">';
 							$image_output .= '</div>';
 						}
 					} else {
-						$image_output .= '<div class="' . gutentor_concat_space( 'gutentor-image-thumb', $overlay ) . '">';
+						$image_output .= '<div class="' . esc_attr( gutentor_concat_space( 'gutentor-image-thumb', $overlay ) ) . '">';
 						$image_output .= get_the_post_thumbnail( $post->ID, $attributes['pFImgSize'], '' );
 						$image_output .= '</div>';
 					}
@@ -197,7 +192,6 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			}
 			$output = apply_filters( 'gutentor_save_post_module_featured_image_data', $output, $post, $attributes );
 			return $output;
-
 		}
 
 		/**
@@ -227,12 +221,12 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$overlay_class  = ( $overlay_enable ) ? 'gutentor-overlay' : '';
 				if ( $avatar_url ) {
 					$output .= '<div class="g-avatar-wrap">';
-					$output .= '<div class="' . gutentor_concat_space( 'gutentor-avatar', $overlay_class ) . '">';
-					$output .= '<img class="gutentor-avatar-img" src="' . $avatar_url . '"/>';
+					$output .= '<div class="' . esc_attr( gutentor_concat_space( 'gutentor-avatar', $overlay_class ) ) . '">';
+					$output .= '<img class="gutentor-avatar-img" src="' . esc_url( $avatar_url ) . '"/>';
 					$output .= '</div>';
 					if ( $enable_by_author && $author_name ) {
 						$output .= '<div class="g-avatar-by-author">';
-						$output .= esc_html__( 'By', 'gutentor' ) . ' ' . ucwords( $author_name );
+						$output .= esc_html__( 'By', 'gutentor' ) . ' ' . esc_html( ucwords( $author_name ) );
 						$output .= '</div>';
 					}
 					$output .= '</div>';
@@ -268,12 +262,12 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$overlay_class  = ( $overlay_enable ) ? 'gutentor-overlay' : '';
 				if ( $avatar_url ) {
 					$output .= '<div class="g-fp-avatar-wrap">';
-					$output .= '<div class="' . gutentor_concat_space( 'gutentor-fp-avatar', $overlay_class ) . '">';
-					$output .= '<img class="gutentor-fp-avatar-img" src="' . $avatar_url . '"/>';
+					$output .= '<div class="' . esc_attr( gutentor_concat_space( 'gutentor-fp-avatar', $overlay_class ) ) . '">';
+					$output .= '<img class="gutentor-fp-avatar-img" src="' . esc_url( $avatar_url ) . '"/>';
 					$output .= '</div>';
 					if ( $enable_by_author && $author_name ) {
 						$output .= '<div class="g-fp-avatar-by-author">';
-						$output .= esc_html__( 'By', 'gutentor' ) . ucwords( $author_name );
+						$output .= esc_html__( 'By', 'gutentor' ) . esc_html( ucwords( $author_name ) );
 						$output .= '</div>';
 					}
 					$output .= '</div>';
@@ -298,9 +292,9 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$dateFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-calendar' : 'far fa-calendar-alt';
 				$output              .= '<div class="posted-on">';
 				if ( isset( $attributes['pOnIconMeta1'] ) && $attributes['pOnIconMeta1'] ) {
-					$output .= '<i class="' . $dateFontAwesomeClass . '"></i>';
+					$output .= '<i class="' . esc_attr( $dateFontAwesomeClass ) . '"></i>';
 				}
-				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . get_the_date() . '</a>';
+				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . esc_html( get_the_date() ) . '</a>';
 				$output .= '</div>';
 
 			}
@@ -324,14 +318,13 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$dateFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-calendar' : 'far fa-calendar-alt';
 				$output              .= '<div class="posted-on">';
 				if ( isset( $attributes['pOnIconMeta2'] ) && $attributes['pOnIconMeta2'] ) {
-					$output .= '<i class="' . $dateFontAwesomeClass . '"></i>';
+					$output .= '<i class="' . esc_attr( $dateFontAwesomeClass ) . '"></i>';
 				}
-				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . get_the_date() . '</a>';
+				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . esc_html( get_the_date() ) . '</a>';
 				$output .= '</div>';
 
 			}
 			return $output;
-
 		}
 
 		/**
@@ -358,9 +351,9 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$commentFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-comment' : 'fas fa-comment';
 				$output                 .= '<div class="comments-link">';
 				if ( isset( $attributes['pOnIconMeta1'] ) && $attributes['pOnIconMeta1'] ) {
-					$output .= '<i class="' . $commentFontAwesomeClass . '"></i>';
+					$output .= '<i class="' . esc_attr( $commentFontAwesomeClass ) . '"></i>';
 				}
-				$output .= $comment_data->total_comments;
+				$output .= esc_html( $comment_data->total_comments );
 				$output .= '</div>';
 
 			}
@@ -388,9 +381,9 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$commentFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-comment' : 'fas fa-comment';
 				$output                 .= '<div class="comments-link">';
 				if ( isset( $attributes['pOnIconMeta2'] ) && $attributes['pOnIconMeta2'] ) {
-					$output .= '<i class="' . $commentFontAwesomeClass . '"></i>';
+					$output .= '<i class="' . esc_attr( $commentFontAwesomeClass ) . '"></i>';
 				}
-				$output .= $comment_data->total_comments;
+				$output .= esc_html( $comment_data->total_comments );
 				$output .= '</div>';
 
 			}
@@ -413,13 +406,12 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$authorFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-user' : 'far fa-user';
 				$output                .= '<div class="author vcard">';
 				if ( isset( $attributes['pOnIconMeta1'] ) && $attributes['pOnIconMeta1'] ) {
-					$output .= '<i class="' . $authorFontAwesomeClass . '"></i>';
+					$output .= '<i class="' . esc_attr( $authorFontAwesomeClass ) . '"></i>';
 				}
-				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . get_the_author() . '</a>';
+				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . esc_html( get_the_author() ) . '</a>';
 				$output .= '</div>';
 			}
 			return $output;
-
 		}
 
 		/**
@@ -438,13 +430,12 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$authorFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-user' : 'far fa-user';
 				$output                .= '<div class="author vcard">';
 				if ( isset( $attributes['pOnIconMeta2'] ) && $attributes['pOnIconMeta2'] ) {
-					$output .= '<i class="' . $authorFontAwesomeClass . '"></i>';
+					$output .= '<i class="' . esc_attr( $authorFontAwesomeClass ) . '"></i>';
 				}
-				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . get_the_author() . '</a>';
+				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . esc_html( get_the_author() ) . '</a>';
 				$output .= '</div>';
 			}
 			return $output;
-
 		}
 
 
@@ -466,13 +457,12 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					$catFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-tags' : 'fas fa-tags';
 					$output             .= '<div class="gutentor-meta-categories">';
 					if ( isset( $attributes['pOnIconMeta1'] ) && $attributes['pOnIconMeta1'] ) {
-						$output .= '<i class="' . $catFontAwesomeClass . '"></i>';
+						$output .= '<i class="' . esc_attr( $catFontAwesomeClass ) . '"></i>';
 					}
 					$output .= $categories_list . '</div>';
 				}
 			}
 			return $output;
-
 		}
 
 
@@ -504,10 +494,10 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 							$tag_output = array();
 							$output    .= '<div class="gutentor-meta-categories">';
 							if ( isset( $attributes['pOnIconMeta1'] ) && $attributes['pOnIconMeta1'] ) {
-								$output .= '<i class="' . $catFontAwesomeClass . '"></i>';
+								$output .= '<i class="' . esc_attr( $catFontAwesomeClass ) . '"></i>';
 							}
 							foreach ( $terms as $term ) {
-								$tag_output[] = '<a href="' . get_term_link( $term->term_id ) . '" rel="tag">' . $term->name . '</a>';
+								$tag_output[] = '<a href="' . get_term_link( $term->term_id ) . '" rel="tag">' . esc_html( $term->name ) . '</a>';
 							}
 							$output .= implode( ', ', $tag_output );
 							$output .= '</div>';
@@ -518,7 +508,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					if ( $tags_list ) {
 						$output .= '<div class="gutentor-meta-categories">';
 						if ( isset( $attributes['pOnIconMeta1'] ) && $attributes['pOnIconMeta1'] ) {
-							$output .= '<i class="' . $catFontAwesomeClass . '"></i>';
+							$output .= '<i class="' . esc_attr( $catFontAwesomeClass ) . '"></i>';
 						}
 						$output .= $tags_list . '</div>';
 					}
@@ -545,14 +535,13 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					$catFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-tags' : 'fas fa-tags';
 					$output             .= '<div class="gutentor-meta-categories">';
 					if ( isset( $attributes['pOnIconMeta2'] ) && $attributes['pOnIconMeta2'] ) {
-						$output .= '<i class="' . $catFontAwesomeClass . '"></i>';
+						$output .= '<i class="' . esc_attr( $catFontAwesomeClass ) . '"></i>';
 					}
 					$output .= $categories_list . '</div>';
 
 				}
 			}
 			return $output;
-
 		}
 
 		/**
@@ -582,10 +571,10 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 							$tag_output = array();
 							$output    .= '<div class="gutentor-meta-categories">';
 							if ( isset( $attributes['pOnIconMeta2'] ) && $attributes['pOnIconMeta2'] ) {
-								$output .= '<i class="' . $catFontAwesomeClass . '"></i>';
+								$output .= '<i class="' . esc_attr( $catFontAwesomeClass ) . '"></i>';
 							}
 							foreach ( $terms as $term ) {
-								$tag_output[] = '<a href="' . get_term_link( $term->term_id ) . '" rel="tag">' . $term->name . '</a>';
+								$tag_output[] = '<a href="' . esc_url( get_term_link( $term->term_id ) ) . '" rel="tag">' . esc_html( $term->name ) . '</a>';
 							}
 							$output .= implode( ', ', $tag_output );
 							$output .= '</div>';
@@ -596,14 +585,13 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					if ( $tags_list ) {
 						$output .= '<div class="gutentor-meta-categories">';
 						if ( isset( $attributes['pOnIconMeta2'] ) && $attributes['pOnIconMeta2'] ) {
-							$output .= '<i class="' . $catFontAwesomeClass . '"></i>';
+							$output .= '<i class="' . esc_attr( $catFontAwesomeClass ) . '"></i>';
 						}
 						$output .= $tags_list . '</div>';
 					}
 				}
 			}
 			return $output;
-
 		}
 
 		/**
@@ -644,13 +632,12 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 						$output .= $this->get_primary_meta_comment_data( $post, $attributes );
 						break;
 					default:
-						$output .= '';
+						$output .= $this->get_dynamic_element( $element, $post, $attributes );
 						break;
 				}
 			endforeach;
 			$output .= '</div>';/*.entry-meta*/
 			return $output;
-
 		}
 
 		/**
@@ -691,13 +678,12 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 						$output .= $this->get_secondary_meta_comment_data( $post, $attributes );
 						break;
 					default:
-						$output .= '';
+						$output .= $this->get_dynamic_element( $element, $post, $attributes );
 						break;
 				}
 			endforeach;
 			$output .= '</div>';/*.entry-meta*/
 			return $output;
-
 		}
 
 		/**
@@ -753,15 +739,14 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$icon_options        = ( isset( $attributes['pBtnIconOpt'] ) ) ? $attributes['pBtnIconOpt'] : '';
 				$icon_position_class = GutentorButtonOptionsClasses( $icon_options );
 				if ( $icon_position_class == 'gutentor-icon-before' || $icon_position_class == 'gutentor-icon-after' ) {
-					$icon = ( isset( $attributes['pBtnIcon'] ) && $attributes['pBtnIcon']['value'] ) ? '<i class="gutentor-button-icon ' . $attributes['pBtnIcon']['value'] . '" ></i>' : '';
+					$icon = ( isset( $attributes['pBtnIcon'] ) && $attributes['pBtnIcon']['value'] ) ? '<i class="gutentor-button-icon ' . esc_attr( $attributes['pBtnIcon']['value'] ) . '" ></i>' : '';
 				}
 				$custom_class = ( isset( $attributes['pBtnCName'] ) ) ? $attributes['pBtnCName'] : '';
 				$link_options = ( isset( $attributes['pBtnLink'] ) ) ? $attributes['pBtnLink'] : '';
-				$output      .= '<a class="' . gutentor_concat_space( $default_class, $custom_class, $icon_position_class ) . '" ' . apply_filters( 'gutentor_save_link_attr', '', esc_url( get_permalink() ), $link_options ) . '>' . $icon . '<span>' . esc_html( $attributes['pBtnText'] ) . '</span></a>';
+				$output      .= '<a class="' . esc_attr( gutentor_concat_space( $default_class, $custom_class, $icon_position_class ) ) . '" ' . apply_filters( 'gutentor_save_link_attr', '', esc_url( get_permalink() ), $link_options ) . '>' . $icon . '<span>' . esc_html( $attributes['pBtnText'] ) . '</span></a>';
 			}
 			$output = apply_filters( 'gutentor_edit_post_module_readmore_button_data', $output, $post, $attributes );
 			return $output;
-
 		}
 
 		/**
@@ -788,14 +773,13 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$icon_options        = ( isset( $attributes['q1BtnIconOpt'] ) ) ? $attributes['q1BtnIconOpt'] : '';
 				$icon_position_class = GutentorButtonOptionsClasses( $icon_options );
 				if ( $icon_position_class == 'gutentor-icon-before' || $icon_position_class == 'gutentor-icon-after' ) {
-					$icon = ( isset( $attributes['q1BtnIcon'] ) && $attributes['q1BtnIcon']['value'] ) ? '<i class="gutentor-button-icon ' . $attributes['q1BtnIcon']['value'] . '" ></i>' : '';
+					$icon = ( isset( $attributes['q1BtnIcon'] ) && $attributes['q1BtnIcon']['value'] ) ? '<i class="gutentor-button-icon ' . esc_attr( $attributes['q1BtnIcon']['value'] ) . '" ></i>' : '';
 				}
 				$custom_class = ( isset( $attributes['q1BtnCName'] ) ) ? $attributes['q1BtnCName'] : '';
 				$link_options = ( isset( $attributes['q1BtnLink'] ) ) ? $attributes['q1BtnLink'] : '';
-				$output      .= '<a class="' . gutentor_concat_space( $default_class, $custom_class, $icon_position_class ) . '" ' . apply_filters( 'gutentor_save_link_attr', '', esc_url( $demo_url ), $link_options ) . '>' . $icon . '<span>' . esc_html( $attributes['q1BtnTxt'] ) . '</span></a>';
+				$output      .= '<a class="' . esc_attr( gutentor_concat_space( $default_class, $custom_class, $icon_position_class ) ) . '" ' . apply_filters( 'gutentor_save_link_attr', '', esc_url( $demo_url ), $link_options ) . '>' . $icon . '<span>' . esc_html( $attributes['q1BtnTxt'] ) . '</span></a>';
 			}
 			return $output;
-
 		}
 
 		/**
@@ -814,7 +798,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$i   = 0;
 				foreach ( $terms as $badge ) {
 					if ( 0 <= $i ) {
-						$cat_list .= '<a href="' . get_term_link( $badge->term_id ) . ' " class="post-featured-category gutentor-cat-' . $badge->slug . '" ' . $rel . '>' . $badge->name . '</a>';
+						$cat_list .= '<a href="' . esc_url( get_term_link( $badge->term_id ) ) . ' " class="post-featured-category gutentor-cat-' . esc_attr( $badge->slug ) . '" ' . esc_attr( $rel ) . '>' . esc_html( $badge->name ) . '</a>';
 					}
 					$cat_list .= ' ';
 					++$i;
@@ -838,7 +822,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$i   = 0;
 				foreach ( $terms as $badge ) {
 					if ( 0 <= $i ) {
-						$cat_list .= '<a href="' . get_term_link( $badge->term_id ) . ' " class="post-category gutentor-cat-' . $badge->slug . '" ' . $rel . '>' . $badge->name . '</a>';
+						$cat_list .= '<a href="' . esc_url( get_term_link( $badge->term_id ) ) . ' " class="post-category gutentor-cat-' . esc_attr( $badge->slug ) . '" ' . esc_attr( $rel ) . '>' . esc_html( $badge->name ) . '</a>';
 					}
 					$cat_list .= ' ';
 					++$i;
@@ -864,7 +848,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$i   = 0;
 				foreach ( $terms as $badge ) {
 					if ( 0 <= $i ) {
-						$cat_list .= '<a href="' . get_term_link( $badge->term_id ) . ' " class="g-wc-badge gutentor-cat-' . $badge->slug . '" ' . $rel . '>' . $badge->name . '</a>';
+						$cat_list .= '<a href="' . esc_url( get_term_link( $badge->term_id ) ) . ' " class="g-wc-badge gutentor-cat-' . esc_attr( $badge->slug ) . '" ' . esc_attr( $rel ) . '>' . esc_html( $badge->name ) . '</a>';
 					}
 					$cat_list .= ' ';
 					++$i;
@@ -886,8 +870,9 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$badge_type = $attributes['pFPBadgeType'];
 			}
 			$output = '';
-			if ( $badge_type != -1 && $this->get_featured_post_module_badge_data( $post->ID, $badge_type ) ) {
-				$output = '<div class="gutentor-categories gutentor-featured-post-categories">' . $this->get_featured_post_module_badge_data( $post->ID, $badge_type ) . '</div>';
+			$data   = $this->get_featured_post_module_badge_data( $post->ID, $badge_type );
+			if ( $badge_type != -1 && $data ) {
+				$output = '<div class="gutentor-categories gutentor-featured-post-categories">' . wp_kses_post( $data ) . '</div>';
 			}
 			return $output;
 		}
@@ -907,8 +892,9 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 
 			$output = '';
 
-			if ( $badge_type != -1 && $this->get_post_module_badge_data( $post->ID, $badge_type ) ) {
-				$output = '<div class="gutentor-categories">' . $this->get_post_module_badge_data( $post->ID, $badge_type ) . '</div>';
+			$data = $this->get_post_module_badge_data( $post->ID, $badge_type );
+			if ( $badge_type != -1 && $data ) {
+				$output = '<div class="gutentor-categories">' . wp_kses_post( $data ) . '</div>';
 			}
 			return $output;
 		}
@@ -938,7 +924,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			$icon              = ( gettype( $icon ) === 'object' ) ? $decoded_icon->icon : $string_icon;
 			$icon              = $icon ? $icon : 'fas fa-file-alt';
 			$post_format_class = 'gutentor-post-format-' . $post_format;
-			$output           .= '<div class="gutentor-post-format-wrap"><span class="' . gutentor_concat_space( 'gutentor-post-format', $post_format_class ) . '"><i class="' . $icon . '"></i></span></div>';
+			$output           .= '<div class="gutentor-post-format-wrap"><span class="' . esc_attr( gutentor_concat_space( 'gutentor-post-format', $post_format_class ) ) . '"><i class="' . esc_attr( $icon ) . '"></i></span></div>';
 			return $output;
 		}
 
@@ -1107,15 +1093,14 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 		public function get_featured_post_title( $post, $attributes ) {
 			$output = '';
 			if ( isset( $attributes['pOnFPTitle'] ) && $attributes['pOnFPTitle'] ) {
-				$title_tag = $attributes['pTitleTag'];
-				$output   .= '<' . $title_tag . ' class="gutentor-post-featured-title">';
+				$title_tag = gutentor_get_title_tag( $attributes['pTitleTag'] );
+				$output   .= '<' . esc_attr( $title_tag ) . ' class="gutentor-post-featured-title">';
 				$output   .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">';
 				$output   .= get_the_title();
 				$output   .= '</a>';
-				$output   .= '</' . $title_tag . '>';
+				$output   .= '</' . esc_attr( $title_tag ) . '>';
 			}
 			return $output;
-
 		}
 
 
@@ -1137,11 +1122,10 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			if ( $attributes['pFPExcerptLen'] > 0 && $attributes['pOnFPDesc'] ) {
 				$in_words = ( isset( $attributes['pFPExcerptLenInWords'] ) && $attributes['pFPExcerptLenInWords'] );
 				$output  .= '<div class="gutentor-post-featured-desc">';
-				$output  .= gutentor_get_excerpt_by_id( $post->ID, $attributes['pFPExcerptLen'], $in_words );
+				$output  .= wp_kses_post( gutentor_get_excerpt_by_id( $post->ID, $attributes['pFPExcerptLen'], $in_words ) );
 				$output  .= '</div>';
 			}
 			return $output;
-
 		}
 
 
@@ -1156,47 +1140,46 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 		 * @since 2.0.1
 		 */
 		public function get_featured_post_featured_image( $post, $attributes ) {
-            $image_output      = $target = $rel = $link_class = '';
-			$overlay_obj    = ( isset( $attributes['pFPFImgOColor'] ) ) ? $attributes['pFPFImgOColor'] : false;
-			$overlay_enable = ( $overlay_obj && array_key_exists( 'enable', $overlay_obj ) ) ? $attributes['pFPFImgOColor']['enable'] : false;
-            $image_link_enable = false;
-            if ( array_key_exists( 'pFPImgOnLink', $attributes ) ) {
-                $image_link_enable = ( isset( $attributes['pFPImgOnLink'] ) ) ? $attributes['pFPImgOnLink'] : false;
-            }
-            if ( array_key_exists( 'pFPImgOpenNewTab', $attributes ) ) {
-                $openNewTab = ( isset( $attributes['pFPImgOpenNewTab'] ) ) ? $attributes['pFPImgOpenNewTab'] : false;
-                $target     = ( $openNewTab ) ? 'target="_blank"' : '';
-            }
-            if ( array_key_exists( 'pFPImgLinkRel', $attributes ) ) {
-                $rel = ( $attributes['pFPImgLinkRel'] ) ? 'rel="' . $attributes['pFPImgLinkRel'] . '"' : '';
+			$image_output      = $target = $rel = $link_class = '';
+			$overlay_obj       = ( isset( $attributes['pFPFImgOColor'] ) ) ? $attributes['pFPFImgOColor'] : false;
+			$overlay_enable    = ( $overlay_obj && array_key_exists( 'enable', $overlay_obj ) ) ? $attributes['pFPFImgOColor']['enable'] : false;
+			$image_link_enable = false;
+			if ( array_key_exists( 'pFPImgOnLink', $attributes ) ) {
+				$image_link_enable = ( isset( $attributes['pFPImgOnLink'] ) ) ? $attributes['pFPImgOnLink'] : false;
+			}
+			if ( array_key_exists( 'pFPImgOpenNewTab', $attributes ) ) {
+				$openNewTab = ( isset( $attributes['pFPImgOpenNewTab'] ) ) ? $attributes['pFPImgOpenNewTab'] : false;
+				$target     = ( $openNewTab ) ? 'target="_blank"' : '';
+			}
+			if ( array_key_exists( 'pFPImgLinkRel', $attributes ) ) {
+				$rel = ( $attributes['pFPImgLinkRel'] ) ? 'rel="' . esc_Attr( $attributes['pFPImgLinkRel'] ) . '"' : '';
 
-            }
-            if ( array_key_exists( 'pFPImgClass', $attributes ) ) {
-                $link_class = ( $attributes['pFPImgClass'] ) ? sanitize_html_class( $attributes['pFPImgClass'] ) : '';
-            }
+			}
+			if ( array_key_exists( 'pFPImgClass', $attributes ) ) {
+				$link_class = ( $attributes['pFPImgClass'] ) ? sanitize_html_class( $attributes['pFPImgClass'] ) : '';
+			}
 			$overlay = ( $overlay_enable ) ? "<div class='overlay'></div>" : '';
 			$overlay = ( $overlay_enable ) ? 'gutentor-overlay' : '';
 			if ( isset( $attributes['pOnFPFImg'] ) && $attributes['pOnFPFImg'] ) {
 				$image_output = '';
 				if ( has_post_thumbnail() ) {
-					$image_output .= '<div class="' . gutentor_concat_space( 'gutentor-image-thumb', $overlay ) . '">';
+					$image_output .= '<div class="' . esc_attr( gutentor_concat_space( 'gutentor-image-thumb', $overlay ) ) . '">';
 					$image_output .= get_the_post_thumbnail( $post->ID, $attributes['pFPFImgSize'], array( 'class' => 'normal-image' ) );
 					$image_output .= $overlay;
 					$image_output .= '</div>';
 				}
 			}
 
-            if ( $image_link_enable ) {
-                $image_without_link  = $image_output;
-                $image_output  = '';
-                $image_output .= '<a href="' . esc_url(  get_permalink($post->ID) ) . '" class="gutentor-post-image-link' . gutentor_concat_space( $link_class ) . '" ' . gutentor_concat_space( $target, $rel ) . '>';
-                $image_output .= $image_without_link;
-                $image_output .= '</a>';
-            }
+			if ( $image_link_enable ) {
+				$image_without_link = $image_output;
+				$image_output       = '';
+				$image_output      .= '<a href="' . esc_url( get_permalink( $post->ID ) ) . '" class="gutentor-post-image-link' . esc_attr( gutentor_concat_space( $link_class ) ) . '" ' . gutentor_concat_space( $target, $rel ) . '>';
+				$image_output      .= $image_without_link;
+				$image_output      .= '</a>';
+			}
 
-            $image_output = apply_filters( 'gutentor_p6_post_module_featured_image_data', $image_output, $post, $attributes );
+			$image_output = apply_filters( 'gutentor_p6_post_module_featured_image_data', $image_output, $post, $attributes );
 			return $image_output;
-
 		}
 
 		/**
@@ -1215,9 +1198,9 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$dateFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-calendar' : 'far fa-calendar-alt';
 				$output              .= '<div class="posted-on">';
 				if ( isset( $attributes['pOnFPIconMeta1'] ) && $attributes['pOnFPIconMeta1'] ) {
-					$output .= '<i class="' . $dateFontAwesomeClass . '"></i>';
+					$output .= '<i class="' . esc_attr( $dateFontAwesomeClass ) . '"></i>';
 				}
-				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . get_the_date() . '</a>';
+				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . esc_html( get_the_date() ) . '</a>';
 				$output .= '</div>';
 
 			}
@@ -1241,14 +1224,13 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$dateFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-calendar' : 'far fa-calendar-alt';
 				$output              .= '<div class="posted-on">';
 				if ( isset( $attributes['pOnFPIconMeta2'] ) && $attributes['pOnFPIconMeta2'] ) {
-					$output .= '<i class="' . $dateFontAwesomeClass . '"></i>';
+					$output .= '<i class="' . esc_attr( $dateFontAwesomeClass ) . '"></i>';
 				}
-				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . get_the_date() . '</a>';
+				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . esc_html( get_the_date() ) . '</a>';
 				$output .= '</div>';
 
 			}
 			return $output;
-
 		}
 
 		/**
@@ -1275,9 +1257,9 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$commentFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-comment' : 'fas fa-comment';
 				$output                 .= '<div class="comments-link">';
 				if ( isset( $attributes['pOnFPIconMeta1'] ) && $attributes['pOnFPIconMeta1'] ) {
-					$output .= '<i class="' . $commentFontAwesomeClass . '"></i>';
+					$output .= '<i class="' . esc_attr( $commentFontAwesomeClass ) . '"></i>';
 				}
-				$output .= $comment_data->total_comments;
+				$output .= esc_html( $comment_data->total_comments );
 				$output .= '</div>';
 
 			}
@@ -1305,9 +1287,9 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$commentFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-comment' : 'fas fa-comment';
 				$output                 .= '<div class="comments-link">';
 				if ( isset( $attributes['pOnFPIconMeta2'] ) && $attributes['pOnFPIconMeta2'] ) {
-					$output .= '<i class="' . $commentFontAwesomeClass . '"></i>';
+					$output .= '<i class="' . esc_attr( $commentFontAwesomeClass ) . '"></i>';
 				}
-				$output .= $comment_data->total_comments;
+				$output .= esc_html( $comment_data->total_comments );
 				$output .= '</div>';
 
 			}
@@ -1330,13 +1312,12 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$authorFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-user' : 'far fa-user';
 				$output                .= '<div class="author vcard">';
 				if ( isset( $attributes['pOnFPIconMeta1'] ) && $attributes['pOnFPIconMeta1'] ) {
-					$output .= '<i class="' . $authorFontAwesomeClass . '"></i>';
+					$output .= '<i class="' . esc_attr( $authorFontAwesomeClass ) . '"></i>';
 				}
-				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . get_the_author() . '</a>';
+				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . esc_html( get_the_author() ) . '</a>';
 				$output .= '</div>';
 			}
 			return $output;
-
 		}
 
 		/**
@@ -1355,13 +1336,12 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$authorFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-user' : 'far fa-user';
 				$output                .= '<div class="author vcard">';
 				if ( isset( $attributes['pOnFPIconMeta2'] ) && $attributes['pOnFPIconMeta2'] ) {
-					$output .= '<i class="' . $authorFontAwesomeClass . '"></i>';
+					$output .= '<i class="' . esc_attr( $authorFontAwesomeClass ) . '"></i>';
 				}
-				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . get_the_author() . '</a>';
+				$output .= '<a href="' . esc_url( get_permalink() ) . '" rel="bookmark">' . esc_html( get_the_author() ) . '</a>';
 				$output .= '</div>';
 			}
 			return $output;
-
 		}
 
 		/**
@@ -1382,13 +1362,12 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					$catFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-tags' : 'fas fa-tags';
 					$output             .= '<div class="gutentor-meta-categories">';
 					if ( isset( $attributes['pOnFPIconMeta1'] ) && $attributes['pOnFPIconMeta1'] ) {
-						$output .= '<i class="' . $catFontAwesomeClass . '"></i>';
+						$output .= '<i class="' . esc_attr( $catFontAwesomeClass ) . '"></i>';
 					}
 					$output .= $categories_list . '</div>';
 				}
 			}
 			return $output;
-
 		}
 
 		/**
@@ -1409,13 +1388,12 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					$catFontAwesomeClass = (int) gutentor_get_options( 'fa-version' ) === 4 ? 'fa fa-tags' : 'fas fa-tags';
 					$output             .= '<div class="gutentor-meta-categories">';
 					if ( isset( $attributes['pOnFPIconMeta2'] ) && $attributes['pOnFPIconMeta2'] ) {
-						$output .= '<i class="' . $catFontAwesomeClass . '"></i>';
+						$output .= '<i class="' . esc_attr( $catFontAwesomeClass ) . '"></i>';
 					}
 					$output .= $categories_list . '</div>';
 				}
 			}
 			return $output;
-
 		}
 
 		/**
@@ -1445,10 +1423,10 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 							$tag_output = array();
 							$output    .= '<div class="gutentor-meta-categories">';
 							if ( isset( $attributes['pOnFPIconMeta1'] ) && $attributes['pOnFPIconMeta1'] ) {
-								$output .= '<i class="' . $catFontAwesomeClass . '"></i>';
+								$output .= '<i class="' . esc_attr( $catFontAwesomeClass ) . '"></i>';
 							}
 							foreach ( $terms as $term ) {
-								$tag_output[] = '<a href="' . get_term_link( $term->term_id ) . '" rel="tag">' . $term->name . '</a>';
+								$tag_output[] = '<a href="' . get_term_link( $term->term_id ) . '" rel="tag">' . esc_html( $term->name ) . '</a>';
 							}
 							$output .= implode( ', ', $tag_output );
 							$output .= '</div>';
@@ -1459,14 +1437,13 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					if ( $tags_list ) {
 						$output .= '<div class="gutentor-meta-categories">';
 						if ( isset( $attributes['pOnFPIconMeta1'] ) && $attributes['pOnFPIconMeta1'] ) {
-							$output .= '<i class="' . $catFontAwesomeClass . '"></i>';
+							$output .= '<i class="' . esc_attr( $catFontAwesomeClass ) . '"></i>';
 						}
 						$output .= $tags_list . '</div>';
 					}
 				}
 			}
 			return $output;
-
 		}
 
 		/**
@@ -1496,10 +1473,10 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 							$tag_output = array();
 							$output    .= '<div class="gutentor-meta-categories">';
 							if ( isset( $attributes['pOnFPIconMeta2'] ) && $attributes['pOnFPIconMeta2'] ) {
-								$output .= '<i class="' . $catFontAwesomeClass . '"></i>';
+								$output .= '<i class="' . esc_attr( $catFontAwesomeClass ) . '"></i>';
 							}
 							foreach ( $terms as $term ) {
-								$tag_output[] = '<a href="' . get_term_link( $term->term_id ) . '" rel="tag">' . $term->name . '</a>';
+								$tag_output[] = '<a href="' . esc_url( get_term_link( $term->term_id ) ) . '" rel="tag">' . esc_html( $term->name ) . '</a>';
 							}
 							$output .= implode( ', ', $tag_output );
 							$output .= '</div>';
@@ -1510,14 +1487,13 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					if ( $tags_list ) {
 						$output .= '<div class="gutentor-meta-categories">';
 						if ( isset( $attributes['pOnFPIconMeta2'] ) && $attributes['pOnFPIconMeta2'] ) {
-							$output .= '<i class="' . $catFontAwesomeClass . '"></i>';
+							$output .= '<i class="' . esc_attr( $catFontAwesomeClass ) . '"></i>';
 						}
 						$output .= $tags_list . '</div>';
 					}
 				}
 			}
 			return $output;
-
 		}
 
 		/**
@@ -1564,7 +1540,6 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			endforeach;
 			$output .= '</div>';/*.entry-meta*/
 			return $output;
-
 		}
 
 		/**
@@ -1611,7 +1586,6 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			endforeach;
 			$output .= '</div>';/*.entry-meta*/
 			return $output;
-
 		}
 
 		/**
@@ -1669,12 +1643,11 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$icon_position_class = GutentorButtonOptionsClasses( $icon_options );
 				$icon                = '';
 				if ( $icon_position_class == 'gutentor-icon-before' || $icon_position_class == 'gutentor-icon-after' ) {
-					$icon = ( isset( $attributes['pFPBtnIcon'] ) && $attributes['pFPBtnIcon']['value'] ) ? '<i class="gutentor-button-icon ' . $attributes['pFPBtnIcon']['value'] . '" ></i>' : '';
+					$icon = ( isset( $attributes['pFPBtnIcon'] ) && $attributes['pFPBtnIcon']['value'] ) ? '<i class="gutentor-button-icon ' . esc_attr( $attributes['pFPBtnIcon']['value'] ) . '" ></i>' : '';
 				}
-				$output .= '<a class="' . gutentor_concat_space( $default_class, $icon_position_class ) . '" ' . apply_filters( 'gutentor_save_link_attr', '', esc_url( get_permalink() ), $link_options ) . '>' . $icon . '<span>' . esc_html( $attributes['pFPBtnText'] ) . '</span></a>';
+				$output .= '<a class="' . esc_attr( gutentor_concat_space( $default_class, $icon_position_class ) ) . '" ' . apply_filters( 'gutentor_save_link_attr', '', esc_url( get_permalink() ), $link_options ) . '>' . $icon . '<span>' . esc_html( $attributes['pFPBtnText'] ) . '</span></a>';
 			}
 			return $output;
-
 		}
 
 		/**
@@ -1702,7 +1675,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			$icon              = ( gettype( $icon ) === 'object' ) ? $decoded_icon->icon : $string_icon;
 			$icon              = $icon ? $icon : 'fas fa-file-alt';
 			$post_format_class = 'gutentor-post-format-' . $post_format;
-			$output           .= '<span class="' . gutentor_concat_space( 'gutentor-post-featured-format', $post_format_class ) . '"><i class="' . $icon . '"></i></span>';
+			$output           .= '<span class="' . esc_attr( gutentor_concat_space( 'gutentor-post-featured-format', $post_format_class ) ) . '"><i class="' . esc_attr( $icon ) . '"></i></span>';
 			return $output;
 		}
 
@@ -1716,7 +1689,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 		 */
 		public function p6_featured_single_article( $post, $attributes, $index ) {
 			$output                = $thumb_class = '';
-            $query_sorting         = array_key_exists( 'blockFPSortableItems', $attributes ) ? $attributes['blockFPSortableItems'] : false;
+			$query_sorting         = array_key_exists( 'blockFPSortableItems', $attributes ) ? $attributes['blockFPSortableItems'] : false;
 			$enable_featured_image = ( isset( $attributes['pOnFPFImg'] ) ) ? $attributes['pOnFPFImg'] : false;
 			$enable_avatar         = ( isset( $attributes['pFPOnAvatar'] ) ) ? $attributes['pFPOnAvatar'] : false;
 			$avatar_pos            = ( isset( $attributes['pFPAvatarPos'] ) ) ? $attributes['pFPAvatarPos'] : false;
@@ -1724,9 +1697,9 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			$post_format_pos       = ( isset( $attributes['pFPPostFormatPos'] ) ) ? $attributes['pFPPostFormatPos'] : false;
 			$cat_pos               = ( isset( $attributes['pFPCatPos'] ) ) ? $attributes['pFPCatPos'] : false;
 			$enable_featured_cat   = ( isset( $attributes['pOnFPFeaturedCat'] ) ) ? $attributes['pOnFPFeaturedCat'] : false;
-            $thumb_class = has_post_thumbnail() && $enable_featured_image ? '' : 'gutentor-post-no-thumb';
-            $output               .= "<article class='" . apply_filters( 'gutentor_post_module_article_class', gutentor_concat_space( 'gutentor-post', 'gutentor-post-featured', $thumb_class, 'gutentor-post-item-' . $index ), $attributes ) . "'>";
-			$output               .= "<div class='" . apply_filters( 'gutentor_p6_featured_post_post_item', 'gutentor-post-featured-item', $attributes ) . "'>";
+			$thumb_class           = has_post_thumbnail() && $enable_featured_image ? '' : 'gutentor-post-no-thumb';
+			$output               .= "<article class='" . esc_attr( apply_filters( 'gutentor_post_module_article_class', gutentor_concat_space( 'gutentor-post', 'gutentor-post-featured', $thumb_class, 'gutentor-post-item-' . $index ), $attributes ) ) . "'>";
+			$output               .= "<div class='" . esc_attr( apply_filters( 'gutentor_p6_featured_post_post_item', 'gutentor-post-featured-item', $attributes ) ) . "'>";
 			if ( $enable_featured_image && has_post_thumbnail( $post->ID ) ) {
 				$enable_overlayImage = false;
 				$overlayImage        = ( isset( $attributes['pFPFImgOColor'] ) ) ? $attributes['pFPFImgOColor'] : false;
@@ -1735,7 +1708,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				}
 				$url     = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), $attributes['pFPFImgSize'] );
 				$overlay = $enable_overlayImage ? 'gutentor-overlay' : '';
-				$output .= "<div class='" . apply_filters( 'gutentor_p6_featured_post_post_item_height', gutentor_concat_space( 'gutentor-post-featured-height', 'gutentor-bg-image', $overlay ), $attributes ) . "' style='background-image:url(" . esc_url( is_array( $url ) && ! empty( $url ) ? $url[0] : '' ) . ")'>";
+				$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_p6_featured_post_post_item_height', gutentor_concat_space( 'gutentor-post-featured-height', 'gutentor-bg-image', $overlay ), $attributes ) ) . "' style='background-image:url(" . esc_url( is_array( $url ) && ! empty( $url ) ? $url[0] : '' ) . ")'>";
 				if ( $enable_avatar && $this->avatar_fp_on_image_condition( $avatar_pos ) ) {
 					$output .= $this->get_fp_avatar_data( $post, $attributes );
 				}
@@ -1917,7 +1890,6 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			$output .= '</div>';/*.gutentor-post-featured-item*/
 			$output .= '</article>';/*.article*/
 			return $output;
-
 		}
 
 		/**
@@ -1929,13 +1901,13 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 		 * @return {mix}
 		 */
 		public function p6_single_article( $post, $attributes, $index ) {
-            $output  = $thumb_class = '';
-            $access_no_thumbnail = array( 'product', 'download' );
-            $video_url                 = get_post_meta( $post->ID, 'gutentor_meta_video_url', true );
-            $video_id                  = get_post_meta( $post->ID, 'gutentor_meta_video_id', true );
-            $pFType                  = $attributes['pFType'] ? $attributes['pFType'] : '';
-            $post_type               = isset( $attributes['pPostType'] ) ? $attributes['pPostType'] : '';
-            $enable_avatar         = ( isset( $attributes['pOnAvatar'] ) ) ? $attributes['pOnAvatar'] : false;
+			$output                = $thumb_class = '';
+			$access_no_thumbnail   = array( 'product', 'download' );
+			$video_url             = get_post_meta( $post->ID, 'gutentor_meta_video_url', true );
+			$video_id              = get_post_meta( $post->ID, 'gutentor_meta_video_id', true );
+			$pFType                = $attributes['pFType'] ? $attributes['pFType'] : '';
+			$post_type             = isset( $attributes['pPostType'] ) ? $attributes['pPostType'] : '';
+			$enable_avatar         = ( isset( $attributes['pOnAvatar'] ) ) ? $attributes['pOnAvatar'] : false;
 			$avatar_pos            = ( isset( $attributes['pAvatarPos'] ) ) ? $attributes['pAvatarPos'] : false;
 			$query_sorting         = array_key_exists( 'blockSortableItems', $attributes ) ? $attributes['blockSortableItems'] : false;
 			$enable_featured_image = ( isset( $attributes['pOnFImg'] ) ) ? $attributes['pOnFImg'] : false;
@@ -1943,14 +1915,14 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			$post_format_pos       = ( isset( $attributes['pPostFormatPos'] ) ) ? $attributes['pPostFormatPos'] : false;
 			$cat_pos               = ( isset( $attributes['pPostCatPos'] ) ) ? $attributes['pPostCatPos'] : false;
 			$enable_featured_cat   = ( isset( $attributes['pOnFeaturedCat'] ) ) ? $attributes['pOnFeaturedCat'] : false;
-            if ( ! in_array( $post_type, $access_no_thumbnail ) ) {
-                $thumb_class = has_post_thumbnail() && $enable_featured_image ? '' : 'gutentor-post-no-thumb';
-                $thumb_class = (($video_url || $video_id) && gutentor_pro_active() && $pFType === 'video') ? '' : $thumb_class;
-            }
-			$output .= "<article class='" . apply_filters( 'gutentor_post_module_article_class', gutentor_concat_space( 'gutentor-post', 'gutentor-post-normal', $thumb_class, 'gutentor-post-item-' . $index ), $attributes ) . "'>";
+			if ( ! in_array( $post_type, $access_no_thumbnail ) ) {
+				$thumb_class = has_post_thumbnail() && $enable_featured_image ? '' : 'gutentor-post-no-thumb';
+				$thumb_class = ( ( $video_url || $video_id ) && gutentor_pro_active() && $pFType === 'video' ) ? '' : $thumb_class;
+			}
+			$output .= "<article class='" . esc_attr( apply_filters( 'gutentor_post_module_article_class', gutentor_concat_space( 'gutentor-post', 'gutentor-post-normal', $thumb_class, 'gutentor-post-item-' . $index ), $attributes ) ) . "'>";
 			$output .= '<div class="gutentor-post-item">';
 			if ( $enable_featured_image && gutentor_has_post_featured( $post ) ) {
-				$output .= "<div class='" . apply_filters( 'gutentor_post_module_post_image_box', 'gutentor-post-image-box', $post, $attributes ) . "'>";
+				$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_post_module_post_image_box', 'gutentor-post-image-box', $post, $attributes ) ) . "'>";
 				$output .= $this->get_featured_image( $post, $attributes );
 				if ( $enable_avatar && $this->avatar_on_image_condition( $avatar_pos ) ) {
 					$output .= $this->get_avatar_data( $post, $attributes );
@@ -2043,7 +2015,6 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			$output .= '</div>';/*.gutentor-post-item*/
 			$output .= '</article>';/*.article*/
 			return $output;
-
 		}
 
 		/**
@@ -2072,10 +2043,10 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			$cat_pos               = ( isset( $attributes['pPostCatPos'] ) ) ? $attributes['pPostCatPos'] : false;
 			$enable_featured_cat   = ( isset( $attributes['pOnFeaturedCat'] ) ) ? $attributes['pOnFeaturedCat'] : false;
 
-			$output .= "<article class='" . apply_filters( 'gutentor_post_module_article_class', gutentor_concat_space( 'gutentor-post', 'gutentor-post-normal', 'gutentor-post-item-' . $index ), $attributes ) . "'>";
+			$output .= "<article class='" . esc_attr( apply_filters( 'gutentor_post_module_article_class', gutentor_concat_space( 'gutentor-post', 'gutentor-post-normal', 'gutentor-post-item-' . $index ), $attributes ) ) . "'>";
 			$output .= '<div class="gutentor-post-item">';
 			if ( $enable_featured_image ) {
-				$output .= "<div class='" . apply_filters( 'gutentor_post_module_post_image_box', 'gutentor-post-image-box', $post, $attributes ) . "'>";
+				$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_post_module_post_image_box', 'gutentor-post-image-box', $post, $attributes ) ) . "'>";
 				$output .= $this->get_woo_product_thumbnail( $post, $product, $attributes );
 				if ( $enable_avatar && $this->avatar_on_image_condition( $avatar_pos ) ) {
 					$output .= $this->get_avatar_data( $post, $attributes );
@@ -2161,22 +2132,20 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 									$output .= $this->get_woo_badge( $post, $product, $attributes );
 								}
 								if ( isset( $attributes['pOnBtn'] ) && $attributes['pOnBtn'] ) {
-									$output .= "<div class='" . apply_filters( 'gutentor_post_module_product_button_class', 'gutentor-woo-add-to-cart wc-block-grid__product-add-to-cart', $post, $attributes ) . "'>";
+									$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_post_module_product_button_class', 'gutentor-woo-add-to-cart wc-block-grid__product-add-to-cart', $post, $attributes ) ) . "'>";
 									ob_start();
 									woocommerce_template_loop_add_to_cart( array( 'gutentor-attributes' => $attributes ) );
 									$output .= ob_get_clean();
 									$output .= '</div>';
 								}
 								$output .= '</div>';
-							} else {
+							} elseif ( isset( $attributes['pOnBtn'] ) && $attributes['pOnBtn'] ) {
 
-								if ( isset( $attributes['pOnBtn'] ) && $attributes['pOnBtn'] ) {
-									$output .= "<div class='" . apply_filters( 'gutentor_post_module_product_button_class', 'gutentor-woo-add-to-cart wc-block-grid__product-add-to-cart', $post, $attributes ) . "'>";
+									$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_post_module_product_button_class', 'gutentor-woo-add-to-cart wc-block-grid__product-add-to-cart', $post, $attributes ) ) . "'>";
 									ob_start();
 									woocommerce_template_loop_add_to_cart( array( 'gutentor-attributes' => $attributes ) );
 									$output .= ob_get_clean();
 									$output .= '</div>';
-								}
 							}
 							break;
 						default:
@@ -2189,7 +2158,6 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			$output .= '</div>';/*.gutentor-post-item*/
 			$output .= '</article>';/*.article*/
 			return $output;
-
 		}
 
 		/**
@@ -2215,10 +2183,10 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			$post_format_pos       = ( isset( $attributes['pPostFormatPos'] ) ) ? $attributes['pPostFormatPos'] : false;
 
 			$output  = '';
-			$output .= "<article class='" . apply_filters( 'gutentor_post_module_article_class', gutentor_concat_space( 'gutentor-post', 'gutentor-post-normal', 'gutentor-post-item-' . $index ), $attributes ) . "'>";
+			$output .= "<article class='" . esc_attr( apply_filters( 'gutentor_post_module_article_class', gutentor_concat_space( 'gutentor-post', 'gutentor-post-normal', 'gutentor-post-item-' . $index ), $attributes ) ) . "'>";
 			$output .= '<div class="gutentor-post-item">';
 			if ( $enable_featured_image ) {
-				$output .= "<div class='" . apply_filters( 'gutentor_post_module_post_image_box', 'gutentor-post-image-box', $post, $attributes ) . "'>";
+				$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_post_module_post_image_box', 'gutentor-post-image-box', $post, $attributes ) ) . "'>";
 				$output .= $this->get_edd_thumbnail( $post, $attributes );
 				if ( $enable_avatar && $this->avatar_on_image_condition( $avatar_pos ) ) {
 					$output .= $this->get_avatar_data( $post, $attributes );
@@ -2310,7 +2278,6 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			$output .= '</div>';/*.gutentor-post-item*/
 			$output .= '</article>';/*.article*/
 			return $output;
-
 		}
 
 		/**
@@ -2378,18 +2345,16 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					$output .= '<div class="gutentor-wc-price">';
 					$output .= $product->get_price_html();
 					$output .= '</div>';
-				} else {
-					if ( isset( $attributes['wooOnFreeTxt'] ) && $attributes['wooOnFreeTxt'] ) {
+				} elseif ( isset( $attributes['wooOnFreeTxt'] ) && $attributes['wooOnFreeTxt'] ) {
 						$output .= '<div class="gutentor-wc-price">';
 						$output .= '<span class="woocommerce-Price-currencySymbol">';
-						$output .= isset( $attributes['wooFreeTxt'] ) ? $attributes['wooFreeTxt'] : '';
+						$output .= isset( $attributes['wooFreeTxt'] ) ? esc_html( $attributes['wooFreeTxt'] ) : '';
 						$output .= '</span>';
 						$output .= '</div>';
-					} else {
-						$output .= '<div class="gutentor-wc-price">';
-						$output .= wc_price( '0.00' );
-						$output .= '</div>';
-					}
+				} else {
+					$output .= '<div class="gutentor-wc-price">';
+					$output .= wc_price( '0.00' );
+					$output .= '</div>';
 				}
 			}
 			return $output;
@@ -2411,18 +2376,16 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					$output .= '<div class="gutentor-fp-wc-price">';
 					$output .= $product->get_price_html();
 					$output .= '</div>';
-				} else {
-					if ( isset( $attributes['fpWooOnFreeTxt'] ) && $attributes['fpWooOnFreeTxt'] ) {
+				} elseif ( isset( $attributes['fpWooOnFreeTxt'] ) && $attributes['fpWooOnFreeTxt'] ) {
 						$output .= '<div class="gutentor-fp-wc-price">';
 						$output .= '<span class="woocommerce-Price-currencySymbol">';
-						$output .= isset( $attributes['fpWooFreeTxt'] ) ? $attributes['fpWooFreeTxt'] : '';
+						$output .= isset( $attributes['fpWooFreeTxt'] ) ? esc_html( $attributes['fpWooFreeTxt'] ) : '';
 						$output .= '</span>';
 						$output .= '</div>';
-					} else {
-						$output .= '<div class="gutentor-fp-wc-price">';
-						$output .= wc_price( '0.00' );
-						$output .= '</div>';
-					}
+				} else {
+					$output .= '<div class="gutentor-fp-wc-price">';
+					$output .= wc_price( '0.00' );
+					$output .= '</div>';
 				}
 			}
 			return $output;
@@ -2535,7 +2498,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$target     = ( $openNewTab ) ? 'target="_blank"' : '';
 			}
 			if ( array_key_exists( 'pImgLinkRel', $attributes ) ) {
-				$rel = ( $attributes['pImgLinkRel'] ) ? 'rel="' . $attributes['pImgLinkRel'] . '"' : '';
+				$rel = ( $attributes['pImgLinkRel'] ) ? 'rel="' . esc_attr( $attributes['pImgLinkRel'] ) . '"' : '';
 
 			}
 			if ( array_key_exists( 'pImgClass', $attributes ) ) {
@@ -2548,21 +2511,20 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			$overlay        = ( $overlay_enable ) ? 'gutentor-overlay' : '';
 			if ( isset( $attributes['pOnFImg'] ) && $attributes['pOnFImg'] ) {
 				$image_output  = '';
-				$image_output .= '<div class="' . gutentor_concat_space( 'gutentor-image-thumb', $overlay ) . '">';
-                $image_output .= woocommerce_get_product_thumbnail( $thumbnail_size );
+				$image_output .= '<div class="' . esc_attr( gutentor_concat_space( 'gutentor-image-thumb', $overlay ) ) . '">';
+				$image_output .= woocommerce_get_product_thumbnail( $thumbnail_size );
 				$image_output .= '</div>';
 			}
-            if ( $image_link_enable ) {
-                $link          = apply_filters( 'woocommerce_loop_product_link', get_the_permalink( $post->ID ), $product );
-                $image_without_link  = $image_output;
-                $image_output  = '';
-                $image_output .= '<a href="' . esc_url( $link ) . '" class="gutentor-post-image-link woocommerce-LoopProduct-link woocommerce-loop-product__link ' . gutentor_concat_space( $link_class ) . '" ' . gutentor_concat_space( $target, $rel ) . '>';
-                $image_output .= $image_without_link;
-                $image_output .= '</a>';
-            }
+			if ( $image_link_enable ) {
+				$link               = apply_filters( 'woocommerce_loop_product_link', get_the_permalink( $post->ID ), $product );
+				$image_without_link = $image_output;
+				$image_output       = '';
+				$image_output      .= '<a href="' . esc_url( $link ) . '" class="gutentor-post-image-link woocommerce-LoopProduct-link woocommerce-loop-product__link ' . esc_attr( gutentor_concat_space( $link_class ) ) . '" ' . gutentor_concat_space( $target, $rel ) . '>';
+				$image_output      .= $image_without_link;
+				$image_output      .= '</a>';
+			}
 			$image_output = apply_filters( 'gutentor_save_post_module_featured_image_data', $image_output, $post, $attributes );
 			return $image_output;
-
 		}
 
 		/**
@@ -2586,7 +2548,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$target = ( isset( $attributes['pFPImgOpenNewTab'] ) ) ? 'target="_blank"' : '';
 			}
 			if ( array_key_exists( 'pFPImgLinkRel', $attributes ) ) {
-				$rel = ( $attributes['pFPImgLinkRel'] ) ? 'rel="' . $attributes['pFPImgLinkRel'] . '"' : '';
+				$rel = ( $attributes['pFPImgLinkRel'] ) ? 'rel="' . esc_attr( $attributes['pFPImgLinkRel'] ) . '"' : '';
 
 			}
 			if ( array_key_exists( 'pFPImgClass', $attributes ) ) {
@@ -2599,21 +2561,20 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			$overlay        = ( $overlay_enable ) ? 'gutentor-overlay' : '';
 			if ( isset( $attributes['pOnFImg'] ) && $attributes['pOnFImg'] ) {
 				$image_output  = '';
-				$image_output .= '<div class="' . gutentor_concat_space( 'gutentor-image-thumb', $overlay ) . '">';
-                $image_output .= woocommerce_get_product_thumbnail( $thumbnail_size );
+				$image_output .= '<div class="' . esc_attr( gutentor_concat_space( 'gutentor-image-thumb', $overlay ) ) . '">';
+				$image_output .= woocommerce_get_product_thumbnail( $thumbnail_size );
 				$image_output .= '</div>';
 			}
-            if ( $image_link_enable ) {
-                $link          = apply_filters( 'woocommerce_loop_product_link', get_the_permalink( $post->ID ), $product );
-                $image_without_link  = $image_output;
-                $image_output  = '';
-                $image_output .= '<a href="' . esc_url( $link ) . '" class="gutentor-post-image-link woocommerce-LoopProduct-link woocommerce-loop-product__link ' . gutentor_concat_space( $link_class ) . '" ' . gutentor_concat_space( $target, $rel ) . '>';
-                $image_output .= $image_without_link;
-                $image_output .= '</a>';
-            }
+			if ( $image_link_enable ) {
+				$link               = apply_filters( 'woocommerce_loop_product_link', get_the_permalink( $post->ID ), $product );
+				$image_without_link = $image_output;
+				$image_output       = '';
+				$image_output      .= '<a href="' . esc_url( $link ) . '" class="gutentor-post-image-link woocommerce-LoopProduct-link woocommerce-loop-product__link ' . gutentor_concat_space( $link_class ) . '" ' . gutentor_concat_space( $target, $rel ) . '>';
+				$image_output      .= $image_without_link;
+				$image_output      .= '</a>';
+			}
 			$image_output = apply_filters( 'gutentor_p6_post_module_featured_image_data', $image_output, $post, $attributes );
 			return $image_output;
-
 		}
 
 		/**
@@ -2638,7 +2599,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$target     = ( $openNewTab ) ? 'target="_blank"' : '';
 			}
 			if ( array_key_exists( 'pFPImgLinkRel', $attributes ) ) {
-				$rel = ( $attributes['pFPImgLinkRel'] ) ? 'rel="' . $attributes['pFPImgLinkRel'] . '"' : '';
+				$rel = ( $attributes['pFPImgLinkRel'] ) ? 'rel="' . esc_attr( $attributes['pFPImgLinkRel'] ) . '"' : '';
 
 			}
 			if ( array_key_exists( 'pFPImgClass', $attributes ) ) {
@@ -2652,25 +2613,24 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			if ( has_post_thumbnail( $post->ID ) ) {
 				$get_thumbnail = get_the_post_thumbnail( $post->ID, $thumbnail_size, '' );
 			} else {
-				$get_thumbnail = '<img src="' . GUTENTOR_URL . 'assets/img/default-image.jpg">';
+				$get_thumbnail = '<img src="' . esc_url( GUTENTOR_URL . 'assets/img/default-image.jpg' ) . '">';
 			}
 			if ( isset( $attributes['pOnFPFImg'] ) && $attributes['pOnFPFImg'] ) {
 				$image_output  = '';
-				$image_output .= '<div class="' . gutentor_concat_space( 'gutentor-image-thumb', $overlay ) . '">';
-                $image_output .= $get_thumbnail;
+				$image_output .= '<div class="' . esc_attr( gutentor_concat_space( 'gutentor-image-thumb', $overlay ) ) . '">';
+				$image_output .= $get_thumbnail;
 				$image_output .= '</div>';
 
 			}
-            if ( $image_link_enable ) {
-                $image_without_link  = $image_output;
-                $image_output  = '';
-                $image_output .= '<a href="' . esc_url( get_the_permalink( $post->ID ) ) . '" class="gutentor-post-image-link ' . gutentor_concat_space( $link_class ) . '" ' . gutentor_concat_space( $target, $rel ) . '>';
-                $image_output .= $image_without_link;
-                $image_output .= '</a>';
-            }
+			if ( $image_link_enable ) {
+				$image_without_link = $image_output;
+				$image_output       = '';
+				$image_output      .= '<a href="' . esc_url( get_the_permalink( $post->ID ) ) . '" class="gutentor-post-image-link ' . esc_attr( gutentor_concat_space( $link_class ) . '" ' . gutentor_concat_space( $target, $rel ) ) . '>';
+				$image_output      .= $image_without_link;
+				$image_output      .= '</a>';
+			}
 			$image_output = apply_filters( 'gutentor_p6_post_module_featured_image_data', $image_output, $post, $attributes );
 			return $image_output;
-
 		}
 
 		/*=== Term Module Start =====*/
@@ -2756,7 +2716,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$url           = $image_url[0];
 				$image_class   = 'gtf-image';
 				$output_image .= '<div class="gtf-image-box">';
-				$output_image .= '<div class="' . gutentor_concat_space( $image_class, $overlay ) . '">';
+				$output_image .= '<div class="' . esc_attr( gutentor_concat_space( $image_class, $overlay ) ) . '">';
 				$output_image .= '<img class="normal-image" src="' . esc_url( $url ) . '">';
 				$output_image .= '</div>';
 				$output_image .= '</div>';
@@ -2764,7 +2724,6 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 
 			}
 			return $output;
-
 		}
 
 		/**
@@ -2780,15 +2739,14 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 		public function get_term_title( $term, $attributes ) {
 			$output = '';
 			if ( isset( $attributes['tOnTitle'] ) && $attributes['tOnTitle'] ) {
-				$title_tag = $attributes['tTitleTag'];
-				$output   .= '<' . $title_tag . ' class="g-d-title">';
+				$title_tag = gutentor_get_title_tag( $attributes['tTitleTag'] );
+				$output   .= '<' . esc_attr( $title_tag ) . ' class="g-d-title">';
 				$output   .= '<a href="' . esc_url( get_term_link( $term ) ) . '" rel="bookmark">';
 				$output   .= esc_html( $term->name );
 				$output   .= '</a>';
-				$output   .= '</' . $title_tag . '>';
+				$output   .= '</' . esc_attr( $title_tag ) . '>';
 			}
 			return $output;
-
 		}
 
 		/**
@@ -2815,11 +2773,10 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					$termCount = $termCount . $suffix;
 				}
 				$output .= '<span class="g-d-count">';
-				$output .= $termCount;
+				$output .= esc_html( $termCount );
 				$output .= '</span>';
 			}
 			return $output;
-
 		}
 
 		/**
@@ -2863,7 +2820,6 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					break;
 			}
 			return $output;
-
 		}
 
 		/**
@@ -2929,20 +2885,20 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 		 * @since 3.0.0
 		 */
 		public function get_term_description( $term, $attributes ) {
-			$output   = '';
-			$in_words = ( isset( $attributes['tExcerptLenInWords'] ) && $attributes['tExcerptLenInWords'] );
+			$output    = '';
+			$in_words  = ( isset( $attributes['tExcerptLenInWords'] ) && $attributes['tExcerptLenInWords'] );
+			$term_desc = gutentor_get_term_description( $term, $attributes['tExcerptLen'], $in_words );
 			if ( ! isset( $attributes['tExcerptLen'] ) ||
 				! isset( $attributes['tOnDesc'] ) ||
 				! $attributes['tOnDesc'] ||
-				! gutentor_get_term_description( $term, $attributes['tExcerptLen'], $in_words ) ||
+				! $term_desc ||
 				$attributes['tExcerptLen'] <= 0 ) {
 				return $output;
 			}
 			$output .= '<div class="g-d-desc">';
-			$output .= '<p>' . gutentor_get_term_description( $term, $attributes['tExcerptLen'], $in_words ) . '</p>';
+			$output .= '<p>' . esc_html( $term_desc ) . '</p>';
 			$output .= '</div>';
 			return $output;
-
 		}
 
 		/**
@@ -2963,10 +2919,10 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$icon_options        = ( isset( $attributes['tBtnIconOpt'] ) ) ? $attributes['tBtnIconOpt'] : '';
 				$icon_position_class = GutentorButtonOptionsClasses( $icon_options );
 				if ( $icon_position_class && $icon_position_class !== 'gutentor-icon-hide' ) {
-					$icon = ( isset( $attributes['tBtnIcon'] ) && $attributes['tBtnIcon']['value'] ) ? '<i class="gutentor-button-icon ' . $attributes['tBtnIcon']['value'] . '" ></i>' : '';
+					$icon = ( isset( $attributes['tBtnIcon'] ) && $attributes['tBtnIcon']['value'] ) ? '<i class="gutentor-button-icon ' . esc_attr( $attributes['tBtnIcon']['value'] ) . '" ></i>' : '';
 				}
 				$link_options = ( isset( $attributes['tBtnLink'] ) ) ? $attributes['tBtnLink'] : '';
-				$output      .= '<a class="' . gutentor_concat_space( $default_class, $custom_class, GutentorButtonOptionsClasses( $icon_options ) ) . '" ' . apply_filters( 'gutentor_save_link_attr', '', esc_url( get_term_link( $term ) ), $link_options ) . '>' . $icon . '<span>' . esc_html( $attributes['tBtnTxt'] ) . '</span></a>';
+				$output      .= '<a class="' . esc_attr( gutentor_concat_space( $default_class, $custom_class, GutentorButtonOptionsClasses( $icon_options ) ) ) . '" ' . apply_filters( 'gutentor_save_link_attr', '', esc_url( get_term_link( $term ) ), $link_options ) . '>' . $icon . '<span>' . esc_html( $attributes['tBtnTxt'] ) . '</span></a>';
 			}
 			return $output;
 		}
@@ -2990,7 +2946,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$icon_position_class = GutentorButtonOptionsClasses( $icon_options );
 				if ( $icon_position_class == 'gutentor-icon-before' || $icon_position_class == 'gutentor-icon-after' ) {
 					$icon            = ( isset( $attributes['pBtnIcon'] ) && $attributes['pBtnIcon']['value'] ) ? $attributes['pBtnIcon']['value'] : '';
-					$data_icon_attrs = 'data-icon="' . $icon . '"';
+					$data_icon_attrs = 'data-icon="' . esc_attr( $icon ) . '"';
 				}
 				if ( gutentor_is_edd_wishlist_active() ) {
 					remove_action( 'edd_purchase_link_top', 'edd_wl_load_wish_list_link' );
@@ -3016,7 +2972,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 					add_action( 'edd_purchase_link_top', 'edd_favorites_load_link' );
 				}
 
-				$output .= "<div class='" . apply_filters( 'gutentor_post_module_download_button_class', 'g-edd-cart', $post, $attributes ) . "' " . $data_icon_attrs . '>';
+				$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_post_module_download_button_class', 'g-edd-cart', $post, $attributes ) ) . "' " . $data_icon_attrs . '>';
 				$output .= $purchase_link;
 				$output .= '</div>';
 
@@ -3105,7 +3061,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$icon_position_class = GutentorButtonOptionsClasses( $icon_options );
 				if ( $icon_position_class == 'gutentor-icon-before' || $icon_position_class == 'gutentor-icon-after' ) {
 					$icon            = ( isset( $attributes['pFPBtnIcon'] ) && $attributes['pFPBtnIcon']['value'] ) ? $attributes['pFPBtnIcon']['value'] : '';
-					$data_icon_attrs = 'data-icon="' . $icon . '"';
+					$data_icon_attrs = 'data-icon="' . esc_attr( $icon ) . '"';
 				}
 				if ( gutentor_is_edd_wishlist_active() ) {
 					remove_action( 'edd_purchase_link_top', 'edd_wl_load_wish_list_link' );
@@ -3128,7 +3084,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				if ( gutentor_is_edd_favorites_active() ) {
 					add_action( 'edd_purchase_link_top', 'edd_favorites_load_link' );
 				}
-				$output .= "<div class='" . apply_filters( 'gutentor_post_module_download_button_class', 'g-edd-cart', $post, $attributes ) . "' " . $data_icon_attrs . '>';
+				$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_post_module_download_button_class', 'g-edd-cart', $post, $attributes ) ) . "' " . $data_icon_attrs . '>';
 				$output .= $purchase_link;
 				$output .= '</div>';
 
@@ -3158,7 +3114,7 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$target     = ( $openNewTab ) ? 'target="_blank"' : '';
 			}
 			if ( array_key_exists( 'pImgLinkRel', $attributes ) ) {
-				$rel = ( $attributes['pImgLinkRel'] ) ? 'rel="' . $attributes['pImgLinkRel'] . '"' : '';
+				$rel = ( $attributes['pImgLinkRel'] ) ? 'rel="' . esc_attr( $attributes['pImgLinkRel'] ) . '"' : '';
 
 			}
 			if ( array_key_exists( 'pImgClass', $attributes ) ) {
@@ -3172,24 +3128,23 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 			if ( has_post_thumbnail( $post->ID ) ) {
 				$get_thumbnail = get_the_post_thumbnail( $post->ID, $thumbnail_size, '' );
 			} else {
-				$get_thumbnail = '<img src="' . GUTENTOR_URL . 'assets/img/default-image.jpg">';
+				$get_thumbnail = '<img src="' . esc_url( GUTENTOR_URL . 'assets/img/default-image.jpg' ) . '">';
 			}
 			if ( isset( $attributes['pOnFImg'] ) && $attributes['pOnFImg'] ) {
 				$image_output  = '';
 				$image_output .= '<div class="' . gutentor_concat_space( 'gutentor-image-thumb', $overlay ) . '">';
-                $image_output .= $get_thumbnail;
+				$image_output .= $get_thumbnail;
 				$image_output .= '</div>';
 			}
-            if ( $image_link_enable ) {
-                $image_without_link  = $image_output;
-                $image_output  = '';
-                $image_output .= '<a href="' . esc_url( get_the_permalink( $post->ID ) ) . '" class="gutentor-post-image-link ' . gutentor_concat_space( $link_class ) . '" ' . gutentor_concat_space( $target, $rel ) . '>';
-                $image_output .= $image_without_link;
-                $image_output .= '</a>';
-            }
+			if ( $image_link_enable ) {
+				$image_without_link = $image_output;
+				$image_output       = '';
+				$image_output      .= '<a href="' . esc_url( get_the_permalink( $post->ID ) ) . '" class="gutentor-post-image-link ' . gutentor_concat_space( $link_class ) . '" ' . gutentor_concat_space( $target, $rel ) . '>';
+				$image_output      .= $image_without_link;
+				$image_output      .= '</a>';
+			}
 			$image_output = apply_filters( 'gutentor_save_post_module_featured_image_data', $image_output, $post, $attributes );
 			return $image_output;
-
 		}
 
 		/**
@@ -3207,18 +3162,16 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$output .= '<div class="gutentor-edd-price">';
 				if ( edd_has_variable_prices( $post->ID ) ) {
 					$output .= edd_price_range( $post->ID );
-				} else {
-					if ( edd_get_download_price( $post->ID ) == 0 ) {
-						if ( isset( $attributes['wooOnFreeTxt'] ) && $attributes['wooOnFreeTxt'] ) {
-							$output .= '<div class="edd_price">';
-							$output .= isset( $attributes['wooFreeTxt'] ) ? $attributes['wooFreeTxt'] : '';
-							$output .= '</div>';
-						} else {
-							$output .= edd_price( $post->ID, false );
-						}
+				} elseif ( edd_get_download_price( $post->ID ) == 0 ) {
+					if ( isset( $attributes['wooOnFreeTxt'] ) && $attributes['wooOnFreeTxt'] ) {
+						$output .= '<div class="edd_price">';
+						$output .= isset( $attributes['wooFreeTxt'] ) ? esc_html( $attributes['wooFreeTxt'] ) : '';
+						$output .= '</div>';
 					} else {
 						$output .= edd_price( $post->ID, false );
 					}
+				} else {
+					$output .= edd_price( $post->ID, false );
 				}
 				$output .= '</div>';
 			}
@@ -3240,23 +3193,20 @@ if ( ! class_exists( 'Gutentor_Query_Elements' ) ) {
 				$output .= '<div class="gutentor-fp-edd-price">';
 				if ( edd_has_variable_prices( $post->ID ) ) {
 					$output .= edd_price_range( $post->ID );
-				} else {
-					if ( edd_get_download_price( $post->ID ) == 0 ) {
-						if ( isset( $attributes['fpWooOnFreeTxt'] ) && $attributes['fpWooOnFreeTxt'] ) {
-							$output .= '<div class="edd_price">';
-							$output .= isset( $attributes['fpWooFreeTxt'] ) ? $attributes['fpWooFreeTxt'] : '';
-							$output .= '</div>';
-						} else {
-							$output .= edd_price( $post->ID, false );
-						}
+				} elseif ( edd_get_download_price( $post->ID ) == 0 ) {
+					if ( isset( $attributes['fpWooOnFreeTxt'] ) && $attributes['fpWooOnFreeTxt'] ) {
+						$output .= '<div class="edd_price">';
+						$output .= isset( $attributes['fpWooFreeTxt'] ) ? esc_html( $attributes['fpWooFreeTxt'] ) : '';
+						$output .= '</div>';
 					} else {
 						$output .= edd_price( $post->ID, false );
 					}
+				} else {
+					$output .= edd_price( $post->ID, false );
 				}
 				$output .= '</div>';
 			}
 			return $output;
 		}
-
 	}
 }

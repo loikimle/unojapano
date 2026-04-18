@@ -51,9 +51,11 @@ if ( ! class_exists( 'Gutentor_Advanced_Import' ) ) {
 						},
 						'args'                => array(
 							'reset' => array(
-								'type'        => 'boolean',
-								'required'    => false,
-								'description' => __( 'Reset True or False', 'gutentor' ),
+								'type'              => 'boolean',
+								'required'          => false,
+								'description'       => __( 'Reset True or False', 'gutentor' ),
+								'sanitize_callback' => array( $this, 'sanitize_boolean_param' ),
+								'validate_callback' => array( $this, 'validate_boolean_param' ),
 							),
 						),
 
@@ -73,15 +75,78 @@ if ( ! class_exists( 'Gutentor_Advanced_Import' ) ) {
 						},
 						'args'                => array(
 							'url' => array(
-								'type'        => 'string',
-								'required'    => true,
-								'description' => __( 'URL of the JSON file.', 'gutentor' ),
+								'type'              => 'string',
+								'required'          => true,
+								'description'       => __( 'URL of the JSON file.', 'gutentor' ),
+								'sanitize_callback' => array( $this, 'sanitize_url_param' ),
+								'validate_callback' => array( $this, 'validate_import_url_param' ),
 							),
 						),
 					),
 				)
 			);
+		}
 
+		/**
+		 * Sanitize boolean param.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return bool
+		 */
+		public function sanitize_boolean_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			return rest_sanitize_boolean( $value );
+		}
+
+		/**
+		 * Validate boolean param.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return bool
+		 */
+		public function validate_boolean_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			return rest_is_boolean( $value );
+		}
+
+		/**
+		 * Sanitize URL param.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return string
+		 */
+		public function sanitize_url_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			return esc_url_raw( (string) $value );
+		}
+
+		/**
+		 * Validate import URL against unsafe targets.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return bool
+		 */
+		public function validate_import_url_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( ! is_string( $value ) || ! gutentor_is_valid_url( $value ) ) {
+				return false;
+			}
+
+			$host = wp_parse_url( $value, PHP_URL_HOST );
+			if ( empty( $host ) ) {
+				return false;
+			}
+
+			$host = strtolower( $host );
+			if ( in_array( $host, array( 'localhost', '127.0.0.1', '::1' ), true ) ) {
+				return false;
+			}
+
+			if ( filter_var( $host, FILTER_VALIDATE_IP ) && ! filter_var( $host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
+				return false;
+			}
+
+			return true;
 		}
 
 		/**
@@ -267,7 +332,7 @@ if ( ! class_exists( 'Gutentor_Advanced_Import' ) ) {
 						$q_list['post_content']   = $p_list['content'] ? $p_list['content'] : '';
 						$q_list['type']           = 'pattern';
 						$q_list['keywords']       = explode( ' ', $q_list['title'] );
-						$q_list['categories']     = $p_list['categories'] ? $p_list['categories'] : array();
+						$q_list['categories']     = isset( $p_list['categories'] ) ? $p_list['categories'] : array();
 						$q_list['template_url']   = '';
 						$q_list['screenshot_url'] = '';
 						$q_list['demo_url']       = '';
@@ -277,8 +342,10 @@ if ( ! class_exists( 'Gutentor_Advanced_Import' ) ) {
 				}
 			}
 
-			return array_merge_recursive( $templates_list, $d_list );
-
+			if ( is_array( $templates_list ) ) {
+				return array_merge_recursive( $templates_list, $d_list );
+			}
+			return $d_list;
 		}
 
 		/**
@@ -291,15 +358,15 @@ if ( ! class_exists( 'Gutentor_Advanced_Import' ) ) {
 		 * @return object
 		 */
 		public static function get_instance() {
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
 		}
 

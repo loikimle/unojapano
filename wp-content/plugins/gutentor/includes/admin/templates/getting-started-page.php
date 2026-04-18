@@ -23,7 +23,7 @@
 		<section>
 			<div class="container">
 				<div class="col col-image">
-					<img src="<?php echo GUTENTOR_URL . 'assets/img/admin/page-post.png'; ?>">
+					<img src="<?php echo esc_url( GUTENTOR_URL . 'assets/img/admin/page-post.png' ); ?>">
 				</div>
 				<div class="col">
 					<div class="gutentor-get-started-content">
@@ -47,7 +47,7 @@
 		<section>
 			<div class="container">
 				<div class="col col-image">
-					<img src="<?php echo GUTENTOR_URL . 'assets/img/admin/template-library.png'; ?>">
+					<img src="<?php echo esc_url( GUTENTOR_URL . 'assets/img/admin/template-library.png' ); ?>">
 				</div>
 				<div class="col">
 					<div class="gutentor-get-started-content">
@@ -78,12 +78,21 @@
 		<section>
 			<div class="container">
 				<div class="col col-image">
-					<img src="<?php echo GUTENTOR_URL . 'assets/img/admin/start-designing.png'; ?>" />
+					<img src="<?php echo esc_url( GUTENTOR_URL . 'assets/img/admin/start-designing.png' ); ?>" />
 				</div>
 				<div class="col">
 					<div class="gutentor-get-started-content">
 						<h3><?php esc_html_e( '3. Start Designing', 'gutentor' ); ?></h3>
-						<p><?php echo sprintf( esc_html__( 'Gutentor blocks are divided into element,module,post,term and widget. Visit %1$s Dashboard: Gutentor=>Blocks %2$s indepth understanding of gutentor blocks classification.', 'gutentor' ), '<strong>', '</strong>' ); ?></p>
+						<p>
+							<?php
+							printf(
+								// translators: %1$s is the HTML opening tag for a strong element, %2$s is the closing tag for a strong element.
+								esc_html__( 'Gutentor blocks are divided into element,module,post,term and widget. Visit %1$s Dashboard: Gutentor=>Blocks %2$s indepth understanding of gutentor blocks classification.', 'gutentor' ),
+								'<strong>',
+								'</strong>'
+							);
+							?>
+						</p>
 						<p><?php esc_html_e( 'After Adding a Block (element/module/post/term) in the editor, It is ready to Design', 'gutentor' ); ?></p>
 						<ul>
 							<li><strong><?php esc_html_e( 'General: ', 'gutentor' ); ?></strong><?php esc_html_e( 'It consists set of options to design blocks. e.g color, typography, margin, padding and so on.', 'gutentor' ); ?></li>
@@ -97,13 +106,22 @@
 		<section>
 			<div class="container">
 				<div class="col col-image">
-					<img src="<?php echo GUTENTOR_URL . 'assets/img/admin/widget-designing.png'; ?>">
+					<img src="<?php echo esc_url( GUTENTOR_URL . 'assets/img/admin/widget-designing.png' ); ?>">
 				</div>
 				<div class="col">
 					<div class="gutentor-get-started-content">
 						<h3><?php esc_html_e( '4. Designing Widget', 'gutentor' ); ?></h3>
 						<p><?php esc_html_e( 'After Adding a Block in the editor, It is ready to Design', 'gutentor' ); ?></p>
-						<p><?php echo sprintf( esc_html__( 'At right sidebar of Edit screen, there are Document and Block Tabs, under %1$s Block Tab %2$s, you will find setting to respective block.', 'gutentor' ), '<strong>', '</strong>' ); ?></p>
+						<p>
+							<?php
+							printf(
+								// translators: %1$s is the HTML opening tag for a strong element, %2$s is the closing tag for a strong element.
+								esc_html__( 'At right sidebar of Edit screen, there are Document and Block Tabs, under %1$s Block Tab %2$s, you will find setting to respective block.', 'gutentor' ),
+								'<strong>',
+								'</strong>'
+							);
+							?>
+						</p>
 						<ul>
 							<li>
 								<strong><?php esc_html_e( 'General', 'gutentor' ); ?></strong>

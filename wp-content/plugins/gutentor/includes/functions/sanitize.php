@@ -133,3 +133,196 @@ if ( ! function_exists( 'gutentor_sanitize_array' ) ) :
 	}
 endif;
 
+
+/* Validation */
+if ( ! function_exists( 'gutentor_get_allowed_text_tags' ) ) :
+	/**
+	 * Get valid text tags
+	 *
+	 * @see src\global-components\i18n\options.js
+	 *
+	 * @since 3.3.6
+	 * @access public
+	 *
+	 * @return array valid text tags.
+	 */
+	function gutentor_get_allowed_text_tags() {
+		return apply_filters( 'gutentor_get_allowed_text_tags', array( 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'div', 'span' ) );
+	}
+endif;
+
+if ( ! function_exists( 'gutentor_get_title_tag' ) ) :
+	/**
+	 * Get valid title tag
+	 *
+	 * @since 3.3.6
+	 * @access public
+	 *
+	 * @param string $title_tag Title tag.
+	 * @return string valid title tag.
+	 */
+	function gutentor_get_title_tag( $title_tag ) {
+		$allowed_tags = gutentor_get_allowed_text_tags();
+		if ( in_array( $title_tag, $allowed_tags, true ) ) {
+			return $title_tag;
+		} else {
+			return 'h3';
+		}
+	}
+endif;
+
+if ( ! function_exists( 'gutentor_get_allowed_module_tags' ) ) :
+	/**
+	 * Get valid module tags
+	 *
+	 * @see src\global-components\i18n\options.js
+	 *
+	 * @since 3.3.6
+	 * @access public
+	 *
+	 * @return array valid module tags.
+	 */
+	function gutentor_get_allowed_module_tags() {
+		return apply_filters( 'gutentor_get_allowed_module_tags', array( 'section', 'div', 'header', 'footer', 'main', 'article', 'aside' ) );
+	}
+endif;
+
+if ( ! function_exists( 'gutentor_get_module_tag' ) ) :
+	/**
+	 * Get valid module tag
+	 *
+	 * @since 3.3.6
+	 * @access public
+	 *
+	 * @param string $tag Module tag.
+	 * @return string valid module tag.
+	 */
+	function gutentor_get_module_tag( $tag ) {
+		$allowed_tags = gutentor_get_allowed_module_tags();
+		if ( in_array( $tag, $allowed_tags, true ) ) {
+			return $tag;
+		} else {
+			return 'div';
+		}
+	}
+endif;
+
+
+
+if ( ! function_exists( 'gutentor_esc_svg' ) ) :
+
+	/**
+	 * Escape for SVG HTML
+	 *
+	 * @since 3.4.4
+	 * @param string $svg_html HTML.
+	 * @return string escaped HTML
+	 * @author codersantosh <codersantosh@gmail.com>
+	 */
+	function gutentor_esc_svg( $svg_html ) {
+
+		if ( function_exists( 'gutentor_get_allowed_html' ) ) {
+			$global_allowed_html = gutentor_get_allowed_html();
+			$svg_tags            = array( 'svg', 'path', 'lineargradient', 'stop', 'g', 'text', 'tspan', 'polygon', 'rect', 'circle', 'defs', 'use', 'symbol' );
+			$svg_allowed_html    = array();
+
+			foreach ( $svg_tags as $svg_tag ) {
+				if ( isset( $global_allowed_html[ $svg_tag ] ) && is_array( $global_allowed_html[ $svg_tag ] ) ) {
+					$svg_allowed_html[ $svg_tag ] = $global_allowed_html[ $svg_tag ];
+				}
+			}
+
+			if ( ! empty( $svg_allowed_html ) ) {
+				return wp_kses( $svg_html, $svg_allowed_html );
+			}
+		}
+
+		$allowed_html = array(
+			'svg'            => array(
+				'xmlns'               => array(),
+				'fill'                => array(),
+				'viewbox'             => array(),
+				'role'                => array(),
+				'aria-hidden'         => array(),
+				'focusable'           => array(),
+				'height'              => array(),
+				'width'               => array(),
+				'xmlns:xlink'         => array(),
+				'id'                  => array(),
+				'class'               => array(),
+				'style'               => array(),
+				'transform'           => array(),
+				'opacity'             => array(),
+				'preserveaspectratio' => array(),
+			),
+			'path'           => array(
+				'd'               => array(),
+				'fill'            => array(),
+				'stroke'          => array(),
+				'stroke-width'    => array(),
+				'stroke-linecap'  => array(),
+				'stroke-linejoin' => array(),
+				'id'              => array(),
+				'class'           => array(),
+				'style'           => array(),
+				'transform'       => array(),
+				'opacity'         => array(),
+			),
+			'lineargradient' => array(
+				'gradientunits'     => array(),
+				'gradienttransform' => array(),
+				'spreadmethod'      => array(),
+				'x1'                => array(),
+				'y1'                => array(),
+				'x2'                => array(),
+				'y2'                => array(),
+				'id'                => array(),
+				'class'             => array(),
+				'style'             => array(),
+				'transform'         => array(),
+				'opacity'           => array(),
+			),
+			'stop'           => array(
+				'offset'       => array(),
+				'stop-color'   => array(),
+				'stop-opacity' => array(),
+				'id'           => array(),
+				'class'        => array(),
+				'style'        => array(),
+				'transform'    => array(),
+				'opacity'      => array(),
+			),
+			'g'              => array(
+				'id'        => array(),
+				'class'     => array(),
+				'style'     => array(),
+				'transform' => array(),
+				'opacity'   => array(),
+			),
+			'text'           => array(
+				'x'           => array(),
+				'y'           => array(),
+				'dy'          => array(),
+				'text-anchor' => array(),
+				'font-family' => array(),
+				'font-size'   => array(),
+				'font-weight' => array(),
+				'fill'        => array(),
+				'id'          => array(),
+				'class'       => array(),
+				'style'       => array(),
+				'transform'   => array(),
+				'opacity'     => array(),
+			),
+			'tspan'          => array(
+				'id'        => array(),
+				'class'     => array(),
+				'style'     => array(),
+				'transform' => array(),
+				'opacity'   => array(),
+			),
+		);
+
+		return wp_kses( $svg_html, $allowed_html );
+	}
+endif;

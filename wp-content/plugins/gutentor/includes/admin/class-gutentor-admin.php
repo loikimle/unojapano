@@ -24,7 +24,9 @@ if ( ! class_exists( 'Gutentor_Admin' ) ) {
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts_js' ) );
-			add_action( 'enqueue_block_editor_assets', array( $this, 'admin_editor_scripts' ), '99' );
+			add_action( 'enqueue_block_editor_assets', array( $this, 'admin_editor_scripts' ), 99 );
+
+			add_action( 'plugin_action_links_gutentor/gutentor.php', array( $this, 'add_plugin_links' ), 10, 4 );
 
 			/*Category/Taxonomy Term Meta*/
 			$this->tax_in_color = gutentor_get_options( 'tax-in-color' );
@@ -59,7 +61,7 @@ if ( ! class_exists( 'Gutentor_Admin' ) ) {
 			if ( get_option( '__gutentor_do_redirect' ) ) {
 				update_option( '__gutentor_do_redirect', false );
 				if ( ! is_multisite() ) {
-					exit( wp_redirect( admin_url( 'admin.php?page=' . self::$page_slug ) ) );
+					exit( wp_redirect( esc_url( admin_url( 'admin.php?page=' . self::$page_slug ) ) ) );
 				}
 			}
 		}
@@ -195,7 +197,6 @@ if ( ! class_exists( 'Gutentor_Admin' ) ) {
 				),
 			);
 			wp_localize_script( 'gutentor-admin-build', 'gutentor', $localize );
-
 		}
 
 
@@ -220,6 +221,7 @@ if ( ! class_exists( 'Gutentor_Admin' ) ) {
 			) {
 				return;
 			}
+
 			/*
 			---------------------------------------------*
 			* Register Style for Admin Page               *
@@ -289,7 +291,6 @@ if ( ! class_exists( 'Gutentor_Admin' ) ) {
 				'status' => self::block_action(),
 			);
 			wp_localize_script( 'gutentor-block-deactivate', 'GUTENTOR_BLOCKS', $localize );
-
 		}
 
 		/**
@@ -397,7 +398,7 @@ if ( ! class_exists( 'Gutentor_Admin' ) ) {
 			// Update blocks.
 			self::block_action( 'update', $blocks );
 
-			echo $block_id;
+			echo esc_html( $block_id );
 
 			die();
 		}
@@ -816,7 +817,6 @@ if ( ! class_exists( 'Gutentor_Admin' ) ) {
 					<td class="form-field gutentor-fields">
 						<label for="gutentor_meta[bg-color]"><?php esc_html_e( 'Normal', 'gutentor' ); ?></label>
 						<input type="text" value="<?php echo esc_attr( $bg ); ?>" id="gutentor_meta[bg-color]" name="gutentor_meta[bg-color]" class="gutentor-color-picker" data-rgba="1"/>
-
 					</td>
 				</tr>
 				<tr class="form-field gutentor-fields">
@@ -884,7 +884,7 @@ if ( ! class_exists( 'Gutentor_Admin' ) ) {
 							$output .= "<a href='#' class='button button-primary gutentor-img-uploader-open' data-button-text='" . esc_attr( $button_text ) . "' data-title='" . esc_attr( $upload_title ) . "'>" . esc_html( $upload_title ) . '</a>';
 
 							$output .= '<input type="hidden" value="' . esc_attr( $f_image ) . '" id="gutentor_meta[featured-image]" name="gutentor_meta[featured-image]" />';
-							echo $output;
+							echo $output;//phpcs:ignore All output is escaped before
 							?>
 						</div>
 					</td>
@@ -941,6 +941,29 @@ if ( ! class_exists( 'Gutentor_Admin' ) ) {
 				$args['show_in_rest'] = true;
 			}
 			return $args;
+		}
+
+		/**
+		 * Add plugin menu items.
+		 *
+		 * @access public
+		 *
+		 * @since 1.0.0
+		 * @param string[] $actions     An array of plugin action links. By default this can include
+		 *                              'activate', 'deactivate', and 'delete'. With Multisite active
+		 *                              this can also include 'network_active' and 'network_only' items.
+		 * @param string   $plugin_file Path to the plugin file relative to the plugins directory.
+		 * @param array    $plugin_data An array of plugin data. See get_plugin_data()
+		 *                              and the {@see 'plugin_row_meta'} filter for the list
+		 *                              of possible values.
+		 * @param string   $context     The plugin context. By default this can include 'all',
+		 *                              'active', 'inactive', 'recently_activated', 'upgrade',
+		 *                              'mustuse', 'dropins', and 'search'.
+		 * @return array settings schema for this plugin.
+		 */
+		public function add_plugin_links( $actions, $plugin_file, $plugin_data, $context ) {
+			$actions[] = '<a href="' . esc_url( menu_page_url( 'gutentor', false ) ) . '">' . esc_html__( 'Getting Started', 'gutentor' ) . '</a>';
+			return $actions;
 		}
 	}
 }

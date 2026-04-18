@@ -52,8 +52,8 @@ if ( ! class_exists( 'Gutentor_WP_Block_Widget' ) ) {
 
 			printf(
 				'<h3><a href="%1$s" target="_blank">%2$s</a></h3>',
-				admin_url( 'edit.php?post_type=wp_block' ),
-				__( 'Go to here to add Block', 'gutentor' )
+				esc_url( admin_url( 'edit.php?post_type=wp_block' ) ),
+				esc_html__( 'Go to here to add Block', 'gutentor' )
 			);
 			?>
 			<p>
@@ -62,26 +62,26 @@ if ( ! class_exists( 'Gutentor_WP_Block_Widget' ) ) {
 			</p>
 			<?php
 			$item_arg   = array(
-				'post_type' => 'wp_block',
-                'posts_per_page' => -1,
-                'post_status' => 'publish',
-				'order'     => 'DESC',
+				'post_type'      => 'wp_block',
+				'posts_per_page' => -1,
+				'post_status'    => 'publish',
+				'order'          => 'DESC',
 			);
-			$item_query = new WP_Query( $item_arg );
+			$item_query = new WP_Query( gutentor_get_query( $item_arg ) );
 			if ( $item_query->have_posts() ) :
 				printf(
 					'<p><label for="%1$s">%2$s</label><br/><small>%4$s</small>' .
 					'<select class="widefat" id="%1$s" name="%3$s">',
-					$this->get_field_id( 'wp_block_id' ),
-					__( 'Select Block:', 'gutentor' ),
-					$this->get_field_name( 'wp_block_id' ),
+					esc_attr( $this->get_field_id( 'wp_block_id' ) ),
+					esc_html__( 'Select Block:', 'gutentor' ),
+					esc_attr( $this->get_field_name( 'wp_block_id' ) ),
 					esc_html__( 'Select block and its content will display in the frontend.', 'gutentor' )
 				);
 				printf(
 					'<option value="%1$s" %2$s>%3$s</option>',
 					0,
 					selected( 0, $wp_block_id, false ),
-					__( 'Select Block', 'gutentor' )
+					esc_html__( 'Select Block', 'gutentor' )
 				);
 				while ( $item_query->have_posts() ) :
 					$item_query->the_post();
@@ -89,7 +89,7 @@ if ( ! class_exists( 'Gutentor_WP_Block_Widget' ) ) {
 						'<option value="%1$s" %2$s>%3$s</option>',
 						absint( get_the_ID() ),
 						selected( get_the_ID(), $wp_block_id, false ),
-						get_the_title()
+						esc_html( get_the_title() )
 					);
 				endwhile;
 				wp_reset_postdata();
@@ -142,7 +142,7 @@ if ( ! class_exists( 'Gutentor_WP_Block_Widget' ) ) {
 					'p'         => $wp_block_id,
 					'post_type' => 'wp_block',
 				);
-				$g_query = new WP_Query( $g_args );
+				$g_query = new WP_Query( gutentor_get_query( $g_args ) );
 				/*The Loop*/
 				if ( $g_query->have_posts() ) :
 					echo '<div class="gutentor-widget gutentor-wp-block-widget">';
@@ -167,11 +167,11 @@ if ( ! class_exists( 'Gutentor_WP_Block_Widget' ) ) {
 						if ( ! $already_used_blocks ) {
 							array_push( $this->used_blocks, get_the_ID() );
 
-                            $css_info = get_post_meta( get_the_ID(), 'gutentor_css_info', true );
-                            if ( isset( $css_info['blocks'] ) && is_array( $css_info['blocks'] ) ) {
-                                self::$unique_blocks = array_unique( array_merge( self::$unique_blocks, $css_info['blocks'] ) );
-                            }
-                        }
+							$css_info = get_post_meta( get_the_ID(), 'gutentor_css_info', true );
+							if ( isset( $css_info['blocks'] ) && is_array( $css_info['blocks'] ) ) {
+								self::$unique_blocks = array_unique( array_merge( self::$unique_blocks, $css_info['blocks'] ) );
+							}
+						}
 
 						the_content();
 					endwhile;
@@ -204,7 +204,7 @@ if ( ! class_exists( 'Gutentor_WP_Block_Widget' ) ) {
 							'p'         => $wp_block_id,
 							'post_type' => 'wp_block',
 						);
-						$g_query     = new WP_Query( $g_args );
+						$g_query     = new WP_Query( gutentor_get_query( $g_args ) );
 						/*The Loop*/
 						if ( $g_query->have_posts() ) :
 							while ( $g_query->have_posts() ) :
@@ -254,11 +254,6 @@ if ( ! class_exists( 'Gutentor_WP_Block_Widget' ) ) {
 		 * @return void
 		 */
 		public function add_missing_assets() {
-
-			/*Missing CSS is only needed if optimized css is loaded*/
-			if ( ! gutentor_get_options( 'load-optimized-css' ) ) {
-				return;
-			}
 
 			$diff_blocks     = array_diff( self::$unique_blocks, gutentor_dynamic_css()->get_unique_blocks() );
 			$block_css_files = array();
@@ -348,20 +343,20 @@ if ( ! class_exists( 'Gutentor_WP_Block_Widget' ) ) {
 				$this->enqueue_missing_assets( $block_css_files );
 			}
 		}
-        public function add_used_blocks_css(){
-		    if( !empty($this->used_blocks )){
-		        foreach ( $this->used_blocks as $used_block ){
-                    $style = get_post_meta( $used_block, 'gutentor_dynamic_css', true );
 
-                    if ( get_post_meta( $used_block, 'gutentor_gfont_url', true ) ) {
-                        $fonts_url = get_post_meta( $used_block, 'gutentor_gfont_url', true );
-                        echo '<link id="gutentor-google-fonts-' . esc_attr( $used_block ) . '" href="' . esc_url( $fonts_url ) . '" rel="stylesheet" />';
-                    }
-                    echo "<!-- Dynamic CSS -->\n<style type=\"text/css\" id='gutentor-used-block-$used_block'>\n" . wp_strip_all_tags( $style ) . "\n</style>";
+		public function add_used_blocks_css() {
+			if ( ! empty( $this->used_blocks ) ) {
+				foreach ( $this->used_blocks as $used_block ) {
+					$style = get_post_meta( $used_block, 'gutentor_dynamic_css', true );
 
-                }
-            }
+					if ( get_post_meta( $used_block, 'gutentor_gfont_url', true ) ) {
+						$fonts_url = get_post_meta( $used_block, 'gutentor_gfont_url', true );
+						echo '<link id="gutentor-google-fonts-' . esc_attr( $used_block ) . '" href="' . esc_url( $fonts_url ) . '" rel="stylesheet" />';
+					}
+					echo "<!-- Dynamic CSS -->\n<style type=\"text/css\" id='gutentor-used-block-$used_block'>\n" . wp_strip_all_tags( $style ) . "\n</style>";
 
-        }
+				}
+			}
+		}
 	} // Class Gutentor_WP_Block_Widget ends here
 }

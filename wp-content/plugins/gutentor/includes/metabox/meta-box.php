@@ -26,15 +26,15 @@ if ( ! class_exists( 'Gutentor_Custom_Meta_Box' ) ) :
 		 */
 		public static function instance() {
 
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new Gutentor_Custom_Meta_Box();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
 		}
 
@@ -54,7 +54,6 @@ if ( ! class_exists( 'Gutentor_Custom_Meta_Box' ) ) :
 			}
 
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_meta_box_script' ) );
-
 		}
 
 		/**
@@ -71,16 +70,15 @@ if ( ! class_exists( 'Gutentor_Custom_Meta_Box' ) ) :
 		 * Meta box initialization.
 		 */
 		public function init_metabox() {
-            $options = gutentor_get_options();
-            $value   = false;
-            if ( isset( $options['edd-demo-url'] ) && ! empty( $options['edd-demo-url'] ) ) {
-                $value = $options['edd-demo-url'];
-            }
-            if( $value){
-                add_action( 'add_meta_boxes', array( $this, 'add_metabox' ) );
-                add_action( 'save_post', array( $this, 'save_metabox' ), 10, 2 );
-            }
-
+			$options = gutentor_get_options();
+			$value   = false;
+			if ( isset( $options['edd-demo-url'] ) && ! empty( $options['edd-demo-url'] ) ) {
+				$value = $options['edd-demo-url'];
+			}
+			if ( $value ) {
+				add_action( 'add_meta_boxes', array( $this, 'add_metabox' ) );
+				add_action( 'save_post', array( $this, 'save_metabox' ), 10, 2 );
+			}
 		}
 
 		/**
@@ -103,7 +101,7 @@ if ( ! class_exists( 'Gutentor_Custom_Meta_Box' ) ) :
 		public function render_metabox( $post ) {
 
 			$gutentor_edd_demo_url_value = get_post_meta( $post->ID, 'gutentor_edd_demo_url', true );
-			// true ensures you get just one value instead of an array
+			// true ensures you get just one value instead of an array.
 			wp_nonce_field( basename( __FILE__ ), 'gutentor_meta_nonce' );
 			?>  
 			<div class="gutentor-custom-meta components-base-control">
@@ -125,9 +123,9 @@ if ( ! class_exists( 'Gutentor_Custom_Meta_Box' ) ) :
 		public function save_metabox( $post_id, $post ) {
 
 			/*
-			  * A Guide to Writing Secure Themes – Part 4: Securing Post Meta
-			  *https://make.wordpress.org/themes/2015/06/09/a-guide-to-writing-secure-themes-part-4-securing-post-meta/
-			  * */
+			 * A Guide to Writing Secure Themes – Part 4: Securing Post Meta
+			 *https://make.wordpress.org/themes/2015/06/09/a-guide-to-writing-secure-themes-part-4-securing-post-meta/
+			 * */
 			if (
 				! isset( $_POST['gutentor_meta_nonce'] ) ||
 				! wp_verify_nonce( $_POST['gutentor_meta_nonce'], basename( __FILE__ ) ) || /*Protecting against unwanted requests*/
@@ -145,10 +143,10 @@ if ( ! class_exists( 'Gutentor_Custom_Meta_Box' ) ) :
 			}
 
 			// Execute this saving function
-			// site layout
+			// site layout.
 			if ( isset( $_POST['gutentor_edd_demo_url'] ) ) {
 				$old = get_post_meta( $post_id, 'gutentor_edd_demo_url', true );
-				$new = esc_attr( $_POST['gutentor_edd_demo_url'] );
+				$new = esc_url_raw( $_POST['gutentor_edd_demo_url'] );
 				if ( $new && $new != $old ) {
 					update_post_meta( $post_id, 'gutentor_edd_demo_url', $new );
 				} elseif ( '' == $new && $old ) {

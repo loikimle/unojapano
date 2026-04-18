@@ -34,17 +34,16 @@ if ( ! class_exists( 'Gutentor_T1' ) ) {
 		 */
 		public static function get_instance() {
 
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
-
 		}
 
 		/**
@@ -149,35 +148,35 @@ if ( ! class_exists( 'Gutentor_T1' ) ) {
 					'default' => array(
 						array(
 							'itemValue' => 'featured-image',
-							'itemLabel' => __( 'Featured Image' ),
+							'itemLabel' => __( 'Featured Image', 'gutentor' ),
 						),
 						array(
 							'itemValue' => 'title',
-							'itemLabel' => __( 'Title' ),
+							'itemLabel' => __( 'Title', 'gutentor' ),
 						),
 						array(
 							'itemValue' => 'count',
-							'itemLabel' => __( 'Count' ),
+							'itemLabel' => __( 'Count', 'gutentor' ),
 						),
 						array(
 							'itemValue' => 'description',
-							'itemLabel' => __( 'Description/Excerpt' ),
+							'itemLabel' => __( 'Description/Excerpt', 'gutentor' ),
 						),
 						array(
 							'itemValue' => 'button',
-							'itemLabel' => __( 'Button' ),
+							'itemLabel' => __( 'Button', 'gutentor' ),
 						),
 					),
 
 				),
-                'tTypeTermQuery' => array(
-                    'type' => 'string',
-                    'default' => 'default',
-                ),
-                'tTermQuery' => array(
-                    'type' => 'string',
-                    'default' => '',
-                ),
+				'tTypeTermQuery'     => array(
+					'type'    => 'string',
+					'default' => 'default',
+				),
+				'tTermQuery'         => array(
+					'type'    => 'string',
+					'default' => '',
+				),
 
 			);
 			$term_partial_attr = array_merge_recursive( $term_attr, $this->get_module_common_attrs() );
@@ -197,10 +196,10 @@ if ( ! class_exists( 'Gutentor_T1' ) ) {
 		 */
 		public function render_callback( $attributes, $content ) {
 
-			$blockID = isset( $attributes['mID'] ) ? $attributes['mID'] : $attributes['gID'];
-			$gID     = isset( $attributes['gID'] ) ? $attributes['gID'] : '';
-            $tTypeTermQuery = isset($attributes['tTypeTermQuery']) ? $attributes['tTypeTermQuery'] : 'default';
-            $output  = '';
+			$blockID        = isset( $attributes['mID'] ) ? $attributes['mID'] : $attributes['gID'];
+			$gID            = isset( $attributes['gID'] ) ? $attributes['gID'] : '';
+			$tTypeTermQuery = isset( $attributes['tTypeTermQuery'] ) ? $attributes['tTypeTermQuery'] : 'default';
+			$output         = '';
 
 			$default_class = gutentor_block_add_default_classes( 'gutentor-t1', $attributes );
 
@@ -219,51 +218,53 @@ if ( ! class_exists( 'Gutentor_T1' ) ) {
 			/*
 			Query
 			*/
-            $term_query_args = array(
-                'taxonomy' => isset( $attributes['t1Taxonomy'] ) ? $attributes['t1Taxonomy'] : 'category',
-            );
-            if($tTypeTermQuery === 'default'){
-                /*query args*/
-                $term_query_args = array(
-                    'taxonomy' => isset( $attributes['t1Taxonomy'] ) ? $attributes['t1Taxonomy'] : 'category',
-                    'orderby' => isset( $attributes['t1OrderBy'] ) ? $attributes['t1OrderBy'] : 'date',
-                    'order' => isset( $attributes['t1Order'] ) ? $attributes['t1Order'] : 'desc',
-                    'hide_empty' => isset( $attributes['t1HideEmpty'] ) ? $attributes['t1HideEmpty'] : true,
-                    'number' => isset( $attributes['t1Number'] ) ? $attributes['t1Number'] : 6,
-                );
-                if (isset($attributes['t1IncludeTerms']) && !empty($attributes['t1IncludeTerms'])) {
-                    $term_query_args['include'] = explode( ',', $attributes['t1IncludeTerms'] );
-                }
-                if (isset($attributes['t1ExcludeTerms']) && !empty($attributes['t1ExcludeTerms'])) {
-                    $term_query_args['exclude'] = explode( ',', $attributes['t1ExcludeTerms'] );
-                }
-            }
-            if($tTypeTermQuery === 'custom'){
-                $tTermQueryJson = isset($attributes['tTermQuery']) ? $attributes['tTermQuery'] : false;
-                $tTermQueryData = json_decode($tTermQueryJson,true);
-                $term_query_args = array_merge($term_query_args,$tTermQueryData);
-                $term_query_args = gutentor_get_term_query($term_query_args);
-            }
-			$terms      = get_terms($term_query_args);
+			$term_query_args = array(
+				'taxonomy' => isset( $attributes['t1Taxonomy'] ) ? $attributes['t1Taxonomy'] : 'category',
+			);
+			if ( $tTypeTermQuery === 'default' ) {
+				/*query args*/
+				$term_query_args = array(
+					'taxonomy'   => isset( $attributes['t1Taxonomy'] ) ? $attributes['t1Taxonomy'] : 'category',
+					'orderby'    => isset( $attributes['t1OrderBy'] ) ? $attributes['t1OrderBy'] : 'date',
+					'order'      => isset( $attributes['t1Order'] ) ? $attributes['t1Order'] : 'desc',
+					'hide_empty' => isset( $attributes['t1HideEmpty'] ) ? $attributes['t1HideEmpty'] : true,
+					'number'     => isset( $attributes['t1Number'] ) ? $attributes['t1Number'] : 6,
+				);
+				if ( isset( $attributes['t1IncludeTerms'] ) && ! empty( $attributes['t1IncludeTerms'] ) ) {
+					$term_query_args['include'] = explode( ',', $attributes['t1IncludeTerms'] );
+				}
+				if ( isset( $attributes['t1ExcludeTerms'] ) && ! empty( $attributes['t1ExcludeTerms'] ) ) {
+					$term_query_args['exclude'] = explode( ',', $attributes['t1ExcludeTerms'] );
+				}
+			}
+			if ( $tTypeTermQuery === 'custom' ) {
+				$tTermQueryJson  = isset( $attributes['tTermQuery'] ) ? $attributes['tTermQuery'] : false;
+				$tTermQueryData  = json_decode( $tTermQueryJson, true );
+				$term_query_args = array_merge( $term_query_args, $tTermQueryData );
+			}
+
+			$terms = get_terms( gutentor_get_term_query( $term_query_args ) );
 			if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-				$output .= '<' . $tag . ' id="' . esc_attr( $blockID ) . '" class="' . apply_filters( 'gutentor_term_module_main_wrap_class', gutentor_concat_space( 'section-' . $gID, 'gutentor-module', 'gtf-module', 'gutentor-term-module', 'gutentor-term-module-t1', $align, $termStyle, $tRevContClass, $enabledWidth, $template, $default_class ), $attributes ) . '" id="' . esc_attr( $blockID ) . '" ' . GutentorAnimationOptionsDataAttr( $blockComponentAnimation ) . '>' . "\n";
+				$tag = gutentor_get_module_tag( $tag );
+
+				$output .= '<' . esc_attr( $tag ) . ' id="' . esc_attr( $blockID ) . '" class="' . esc_attr( apply_filters( 'gutentor_term_module_main_wrap_class', gutentor_concat_space( 'section-' . $gID, 'gutentor-module', 'gtf-module', 'gutentor-term-module', 'gutentor-term-module-t1', $align, $termStyle, $tRevContClass, $enabledWidth, $template, $default_class ), $attributes ) ) . '" id="' . esc_attr( $blockID ) . '" ' . GutentorAnimationOptionsDataAttr( $blockComponentAnimation ) . '>' . "\n";
 				$output .= apply_filters( 'gutentor_term_module_before_container', '', $attributes );
-				$output .= "<div class='" . apply_filters( 'gutentor_term_module_container_class', 'grid-container', $attributes ) . "'>";
+				$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_term_module_container_class', 'grid-container', $attributes ) ) . "'>";
 				$output .= apply_filters( 'gutentor_term_module_before_block_items', '', $attributes );
-				$output .= "<div class='" . apply_filters( 'gutentor_term_module_grid_row_class', 'grid-row', $attributes ) . "' " . gutentor_get_html_attr( apply_filters( 'gutentor_term_module_attr', array(), $attributes ) ) . '>';
+				$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_term_module_grid_row_class', 'grid-row', $attributes ) ) . "' " . gutentor_get_html_attr( apply_filters( 'gutentor_term_module_attr', array(), $attributes ) ) . '>';
 				$output .= apply_filters( 'gutentor_term_module_before_block_items', '', $attributes );
 
 				$index = 0;
 				foreach ( $terms as $term ) {
 					/*term query*/
 					$output .= apply_filters( 'gutentor_term_module_t1_query_data', '', $term, $attributes, $index );
-					$index++;
+					++$index;
 				}
 				$output .= '</div>';/*.grid-row*/
 				$output .= apply_filters( 'gutentor_term_module_after_block_items', '', $attributes );
 				$output .= '</div>';/*.grid-container*/
 				$output .= apply_filters( 'gutentor_term_module_after_container', '', $attributes );
-				$output .= '</' . $tag . '>';/*.gutentor-blog-term-wrapper*/
+				$output .= '</' . esc_attr( $tag ) . '>';/*.gutentor-blog-term-wrapper*/
 			}
 
 			return $output;

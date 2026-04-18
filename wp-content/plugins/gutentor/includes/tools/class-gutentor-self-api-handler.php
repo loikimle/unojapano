@@ -30,14 +30,14 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 		 * Initialize the class
 		 */
 		public function run() {
-			 add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+			add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 		}
 
 		/**
 		 * Register REST API route
 		 */
 		public function register_routes() {
-			 $namespace = $this->namespace . $this->version;
+			$namespace = $this->namespace . $this->version;
 
 			register_rest_route(
 				$namespace,
@@ -49,6 +49,68 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'permission_callback' => function () {
 							return current_user_can( 'edit_posts' );
 						},
+						'args'                => array(
+							'posts_per_page' => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'post_type'      => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_post_type_param_optional' ),
+							),
+							'orderby'        => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_orderby_param' ),
+							),
+							'order'          => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_order_param' ),
+							),
+							'paged'          => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_positive_int_param' ),
+							),
+							'taxonomy'       => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_taxonomy_param_optional' ),
+							),
+							'term'           => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'offset'         => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'post__in'       => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'post__not_in'   => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+						),
 					),
 				)
 			);
@@ -61,23 +123,56 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'methods'             => \WP_REST_Server::READABLE,
 						'callback'            => array( $this, 'gadvancedb' ),
 						'args'                => array(
-							'paged'   => array(
-								'type'              => 'number',
+							'paged'          => array(
+								'type'              => 'integer',
 								'required'          => true,
 								'description'       => __( 'Page Number (Paged) ', 'gutentor' ),
 								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_positive_int_param' ),
 							),
-							'blockId' => array(
+							'blockId'        => array(
 								'type'              => 'string',
 								'required'          => true,
 								'description'       => __( 'Block ID', 'gutentor' ),
-								'sanitize_callback' => 'sanitize_text_field',
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_block_id_param' ),
 							),
-							'postId'  => array(
-								'type'              => 'number',
+							'postId'         => array(
+								'type'              => 'integer',
 								'required'          => true,
 								'description'       => __( 'Block ID', 'gutentor' ),
-								'sanitize_callback' => 'sanitize_text_field',
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_positive_int_param' ),
+							),
+							'gTax'           => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'gTerm'          => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'innerBlockType' => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							's'              => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'allOpt'         => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
 							),
 						),
 						'permission_callback' => '__return_true',
@@ -95,6 +190,14 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'permission_callback' => function () {
 							return current_user_can( 'edit_posts' );
 						},
+						'args'                => array(
+							'post_type' => array(
+								'type'              => 'string',
+								'required'          => true,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_post_type_param' ),
+							),
+						),
 					),
 				)
 			);
@@ -123,6 +226,14 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'permission_callback' => function () {
 							return current_user_can( 'edit_posts' );
 						},
+						'args'                => array(
+							'post_type' => array(
+								'type'              => 'string',
+								'required'          => true,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_post_type_param' ),
+							),
+						),
 					),
 				)
 			);
@@ -151,6 +262,20 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'permission_callback' => function () {
 							return current_user_can( 'edit_posts' );
 						},
+						'args'                => array(
+							'postType'  => array(
+								'type'              => 'string',
+								'required'          => true,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_post_type_param' ),
+							),
+							'searchTxt' => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+						),
 					),
 				)
 			);
@@ -166,11 +291,18 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 							return current_user_can( 'edit_posts' );
 						},
 						'args'                => array(
-							'tax' => array(
+							'tax'       => array(
 								'type'              => 'string',
 								'required'          => true,
 								'description'       => __( 'Taxonomy', 'gutentor' ),
-								'sanitize_callback' => 'sanitize_text_field',
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_taxonomy_param' ),
+							),
+							'searchTxt' => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
 							),
 						),
 
@@ -186,6 +318,314 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'methods'             => \WP_REST_Server::READABLE,
 						'callback'            => array( $this, 'get_posts' ),
 						'permission_callback' => array( $this, 'get_posts_permissions_check' ),
+						'args'                => array(
+							'post_type'              => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_post_type_param_optional' ),
+							),
+							'per_page'               => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_positive_int_param' ),
+							),
+							'paged'                  => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_positive_int_param' ),
+							),
+							'offset'                 => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'post_status'            => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_post_status_param' ),
+							),
+							'orderby'                => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_orderby_param' ),
+							),
+							'order'                  => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_order_param' ),
+							),
+							'taxonomy'               => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_taxonomy_param_optional' ),
+							),
+							'term'                   => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'taxOperator'            => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_tax_operator_param' ),
+							),
+							'post__in'               => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'post__not_in'           => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'author__in'             => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'author__not_in'         => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'category__in'           => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'category__and'          => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'category__not_in'       => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'tag_id'                 => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'tag__and'               => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'tag__in'                => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'tag__not_in'            => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'author'                 => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'p'                      => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_positive_int_param' ),
+							),
+							'page_id'                => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_positive_int_param' ),
+							),
+							'post_parent'            => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'post_parent__in'        => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'comment_count'          => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'posts_per_archive_page' => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'page'                   => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_positive_int_param' ),
+							),
+							'nopaging'               => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_boolean_param' ),
+							),
+							'ignore_sticky_posts'    => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_boolean_param' ),
+							),
+							'cache_results'          => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_boolean_param' ),
+							),
+							'update_post_meta_cache' => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_boolean_param' ),
+							),
+							'update_post_term_cache' => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_boolean_param' ),
+							),
+							's'                      => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'name'                   => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'pagename'               => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'category_name'          => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'cat'                    => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'tag'                    => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'author_name'            => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'perm'                   => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_perm_param' ),
+							),
+							'post_password'          => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'has_password'           => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_boolean_param' ),
+							),
+							'post_mime_type'         => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'tax_query'              => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_json_param' ),
+							),
+							'tax_query_relation'     => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_relation_param' ),
+							),
+							'meta_query'             => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_json_param' ),
+							),
+							'meta_query_relation'    => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_relation_param' ),
+							),
+							'date_query'             => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_json_param' ),
+							),
+							'date_query_relation'    => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_relation_param' ),
+							),
+						),
 					),
 				)
 			);
@@ -197,6 +637,20 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'methods'             => \WP_REST_Server::READABLE,
 						'callback'            => array( $this, 'additional_elements' ),
 						'permission_callback' => array( $this, 'get_posts_permissions_check' ),
+						'args'                => array(
+							'post_type' => array(
+								'type'              => 'string',
+								'required'          => true,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_post_type_param' ),
+							),
+							'type'      => array(
+								'type'              => 'string',
+								'required'          => true,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+						),
 					),
 				)
 			);
@@ -209,6 +663,20 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'methods'             => \WP_REST_Server::READABLE,
 						'callback'            => array( $this, 'additional_term_elements' ),
 						'permission_callback' => array( $this, 'get_posts_permissions_check' ),
+						'args'                => array(
+							'term' => array(
+								'type'              => 'string',
+								'required'          => true,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'type' => array(
+								'type'              => 'string',
+								'required'          => true,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+						),
 					),
 				)
 			);
@@ -223,6 +691,146 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'permission_callback' => function () {
 							return current_user_can( 'edit_posts' );
 						},
+						'args'                => array(
+							'taxonomy'            => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_taxonomies_csv_param' ),
+							),
+							'term_ids'            => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'orderby'             => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_term_orderby_param' ),
+							),
+							'order'               => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_order_param' ),
+							),
+							'include'             => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'exclude'             => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'exclude_tree'        => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'number'              => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'offset'              => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'term_taxonomy_id'    => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_csv_ids_param' ),
+							),
+							'child_of'            => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'parent'              => array(
+								'type'              => 'integer',
+								'required'          => false,
+								'sanitize_callback' => 'absint',
+								'validate_callback' => array( $this, 'validate_non_negative_int_param' ),
+							),
+							'hide_empty'          => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_boolean_param' ),
+							),
+							'count'               => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_boolean_param' ),
+							),
+							'hierarchical'        => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_boolean_param' ),
+							),
+							'childless'           => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_boolean_param' ),
+							),
+							'search'              => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'name__like'          => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'description__like'   => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'name'                => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'slug'                => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_simple_string_param' ),
+							),
+							'meta_query'          => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_json_param' ),
+							),
+							'meta_query_relation' => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_relation_param' ),
+							),
+						),
 					),
 				)
 			);
@@ -237,7 +845,14 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'permission_callback' => function () {
 							return ( current_user_can( 'edit_posts' ) && current_user_can( 'manage_options' ) );
 						},
-						'args'                => array(),
+						'args'                => array(
+							'settings' => array(
+								'type'              => 'object',
+								'required'          => true,
+								'sanitize_callback' => array( $this, 'sanitize_settings_param' ),
+								'validate_callback' => array( $this, 'validate_settings_param' ),
+							),
+						),
 					),
 				)
 			);
@@ -267,6 +882,13 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'permission_callback' => function () {
 							return ( current_user_can( 'manage_options' ) || current_user_can( 'edit_posts' ) );
 						},
+						'args'                => array(
+							'args' => array(
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_post_type_args_param' ),
+								'validate_callback' => array( $this, 'validate_post_type_args_param' ),
+							),
+						),
 					),
 				)
 			);
@@ -281,6 +903,14 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'permission_callback' => function () {
 							return ( current_user_can( 'manage_options' ) || current_user_can( 'edit_posts' ) );
 						},
+						'args'                => array(
+							'post_type' => array(
+								'type'              => 'string',
+								'required'          => true,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_post_type_param' ),
+							),
+						),
 					),
 				)
 			);
@@ -295,6 +925,14 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						'permission_callback' => function () {
 							return ( current_user_can( 'manage_options' ) || current_user_can( 'edit_posts' ) );
 						},
+						'args'                => array(
+							'tax' => array(
+								'type'              => 'string',
+								'required'          => true,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_taxonomy_param' ),
+							),
+						),
 					),
 				)
 			);
@@ -306,10 +944,577 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 					array(
 						'methods'             => \WP_REST_Server::READABLE,
 						'callback'            => array( $this, 'popup' ),
+						'args'                => array(
+							'condition' => array(
+								'type'              => 'string',
+								'required'          => false,
+								'sanitize_callback' => array( $this, 'sanitize_text_param' ),
+								'validate_callback' => array( $this, 'validate_condition_param' ),
+							),
+						),
 						'permission_callback' => '__return_true',
 					),
 				)
 			);
+		}
+
+		/**
+		 * Sanitize a generic text request parameter.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return string
+		 */
+		public function sanitize_text_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value ) {
+				return '';
+			}
+
+			return sanitize_text_field( (string) $value );
+		}
+
+		/**
+		 * Validate that a parameter is a positive integer.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return bool
+		 */
+		public function validate_positive_int_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			return is_numeric( $value ) && absint( $value ) > 0;
+		}
+
+		/**
+		 * Validate block id format for public query route.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return bool
+		 */
+		public function validate_block_id_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( ! is_string( $value ) ) {
+				return false;
+			}
+
+			return (bool) preg_match( '/^[a-zA-Z0-9_-]+$/', $value );
+		}
+
+		/**
+		 * Validate simple string parameters.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return bool
+		 */
+		public function validate_simple_string_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			return is_string( $value ) && strlen( $value ) <= 200;
+		}
+
+		/**
+		 * Validate popup condition input.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return bool
+		 */
+		public function validate_condition_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			return is_string( $value ) && strlen( $value ) <= 1000;
+		}
+
+		/**
+		 * Validate settings payload before callback execution.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return bool
+		 */
+		public function validate_settings_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			return is_array( $value ) && ! empty( $value );
+		}
+
+		/**
+		 * Validate post type parameter.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_post_type_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( ! is_string( $value ) || '' === $value ) {
+				return false;
+			}
+
+			return post_type_exists( $value );
+		}
+
+		/**
+		 * Validate optional post type parameter.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_post_type_param_optional( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			return $this->validate_post_type_param( $value, $request, $param );
+		}
+
+		/**
+		 * Validate taxonomy parameter.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_taxonomy_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( ! is_string( $value ) || '' === $value ) {
+				return false;
+			}
+
+			return taxonomy_exists( $value );
+		}
+
+		/**
+		 * Validate optional taxonomy parameter.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_taxonomy_param_optional( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			return $this->validate_taxonomy_param( $value, $request, $param );
+		}
+
+		/**
+		 * Validate a non-negative integer parameter.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_non_negative_int_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			return is_numeric( $value ) && absint( $value ) >= 0;
+		}
+
+		/**
+		 * Validate CSV-style IDs list.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_csv_ids_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			if ( ! is_string( $value ) ) {
+				return false;
+			}
+
+			return (bool) preg_match( '/^[0-9,]+$/', $value );
+		}
+
+		/**
+		 * Validate orderby parameter against allowlist.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_orderby_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			if ( ! is_string( $value ) ) {
+				return false;
+			}
+
+			$allowed = array( 'date', 'title', 'modified', 'ID', 'author', 'name', 'rand', 'menu_order' );
+			return in_array( $value, $allowed, true );
+		}
+
+		/**
+		 * Validate order parameter against allowlist.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_order_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			if ( ! is_string( $value ) ) {
+				return false;
+			}
+
+			$value = strtoupper( $value );
+			return in_array( $value, array( 'ASC', 'DESC' ), true );
+		}
+
+		/**
+		 * Validate term orderby parameter against allowlist.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_term_orderby_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			if ( ! is_string( $value ) ) {
+				return false;
+			}
+
+			$allowed = array( 'name', 'slug', 'term_group', 'term_id', 'id', 'description', 'parent', 'count', 'include' );
+			return in_array( strtolower( $value ), $allowed, true );
+		}
+
+		/**
+		 * Validate taxonomy CSV list.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_taxonomies_csv_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			if ( ! is_string( $value ) ) {
+				return false;
+			}
+
+			$taxonomies = array_map( 'trim', explode( ',', $value ) );
+			$taxonomies = array_filter( $taxonomies );
+
+			if ( empty( $taxonomies ) ) {
+				return false;
+			}
+
+			foreach ( $taxonomies as $taxonomy ) {
+				if ( ! taxonomy_exists( $taxonomy ) ) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		/**
+		 * Validate boolean-like request values.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_boolean_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			if ( is_bool( $value ) ) {
+				return true;
+			}
+
+			if ( is_string( $value ) ) {
+				$value = strtolower( $value );
+				return in_array( $value, array( 'true', 'false', '1', '0' ), true );
+			}
+
+			if ( is_int( $value ) ) {
+				return in_array( $value, array( 0, 1 ), true );
+			}
+
+			return false;
+		}
+
+		/**
+		 * Validate tax operator against allowlist.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_tax_operator_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			if ( ! is_string( $value ) ) {
+				return false;
+			}
+
+			$value   = strtoupper( $value );
+			$allowed = array( 'IN', 'NOT IN', 'AND', 'EXISTS', 'NOT EXISTS' );
+			return in_array( $value, $allowed, true );
+		}
+
+		/**
+		 * Validate relation values for query relation fields.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_relation_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			if ( ! is_string( $value ) ) {
+				return false;
+			}
+
+			$value = strtoupper( $value );
+			return in_array( $value, array( 'AND', 'OR' ), true );
+		}
+
+		/**
+		 * Validate post status against registered statuses.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_post_status_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			if ( ! is_string( $value ) ) {
+				return false;
+			}
+
+			$statuses = get_post_stati();
+			return in_array( $value, $statuses, true );
+		}
+
+		/**
+		 * Validate permission scope argument.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_perm_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			if ( ! is_string( $value ) ) {
+				return false;
+			}
+
+			return in_array( strtolower( $value ), array( 'readable', 'editable' ), true );
+		}
+
+		/**
+		 * Validate JSON payloads for query filters.
+		 *
+		 * @since 3.5.6
+		 * @param mixed            $value   Request value.
+		 * @param \WP_REST_Request $request Optional request object.
+		 * @param string           $param   Optional parameter name.
+		 * @return bool
+		 */
+		public function validate_json_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			if ( ! is_string( $value ) ) {
+				return false;
+			}
+
+			json_decode( $value, true );
+			return JSON_ERROR_NONE === json_last_error();
+		}
+
+		/**
+		 * Sanitize settings payload container.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return array
+		 */
+		public function sanitize_settings_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			return is_array( $value ) ? $value : array();
+		}
+
+		/**
+		 * Sanitize post type args request parameter.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return array
+		 */
+		public function sanitize_post_type_args_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( is_string( $value ) ) {
+				$decoded = json_decode( $value, true );
+				if ( JSON_ERROR_NONE === json_last_error() ) {
+					$value = $decoded;
+				}
+			}
+
+			if ( ! is_array( $value ) ) {
+				return array();
+			}
+
+			$allowed_keys = array(
+				'public',
+				'publicly_queryable',
+				'exclude_from_search',
+				'show_ui',
+				'show_in_nav_menus',
+				'show_in_menu',
+				'show_in_admin_bar',
+				'hierarchical',
+				'has_archive',
+				'show_in_rest',
+				'_builtin',
+			);
+
+			$sanitized = array();
+			foreach ( $value as $key => $item ) {
+				if ( ! in_array( $key, $allowed_keys, true ) ) {
+					continue;
+				}
+
+				if ( is_bool( $item ) ) {
+					$sanitized[ $key ] = $item;
+				} elseif ( is_string( $item ) ) {
+					$parsed = rest_sanitize_boolean( $item );
+					if ( is_bool( $parsed ) ) {
+						$sanitized[ $key ] = $parsed;
+					}
+				} elseif ( is_int( $item ) ) {
+					$sanitized[ $key ] = ( 1 === $item );
+				}
+			}
+
+			return $sanitized;
+		}
+
+		/**
+		 * Validate post type args request parameter.
+		 *
+		 * @since 3.5.6
+		 * @param mixed $value Request value.
+		 * @return bool
+		 */
+		public function validate_post_type_args_param( $value, \WP_REST_Request $request = null, $param = '' ) {
+			if ( null === $value || '' === $value ) {
+				return true;
+			}
+
+			if ( is_string( $value ) ) {
+				$decoded = json_decode( $value, true );
+				if ( JSON_ERROR_NONE === json_last_error() ) {
+					$value = $decoded;
+				}
+			}
+
+			if ( ! is_array( $value ) ) {
+				return false;
+			}
+
+			$allowed_keys = array(
+				'public',
+				'publicly_queryable',
+				'exclude_from_search',
+				'show_ui',
+				'show_in_nav_menus',
+				'show_in_menu',
+				'show_in_admin_bar',
+				'hierarchical',
+				'has_archive',
+				'show_in_rest',
+				'_builtin',
+			);
+
+			foreach ( $value as $key => $item ) {
+				if ( ! in_array( $key, $allowed_keys, true ) ) {
+					return false;
+				}
+
+				if ( is_bool( $item ) ) {
+					continue;
+				}
+
+				if ( is_int( $item ) ) {
+					if ( ! in_array( $item, array( 0, 1 ), true ) ) {
+						return false;
+					}
+					continue;
+				}
+
+				if ( is_string( $item ) ) {
+					if ( ! in_array( strtolower( $item ), array( 'true', 'false', '1', '0' ), true ) ) {
+						return false;
+					}
+					continue;
+				}
+
+				return false;
+			}
+
+			return true;
 		}
 
 		/**
@@ -348,7 +1553,7 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 				$query_args['post__not_in'] = explode( ',', $request->get_param( 'post__not_in' ) );
 			}
 			// the query
-			$the_query = new WP_Query( $query_args );
+			$the_query = new WP_Query( gutentor_get_query( $query_args ) );
 			wp_reset_postdata();
 			return rest_ensure_response( $the_query->max_num_pages );
 		}
@@ -409,11 +1614,9 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 						if ( $term !== 'gAll' ) {
 							$final_attrs['pTaxType'] = $taxonomy;
 							$final_attrs['pTaxTerm'] = $term;
-						} else {
-							if ( $request->get_param( 'allOpt' ) && 'inherit' != $request->get_param( 'allOpt' ) ) {
+						} elseif ( $request->get_param( 'allOpt' ) && 'inherit' != $request->get_param( 'allOpt' ) ) {
 								$final_attrs['pTaxType'] = '';
 								$final_attrs['pTaxTerm'] = '';
-							}
 						}
 					}
 
@@ -494,20 +1697,24 @@ if ( ! class_exists( 'Gutentor_Self_Api_Handler' ) ) {
 		 */
 		public function get_authors( \WP_REST_Request $request ) {
 			$post_type = $request->get_param( 'post_type' );
-			global $wpdb;
 
-			$all_authors = $wpdb->get_results(
-				"
-                select
-    A.*, COUNT(*) as post_count
-from
-    $wpdb->users A
-inner join $wpdb->posts B
-    on A.ID = B.post_author
-WHERE ( ( B.post_type = '$post_type' AND ( B.post_status = 'publish' OR B.post_status = 'private' ) ) )
-GROUP BY A.ID
-ORDER BY post_count DESC"
+			if ( ! post_type_exists( $post_type ) ) {
+				return new WP_Error( 'invalid_post_type', __( 'Invalid post type', 'gutentor' ), array( 'status' => 400 ) );
+			}
+
+			global $wpdb;
+			$query = $wpdb->prepare(
+				"SELECT A.*, COUNT(*) as post_count
+                FROM $wpdb->users A
+                INNER JOIN $wpdb->posts B ON A.ID = B.post_author
+                WHERE B.post_type = %s 
+                AND ( B.post_status = 'publish' OR B.post_status = 'private' )
+                GROUP BY A.ID
+                ORDER BY post_count DESC",
+				$post_type
 			);
+
+			$all_authors = $wpdb->get_results( $query );
 
 			$final_data = array();
 			if ( $all_authors ) {
@@ -525,24 +1732,20 @@ ORDER BY post_count DESC"
 
 		/**
 		 * Function to fetch authors.
-		 *
-		 * T
 		 */
 		public function get_all_author( \WP_REST_Request $request ) {
 			global $wpdb;
 
-			$all_authors = $wpdb->get_results(
-				"
-                select
-    A.*, COUNT(*) as post_count
-from
-    $wpdb->users A
-inner join $wpdb->posts B
-    on A.ID = B.post_author
-WHERE (  ( B.post_status = 'publish' OR B.post_status = 'private'  ) )
-GROUP BY A.ID
-ORDER BY post_count DESC"
-			);
+			$query = "
+                SELECT A.ID, A.display_name, COUNT(*) as post_count
+                FROM $wpdb->users A
+                INNER JOIN $wpdb->posts B ON A.ID = B.post_author
+                WHERE B.post_status IN ('publish', 'private')
+                GROUP BY A.ID
+                ORDER BY post_count DESC
+            ";
+
+			$all_authors = $wpdb->get_results( $query );
 
 			$final_data = array();
 			if ( $all_authors ) {
@@ -556,6 +1759,7 @@ ORDER BY post_count DESC"
 
 			return rest_ensure_response( $final_data );
 		}
+
 
 		/**
 		 * Function to fetch tax terms.
@@ -604,7 +1808,7 @@ ORDER BY post_count DESC"
 			if ( $search_text ) {
 				$tax_array['name__like'] = $search_text;
 			}
-			$tex_terms = get_terms( $tax_array );
+			$tex_terms = get_terms( gutentor_get_term_query( $tax_array ) );
 			if ( ! empty( $tex_terms ) ) :
 				return rest_ensure_response( $tex_terms );
 			endif;
@@ -696,7 +1900,7 @@ ORDER BY post_count DESC"
 				}
 			}
 			// return $term_args;
-			$term_obj = get_terms( $term_args );
+			$term_obj = get_terms( gutentor_get_term_query( $term_args ) );
 			$terms    = array();
 			foreach ( $term_obj as $term ) {
 				$data    = $this->prepare_term_for_response( $term, $request );
@@ -708,7 +1912,6 @@ ORDER BY post_count DESC"
 				return rest_ensure_response( $term_obj );
 			endif;
 			return rest_ensure_response( false );
-
 		}
 
 
@@ -743,12 +1946,74 @@ ORDER BY post_count DESC"
 		 * @since 2.1.3
 		 */
 		public function get_posts_permissions_check( $request ) {
-			$post_type = get_post_type_object( $request->get_param( 'post_type' ) );
 
-			if ( 'edit' === $request['context'] && ! current_user_can( $post_type->cap->edit_posts ) ) {
+			$post_type   = $request->get_param( 'post_type' ) ? $request->get_param( 'post_type' ) : 'post';
+			$post_status = $request->get_param( 'post_status' ) ? $request->get_param( 'post_status' ) : 'publish';
+
+			$post_type_obj = get_post_type_object( $post_type );
+
+			if ( ! $post_type_obj ) {
+				return new WP_Error(
+					'rest_invalid_post_type',
+					__( 'Invalid post type.', 'gutentor' ),
+					array( 'status' => 404 )
+				);
+			}
+
+			// Check if user can read this post type at all.
+			if ( ! current_user_can( $post_type_obj->cap->read ) ) {
 				return new WP_Error(
 					'rest_forbidden_context',
-					__( 'Sorry, you are not allowed to edit posts in this post type.' ),
+					__( 'Sorry, you are not allowed to read posts in this post type.', 'gutentor' ),
+					array( 'status' => rest_authorization_required_code() )
+				);
+			}
+
+			// Handle different post statuses with appropriate capability checks.
+			switch ( $post_status ) {
+				case 'private':
+					if ( ! current_user_can( $post_type_obj->cap->read_private_posts ) ) {
+						return new WP_Error(
+							'rest_cannot_read_private',
+							__( 'Sorry, you are not allowed to read private posts.', 'gutentor' ),
+							array( 'status' => rest_authorization_required_code() )
+						);
+					}
+					break;
+
+				case 'draft':
+				case 'pending':
+				case 'future':
+					// For non-published posts, users need edit_posts capability.
+					if ( ! current_user_can( $post_type_obj->cap->edit_posts ) ) {
+						return new WP_Error(
+							'rest_cannot_read_draft',
+							__( 'Sorry, you are not allowed to read non-published posts.', 'gutentor' ),
+							array( 'status' => rest_authorization_required_code() )
+						);
+					}
+					break;
+
+				case 'publish':
+					// No additional checks needed beyond basic 'read' capability.
+					break;
+
+				default:
+					// For custom statuses, be conservative - require edit_posts capability.
+					if ( ! current_user_can( $post_type_obj->cap->edit_posts ) ) {
+						return new WP_Error(
+							'rest_cannot_read_custom_status',
+							__( 'Sorry, you are not allowed to read posts with this status.', 'gutentor' ),
+							array( 'status' => rest_authorization_required_code() )
+						);
+					}
+			}
+
+			// Additional check for edit context.
+			if ( 'edit' === $request['context'] && ! current_user_can( $post_type_obj->cap->edit_posts ) ) {
+				return new WP_Error(
+					'rest_forbidden_edit_context',
+					__( 'Sorry, you are not allowed to edit posts in this post type.', 'gutentor' ),
 					array( 'status' => rest_authorization_required_code() )
 				);
 			}
@@ -972,9 +2237,20 @@ ORDER BY post_count DESC"
 			$data['title']['rendered'] = get_the_title( $post->ID );
 			remove_filter( 'protected_title_format', array( $this, 'protected_title_format' ) );
 
+			$has_password_filter = false;
+
 			/*Content*/
-			$data['content']                  = array();
-			$data['content']['raw']           = $post->post_content;
+			$data['content'] = array();
+			if ( $this->can_access_password_content( $post, $request ) ) {
+				$this->password_check_passed[ $post->ID ] = true;
+				// Allow access to the post, permissions already checked before.
+				add_filter( 'post_password_required', array( $this, 'check_password_required' ), 10, 2 );
+
+				$has_password_filter    = true;
+				$data['content']['raw'] = $post->post_content;
+
+			}
+
 			$data['content']['rendered']      = post_password_required( $post ) ? '' : apply_filters( 'the_content', $post->post_content );
 			$data['content']['protected']     = (bool) $post->post_password;
 			$data['content']['block_version'] = block_version( $post->post_content );
@@ -1071,36 +2347,6 @@ ORDER BY post_count DESC"
 			 * @since 4.7.0
 			 */
 			return apply_filters( "gutentor_rest_prepare_{$post_type}", $response, $post, $request );
-		}
-
-		/**
-		 * set order and order by.
-		 *
-		 * @param string $orderby
-		 * @param string $order .
-		 * @param array  $args .
-		 * @return array $args.
-		 * @since 2.1.3
-		 */
-		public function set_product_order_order_by( $orderby, $order, $args ) {
-			switch ( $orderby ) {
-				case 'price':
-					$args['orderby']  = 'meta_value_num';
-					$args['order']    = $order;
-					$args['meta_key'] = '_price';
-					break;
-				case 'popularity':
-					$args['orderby']  = 'meta_value_num';
-					$args['order']    = $order;
-					$args['meta_key'] = 'total_sales';
-					break;
-				case 'rating':
-					$args['orderby']  = 'meta_value_num';
-					$args['order']    = $order;
-					$args['meta_key'] = '_wc_average_rating';
-					break;
-			}
-			return $args;
 		}
 
 		/**
@@ -1250,10 +2496,9 @@ ORDER BY post_count DESC"
 				$query_args['post__not_in'] = explode( ',', $request->get_param( 'post__not_in' ) );
 			}
 			if ( $post_type === 'product' ) {
-				$product_order_by    = $request->get_param( 'orderby' ) ? $request->get_param( 'orderby' ) : 'date';
-				$product_order       = $request->get_param( 'order' ) ? $request->get_param( 'order' ) : 'desc';
-				$query_args['order'] = $request->get_param( 'order' ) ? $request->get_param( 'order' ) : 'desc';
-				$query_args          = $this->set_product_order_order_by( $product_order_by, $product_order, $query_args );
+				$product_order_by = $request->get_param( 'orderby' ) ? $request->get_param( 'orderby' ) : 'date';
+				$product_order    = $request->get_param( 'order' ) ? $request->get_param( 'order' ) : 'desc';
+				$query_args       = gutentor_set_product_order_order_by( $product_order_by, $product_order, $query_args );
 			} else {
 				$query_args['orderby'] = $request->get_param( 'orderby' ) ? $request->get_param( 'orderby' ) : 'date';
 				$query_args['order']   = $request->get_param( 'order' ) ? $request->get_param( 'order' ) : 'desc';
@@ -1440,7 +2685,7 @@ ORDER BY post_count DESC"
 				}
 			}
 			$posts_query  = new WP_Query();
-			$query_result = $posts_query->query( $query_args );
+			$query_result = $posts_query->query( gutentor_get_query( $query_args ) );
 
 			$posts = array();
 
@@ -1458,7 +2703,7 @@ ORDER BY post_count DESC"
 				unset( $query_args['paged'] );
 
 				$count_query = new WP_Query();
-				$count_query->query( $query_args );
+				$count_query->query( gutentor_get_query( $query_args ) );
 				$total_posts = $count_query->found_posts;
 			}
 
@@ -1467,7 +2712,7 @@ ORDER BY post_count DESC"
 			if ( $page > $max_pages && $total_posts > 0 ) {
 				return new WP_Error(
 					'rest_post_invalid_page_number',
-					__( 'The page number requested is larger than the number of pages available.' ),
+					__( 'The page number requested is larger than the number of pages available.', 'gutentor' ),
 					array( 'status' => 400 )
 				);
 			}
@@ -1523,7 +2768,6 @@ ORDER BY post_count DESC"
 			}
 
 			return rest_ensure_response( $response );
-
 		}
 
 		/**
@@ -1549,7 +2793,6 @@ ORDER BY post_count DESC"
 			}
 
 			return rest_ensure_response( $response );
-
 		}
 
 		/**
@@ -1577,9 +2820,7 @@ ORDER BY post_count DESC"
 					) {
 						$value = sanitize_text_field( $value );
 					} elseif (
-						'assets-on-global' === $key ||
 						'wide-width-editor' === $key ||
-						'load-optimized-css' === $key ||
 						'enable-export-block' === $key ||
 						'enable-import-block' === $key ||
 						'on-popup' === $key ||
@@ -1656,7 +2897,6 @@ ORDER BY post_count DESC"
 				return rest_ensure_response( gutentor_get_options() );
 			}
 			return rest_ensure_response( gutentor_get_options() );
-
 		}
 
 		/**
@@ -1695,29 +2935,28 @@ ORDER BY post_count DESC"
 		public function get_all_metas( \WP_REST_Request $request ) {
 			$post_type = $request->get_param( 'post_type' );
 
+			if ( ! post_type_exists( $post_type ) ) {
+				return new WP_Error( 'invalid_post_type', __( 'Invalid post type', 'gutentor' ), array( 'status' => 400 ) );
+			}
+
 			$meta_keys = array();
 			global $wpdb;
 			$query = "
-            SELECT DISTINCT($wpdb->postmeta.meta_key) 
-            FROM $wpdb->posts 
-            LEFT JOIN $wpdb->postmeta 
-            ON $wpdb->posts.ID = $wpdb->postmeta.post_id 
-            WHERE $wpdb->posts.post_type = '%s' 
-            AND $wpdb->postmeta.meta_key != '' 
-            AND $wpdb->postmeta.meta_key != 'enclosure' 
-            AND $wpdb->postmeta.meta_key != 'gutentor_gfont_url' 
-            AND $wpdb->postmeta.meta_key != 'gutentor_dynamic_css' 
-            AND $wpdb->postmeta.meta_key != 'gutentor_css_info' 
-            AND $wpdb->postmeta.meta_key != 'gutentor_meta_video_src_option' 
-            AND $wpdb->postmeta.meta_key != 'gutentor_meta_video_url' 
-            AND $wpdb->postmeta.meta_key != 'gutentor_meta_video_id' 
-            AND $wpdb->postmeta.meta_key != 'cosmoswp_site_layout' 
-            AND $wpdb->postmeta.meta_key != 'cosmoswp_sidebar_options' 
-            AND $wpdb->postmeta.meta_key != 'cosmoswp_header_layout' 
-            AND $wpdb->postmeta.meta_key != 'cosmoswp_footer_layout' 
-            AND $wpdb->postmeta.meta_key != 'cosmoswp_banner_options_layout' 
-            AND $wpdb->postmeta.meta_key NOT RegExp '(^[_0-9].+$)' 
-            AND $wpdb->postmeta.meta_key NOT RegExp '(^[0-9]+$)'";
+                SELECT DISTINCT meta_key
+                FROM $wpdb->postmeta
+                WHERE post_id IN (
+                    SELECT ID FROM $wpdb->posts WHERE post_type = %s
+                )
+                AND meta_key != ''
+                AND meta_key NOT IN (
+                    'enclosure', 'gutentor_gfont_url', 'gutentor_dynamic_css', 'gutentor_css_info',
+                    'gutentor_meta_video_src_option', 'gutentor_meta_video_url', 'gutentor_meta_video_id',
+                    'cosmoswp_site_layout', 'cosmoswp_sidebar_options', 'cosmoswp_header_layout',
+                    'cosmoswp_footer_layout', 'cosmoswp_banner_options_layout'
+                )
+                AND meta_key NOT REGEXP BINARY '(^[_0-9].+$)'
+                AND meta_key NOT REGEXP BINARY '(^[0-9]+$)'
+            ";
 
 			$normal_meta = $wpdb->get_col( $wpdb->prepare( $query, $post_type ) );
 
@@ -1740,9 +2979,7 @@ ORDER BY post_count DESC"
 			set_transient( 'gutentor_meta_keys_' . $post_type, $meta_keys, 60 * 60 * 24 );
 
 			return rest_ensure_response( $meta_keys );
-
 		}
-
 
 		/**
 		 * Function to get all term meta
@@ -1752,10 +2989,14 @@ ORDER BY post_count DESC"
 		 * @since 3.1.4
 		 */
 		public function get_all_term_metas( \WP_REST_Request $request ) {
-			$post_type = $request->get_param( 'tax' );
+			$taxonomy = sanitize_text_field( $request->get_param( 'tax' ) );
+			if ( ! taxonomy_exists( $taxonomy ) ) {
+				return new WP_Error( 'invalid_taxonomy', __( 'The taxonomy does not exist.', 'gutentor' ), array( 'status' => 404 ) );
+			}
 
 			$meta_keys = array();
 			global $wpdb;
+
 			$query = "
             SELECT DISTINCT($wpdb->termmeta.meta_key) 
             FROM $wpdb->termmeta
@@ -1765,23 +3006,17 @@ ORDER BY post_count DESC"
                 ON $wpdb->terms.term_id = $wpdb->term_taxonomy.term_id 
             WHERE $wpdb->term_taxonomy.taxonomy = '%s' 
             AND $wpdb->termmeta.meta_key != '' 
-            AND $wpdb->termmeta.meta_key != 'enclosure' 
-            AND $wpdb->termmeta.meta_key != 'gutentor_dynamic_css' 
-            AND $wpdb->termmeta.meta_key != 'gutentor_css_info' 
-            AND $wpdb->termmeta.meta_key != 'gutentor_meta_video_src_option' 
-            AND $wpdb->termmeta.meta_key != 'gutentor_meta_video_id' 
-            AND $wpdb->termmeta.meta_key != 'cosmoswp_site_layout' 
-            AND $wpdb->termmeta.meta_key != 'cosmoswp_sidebar_options' 
-            AND $wpdb->termmeta.meta_key != 'cosmoswp_header_layout' 
-            AND $wpdb->termmeta.meta_key != 'cosmoswp_footer_layout' 
-            AND $wpdb->termmeta.meta_key != 'cosmoswp_banner_options_layout' 
-            AND $wpdb->termmeta.meta_key NOT RegExp '(^[_0-9].+$)' 
-            AND $wpdb->termmeta.meta_key NOT RegExp '(^[0-9]+$)'";
+            AND $wpdb->termmeta.meta_key NOT IN (
+                'enclosure', 'gutentor_dynamic_css', 'gutentor_css_info', 'gutentor_meta_video_src_option', 'gutentor_meta_video_id', 
+                'cosmoswp_site_layout', 'cosmoswp_sidebar_options', 'cosmoswp_header_layout', 'cosmoswp_footer_layout', 'cosmoswp_banner_options_layout'
+            )
+            AND $wpdb->termmeta.meta_key NOT REGEXP '(^[_0-9].+$)' 
+            AND $wpdb->termmeta.meta_key NOT REGEXP '(^[0-9]+$)'";
 
-			$normal_meta = $wpdb->get_col( $wpdb->prepare( $query, $post_type ) );
+			$normal_meta = $wpdb->get_col( $wpdb->prepare( $query, $taxonomy ) );
 
 			if ( function_exists( 'gutentor_get_acf_fields_by_location' ) ) {
-				$acf_fields       = gutentor_get_acf_fields_by_location( $post_type );
+				$acf_fields       = gutentor_get_acf_fields_by_location( $taxonomy );
 				$meta_keys['acf'] = $acf_fields;
 				$names            = array_column( $acf_fields, 'name' );
 				if ( is_array( $normal_meta ) && is_array( $names ) ) {
@@ -1796,11 +3031,11 @@ ORDER BY post_count DESC"
 			$meta_keys['normal'] = $normal_meta;
 
 			/* create 1 Day Expiration TODO*/
-			set_transient( 'gutentor_meta_keys_' . $post_type, $meta_keys, 60 * 60 * 24 );
+			set_transient( 'gutentor_meta_keys_' . $taxonomy, $meta_keys, 60 * 60 * 24 );
 
 			return rest_ensure_response( $meta_keys );
-
 		}
+
 		/**
 		 * Function to popup.
 		 *
@@ -1820,6 +3055,83 @@ ORDER BY post_count DESC"
 		}
 
 		/**
+		 * Copid from WP_REST_Posts_Controller
+		 *
+		 * @since 3.3.0
+		 *
+		 * @return string Protected title format.
+		 */
+		public function protected_title_format() {
+			return '%s';
+		}
+
+		/**
+		 * Copid from WP_REST_Posts_Controller
+		 *
+		 * @since 3.3.0
+		 *
+		 * @param bool    $required Whether the post requires a password check.
+		 * @param WP_Post $post     The post been password checked.
+		 * @return bool Result of password check taking in to account REST API considerations.
+		 */
+		public function check_password_required( $required, $post ) {
+			if ( ! $required ) {
+				return $required;
+			}
+
+			$post = get_post( $post );
+
+			if ( ! $post ) {
+				return $required;
+			}
+
+			if ( ! empty( $this->password_check_passed[ $post->ID ] ) ) {
+				// Password previously checked and approved.
+				return false;
+			}
+
+			return ! current_user_can( 'edit_post', $post->ID );
+		}
+
+		/**
+		 * Checks if the user can access password-protected content.
+		 *
+		 * This method determines whether we need to override the regular password
+		 * check in core with a filter.
+		 *
+		 * @since 3.3.0
+		 *
+		 * @param WP_Post         $post    Post to check against.
+		 * @param WP_REST_Request $request Request data to check.
+		 * @return bool True if the user can access password-protected content, otherwise false.
+		 */
+		public function can_access_password_content( $post, $request ) {
+			if ( empty( $post->post_password ) ) {
+				// No filter required.
+				return false;
+			}
+
+			/*
+			 * Users always gets access to password protected content in the edit
+			 * context if they have the `edit_post` meta capability.
+			 */
+			if (
+			'edit' === $request['context'] &&
+			current_user_can( 'edit_post', $post->ID )
+			) {
+				return true;
+			}
+
+			// No password, no auth.
+			if ( empty( $request['password'] ) ) {
+				return false;
+			}
+
+			// Double-check the request password.
+			return hash_equals( $post->post_password, $request['password'] );
+		}
+
+		/**
 		 * Gets an instance of this object.
 		 * Prevents duplicate instances which avoid artefacts and improves performance.
 		 *
@@ -1829,15 +3141,15 @@ ORDER BY post_count DESC"
 		 * @since 1.0.1
 		 */
 		public static function get_instance() {
-			 // Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
 		}
 
@@ -1852,7 +3164,7 @@ ORDER BY post_count DESC"
 		 * @since 1.0.0
 		 */
 		public function __clone() {
-			 // Cloning instances of the class is forbidden.
+			// Cloning instances of the class is forbidden.
 			_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'gutentor' ), '1.0.0' );
 		}
 

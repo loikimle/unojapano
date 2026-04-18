@@ -42,17 +42,16 @@ if ( ! class_exists( 'Gutentor_Featured_N2_T2' ) ) {
 		 */
 		public static function get_instance() {
 
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
-
 		}
 
 
@@ -74,10 +73,10 @@ if ( ! class_exists( 'Gutentor_Featured_N2_T2' ) ) {
 			$index = 0;
 			while ( $the_query->have_posts() ) :
 				$the_query->the_post();
-				$output .= "<div class='" . apply_filters( 'gutentor_post_module_p2_grid_class', 'grid-lg-6 grid-md-6 grid-12', $attributes ) . "'>";
+				$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_post_module_p2_grid_class', 'grid-lg-6 grid-md-6 grid-12', $attributes ) ) . "'>";
 				$output .= $this->featured_post_type_template( get_post(), $attributes, $index );
 				$output .= '</div>';
-				$index++;
+				++$index;
 			endwhile;
 			return $output;
 		}
@@ -98,10 +97,10 @@ if ( ! class_exists( 'Gutentor_Featured_N2_T2' ) ) {
 			}
 			$index = 0;
 			foreach ( $terms as $term ) {
-				$output .= "<div class='" . apply_filters( 'gutentor_term_module_t2_grid_class', 'grid-lg-6 grid-md-6 grid-12', $attributes ) . "'>";
+				$output .= "<div class='" . esc_attr( apply_filters( 'gutentor_term_module_t2_grid_class', 'grid-lg-6 grid-md-6 grid-12', $attributes ) ) . "'>";
 				$output .= $this->t2_single_article( $term, $attributes, $index );
 				$output .= '</div>';
-				$index++;
+				++$index;
 			}
 			return $output;
 		}

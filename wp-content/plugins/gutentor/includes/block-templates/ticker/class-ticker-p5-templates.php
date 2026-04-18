@@ -24,17 +24,16 @@ if ( ! class_exists( 'Gutentor_Ticker_P5_Templates' ) ) {
 		 */
 		public static function get_instance() {
 
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
-
 		}
 
 		/**
@@ -72,7 +71,6 @@ if ( ! class_exists( 'Gutentor_Ticker_P5_Templates' ) ) {
 		 * @param {array}  $attributes
 		 * @return {mix}
 		 */
-
 		public function load_blog_post_template( $data, $post, $attributes ) {
 			$output   = $data;
 			$template = ( isset( $attributes['p5Temp'] ) ) ? $attributes['p5Temp'] : '';
@@ -81,7 +79,6 @@ if ( ! class_exists( 'Gutentor_Ticker_P5_Templates' ) ) {
 			}
 			return $output;
 		}
-
 	}
 }
 Gutentor_Ticker_P5_Templates::get_instance()->run();

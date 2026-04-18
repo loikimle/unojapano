@@ -11,7 +11,16 @@ if ( ! class_exists( 'Gutentor_P3_Hooks' ) ) {
 	 * @package Gutentor
 	 * @since 2.0.0
 	 */
-	class Gutentor_P3_Hooks {
+	class Gutentor_P3_Hooks extends Gutentor_Block_Base {
+
+		/**
+		 * Name of the block.
+		 *
+		 * @access protected
+		 * @since 1.0.1
+		 * @var string
+		 */
+		protected $block_name = 'p3';
 
 		/**
 		 * Prevent some functions to called many times
@@ -33,17 +42,31 @@ if ( ! class_exists( 'Gutentor_P3_Hooks' ) ) {
 		 */
 		public static function get_instance() {
 
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
+		}
 
+		/**
+		 * Set register_block_type_args variable on parent
+		 * Used for blog template loading
+		 *
+		 * @since      3.0.6
+		 * @package    Gutentor
+		 * @author     Gutentor <info@gutentor.com>
+		 */
+		public function register_block_type_args() {
+			$this->register_block_type_args = array(
+				'view_script_handles' => array( 'slick' ),
+				'style_handles'       => array( 'slick' ),
+			);
 		}
 
 		/**
@@ -77,6 +100,7 @@ if ( ! class_exists( 'Gutentor_P3_Hooks' ) ) {
 		 * @return void
 		 */
 		public function run() {
+			parent::run();
 			/*Block Specific PHP hooks*/
 			$this->add_filter( 'gutentor_post_module_main_wrap_class', $this, 'add_carousel_arrow_class', 15, 2 );
 			$this->add_filter( 'gutentor_post_module_grid_row_class', $this, 'add_carousel_row', 15, 2 );
@@ -106,10 +130,10 @@ if ( ! class_exists( 'Gutentor_P3_Hooks' ) ) {
 				return $output;
 			}
 
-			$arrow_position       = $attributes['p1CarouselOpt']['arrowsPosition'];
-			$enable_desktop_arrow  = isset( $attributes['p1CarouselOpt']['arrows'] ) && $attributes['p1CarouselOpt']['arrows'];
-			$enable_tablet_arrow   = isset( $attributes['p1CarouselOpt']['arrowsT'] ) && $attributes['p1CarouselOpt']['arrowsT'];
-			$enable_mobile_arrow   = isset( $attributes['p1CarouselOpt']['arrowsM'] ) && $attributes['p1CarouselOpt']['arrowsM'];
+			$arrow_position         = $attributes['p1CarouselOpt']['arrowsPosition'];
+			$enable_desktop_arrow   = isset( $attributes['p1CarouselOpt']['arrows'] ) && $attributes['p1CarouselOpt']['arrows'];
+			$enable_tablet_arrow    = isset( $attributes['p1CarouselOpt']['arrowsT'] ) && $attributes['p1CarouselOpt']['arrowsT'];
+			$enable_mobile_arrow    = isset( $attributes['p1CarouselOpt']['arrowsM'] ) && $attributes['p1CarouselOpt']['arrowsM'];
 			$arrow_position_desktop = array_key_exists( 'desktop', $arrow_position ) ? $arrow_position['desktop'] : false;
 			if ( $enable_desktop_arrow && $arrow_position_desktop ) {
 				$output = gutentor_concat_space( $output, $arrow_position_desktop . '-desktop' );
@@ -287,7 +311,7 @@ if ( ! class_exists( 'Gutentor_P3_Hooks' ) ) {
 				return $output;
 			}
 			$p1CarouselOpt        = ( isset( $attributes['p1CarouselOpt'] ) && $attributes['p1CarouselOpt']['enable'] ) ? $attributes['p1CarouselOpt'] : false;
-			$desktop_row_position = ( $p1CarouselOpt && $p1CarouselOpt['arrowsPosition']['desktop'] ) ? $p1CarouselOpt['arrowsPosition']['desktop'] . '-desktop' : false;
+			$desktop_row_position = ( $p1CarouselOpt && isset( $p1CarouselOpt['arrowsPosition']['desktop'] ) && $p1CarouselOpt['arrowsPosition']['desktop'] ) ? $p1CarouselOpt['arrowsPosition']['desktop'] . '-desktop' : false;
 			if ( $desktop_row_position != 'gutentor-slick-a-default-desktop' ) {
 				$output .= '<div class="gutentor-slick-arrows"></div>';
 			}

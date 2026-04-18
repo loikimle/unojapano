@@ -11,8 +11,16 @@ if ( ! class_exists( 'Gutentor_T3_Hooks' ) ) {
 	 * @package Gutentor
 	 * @since 2.0.0
 	 */
-	class Gutentor_T3_Hooks {
+	class Gutentor_T3_Hooks extends Gutentor_Block_Base {
 
+		/**
+		 * Name of the block.
+		 *
+		 * @access protected
+		 * @since 1.0.1
+		 * @var string
+		 */
+		protected $block_name = 't3';
 
 		/**
 		 * Gets an instance of this object.
@@ -25,17 +33,31 @@ if ( ! class_exists( 'Gutentor_T3_Hooks' ) ) {
 		 */
 		public static function get_instance() {
 
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
+		}
 
+		/**
+		 * Set register_block_type_args variable on parent
+		 * Used for blog template loading
+		 *
+		 * @since      3.0.6
+		 * @package    Gutentor
+		 * @author     Gutentor <info@gutentor.com>
+		 */
+		public function register_block_type_args() {
+			$this->register_block_type_args = array(
+				'view_script_handles' => array( 'slick' ),
+				'style_handles'       => array( 'slick' ),
+			);
 		}
 
 		/**
@@ -69,6 +91,7 @@ if ( ! class_exists( 'Gutentor_T3_Hooks' ) ) {
 		 * @return void
 		 */
 		public function run() {
+			parent::run();
 			/*Block Specific PHP hooks*/
 			$this->add_filter( 'gutentor_term_module_main_wrap_class', $this, 'add_carousel_arrow_class', 15, 2 );
 			$this->add_filter( 'gutentor_term_module_grid_row_class', $this, 'add_carousel_row', 15, 2 );

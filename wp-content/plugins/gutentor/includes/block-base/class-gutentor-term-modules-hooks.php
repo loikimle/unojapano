@@ -23,17 +23,16 @@ if ( ! class_exists( 'Gutentor_Term_Modules_Hooks' ) ) {
 		 * @since 2.0.0
 		 */
 		public static function get_instance() {
-			// Store the instance locally to avoid private static replication
+			// Store the instance locally to avoid private static replication.
 			static $instance = null;
 
-			// Only run these methods if they haven't been ran previously
+			// Only run these methods if they haven't been ran previously.
 			if ( null === $instance ) {
 				$instance = new self();
 			}
 
-			// Always return the instance
+			// Always return the instance.
 			return $instance;
-
 		}
 
 		/**
@@ -66,9 +65,8 @@ if ( ! class_exists( 'Gutentor_Term_Modules_Hooks' ) ) {
 		 * @since 2.0.0
 		 */
 		public function run() {
-		    /*Block Specific PHP hooks*/
-            $this->add_filter( 'gutentor_term_module_article_class', $this, 'add_item_post_align_class', 10, 2 );
-
+			/*Block Specific PHP hooks*/
+			$this->add_filter( 'gutentor_term_module_article_class', $this, 'add_item_post_align_class', 10, 2 );
 		}
 
 		/**
@@ -81,7 +79,7 @@ if ( ! class_exists( 'Gutentor_Term_Modules_Hooks' ) ) {
 		public function add_item_post_align_class( $output, $attributes ) {
 
 			$gName      = ( isset( $attributes['gName'] ) ) ? $attributes['gName'] : '';
-			$block_list = array( 'gutentor/t1','gutentor/t2' );
+			$block_list = array( 'gutentor/t1', 'gutentor/t2' );
 			$block_list = apply_filters( 'gutentor_term_item_bx_align_class_accessor_block', $block_list );
 			if ( ! in_array( $gName, $block_list ) ) {
 				return $output;
@@ -109,9 +107,10 @@ if ( ! class_exists( 'Gutentor_Term_Modules_Hooks' ) ) {
 				$align_d_class = ( $align_desktop ) ? $align_desktop . '-desktop' : '';
 				$local_data    = gutentor_concat_space( $local_data, $align_d_class );
 			}
+
+			/*Checked: escaped last*/
 			return gutentor_concat_space( $output, $local_data );
 		}
-
 	}
 }
 
