@@ -27,6 +27,7 @@ class UI {
 				'id'         => '',
 				'value'      => '',
 				'clear_text' => esc_html__( 'Remove', 'easy-wp-smtp' ),
+				'clear_url'  => '',
 			]
 		);
 
@@ -46,12 +47,13 @@ class UI {
 			       <?php if ( ! empty( $args['id'] ) ) : ?>id="<?php echo esc_attr( $args['id'] ); ?>"<?php endif; ?>
 			       <?php if ( ! empty( $value ) ) : ?>value="<?php echo esc_attr( $value ); ?>"<?php endif; ?>/>
 
-			<?php if ( ! empty( $value ) ) : ?>
-
+			<?php if ( ! empty( $value ) && ! empty( $args['clear_url'] ) ) : ?>
+				<a href="<?php echo esc_url( $args['clear_url'] ); ?>"
+				   class="easy-wp-smtp-btn easy-wp-smtp-btn--tertiary"><?php echo esc_html( $args['clear_text'] ); ?></a>
+			<?php elseif ( ! empty( $value ) ) : ?>
 				<button type="button"
 				        class="easy-wp-smtp-btn easy-wp-smtp-btn--tertiary"
 				        data-clear-field="<?php echo esc_attr( $args['id'] ); ?>"><?php echo esc_html( $args['clear_text'] ); ?></button>
-
 			<?php endif; ?>
 		</div>
 		<?php

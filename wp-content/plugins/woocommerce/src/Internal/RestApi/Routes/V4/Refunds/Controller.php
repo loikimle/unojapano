@@ -16,6 +16,7 @@ defined( 'ABSPATH' ) || exit;
 use Automattic\WooCommerce\Internal\RestApi\Routes\V4\AbstractController;
 use Automattic\WooCommerce\StoreApi\Utilities\Pagination;
 use Automattic\WooCommerce\Internal\RestApi\Routes\V4\Refunds\Schema\RefundSchema;
+use Automattic\WooCommerce\Utilities\NumberUtil;
 use WP_Http;
 use WP_Error;
 use WC_Order_Refund;
@@ -185,6 +186,37 @@ class Controller extends AbstractController {
 	}
 
 	/**
+	 * Prepare links for the request.
+	 *
+	 * @param mixed            $item WordPress representation of the item.
+	 * @param WP_REST_Request  $request Request object.
+	 * @param WP_REST_Response $response Response object.
+	 * @return array
+	 */
+	protected function prepare_links( $item, WP_REST_Request $request, WP_REST_Response $response ): array {
+		$links = array(
+			'self'       => array(
+				'href' => rest_url( sprintf( '/%s/%s/%d', $this->namespace, $this->rest_base, $item->get_id() ) ),
+			),
+			'collection' => array(
+				'href' => rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ),
+			),
+			'up'         => array(
+				'href' => rest_url( sprintf( '/%s/orders/%d', $this->namespace, $item->get_parent_id() ) ),
+			),
+		);
+
+		if ( $item->get_refunded_by() ) {
+			$links['refunded_by'] = array(
+				'href'       => rest_url( sprintf( '/wp/v2/users/%d', $item->get_refunded_by() ) ),
+				'embeddable' => true,
+			);
+		}
+
+		return $links;
+	}
+
+	/**
 	 * Prepare a single order object for response.
 	 *
 	 * @param WC_Order_Refund $refund Refund object.
@@ -268,11 +300,26 @@ class Controller extends AbstractController {
 			}
 
 			// Convert line items to internal format.
-			$line_item_data = $this->data_utils->convert_line_items_to_internal_format( $request['line_items'] );
-			$refund_amount  = ! empty( $request['amount'] ) ? $request['amount'] : $this->data_utils->calculate_refund_amount( $request['line_items'] );
+			$line_item_data   = $this->data_utils->convert_line_items_to_internal_format( $request['line_items'], $order );
+			$calculated_total = ! empty( $request['line_items'] ) ? $this->data_utils->calculate_refund_amount( $request['line_items'] ) : 0;
+			$refund_amount    = ! empty( $request['amount'] ) ? $request['amount'] : $calculated_total;
 
 			if ( 0 > $refund_amount || ! $refund_amount ) {
 				return $this->get_route_error_response( 'invalid_refund_amount', __( 'Refund total must be greater than zero.', 'woocommerce' ) );
+			}
+
+			// Prevent under-refunding: amount cannot be less than calculated line items total.
+			// Over-refunding is allowed for goodwill/compensation scenarios.
+			if ( ! empty( $request['amount'] ) && $calculated_total > 0 && NumberUtil::round( (float) $refund_amount, wc_get_price_decimals() ) < NumberUtil::round( $calculated_total, wc_get_price_decimals() ) ) {
+				return $this->get_route_error_response(
+					'invalid_refund_amount',
+					sprintf(
+						/* translators: %1$s: refund amount, %2$s: calculated total from line items */
+						__( 'Refund amount (%1$s) cannot be less than the total of line items (%2$s).', 'woocommerce' ),
+						wc_format_decimal( $refund_amount, wc_get_price_decimals() ),
+						wc_format_decimal( $calculated_total, wc_get_price_decimals() )
+					)
+				);
 			}
 
 			$refund = wc_create_refund(

@@ -1,259 +1,313 @@
 <?php
+
 /**
  * Options Action.
- * 
+ *
  * @package ULTP\Notice
  * @since v.1.0.0
  */
+
 namespace ULTP;
 
-defined('ABSPATH') || exit;
+use ULTP\Includes\Durbin\Xpo;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Options class.
+ *
+ * Handles plugin options and settings for Ultimate Post.
+ *
+ * @package ULTP\Options
+ * @since 4.0.0
  */
-class Options{
+class Options {
 
-    /**
+	/**
 	 * Setup class.
 	 *
 	 * @since v.1.0.0
 	 */
-    public function __construct() {
-        add_action( 'admin_init', array( $this, 'handle_external_redirects' ) );
-        add_action( 'admin_menu', array( $this, 'menu_page_callback' ) );
-        add_action( 'in_admin_header', array($this, 'remove_all_notices') );
-        add_filter( 'plugin_row_meta', array( $this, 'plugin_settings_meta' ), 10, 2 );
-        add_filter( 'plugin_action_links_'.ULTP_BASE, array( $this, 'plugin_action_links_callback' ) );
-    }
-    
-    
-    /**
-	 * Plugin Page Menu Add
-     * 
-     * @since v.1.0.0
-	 * @return ARRAY
+	public function __construct() {
+		add_action( 'admin_init', array( $this, 'handle_external_redirects' ) );
+		add_action( 'admin_menu', array( $this, 'menu_page_callback' ) );
+		add_action( 'in_admin_header', array( $this, 'remove_all_notices' ) );
+		add_filter( 'plugin_row_meta', array( $this, 'plugin_settings_meta' ), 10, 2 );
+		add_filter( 'plugin_action_links_' . ULTP_BASE, array( $this, 'plugin_action_links_callback' ) );
+	}
+
+
+	/**
+	 * Adds extra links to the plugin row meta on the plugins page.
+	 *
+	 * @param array  $links Existing plugin meta links.
+	 * @param string $file  Plugin file path.
+	 * @return array Modified plugin meta links.
 	 */
-    public function plugin_settings_meta( $links, $file ) {
-        if (strpos( $file, 'ultimate-post.php' ) !== false ) {
-            $new_links = array(
-                'ultp_docs' =>  '<a href="https://docs.wpxpo.com/" target="_blank">'.esc_html__('Docs', 'ultimate-post').'</a>',
-                'ultp_tutorial' =>  '<a href="https://www.youtube.com/watch?v=JZxIflYKOuM&list=PLPidnGLSR4qcAwVwIjMo1OVaqXqjUp_s4" target="_blank">'.esc_html__('Tutorials', 'ultimate-post').'</a>',
-                'ultp_support' =>  '<a href="'.esc_url(ultimate_post()->get_premium_link( 'https://www.wpxpo.com/contact/', 'postx_plugins_support')).'" target="_blank">'.esc_html__('Support', 'ultimate-post').'</a>'
-            );
-            $links = array_merge( $links, $new_links );
-        }
-        return $links;
-    }
+	public function plugin_settings_meta( $links, $file ) {
+		if ( strpos( $file, 'ultimate-post.php' ) !== false ) {
+			$new_links = array(
+				'ultp_docs'     => '<a href="https://wpxpo.com/docs/" target="_blank">' . esc_html__( 'Docs', 'ultimate-post' ) . '</a>',
+				'ultp_tutorial' => '<a href="https://www.youtube.com/watch?v=JZxIflYKOuM&list=PLPidnGLSR4qcAwVwIjMo1OVaqXqjUp_s4" target="_blank">' . esc_html__( 'Tutorials', 'ultimate-post' ) . '</a>',
+				'ultp_support'  => '<a href="' . esc_url(
+					Xpo::generate_utm_link(
+						array(
+							'url'    => 'https://www.wpxpo.com/contact/',
+							'utmKey' => 'plugin_dir_support',
+						)
+					)
+				) . '" target="_blank">' . esc_html__( 'Support', 'ultimate-post' ) . '</a>',
+			);
+			$links     = array_merge( $links, $new_links );
+		}
+		return $links;
+	}
 
-
-    /**
-	 * Settings Pro Update Link
-     * 
-     * @since v.1.0.0
-	 * @return ARRAY
+	/**
+	 * Adds quick action links below the plugin name.
+	 *
+	 * @param array $links Default plugin action links.
+	 * @return array Modified plugin action links.
 	 */
-    public function plugin_action_links_callback( $links ) {
-        $upgrade_link = array();
-        $setting_link = array();
-        if (!defined('ULTP_PRO_VER')) {
-            $upgrade_link = array(
-                'ultp_pro' => '<a href="'.esc_url(ultimate_post()->get_premium_link('', 'postx_plugins_pro')).'" target="_blank"><span style="color: #e83838; font-weight: bold;">'.esc_html__('Go Pro', 'ultimate-post').'</span></a>'
-            );
-        }
-        $setting_link['ultp_settings'] = '<a href="'. esc_url(admin_url('admin.php?page=ultp-settings#settings')) .'">'. esc_html__('Settings', 'wp-megamenu') .'</a>';
-        return array_merge( $setting_link, $links, $upgrade_link);
-    }
+	public function plugin_action_links_callback( $links ) {
+		$offer_config = array(
+			array(
+				'start'  => '2026-02-19 00:00 Asia/Dhaka',
+				'end'    => '2026-02-23 23:59 Asia/Dhaka',
+				'text'   => __(
+					'Flash Sale - Up to 45% OFF',
+					'ultimate-post'
+				),
+				'utmKey' => 'flash_sale_meta',
+			),
+			array(
+				'start'  => '2026-03-16 00:00 Asia/Dhaka',
+				'end'    => '2026-04-14 23:59 Asia/Dhaka',
+				'text'   => __(
+					'Spring Sale - Up to 50% OFF',
+					'ultimate-post'
+				),
+				'utmKey' => 'spring_sale_meta',
+			),
+		);
+
+		$setting_link = array(
+			'ultp_options' => '<a href="' . esc_url( admin_url( 'admin.php?page=ultp-settings#startersites' ) ) . '">' . esc_html__( 'Starter Sites', 'ultimate-post' ) . '</a>',
+		);
+
+		$upgrade_link = array();
+
+		// Free user or expired license user.
+		if ( ! defined( 'ULTP_PRO_VER' ) || Xpo::is_lc_expired() ) {
+
+			$license_key = Xpo::get_lc_key() ?? '';
+
+			if ( Xpo::is_lc_expired() ) {
+				$text = esc_html__( 'Renew License', 'ultimate-post' );
+				$url  = 'https://account.wpxpo.com/checkout/?edd_license_key=' . $license_key;
+			} else {
+
+				$text = esc_html__( 'Upgrade to Pro', 'ultimate-post' );
+				$url  = Xpo::generate_utm_link();
+
+				foreach ( $offer_config as $offer ) {
+					$current_time = gmdate( 'U' );
+					$notice_start = gmdate( 'U', strtotime( $offer['start'] ) );
+					$notice_end   = gmdate( 'U', strtotime( $offer['end'] ) );
+					if ( $current_time >= $notice_start && $current_time <= $notice_end ) {
+						$url  = Xpo::generate_utm_link(
+							array(
+								'utmKey' => $offer['utmKey'],
+							)
+						);
+						$text = $offer['text'];
+						break;
+					}
+				}
+			}
+
+			$upgrade_link['ultp_pro'] = '<a style="color: #0062ff; font-weight: bold;" target="_blank" href="' . esc_url( $url ) . '">' . esc_html( $text ) . '</a>';
+		}
+
+		return array_merge( $setting_link, $links, $upgrade_link );
+	}
 
 
-    /**
-	 * Admin Menu Option Page
-     * 
-     * @since v.1.0.0
-	 * @return NULL
+	/**
+	 * Add admin menu option page and submenus.
+	 *
+	 * @since v.1.0.0
+	 * @return void No return value.
 	 */
-    public static function menu_page_callback() {
-        
-        $ultp_menu_icon = 'data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MCA0OC4zIj4NCiAgPGRlZnM+DQogICAgPHN0eWxlPg0KICAgICAgLmNscy0xIHsNCiAgICAgICAgZmlsbDogI2E3YWFhZDsNCiAgICAgIH0NCiAgICA8L3N0eWxlPg0KICA8L2RlZnM+DQogIDx0aXRsZT5Qb3N0eCBJY29uIGNtcHJzc2QgU1ZHPC90aXRsZT4NCiAgPGc+DQogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTguODEsOXY4LjlIOC4xOUE2LjE5LDYuMTksMCwwLDAsMiwyMy43N2EzLjE2LDMuMTYsMCwwLDEtMi0yLjk0VjRBMy4xNiwzLjE2LDAsMCwxLDMuMTUuODVIMjBhMy4xOCwzLjE4LDAsMCwxLDMsMi4zMUE2LjIxLDYuMjEsMCwwLDAsMTguODEsOVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgLTAuODUpIi8+DQogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNDUsOVYyM0gzMS4xYTYuMjMsNi4yMywwLDAsMC00LjkzLTQuOTNBNS41NCw1LjU0LDAsMCwwLDI1LDE3Ljk0SDIxLjg1VjlBMy4xNSwzLjE1LDAsMCwxLDIzLjEzLDYuNWEzLjEyLDMuMTIsMCwwLDEsMS40My0uNThsLjA5LDBINDEuODNBMy4xNCwzLjE0LDAsMCwxLDQ1LDlaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIC0wLjg1KSIvPg0KICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTUwLDI5LjE3VjQ2YTMuMTYsMy4xNiwwLDAsMS0zLjE1LDMuMTVIMzBhMy4xOCwzLjE4LDAsMCwxLTMtMi4zMUE2LjIyLDYuMjIsMCwwLDAsMzEuMjEsNDFWMjZINDYuODVhMy4zLDMuMywwLDAsMSwxLjE0LjIxQTMuMTYsMy4xNiwwLDAsMSw1MCwyOS4xN1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgLTAuODUpIi8+DQogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMjguMTYsMjQuMTNWNDFhMy4xMywzLjEzLDAsMCwxLTEuMjksMi41NCwzLDMsMCwwLDEtMS40Ny41OGwwLDBIOC4xOUEzLjE1LDMuMTUsMCwwLDEsNSw0MVYyNGEzLjE3LDMuMTcsMCwwLDEsMy4xNS0zSDI1YTMuMTIsMy4xMiwwLDAsMSwxLjE0LjIyLDMuMjQsMy4yNCwwLDAsMSwxLjksMi4xQTMuNjMsMy42MywwLDAsMSwyOC4xNiwyNC4xM1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgLTAuODUpIi8+DQogIDwvZz4NCjwvc3ZnPg0K';
-        add_menu_page(
-            esc_html__( 'PostX', 'ultimate-post' ),
-            esc_html__( 'PostX', 'ultimate-post' ),
-            'manage_options',
-            'ultp-settings',
-            array(self::class, 'tab_page_content'),
-            $ultp_menu_icon,
-            58.5
-        );
+	public static function menu_page_callback() {
+		$ultp_menu_icon = 'data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MCA0OC4zIj4NCiAgPGRlZnM+DQogICAgPHN0eWxlPg0KICAgICAgLmNscy0xIHsNCiAgICAgICAgZmlsbDogI2E3YWFhZDsNCiAgICAgIH0NCiAgICA8L3N0eWxlPg0KICA8L2RlZnM+DQogIDx0aXRsZT5Qb3N0eCBJY29uIGNtcHJzc2QgU1ZHPC90aXRsZT4NCiAgPGc+DQogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTguODEsOXY4LjlIOC4xOUE2LjE5LDYuMTksMCwwLDAsMiwyMy43N2EzLjE2LDMuMTYsMCwwLDEtMi0yLjk0VjRBMy4xNiwzLjE2LDAsMCwxLDMuMTUuODVIMjBhMy4xOCwzLjE4LDAsMCwxLDMsMi4zMUE2LjIxLDYuMjEsMCwwLDAsMTguODEsOVoiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgLTAuODUpIi8+DQogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNNDUsOVYyM0gzMS4xYTYuMjMsNi4yMywwLDAsMC00LjkzLTQuOTNBNS41NCw1LjU0LDAsMCwwLDI1LDE3Ljk0SDIxLjg1VjlBMy4xNSwzLjE1LDAsMCwxLDIzLjEzLDYuNWEzLjEyLDMuMTIsMCwwLDEsMS40My0uNThsLjA5LDBINDEuODNBMy4xNCwzLjE0LDAsMCwxLDQ1LDlaIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwIC0wLjg1KSIvPg0KICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTUwLDI5LjE3VjQ2YTMuMTYsMy4xNiwwLDAsMS0zLjE1LDMuMTVIMzBhMy4xOCwzLjE4LDAsMCwxLTMtMi4zMUE2LjIyLDYuMjIsMCwwLDAsMzEuMjEsNDFWMjZINDYuODVhMy4zLDMuMywwLDAsMSwxLjE0LjIxQTMuMTYsMy4xNiwwLDAsMSw1MCwyOS4xN1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgLTAuODUpIi8+DQogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMjguMTYsMjQuMTNWNDFhMy4xMywzLjEzLDAsMCwxLTEuMjksMi41NCwzLDMsMCwwLDEtMS40Ny41OGwwLDBIOC4xOUEzLjE1LDMuMTUsMCwwLDEsNSw0MVYyNGEzLjE3LDMuMTcsMCwwLDEsMy4xNS0zSDI1YTMuMTIsMy4xMiwwLDAsMSwxLjE0LjIyLDMuMjQsMy4yNCwwLDAsMSwxLjksMi4xQTMuNjMsMy42MywwLDAsMSwyOC4xNiwyNC4xM1oiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDAgLTAuODUpIi8+DQogIDwvZz4NCjwvc3ZnPg0K';
+		$menupage_cap   = apply_filters( 'ultp_menu_page_capability', 'manage_options' );
+		add_menu_page(
+			__( 'PostX', 'ultimate-post' ),
+			__( 'PostX', 'ultimate-post' ),
+			$menupage_cap,
+			'ultp-settings',
+			array( self::class, 'ultp_dashboard' ),
+			$ultp_menu_icon,
+			58.5
+		);
 
-        add_submenu_page(
-            'ultp-settings', 
-            esc_html__( 'Getting Started', 'ultimate-post' ),
-            esc_html__( 'Getting Started', 'ultimate-post' ),
-            'manage_options',
-            'ultp-settings'
-        );
+		add_submenu_page(
+			'ultp-settings',
+			__( 'PostX Dashboard', 'ultimate-post' ),
+			__( 'Getting Started', 'ultimate-post' ),
+			$menupage_cap,
+			'ultp-settings'
+		);
 
-        if (ultimate_post()->get_setting('ultp_templates') == 'true') {
-            add_submenu_page(
-                'ultp-settings',
-                esc_html__( 'Saved Templates', 'ultimate-post' ),
-                esc_html__( 'Saved Templates', 'ultimate-post' ),
-                'manage_options',
-                'edit.php?post_type=ultp_templates',
-                ''
-            );
-        }
-        
-        if (ultimate_post()->get_setting('ultp_builder') == 'true') {
-            add_submenu_page(
-                'ultp-settings',
-                esc_html__( 'Site Builder', 'ultimate-post' ),
-                esc_html__( 'Site Builder', 'ultimate-post' ),
-                'manage_options',
-                'admin.php?page=ultp-settings#builder',
-                ''
-            );
-        }
+		$menu_lists = array(
+			'startersites'    => esc_html__( 'Starter Sites', 'ultimate-post' ),
+			'builder'         => esc_html__( 'Site Builder', 'ultimate-post' ),
+			'saved-templates' => esc_html__( 'Saved Templates', 'ultimate-post' ),
+			'custom-font'     => esc_html__( 'Custom Font', 'ultimate-post' ),
+			'addons'          => esc_html__( 'Add-ons', 'ultimate-post' ),
+			'blocks'          => esc_html__( 'Blocks', 'ultimate-post' ),
+			'settings'        => esc_html__( 'Settings', 'ultimate-post' ),
+		);
+		if ( defined( 'ULTP_PRO_VER' ) ) {
+			$menu_lists['license'] = esc_html__( 'License ', 'ultimate-post' );
+		}
 
-        $menu_lists = array(
-            array(
-                'name' => esc_html__( 'Template Kits', 'ultimate-post' ),
-                'slug' => 'templatekit'
-            ),
-            array(
-                'name' => esc_html__( 'Addons', 'ultimate-post' ),
-                'slug' => 'addons'
-            ),
-            array(
-                'name' => esc_html__( 'Blocks', 'ultimate-post' ),
-                'slug' => 'blocks'
-            ),
-            array(
-                'name' => esc_html__( 'Settings', 'ultimate-post' ),
-                'slug' => 'settings'
-            ),
-            array(
-                'name' => esc_html__( 'Tutorials', 'ultimate-post' ),
-                'slug' => 'tutorials'
-            ),
-        );
-        foreach ($menu_lists as $key => $val) {
-            add_submenu_page(
-                'ultp-settings',
-                $val['name'],
-                $val['name'],
-                'manage_options',
-                'ultp-settings#' . $val['slug'],
-                array(__CLASS__, 'render_main')
-            );
-        }
+		foreach ( $menu_lists as $key => $val ) {
+			add_submenu_page(
+				'ultp-settings',
+				$val,
+				$val,
+				$menupage_cap,
+				'ultp-settings#' . $key,
+				array( __CLASS__, 'render_main' )
+			);
+		}
+		add_submenu_page(
+			'ultp-settings',
+			esc_html__( 'Initial Setup', 'ultimate-post' ),
+			esc_html__( 'Initial Setup', 'ultimate-post' ),
+			$menupage_cap,
+			'ultp-setup-wizard',
+			array( __CLASS__, 'ultp_wizard_page' )
+		);
 
-        if (!ultimate_post()->is_lc_active()) {
-            add_submenu_page(
-                'ultp-settings',
-                '',
-                '<span class="dashicons dashicons-star-filled" style="font-size: 17px"></span> ' . esc_html__( 'Go Pro', 'ultimate-post' ),
-                'manage_options',
-                'go_postx_pro',
-                array(self::class, 'handle_external_redirects')
-            );
-        }
-    }
+		$pro_link      = '';
+		$pro_link_text = '';
 
+		// Check if current date is between November 5th and December 10th
+		$current_date         = current_time( 'Y-m-d' );
+		$start_date           = date( 'Y' ) . '-01-01'; // January 1st of current year
+		$end_date             = date( 'Y' ) . '-02-15';   // February 15th of current year
+		$menu_pro_text_period = ( $current_date >= $start_date && $current_date <= $end_date );
 
-    public function handle_external_redirects() {
-        if ( empty( $_GET['page'] ) ) {
-            return;
-        }
+		if ( ! Xpo::is_lc_active() ) {
+			$pro_link      = Xpo::generate_utm_link(
+				array(
+					'utmKey' => 'sub_menu',
+				)
+			);
+			$pro_link_text = $menu_pro_text_period ? __( 'New Year Offer!', 'ultimate-post' ) : __( 'Upgrade to Pro', 'ultimate-post' );
+		} elseif ( Xpo::is_lc_expired() ) {
+			$license_key   = Xpo::get_lc_key();
+			$pro_link      = 'https://account.wpxpo.com/checkout/?edd_license_key=' . $license_key;
+			$pro_link_text = __( 'Renew License', 'ultimate-post' );
+		}
 
-        if ( 'go_postx_pro' === $_GET['page'] ) {
-            wp_redirect( esc_url(ultimate_post()->get_premium_link('', 'postx_dashboard_menu')) );
-            die();
-        }
-    }
+		if ( ! empty( $pro_link ) ) {
+			ob_start();
+			?>
+			<a href="<?php echo esc_url( $pro_link ); ?>" target="_blank" class="ultp-go-pro">
+				<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M2.86 6.553a.5.5 0 01.823-.482l3.02 2.745c.196.178.506.13.64-.098L9.64 4.779a.417.417 0 01.72 0l2.297 3.939a.417.417 0 00.64.098l3.02-2.745a.5.5 0 01.823.482l-1.99 8.63a.833.833 0 01-.813.646H5.663a.833.833 0 01-.812-.646L2.86 6.553z" stroke="currentColor" stroke-width="1.5"></path>
+				</svg>
+				<span><?php echo esc_html( $pro_link_text ); ?></span>
+			</a>
+			<?php
+			$submenu_content = ob_get_clean();
 
-    public static function tab_page_content() {
-        $current = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
-        if ($current) {
-            $pro_active = ultimate_post()->is_lc_active();
-            echo '<div class="ultp-settings-tab-wrap">';
+			add_submenu_page(
+				'ultp-settings',
+				'',
+				$submenu_content,
+				'manage_options',
+				'ultp-pro',
+				array( self::class, 'handle_external_redirects' )
+			);
+		}
 
-                if (date('U') < strtotime('03-12-2022')) { // Black Friday
-                    echo '<div class="ultp-setting-hellobar"><span class="dashicons dashicons-bell ultp-ring"></span><strong> Black Friday Sale: </strong> Up to <b>50% Off.</b> Unlock all premium features - <a href="'.esc_url(ultimate_post()->get_premium_link( 'https://www.wpxpo.com/postx/pricing/', 'dashboard-topbar')).'" target="_blank">'.esc_html__('Get Offer', 'ultimate-post').'</a></div>';
-                } else {
-                    if (!$pro_active) {
-                        echo '<div class="ultp-setting-hellobar"><span class="dashicons dashicons-bell ultp-ring"></span><strong> New : </strong> PostX Dynamic Site Builder is Live - <a href="'.esc_url(ultimate_post()->get_premium_link( 'https://www.wpxpo.com/postx-dynamic-site-builder/', 'dashboard-topbar')).'" target="_blank">'.esc_html__('See what’s new', 'ultimate-post').'</a></div>';
-                    }
-                }
-                
-                echo '<div class="ultp-setting-header">';
-                    echo '<div class="ultp-setting-logo">';
-                        echo '<img class="ultp-setting-header-img" loading="lazy" src="'.esc_url(ULTP_URL.'assets/img/logo-option.svg').'" alt="'.esc_html__('PostX', 'ultimate-post').'">';
-                        echo '<span>v'. esc_html(ULTP_VER).'</span>';
-                    echo '</div>';
-                    echo '<ul class="ultp-settings-tab">';
-                        echo '<li class="current"><a href="#home">'.esc_html__('Getting Started', 'ultimate-post').'</a></li>';
-                        if (ultimate_post()->get_setting('ultp_templates') != 'false') {
-                            echo '<li><a href="'.esc_url(admin_url( 'edit.php?post_type=ultp_templates' )).'">'.esc_html__('Saved Template', 'ultimate-post').'</a></li>';
-                        }
-                        if (ultimate_post()->get_setting('ultp_builder') != 'false') {
-                            echo '<li><a href="#builder">'.esc_html__('Site Builder', 'ultimate-post').'</a></li>';
-                        }
-                        echo '<li><a href="#templatekit">'.esc_html__('Template kits', 'ultimate-post').'</a></li>';
-                        echo '<li><a href="#addons">'.esc_html__('Addons', 'ultimate-post').'</a></li>';
-                        echo '<li><a href="#blocks">'.esc_html__('Blocks', 'ultimate-post').'</a></li>';
-                        echo '<li><a href="#settings">'.esc_html__('Settings', 'ultimate-post').'</a></li>';
-                        echo '<li><a href="#tutorials">'.esc_html__('Tutorials', 'ultimate-post').'</a></li>';
-                    echo '</ul>';
-                echo '</div>';
-                echo '<ul class="ultp-settings-content">';
-                    echo '<li class="current" data-tab="#home">';
-                        require_once ULTP_PATH . 'classes/options/Getting_Started.php';
-                    echo '</li>';
-                    echo '<li data-tab="#addons">';
-                        require_once ULTP_PATH . 'classes/options/Addons.php';
-                        new \ULTP\Option_Addons();
-                    echo '</li>';
-                    echo '<li data-tab="#blocks">';
-                        require_once ULTP_PATH . 'classes/options/Blocks.php';
-                        new \ULTP\Option_Blocks();
-                    echo '</li>';
-                    if (ultimate_post()->get_setting('ultp_builder') != 'false') {
-                        echo '<li data-tab="#builder">';
-                            echo '<div id="ultp-builder-condition"></div>';
-                        echo '</li>';
-                    }
-                    echo '<li data-tab="#templatekit">';
-                        echo '<div id="ultp-dashboard-templatekit"></div>';
-                    echo '</li>';
-                
-                    echo '<li data-tab="#settings">';
-                        require_once ULTP_PATH . 'classes/options/Settings.php';
-                        $obj = new \ULTP\Option_Settings();
-                        $obj->create_admin_page();
-                    echo '</li>';
-                    echo '<li data-tab="#tutorials">';
-                        require_once ULTP_PATH . 'classes/options/Tutorials.php';
-                    echo '</li>';
-                echo '<ul>';
-            echo '</div>';
-        }
-    }
+		add_theme_page(
+			__( 'Starter Sites', 'ultimate-post' ),
+			__( 'Starter Sites', 'ultimate-post' ),
+			$menupage_cap,
+			'ultp-startersites',
+			array( self::class, 'handle_external_redirects' )
+		);
+	}
 
-    /**
-	 * Remove All Notification From Menu Page
-     * 
-     * @since v.1.0.0
-	 * @return NULL
+	/**
+	 * Handle external redirects for menu and pro links.
+	 *
+	 * @since v.1.0.0
+	 * @return void No return value.
 	 */
-    public static function remove_all_notices() {
-        if ( isset($_GET['page']) ) {
-            $page = sanitize_key($_GET['page']);
-            if ( $page === 'ultp-settings' ||  
-                $page === 'ultp-license' ) {
-                    remove_all_actions( 'admin_notices' );
-                    remove_all_actions( 'all_admin_notices' );
-            }
-        }
-    }
+	public function handle_external_redirects() {
+		if (empty($_GET['page'])) {     // @codingStandardsIgnoreLine
+			return;
+		}
+		$_page = sanitize_key( $_GET['page'] );
+		if ('ultp-startersites' === $_page) {   // @codingStandardsIgnoreLine
+			exit( wp_safe_redirect( admin_url( 'admin.php?page=ultp-settings#startersites' ) ) );
+		} else if ('go_postx_pro' === $_page) {   // @codingStandardsIgnoreLine
+			wp_redirect(
+				Xpo::generate_utm_link(
+					array(
+						'utmKey' => 'dashboard_go_pro',
+					)
+				)
+			);
+			die();
+		}
+	}
+
+	/**
+	 * Render the wizard page.
+	 *
+	 * @since v.2.4.4
+	 */
+	public static function ultp_wizard_page() {
+		?>
+		<div class="ultp-wizard-page-wrap" id="ultp-wizard-page"></div>
+		<?php
+	}
+
+	/**
+	 * Render the dashboard page.
+	 *
+	 * @since v.1.0.0
+	 * @return void No return value.
+	 */
+	public static function ultp_dashboard() {
+		echo '<div id="ultp-dashboard"></div>';
+	}
+
+	/**
+	 * Remove all notifications from menu page.
+	 *
+	 * @since v.1.0.0
+	 * @return void No return value.
+	 */
+	public static function remove_all_notices() {
+		if (isset($_GET['page'])) {   // @codingStandardsIgnoreLine
+			$page = sanitize_key($_GET['page']);    // @codingStandardsIgnoreLine
+			if (
+				$page === 'ultp-settings' ||
+				$page === 'ultp-license' ||
+				$page === 'ultp-setup-wizard'
+			) {
+				remove_all_actions( 'admin_notices' );
+				remove_all_actions( 'all_admin_notices' );
+			}
+		}
+	}
 }

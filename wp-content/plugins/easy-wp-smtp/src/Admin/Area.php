@@ -468,6 +468,14 @@ class Area {
 			'lang_code'               => sanitize_key( WP::get_language_code() ),
 			'clear_debug_log'         => esc_html__( 'Are you sure want to clear log?', 'easy-wp-smtp' ),
 			'debug_log_cleared'       => esc_html__( 'Log cleared.', 'easy-wp-smtp' ),
+			'sendlayer'               => [
+				'connect_nonce'   => wp_create_nonce( 'easy-wp-smtp-sendlayer-connect' ),
+				'return_url'      => $this->get_admin_page_url(),
+				'error_title'     => esc_html__( 'Error', 'easy-wp-smtp' ),
+				'error_text'      => esc_html__( 'An error occurred. Please try again.', 'easy-wp-smtp' ),
+				'server_error'    => esc_html__( 'A server error occurred. Please try again.', 'easy-wp-smtp' ),
+				'connecting_text' => esc_html__( 'Connecting...', 'easy-wp-smtp' ),
+			],
 		];
 
 		/**
@@ -1003,9 +1011,19 @@ class Area {
 			return;
 		}
 
+		$current_tab = $pages[ $this->get_current_tab() ];
+
 		// Process POST only if it exists.
 		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		if ( ! empty( $_POST ) && isset( $_POST['easy-wp-smtp-post'] ) ) {
+			// Nonce checks.
+			$current_tab->check_admin_referer();
+
+			// Capability checks.
+			if ( ! current_user_can( easy_wp_smtp()->get_capability_manage_options() ) ) {
+				return;
+			}
+
 			if ( ! empty( $_POST['easy-wp-smtp'] ) ) {
 				$post = $_POST['easy-wp-smtp'];
 			} else {
@@ -1023,16 +1041,16 @@ class Area {
 			do_action(
 				'easy_wp_smtp_admin_area_process_actions_process_post_before',
 				$post,
-				$pages[ $this->get_current_tab() ]->get_slug()
+				$current_tab->get_slug()
 			);
 
-			$pages[ $this->get_current_tab() ]->process_post( $post );
+			$current_tab->process_post( $post );
 		}
 		// phpcs:enable
 
 		// This won't do anything for most pages.
 		// Works for plugin page only, when GET params are allowed.
-		$pages[ $this->get_current_tab() ]->process_auth();
+		$current_tab->process_auth();
 	}
 
 	/**
@@ -1049,20 +1067,16 @@ class Area {
 			wp_send_json_error( $data );
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		check_ajax_referer( 'easy-wp-smtp-admin', 'nonce' );
+
 		if ( empty( $_POST['task'] ) ) {
 			wp_send_json_error( $data );
 		}
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$task = sanitize_key( $_POST['task'] );
 
 		switch ( $task ) {
 			case 'pro_banner_dismiss':
-				if ( ! check_ajax_referer( 'easy-wp-smtp-admin', 'nonce', false ) ) {
-					break;
-				}
-
 				update_user_meta( get_current_user_id(), 'easy_wp_smtp_pro_banner_dismissed', true );
 				$data['message'] = esc_html__( 'Easy WP SMTP Pro related message was successfully dismissed.', 'easy-wp-smtp' );
 				break;
@@ -1100,10 +1114,6 @@ class Area {
 	 * @return false|string
 	 */
 	private function dismiss_notice_via_ajax() {
-
-		if ( ! check_ajax_referer( 'easy-wp-smtp-admin', 'nonce', false ) ) {
-			return false;
-		}
 
 		if ( empty( $_POST['notice'] ) ) {
 			return false;

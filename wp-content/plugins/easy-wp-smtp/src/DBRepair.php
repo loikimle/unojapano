@@ -55,6 +55,7 @@ class DBRepair {
 				$redirect_tab  = isset( $_GET['tab'] ) ? sanitize_key( $_GET['tab'] ) : '';
 				$query_args    = [
 					'check-db-tables' => 1,
+					'nonce'           => wp_create_nonce( 'easy-wp-smtp-check-db-tables' ),
 				];
 
 				if ( ! empty( $redirect_tab ) ) {
@@ -183,6 +184,8 @@ class DBRepair {
 			easy_wp_smtp()->get_admin()->is_admin_page() &&
 			current_user_can( easy_wp_smtp()->get_capability_manage_options() )
 		) {
+			check_admin_referer( 'easy-wp-smtp-check-db-tables', 'nonce' );
+
 			$missing_tables = $this->get_missing_tables();
 
 			if ( empty( $missing_tables ) ) {

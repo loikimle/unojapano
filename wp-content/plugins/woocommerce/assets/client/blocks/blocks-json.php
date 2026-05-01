@@ -431,7 +431,6 @@ return array(
 		),
 		'apiVersion' => 3,
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',
-		'viewScriptModule' => 'woocommerce/add-to-cart-with-options',
 		'style' => 'file:../woocommerce/add-to-cart-with-options-style.css',
 		'editorStyle' => 'file:../woocommerce/add-to-cart-with-options-editor.css'
 	),
@@ -755,7 +754,20 @@ return array(
 				'enum' => array(
 					'pills',
 					'dropdown'
-				)
+				),
+				'default' => 'pills'
+			),
+			'autoselect' => array(
+				'type' => 'boolean',
+				'default' => false
+			),
+			'disabledAttributesAction' => array(
+				'type' => 'string',
+				'enum' => array(
+					'disable',
+					'hide'
+				),
+				'default' => 'disable'
 			)
 		),
 		'textdomain' => 'woocommerce',
@@ -983,16 +995,11 @@ return array(
 		),
 		'example' => array(
 			'attributes' => array(
-				'isPreview' => true,
 				'cartIcon' => 'cart',
 				'content' => 'Cart'
 			)
 		),
 		'attributes' => array(
-			'isPreview' => array(
-				'type' => 'boolean',
-				'default' => false
-			),
 			'cartIcon' => array(
 				'type' => 'string',
 				'default' => 'cart'
@@ -1132,17 +1139,9 @@ return array(
 			'multiple' => false
 		),
 		'example' => array(
-			'attributes' => array(
-				'isPreview' => true
-			),
 			'viewportWidth' => 800
 		),
 		'attributes' => array(
-			'isPreview' => array(
-				'type' => 'boolean',
-				'default' => false,
-				'save' => false
-			),
 			'align' => array(
 				'type' => 'string',
 				'default' => 'wide'
@@ -1217,6 +1216,44 @@ return array(
 			'inserter' => false
 		)
 	),
+	'coupon-code' => array(
+		'$schema' => 'https://schemas.wp.org/trunk/block.json',
+		'apiVersion' => 3,
+		'name' => 'woocommerce/coupon-code',
+		'version' => '1.0.0',
+		'title' => 'Coupon Code',
+		'category' => 'woocommerce',
+		'description' => 'Include a coupon code to entice customers to make a purchase.',
+		'supports' => array(
+			'email' => true,
+			'html' => false,
+			'align' => true,
+			'color' => array(
+				'text' => true,
+				'background' => true
+			),
+			'typography' => array(
+				'fontSize' => true
+			),
+			'spacing' => array(
+				'margin' => true,
+				'padding' => true
+			),
+			'__experimentalBorder' => array(
+				'color' => true,
+				'radius' => true,
+				'style' => true,
+				'width' => true
+			)
+		),
+		'attributes' => array(
+			'couponCode' => array(
+				'type' => 'string',
+				'default' => ''
+			)
+		),
+		'textdomain' => 'woocommerce'
+	),
 	'customer-account' => array(
 		'name' => 'woocommerce/customer-account',
 		'title' => 'Customer account',
@@ -1227,13 +1264,11 @@ return array(
 			'My Account'
 		),
 		'supports' => array(
-			'interactivity' => array(
-				'clientNavigation' => true
-			),
 			'align' => true,
 			'color' => array(
 				'text' => true
 			),
+			'interactivity' => true,
 			'typography' => array(
 				'fontSize' => true,
 				'__experimentalFontFamily' => true
@@ -1248,6 +1283,10 @@ return array(
 				'type' => 'string',
 				'default' => 'icon_and_text'
 			),
+			'hasDropdownNavigation' => array(
+				'type' => 'boolean',
+				'default' => false
+			),
 			'iconStyle' => array(
 				'type' => 'string',
 				'default' => 'default'
@@ -1257,6 +1296,9 @@ return array(
 				'default' => 'icon'
 			)
 		),
+		'viewScriptModule' => 'woocommerce/customer-account',
+		'style' => 'file:../woocommerce/customer-account-style.css',
+		'editorStyle' => 'file:../woocommerce/customer-account-editor.css',
 		'textdomain' => 'woocommerce',
 		'apiVersion' => 3,
 		'$schema' => 'https://schemas.wp.org/trunk/block.json'
@@ -1274,6 +1316,9 @@ return array(
 		'attributes' => array(
 			'emailType' => array(
 				'type' => 'string'
+			),
+			'postId' => array(
+				'type' => 'integer'
 			)
 		),
 		'apiVersion' => 3,
@@ -1661,15 +1706,10 @@ return array(
 		),
 		'example' => array(
 			'attributes' => array(
-				'isPreview' => true,
 				'className' => 'wc-block-mini-cart--preview'
 			)
 		),
 		'attributes' => array(
-			'isPreview' => array(
-				'type' => 'boolean',
-				'default' => false
-			),
 			'miniCartIcon' => array(
 				'type' => 'string',
 				'default' => 'cart'
@@ -1740,10 +1780,6 @@ return array(
 			)
 		),
 		'attributes' => array(
-			'isPreview' => array(
-				'type' => 'boolean',
-				'default' => false
-			),
 			'lock' => array(
 				'type' => 'object',
 				'default' => array(
@@ -3997,7 +4033,7 @@ return array(
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',
 		'apiVersion' => 3,
 		'name' => 'woocommerce/product-gallery',
-		'title' => 'Product Gallery (Beta)',
+		'title' => 'Product Gallery',
 		'description' => 'Showcase your products relevant images and media.',
 		'category' => 'woocommerce',
 		'keywords' => array(
@@ -4050,8 +4086,8 @@ return array(
 		'$schema' => 'https://schemas.wp.org/trunk/block.json',
 		'apiVersion' => 3,
 		'name' => 'woocommerce/product-gallery-large-image',
-		'title' => 'Large Image',
-		'description' => 'Display the Large Image of a product.',
+		'title' => 'Viewer',
+		'description' => 'Container for the current gallery image, navigation buttons, zoom functionality and more.',
 		'category' => 'woocommerce',
 		'keywords' => array(
 			'WooCommerce'
@@ -4063,11 +4099,6 @@ return array(
 		),
 		'supports' => array(
 			'interactivity' => true
-		),
-		'allowedBlocks' => array(
-			'woocommerce/product-image',
-			'woocommerce/product-sale-badge',
-			'woocommerce/product-gallery-large-image-next-previous'
 		),
 		'textdomain' => 'woocommerce',
 		'ancestor' => array(
@@ -4151,6 +4182,10 @@ return array(
 			'aspectRatio' => array(
 				'type' => 'string',
 				'default' => '1'
+			),
+			'activeThumbnailStyle' => array(
+				'type' => 'string',
+				'default' => 'overlay'
 			)
 		),
 		'supports' => array(

@@ -10,6 +10,7 @@ use EasyWPSMTP\Compatibility\Compatibility;
 use EasyWPSMTP\Migrations\Migrations;
 use EasyWPSMTP\Providers\Loader as ProvidersLoader;
 use EasyWPSMTP\Providers\Outlook\Provider as OutlookProvider;
+use EasyWPSMTP\Providers\Sendlayer\QuickConnect as SendlayerQuickConnect;
 use EasyWPSMTP\Queue\Queue;
 use EasyWPSMTP\Reports\Reports;
 use EasyWPSMTP\Tasks\Meta;
@@ -151,6 +152,7 @@ class Core {
 			function () {
 				( new OptimizedEmailSending() )->hooks();
 				( new OutlookProvider() )->hooks();
+				( new SendlayerQuickConnect() )->hooks();
 			}
 		);
 	}

@@ -1,290 +1,218 @@
 <?php
 /**
  * Deactivation Action.
- * 
+ *
  * @package ULTP\Notice
  * @since v.1.1.0
  */
+
 namespace ULTP;
 
-/**
- * Deactive class.
- */
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Deactive class.
+ *
+ * Handles plugin deactivation logic for Ultimate Post.
+ *
+ * @package ULTP\Deactive
+ * @since 4.0.0
  */
-class Deactive{
+class Deactive {
 
-	private $PLUGIN_NAME = 'PostX';
-	private $PLUGIN_SLUG = 'ultimate-post';
+	private $PLUGIN_NAME    = 'PostX';
+	private $PLUGIN_SLUG    = 'ultimate-post';
 	private $PLUGIN_VERSION = ULTP_VER;
-    private $API_ENDPOINT = 'https://inside.wpxpo.com';
-    
+	private $API_ENDPOINT   = 'https://inside.wpxpo.com';
 
 	/**
-	 * Setup class.
+	 * Setup class.s
 	 *
 	 * @since v.1.1.0
 	 */
-    public function __construct() {
-        add_action( 'admin_footer', array( $this, 'get_source_data_callback' ) );
-
-		$is_collect = get_transient( 'wpxpo_data_collect' );
-		if ($is_collect != 'yes' && $is_collect != 'no' ) {
-            //add_action( 'admin_notices', array( $this, 'data_collect_notice' ) );
+	public function __construct() {
+		global $pagenow;
+		if ( $pagenow == 'plugins.php' ) {
+			add_action( 'admin_footer', array( $this, 'get_source_data_callback' ) );
 		}
-
-		$is_frequency = get_transient( 'wpxpo_data_collect_every' );
-		if ($is_frequency == false && $is_collect == 'yes') {
-			add_action( 'init', array( $this, 'send_frequency_plugin_data' ) );
-			set_transient( 'wpxpo_data_collect_every', 'yes', MONTH_IN_SECONDS ); // every 30 days
-		}
-		
-		add_action( 'admin_init', array( $this, 'ultp_tracking_callback' ) );
 		add_action( 'wp_ajax_ultp_deactive_plugin', array( $this, 'send_plugin_data' ) );
 	}
 
-	public function send_frequency_plugin_data() {
-		$this->send_plugin_data( 'allow' );
-	}
-
-	public function ultp_tracking_callback() {
-		if (!isset($_GET['postx_tracking'])) {
-			return;
-		}
-		if( sanitize_key($_GET['postx_tracking']) == 'yes' ) {
-			set_transient( 'wpxpo_data_collect', 'yes', 5 * YEAR_IN_SECONDS ); // 5 years notice
-			$this->send_plugin_data('allow');
-		} else {
-			set_transient( 'wpxpo_data_collect', 'no', 3 * MONTH_IN_SECONDS ); // 90 days notice
-		}
-	}
-
-
 	/**
-	 * Data Collect Notice
+	 * Get plugin data response.
 	 *
 	 * @since v.1.0.0
-	 * @param NULL
-	 * @return STRING | Message Shown in Admin Area
+	 * @param STRING $type The type of deactivation.
+	 * @param STRING $site The site type (optional).
+	 * @return ARRAY Product return data.
 	 */
-	public function data_collect_notice() {
-		if (!isset($_GET['postx_tracking'])) {
-			echo '<div class="notice notice-success">';
-				echo '<div class="wpxpo-btn-tracking-notice">';
-					printf( __( 'Want to help make <strong style="padding:0 5px;"> %1$s </strong> even more awesome? Allow %1$s to collect <a style="padding:0 5px;" href="https://www.wpxpo.com/data-collection-policy/" target="_blank">non-sensitive</a> diagnostic data and usage information.', 'ultimate-post' ), $this->PLUGIN_NAME );
-					echo '<a href="'.esc_url( add_query_arg( 'postx_tracking', 'yes' ) ).'" class="button button-primary wpxpo-btn-tracking">' . esc_html__( "Allow", "ultimate-post" ) . '</a> ';
-					echo '<a href="'.esc_url( add_query_arg( 'postx_tracking', 'no' ) ).'" class="button-secondary button-large wpxpo-btn-tracking">' . esc_html__( "No Thanks", "ultimate-post" ) . '</a>';
-				echo '</div>';
-			echo '</div>';
-		}
-		
-	}
+	public function send_plugin_data( $type, $site = '' ) {
 
+		if ( current_user_can( 'administrator' ) ) {
+			$data              = $this->get_required_data();
+			$data['site_type'] = $site ? $site : get_option( '__ultp_site_type', '' );
+			$data['type']      = $type ? $type : 'deactive';
+			$form_data = isset($_POST) ? ultimate_post()->ultp_rest_sanitize_params($_POST) : array(); //phpcs:Ignore
 
-	/**
-	 * Check is Local or Not
-	 *
-	 * @since v.1.0.0
-	 * @param NULL
-	 * @return BOOLEAN | Is local or not
-	 */
-	public function is_local() {
-		$seed = isset($_SERVER['REMOTE_ADDR']) ? sanitize_key($_SERVER['REMOTE_ADDR']) : '';
-		return in_array( $seed, array( '127.0.0.1', '::1' ) );
-	}
-
-
-	/**
-	 * Sanitize Array
-	 *
-	 * @since v.2.5.8
-	 * @param ARRAY
-	 * @return ARRAY | Product return data
-	 */
-	public function sanitize_array( &$array ) {
-		foreach ($array as &$value) {
-			if ( !is_array($value) ) {
-				$value = sanitize_text_field( $value );
-			} else {
-				$this->sanitize_array($value);
-			}
-		}
-		return $array;
-	}
-
-	
-	/**
-	 * Get Plugin Data Response
-	 *
-	 * @since v.1.0.0
-	 * @param STRING
-	 * @return ARRAY | Product return data
-	 */
-	public function send_plugin_data( $type ) {
-		$data = $this->get_data();
-
-		$data['type'] = $type ? $type : 'deactive';
-		$form_data = isset($_POST) ? $this->sanitize_array($_POST) : array();
-		
-		if (current_user_can( 'administrator' ) ) {
-			if (isset( $form_data['action'] )) {
+			if ( isset( $form_data['action'] ) ) {
 				unset( $form_data['action'] );
 			}
-
-			$response = wp_remote_post( $this->API_ENDPOINT, array(
-				'method'      => 'POST',
-				'timeout'     => 30,
-				'redirection' => 5,
-				'headers'     => array(
-					'user-agent' => 'wpxpo/' . md5( esc_url( home_url() ) ) . ';',
-					'Accept'     => 'application/json',
-				),
-				'blocking'    => true,
-				'httpversion' => '1.0',
-				'body'        => array_merge($data, $form_data),
-			) );
+			$response = wp_remote_post(
+				$this->API_ENDPOINT,
+				array(
+					'method'      => 'POST',
+					'timeout'     => 30,
+					'redirection' => 5,
+					'headers'     => array(
+						'user-agent' => 'wpxpo/' . md5( esc_url( home_url() ) ) . ';',
+						'Accept'     => 'application/json',
+					),
+					'blocking'    => true,
+					'httpversion' => '1.0',
+					'body'        => array_merge( $data, $form_data ),
+				)
+			);
 
 			return $response;
-		}		
+		}
 	}
-	
 
 	/**
-	 * Deactive Form Settings Data
+	 * Get deactivation form settings data.
 	 *
 	 * @since v.1.0.0
-	 * @param NULL
-	 * @return ARRAY | Settings Parameters
+	 * @return ARRAY Settings parameters.
 	 */
-	public function get_settings() {
+	public function get_deactive_settings() {
 		$attr = array(
 			array(
-				'id'          	=> 'no-need',
-				'input' 		=> false,
-				'text'        	=> __( "I no longer need the plugin.", "ultimate-post" )
+				'id'    => 'no-need',
+				'input' => false,
+				'text'  => __( 'I no longer need the plugin.', 'ultimate-post' ),
 			),
 			array(
-				'id'          	=> 'better-plugin',
-				'input' 		=> true,
-				'text'        	=> __( "I found a better plugin.", "ultimate-post" ),
-				'placeholder' 	=> __( "Please share which plugin.", "ultimate-post" ),
+				'id'          => 'better-plugin',
+				'input'       => true,
+				'text'        => __( 'I found a better plugin.', 'ultimate-post' ),
+				'placeholder' => __( 'Please share which plugin.', 'ultimate-post' ),
 			),
 			array(
-				'id'          	=> 'stop-working',
-				'input' 		=> true,
-				'text'        	=> __( "The plugin suddenly stopped working.", "ultimate-post" ),
-				'placeholder' 	=> __( "Please share more details.", "ultimate-post" ),
+				'id'          => 'stop-working',
+				'input'       => true,
+				'text'        => __( 'The plugin suddenly stopped working.', 'ultimate-post' ),
+				'placeholder' => __( 'Please share more details.', 'ultimate-post' ),
 			),
 			array(
-				'id'          	=> 'not-working',
-				'input' 		=> false,
-				'text'        	=> __( "I could not get the plugin to work.", "ultimate-post" )
+				'id'    => 'not-working',
+				'input' => false,
+				'text'  => __( 'I could not get the plugin to work.', 'ultimate-post' ),
 			),
 			array(
-				'id'          	=> 'temporary-deactivation',
-				'input' 		=> false,
-				'text'        	=> __( "It's a temporary deactivation.", "ultimate-post" )
+				'id'    => 'temporary-deactivation',
+				'input' => false,
+				'text'  => __( "It's a temporary deactivation.", 'ultimate-post' ),
 			),
 			array(
-				'id'          	=> 'other',
-				'input' 		=> true,
-				'text'        	=> __( "Other.", "ultimate-post" ),
-				'placeholder' 	=> __( "Please share the reason.", "ultimate-post" ),
+				'id'          => 'other',
+				'input'       => true,
+				'text'        => __( 'Other.', 'ultimate-post' ),
+				'placeholder' => __( 'Please share the reason.', 'ultimate-post' ),
 			),
 		);
 		return $attr;
 	}
 
-
 	/**
-	 * Deactive HTML View
+	 * Output deactivation HTML view.
 	 *
 	 * @since v.1.0.0
-	 * @param NULL
-	 * @return STRING | HTML Data
+	 * @return void No return value.
 	 */
-    public function get_source_data_callback() {
-		global $pagenow;
-        if ($pagenow == 'plugins.php' ) {
-            $this->deactive_html();
-		}
-		$this->deactive_css();
-		$this->deactive_js();
+	public function get_source_data_callback() {
+		$this->deactive_html_container();
+		$this->deactive_container_css();
+		$this->deactive_container_js();
 	}
 
-	public function deactive_html() { ?>
-    	<div class="ultp-modal" id="ultp-deactive-modal">
-            <div class="ultp-modal-wrap">
+	/**
+	 * Outputs the HTML container for the deactivation process.
+	 *
+	 * This method is responsible for rendering the necessary HTML
+	 * when the plugin is being deactivated.
+	 *
+	 * @return void
+	 */
+	public function deactive_html_container() {
+		?>
+		<div class="ultp-modal" id="ultp-deactive-modal">
+			<div class="ultp-modal-wrap">
 			
-                <div class="ultp-modal-header">
-                    <h2><?php esc_html_e( "Quick Feedback", "ultimate-post" ); ?></h2>
-                    <button class="ultp-modal-cancel"><span class="dashicons dashicons-no-alt"></span></button>
-                </div>
+				<div class="ultp-modal-header">
+					<h2><?php esc_html_e( 'Quick Feedback', 'ultimate-post' ); ?></h2>
+					<button class="ultp-modal-cancel"><span class="dashicons dashicons-no-alt"></span></button>
+				</div>
 
-                <div class="ultp-modal-body">
-                    <h3><?php esc_html_e( "If you have a moment, please let us know why you are deactivating PostX:", "ultimate-post" ); ?></h3>
-                    <ul class="ultp-modal-input">
-						<?php foreach ($this->get_settings() as $key => $setting) { ?>
+				<div class="ultp-modal-body">
+					<h3><?php esc_html_e( 'If you have a moment, please let us know why you are deactivating PostX:', 'ultimate-post' ); ?></h3>
+					<ul class="ultp-modal-input">
+						<?php foreach ( $this->get_deactive_settings() as $key => $setting ) { ?>
 							<li>
 								<label>
-									<input type="radio" <?php echo $key == 0 ? 'checked="checked"' : ''; ?> id="<?php echo esc_attr($setting['id']); ?>" name="<?php echo esc_attr($this->PLUGIN_SLUG); ?>" value="<?php echo esc_attr($setting['text']); ?>">
-									<div class="ultp-reason-text"><?php echo esc_html($setting['text']); ?></div>
-									<?php if( isset($setting['input']) && $setting['input'] ) { ?>
-										<textarea placeholder="<?php echo esc_attr($setting['placeholder']); ?>" class="ultp-reason-input <?php echo $key == 0 ? 'ultp-active' : ''; ?> <?php echo esc_html($setting['id']); ?>"></textarea>
+									<input type="radio" <?php echo $key == 0 ? 'checked="checked"' : ''; ?> id="<?php echo esc_attr( $setting['id'] ); ?>" name="<?php echo esc_attr( $this->PLUGIN_SLUG ); ?>" value="<?php echo esc_attr( $setting['text'] ); ?>">
+									<div class="ultp-reason-text"><?php echo esc_html( $setting['text'] ); ?></div>
+									<?php if ( isset( $setting['input'] ) && $setting['input'] ) { ?>
+										<textarea placeholder="<?php echo esc_attr( $setting['placeholder'] ); ?>" class="ultp-reason-input <?php echo $key == 0 ? 'ultp-active' : ''; ?> <?php echo esc_html( $setting['id'] ); ?>"></textarea>
 									<?php } ?>
 								</label>
 							</li>
 						<?php } ?>
-                    </ul>
-                </div>
+					</ul>
+				</div>
 
-                <div class="ultp-modal-footer">
-                    <a class="ultp-modal-submit ultp-btn ultp-btn-primary" href="#"><?php esc_html_e( "Submit & Deactivate", "ultimate-post" ); ?><span class="dashicons dashicons-update rotate"></span></a>
-                    <a class="ultp-modal-deactive" href="#"><?php esc_html_e( "Skip & Deactivate", "ultimate-post" ); ?></a>
+				<div class="ultp-modal-footer">
+					<a class="ultp-modal-submit ultp-btn ultp-btn-primary" href="#"><?php esc_html_e( 'Submit & Deactivate', 'ultimate-post' ); ?><span class="dashicons dashicons-update rotate"></span></a>
+					<a class="ultp-modal-deactive" href="#"><?php esc_html_e( 'Skip & Deactivate', 'ultimate-post' ); ?></a>
 				</div>
 				
-            </div>
-        </div>
-	<?php }
-
+			</div>
+		</div>
+		<?php
+	}
 
 	/**
-	 * Deactivation Forms CSS File
+	 * Output deactivation forms CSS.
 	 *
 	 * @since v.1.0.0
-	 * @param NULL
-	 * @return STRING | CSS Code
+	 * @return void No return value.
 	 */
-	public function deactive_css() { ?>
+	public function deactive_container_css() {
+		?>
 		<style type="text/css">
 			.ultp-modal {
-                position: fixed;
-                z-index: 99999;
-                top: 0;
-                right: 0;
-                bottom: 0;
-                left: 0;
-                background: rgba(0,0,0,0.5);
-                display: none;
-                box-sizing: border-box;
-                overflow: scroll;
-            }
-            .ultp-modal * {
-                box-sizing: border-box;
-            }
-            .ultp-modal.modal-active {
-                display: block;
-            }
+				position: fixed;
+				z-index: 99999;
+				top: 0;
+				right: 0;
+				bottom: 0;
+				left: 0;
+				background: rgba(0,0,0,0.5);
+				display: none;
+				box-sizing: border-box;
+				overflow: scroll;
+			}
+			.ultp-modal * {
+				box-sizing: border-box;
+			}
+			.ultp-modal.modal-active {
+				display: block;
+			}
 			.ultp-modal-wrap {
-                max-width: 870px;
-                width: 100%;
-                position: relative;
-                margin: 10% auto;
-                background: #fff;
-            }
+				max-width: 870px;
+				width: 100%;
+				position: relative;
+				margin: 10% auto;
+				background: #fff;
+			}
 			.ultp-reason-input{
 				display: none;
 			}
@@ -409,27 +337,27 @@ class Deactive{
 			}
 			.wpxpo-btn-tracking-notice {
 				display: flex;
-                align-items: center;
-                flex-wrap: wrap;
-                padding: 5px 0;
+				align-items: center;
+				flex-wrap: wrap;
+				padding: 5px 0;
 			}
 			.wpxpo-btn-tracking-notice .wpxpo-btn-tracking {
 				margin: 0 5px;
 				text-decoration: none;
 			}
 		</style>
-    <?php }
-
+		<?php
+	}
 
 	/**
-	 * Deactivation Forms JS File
+	 * Output deactivation forms JS.
 	 *
 	 * @since v.1.0.0
-	 * @param NULL
-	 * @return STRING | JS Code
+	 * @return void No return value.
 	 */
-	public function deactive_js() { ?>
-        <script type="text/javascript">
+	public function deactive_container_js() {
+		?>
+		<script type="text/javascript">
 			jQuery( document ).ready( function( $ ) {
 				'use strict';
 
@@ -460,7 +388,7 @@ class Deactive{
 					const url = $(this).attr('href')
 
 					$.ajax({
-						url: '<?php echo admin_url('admin-ajax.php'); ?>',
+						url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
 						type: 'POST',
 						data: { 
 							action: 'ultp_deactive_plugin',
@@ -471,7 +399,6 @@ class Deactive{
 						success: function (data) {
 							$( '#ultp-deactive-modal' ).removeClass( 'modal-active' );
 							window.location.href = url;
-							// that.parents('.wc-install').hide("slow", function() { that.parents('.wc-install').remove(); });
 						},
 						error: function(xhr) {
 							console.log( 'Error occured. Please try again' + xhr.statusText + xhr.responseText );
@@ -482,140 +409,134 @@ class Deactive{
 
 			});
 		</script>
-    <?php }
-
-
-	/**
-	 * Get All the Installed Plugin Data
-	 *
-	 * @since v.1.0.0
-	 * @param NULL
-	 * @return ARRAY | Return Plugin Information
-	 */
-	public function get_plugins() {
-		if (! function_exists( 'get_plugins' ) ) {
-            include ABSPATH . '/wp-admin/includes/plugin.php';
-        }
-
-		$active = array();
-        $inactive = array();
-        $all_plugins = get_plugins();
-        $active_plugins = get_option( 'active_plugins', array() );
-		if (is_multisite()) {
-			$active_plugins = array_merge($active_plugins, array_keys(get_site_option( 'active_sitewide_plugins', array() )));
-		}
-
-        foreach ( $all_plugins as $key => $plugin ) {
-			$arr = array();
-			
-			$arr['name'] 	= isset( $plugin['Name'] ) ? $plugin['Name'] : '';
-			$arr['url'] 	= isset( $plugin['PluginURI'] ) ? $plugin['PluginURI'] : '';
-			$arr['author'] 	= isset( $plugin['Author'] ) ? $plugin['Author'] : '';
-			$arr['version'] = isset( $plugin['Version'] ) ? $plugin['Version'] : '';
-
-			if (in_array( $key, $active_plugins )) {
-				$active[$key] = $arr;
-			} else {
-				$inactive[$key] = $arr;
-			}
-		}
-
-		return array( 'active' => $active, 'inactive' => $inactive );		
+		<?php
 	}
 
 
 	/**
-	 * Get All the Theme Installed
+	 * Get all the installed plugin data.
 	 *
 	 * @since v.1.0.0
-	 * @param NULL
-	 * @return ARRAY | Return Theme Information
+	 * @return ARRAY Plugin information.
 	 */
-	public function get_themes() {
-		$theme_data = array();
-		$all_themes = wp_get_themes();	
+	public function get_installed_plugins() {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			include ABSPATH . '/wp-admin/includes/plugin.php';
+		}
 
-		if (is_array($all_themes)) {
-			foreach ($all_themes as $key => $theme) {
-				$attr = array();
-				$attr['name'] 		= $theme->Name;
-				$attr['url'] 		= $theme->ThemeURI;
-				$attr['author'] 	= $theme->Author;
-				$attr['version'] 	= $theme->Version;
-				$theme_data[$key] 	= $attr;
+		$active         = array();
+		$inactive       = array();
+		$all_plugins    = get_plugins();
+		$active_plugins = get_option( 'active_plugins', array() );
+		if ( is_multisite() ) {
+			$active_plugins = array_merge( $active_plugins, array_keys( get_site_option( 'active_sitewide_plugins', array() ) ) );
+		}
+
+		foreach ( $all_plugins as $key => $plugin ) {
+			$arr = array();
+
+			$arr['name']    = isset( $plugin['Name'] ) ? $plugin['Name'] : '';
+			$arr['url']     = isset( $plugin['PluginURI'] ) ? $plugin['PluginURI'] : '';
+			$arr['author']  = isset( $plugin['Author'] ) ? $plugin['Author'] : '';
+			$arr['version'] = isset( $plugin['Version'] ) ? $plugin['Version'] : '';
+
+			if ( in_array( $key, $active_plugins ) ) {
+				$active[ $key ] = $arr;
+			} else {
+				$inactive[ $key ] = $arr;
+			}
+		}
+
+		return array(
+			'active'   => $active,
+			'inactive' => $inactive,
+		);
+	}
+
+	/**
+	 * Get all the installed themes.
+	 *
+	 * @since v.1.0.0
+	 * @return ARRAY Theme information.
+	 */
+	public function get_installed_themes() {
+		$theme_data = array();
+		$all_themes = wp_get_themes();
+
+		if ( is_array( $all_themes ) ) {
+			foreach ( $all_themes as $key => $theme ) {
+				$attr               = array();
+				$attr['name']       = $theme->Name;
+				$attr['url']        = $theme->ThemeURI;
+				$attr['author']     = $theme->Author;
+				$attr['version']    = $theme->Version;
+				$theme_data[ $key ] = $attr;
 			}
 		}
 		return $theme_data;
 	}
 
-
 	/**
-	 * Get Current User IP
+	 * Get current user IP address.
 	 *
 	 * @since v.1.0.0
-	 * @param NULL
-	 * @return STRING | Return IP
+	 * @return STRING IP address.
 	 */
 	public function get_user_ip() {
 		$response = wp_remote_get( 'https://icanhazip.com/' );
-		
-        if (is_wp_error( $response ) ) {
-            return '';
-        } else {
+		if ( is_wp_error( $response ) ) {
+			return '';
+		} else {
 			$user_ip = trim( wp_remote_retrieve_body( $response ) );
 			return filter_var( $user_ip, FILTER_VALIDATE_IP ) ? $user_ip : '';
 		}
-    }
-
+	}
 
 	/**
-	 * Get All the Data Collected
+	 * Get all the collected data for deactivation.
 	 *
 	 * @since v.1.0.0
-	 * @param NULL
-	 * @return ARRAY | All Send Data
+	 * @return ARRAY All send data.
 	 */
-	public function get_data() {
+	public function get_required_data() {
 		global $wpdb;
-		$user = wp_get_current_user();
-		$user_count = count_users();
-		$plugins_data = $this->get_plugins();
+		$user         = wp_get_current_user();
+		$user_count   = count_users();
+		$plugins_data = $this->get_installed_plugins();
 
 		$data = array(
-			'name' => get_bloginfo( 'name' ),
-			'home' => esc_url( home_url() ),
-			'admin_email' => $user->user_email,
-			'first_name' => isset($user->user_firstname) ? $user->user_firstname : '',
-			'last_name' => isset($user->user_lastname) ? $user->user_lastname : '',
-			'display_name' => $user->display_name,
-			'wordpress' => get_bloginfo( 'version' ),
-			'memory_limit' => WP_MEMORY_LIMIT,
-			'debug_mode' => ( defined('WP_DEBUG') && WP_DEBUG ) ? 'Yes' : 'No',
-			'locale' => get_locale(),
-			'multisite' => is_multisite() ? 'Yes' : 'No',
+			'name'             => get_bloginfo( 'name' ),
+			'home'             => esc_url( home_url() ),
+			'admin_email'      => $user->user_email,
+			'first_name'       => isset( $user->user_firstname ) ? $user->user_firstname : '',
+			'last_name'        => isset( $user->user_lastname ) ? $user->user_lastname : '',
+			'display_name'     => $user->display_name,
+			'wordpress'        => get_bloginfo( 'version' ),
+			'memory_limit'     => WP_MEMORY_LIMIT,
+			'debug_mode'       => ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ? 'Yes' : 'No',
+			'locale'           => get_locale(),
+			'multisite'        => is_multisite() ? 'Yes' : 'No',
 
-			'themes' => $this->get_themes(),
-			'active_theme' => get_stylesheet(),
-			'users' => isset($user_count['total_users']) ? $user_count['total_users'] : 0,
-			'active_plugins' => $plugins_data['active'],
+			'themes'           => $this->get_installed_themes(),
+			'active_theme'     => get_stylesheet(),
+			'users'            => isset( $user_count['total_users'] ) ? $user_count['total_users'] : 0,
+			'active_plugins'   => $plugins_data['active'],
 			'inactive_plugins' => $plugins_data['inactive'],
-			'server' => isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_key($_SERVER['SERVER_SOFTWARE']) : '',
-			
-			'timezone' => date_default_timezone_get(),
-			'php_curl' => function_exists( 'curl_init' ) ? 'Yes' : 'No',
-			'php_version' => function_exists('phpversion') ? phpversion() : '',
-			'upload_size' => size_format( wp_max_upload_size() ),
-			'mysql_version' => $wpdb->db_version(),
-			'php_fsockopen' => function_exists( 'fsockopen' ) ? 'Yes' : 'No',
+			'server'           => isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_key( $_SERVER['SERVER_SOFTWARE'] ) : '',
 
-			'ip' => $this->get_user_ip(),
-			'plugin_name' => $this->PLUGIN_NAME,
-			'plugin_version' => $this->PLUGIN_VERSION,
-			'plugin_slug' => $this->PLUGIN_SLUG
+			'timezone'         => date_default_timezone_get(),
+			'php_curl'         => function_exists( 'curl_init' ) ? 'Yes' : 'No',
+			'php_version'      => function_exists( 'phpversion' ) ? phpversion() : '',
+			'upload_size'      => size_format( wp_max_upload_size() ),
+			'mysql_version'    => $wpdb->db_version(),
+			'php_fsockopen'    => function_exists( 'fsockopen' ) ? 'Yes' : 'No',
+
+			'ip'               => $this->get_user_ip(),
+			'plugin_name'      => $this->PLUGIN_NAME,
+			'plugin_version'   => $this->PLUGIN_VERSION,
+			'plugin_slug'      => $this->PLUGIN_SLUG,
 		);
 
 		return $data;
 	}
-
-    
 }

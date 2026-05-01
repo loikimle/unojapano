@@ -272,22 +272,32 @@ abstract class ParentPageAbstract implements PageInterface {
 			return;
 		}
 
+		$current_tab = $this->tabs[ $this->get_current_tab() ];
+
 		// Process POST only if it exists.
 		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 		if ( ! empty( $_POST ) && isset( $_POST['easy-wp-smtp-post'] ) ) {
+			// Nonce checks.
+			$current_tab->check_admin_referer();
+
+			// Capability checks.
+			if ( ! current_user_can( easy_wp_smtp()->get_capability_manage_options() ) ) {
+				return;
+			}
+
 			if ( ! empty( $_POST['easy-wp-smtp'] ) ) {
 				$post = $_POST['easy-wp-smtp'];
 			} else {
 				$post = [];
 			}
 
-			$this->tabs[ $this->get_current_tab() ]->process_post( $post );
+			$current_tab->process_post( $post );
 		}
 		// phpcs:enable
 
 		// This won't do anything for most pages.
 		// Works for plugin page only, when GET params are allowed.
-		$this->tabs[ $this->get_current_tab() ]->process_auth();
+		$current_tab->process_auth();
 	}
 
 	/**

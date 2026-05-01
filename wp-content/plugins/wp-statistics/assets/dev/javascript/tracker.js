@@ -1,4 +1,12 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function handler() {
+    // Defer until a prerendered document is activated by user navigation.
+    // The server drops prerender hits via Sec-Purpose, and activation does
+    // not re-run scripts — without this gate the real pageview is lost.
+    if (document.prerendering) {
+        document.addEventListener('prerenderingchange', handler, { once: true });
+        return;
+    }
+
     const consentIntegration = WP_Statistics_Tracker_Object.option.consentIntegration.name;
 
     // If there's no consent integration, or borlabs cookie integration is enabled
@@ -20,10 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 function handleWpConsentApiIntegration() {
-    const consentLevel      = WP_Statistics_Tracker_Object.option.consentIntegration.status['consent_level'];
-    const trackAnonymously  = WP_Statistics_Tracker_Object.option.consentIntegration.status['track_anonymously'];
-
-    if (trackAnonymously || consentLevel == 'disabled' || wp_has_consent(consentLevel)) {
+    if (wp_has_consent('statistics') || wp_has_consent('statistics-anonymous')) {
         WpStatisticsUserTracker.init();
         WpStatisticsEventTracker.init();
     }
@@ -32,16 +37,9 @@ function handleWpConsentApiIntegration() {
         const changedConsentCategory = e.detail;
         for (let key in changedConsentCategory) {
             if (changedConsentCategory.hasOwnProperty(key)) {
-                if (key === consentLevel && changedConsentCategory[key] === 'allow') {
+                if ((key === 'statistics' || key === 'statistics-anonymous') && changedConsentCategory[key] === 'allow') {
                     WpStatisticsUserTracker.init();
                     WpStatisticsEventTracker.init();
-
-                    // When trackAnonymously is enabled, the init() call above will get ignored (since it's already initialized before)
-                    // So, in this specific case, we can call checkHitRequestConditions() manually
-                    // This will insert a new record for the user (who just gave consent to us) and prevent other scripts (e.g. event.js) from malfunctioning
-                    if (trackAnonymously) {
-                        WpStatisticsUserTracker.checkHitRequestConditions();
-                    }
                 }
             }
         }

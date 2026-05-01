@@ -54,12 +54,22 @@ class ConnectionSettings {
 		$mailer             = $this->connection->get_mailer_slug();
 		$connection_options = $this->connection->get_options();
 
+		$hide_from_email   = false;
 		$disabled_email    = in_array( $mailer, [ 'zoho' ], true ) ? 'disabled' : '';
 		$disabled_name     = in_array( $mailer, [ 'outlook' ], true ) ? 'disabled' : '';
 		$disabled_reply_to = in_array( $mailer, [ 'zoho' ], true ) ? 'disabled' : '';
 
 		if ( empty( $mailer ) || ! in_array( $mailer, Options::$mailers, true ) ) {
 			$mailer = 'mail';
+		}
+
+		if (
+			$mailer === 'sendlayer' &&
+			$connection_options->get( 'sendlayer', 'quick_connect' ) &&
+			$connection_options->get( 'sendlayer', 'is_shared_domain' )
+		) {
+			// For SendLayer, hide the From Email setting since it's managed from the SendLayer dashboard.
+			$hide_from_email = true;
 		}
 
 		$mailer_supported_settings = easy_wp_smtp()->get_providers()->get_options( $mailer )->get_supports();
@@ -206,7 +216,7 @@ class ConnectionSettings {
 			<div class="easy-wp-smtp-meta-box__content">
 
 				<!-- From Email -->
-				<div id="easy-wp-smtp-setting-row-from_email" class="easy-wp-smtp-row easy-wp-smtp-setting-row easy-wp-smtp-setting-row--text">
+				<div id="easy-wp-smtp-setting-row-from_email" class="easy-wp-smtp-row easy-wp-smtp-setting-row easy-wp-smtp-setting-row--text" <?php echo $hide_from_email ? ' style="display: none;"' : ''; ?>>
 					<div class="easy-wp-smtp-setting-row__label">
 						<label for="easy-wp-smtp-setting-from_email"><?php esc_html_e( 'From Email Address', 'easy-wp-smtp' ); ?></label>
 					</div>
@@ -252,6 +262,19 @@ class ConnectionSettings {
 						</div>
 					</div>
 				</div>
+
+				<?php
+				/**
+				 * Fires after the From Email Address setting row.
+				 *
+				 * @since 2.14.0
+				 *
+				 * @param ConnectionInterface $connection         The Connection object.
+				 * @param Options             $connection_options The connection options instance.
+				 * @param string              $mailer             The current mailer slug.
+				 */
+				do_action( 'easy_wpsmtp_admin_connection_settings_display_after_from_email_setting_row', $this->connection, $connection_options, $mailer );
+				?>
 
 				<!-- From Name -->
 				<div id="easy-wp-smtp-setting-row-from_name" class="easy-wp-smtp-row easy-wp-smtp-setting-row easy-wp-smtp-setting-row--text">

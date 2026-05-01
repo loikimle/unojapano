@@ -151,7 +151,10 @@ class UserFeedback {
           if (!$(this).hasClass('easy-wp-smtp-review-out')) {
             e.preventDefault();
           }
-          $.post(ajaxurl, {action: 'easy_wp_smtp_feedback_notice_dismiss'});
+          $.post(ajaxurl, {
+            action: 'easy_wp_smtp_feedback_notice_dismiss',
+            nonce: '<?php echo esc_js( wp_create_nonce( 'easy-wp-smtp-feedback-notice-dismiss' ) ); ?>'
+          });
           $('.easy-wp-smtp-review-notice').remove();
         });
 
@@ -206,6 +209,12 @@ class UserFeedback {
 	 * @since 1.5.3
 	 */
 	public function feedback_notice_dismiss() {
+
+		check_ajax_referer( 'easy-wp-smtp-feedback-notice-dismiss', 'nonce' );
+
+		if ( ! is_super_admin() ) {
+			wp_send_json_error();
+		}
 
 		$options              = get_option( self::OPTION_NAME, [] );
 		$options['time']      = time();

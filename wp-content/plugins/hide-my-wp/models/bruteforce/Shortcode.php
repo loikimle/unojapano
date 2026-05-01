@@ -8,7 +8,7 @@
  * @since 8.1
  */
 
-defined( 'ABSPATH' ) || die( 'Cheatin\' uh?' );
+defined( 'ABSPATH' ) || die( 'Cheating uh?' );
 
 class HMWP_Models_Bruteforce_Shortcode {
 
@@ -31,7 +31,7 @@ class HMWP_Models_Bruteforce_Shortcode {
 		// Set brute force globally
 		global $hmwp_bruteforce;
 
-		if ( ! function_exists( 'is_user_logged_in' ) || is_user_logged_in() ) {
+		if ( HMWP_Classes_Tools::isLoggedInUser() ) {
 			return;
 		}
 

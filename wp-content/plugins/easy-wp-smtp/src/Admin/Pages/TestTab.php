@@ -306,8 +306,6 @@ class TestTab extends PageAbstract {
 	 */
 	public function process_post( $data ) {
 
-		$this->check_admin_referer();
-
 		$this->post_data = $data;
 
 		$connection = easy_wp_smtp()->get_connections_manager()->get_primary_connection();

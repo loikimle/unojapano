@@ -221,6 +221,10 @@ class Reports {
 			return;
 		}
 
+		if ( ! current_user_can( easy_wp_smtp()->get_capability_manage_options() ) ) {
+			return;
+		}
+
 		if ( Options::init()->is_const_changed( 'general', SummaryReportEmail::SETTINGS_SLUG ) ) {
 			( new SummaryEmailTask() )->cancel();
 		}

@@ -594,8 +594,6 @@ class MiscTab extends PageAbstract {
 	 */
 	public function process_post( $data ) { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
-		$this->check_admin_referer();
-
 		$options = Options::init();
 
 		$bool_options = [

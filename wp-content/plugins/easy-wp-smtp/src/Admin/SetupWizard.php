@@ -109,6 +109,10 @@ class SetupWizard {
 	 */
 	public function maybe_redirect_after_activation() { // phpcs:ignore Generic.Metrics.CyclomaticComplexity.TooHigh
 
+		if ( ! current_user_can( 'activate_plugins' ) ) {
+			return;
+		}
+
 		if ( wp_doing_ajax() || wp_doing_cron() ) {
 			return;
 		}
@@ -230,10 +234,14 @@ class SetupWizard {
 				'public_url'         => easy_wp_smtp()->assets_url . '/vue/',
 				'current_user_email' => wp_get_current_user()->user_email,
 				'completed_time'     => self::get_stats()['completed_time'],
+				'sendlayer'          => [
+					'connect_nonce' => wp_create_nonce( 'easy-wp-smtp-sendlayer-connect' ),
+					'return_url'    => self::get_site_url() . '#/step/configure_mailer/sendlayer',
+				],
 				'education'          => [
 					'upgrade_text'        => esc_html__( 'Sorry, but the %mailer% mailer isn’t available in the lite version. Please upgrade to PRO to unlock this mailer and much more.', 'easy-wp-smtp' ),
 					'upgrade_button'      => esc_html__( 'Upgrade to PRO', 'easy-wp-smtp' ),
-					'upgrade_url'         => add_query_arg( 'discount', 'SMTPLITEUPGRADE', easy_wp_smtp()->get_upgrade_link( '' ) ),
+					'upgrade_url'         => add_query_arg( 'discount', 'SMTPLITEUPGRADE', easy_wp_smtp()->get_upgrade_link( [ 'medium' => 'setup-wizard' ] ) ),
 					'upgrade_bonus_short' => sprintf(
 						wp_kses( /* Translators: %s - discount value 50%. */
 							__( '<b>%s OFF</b> for Easy WP SMTP users, applied at checkout.', 'easy-wp-smtp' ),
@@ -1055,6 +1063,10 @@ class SetupWizard {
 	public function send_feedback() {
 
 		check_ajax_referer( 'easywpsmtp-admin-nonce', 'nonce' );
+		
+		if ( ! current_user_can( easy_wp_smtp()->get_capability_manage_options() ) ) {
+			wp_send_json_error();
+		}
 
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$data = ! empty( $_POST['data'] ) ? json_decode( wp_unslash( $_POST['data'] ), true ) : [];

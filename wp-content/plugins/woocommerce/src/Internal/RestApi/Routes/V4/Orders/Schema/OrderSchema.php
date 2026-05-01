@@ -17,7 +17,7 @@ use Automattic\WooCommerce\Internal\CostOfGoodsSold\CogsAwareTrait;
 use Automattic\WooCommerce\Utilities\OrderUtil;
 use WC_Order;
 use WP_REST_Request;
-use Automattic\WooCommerce\Internal\Fulfillments\FulfillmentUtils;
+use Automattic\WooCommerce\Admin\Features\Fulfillments\FulfillmentUtils;
 
 /**
  * OrderSchema class.
@@ -143,6 +143,7 @@ class OrderSchema extends AbstractSchema {
 				'default'     => get_woocommerce_currency(),
 				'enum'        => array_keys( get_woocommerce_currencies() ),
 				'context'     => self::VIEW_EDIT_EMBED_CONTEXT,
+				'readonly'    => true,
 			),
 			'currency_symbol'      => array(
 				'description' => __( 'Currency symbol for the currency which can be used to format returned prices.', 'woocommerce' ),

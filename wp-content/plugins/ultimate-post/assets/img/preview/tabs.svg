@@ -1,0 +1,23 @@
+<svg width="120" height="72" viewBox="0 0 120 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0.5" y="14.5" width="119" height="57" rx="3.5" fill="#E2E2E2" stroke="#AFAFAF" />
+    <rect x="0.5" y="0.5" width="23" height="11" rx="1.5" stroke="#AFAFAF" />
+    <path d="M28 2C28 0.89543 28.8954 0 30 0H50C51.1046 0 52 0.895431 52 2V14H28V2Z" fill="#AFAFAF" />
+    <rect x="56.5" y="0.5" width="23" height="11" rx="1.5" stroke="#AFAFAF" />
+    <path
+        d="M8 24C8 22.8954 8.89543 22 10 22H53C54.1046 22 55 22.8954 55 24V46C55 47.1046 54.1046 48 53 48H10C8.89543 48 8 47.1046 8 46V24Z"
+        fill="white" />
+    <path
+        d="M8 55.5C8 54.6716 8.67157 54 9.5 54H53.5C54.3284 54 55 54.6716 55 55.5V55.5C55 56.3284 54.3284 57 53.5 57H9.5C8.67157 57 8 56.3284 8 55.5V55.5Z"
+        fill="white" />
+    <rect x="76" y="25" width="36" height="2" rx="1" fill="white" />
+    <rect x="76" y="48" width="36" height="2" rx="1" fill="white" />
+    <rect x="76" y="36" width="24" height="2" rx="1" fill="white" />
+    <rect x="76" y="59" width="20" height="2" rx="1" fill="white" />
+    <path
+        d="M8 62.5C8 61.6716 8.67157 61 9.5 61H41.5C42.3284 61 43 61.6716 43 62.5V62.5C43 63.3284 42.3284 64 41.5 64H9.5C8.67157 64 8 63.3284 8 62.5V62.5Z"
+        fill="white" />
+    <circle cx="69" cy="49" r="4" fill="white" />
+    <circle cx="69" cy="37" r="4" fill="white" />
+    <circle cx="69" cy="60" r="4" fill="white" />
+    <circle cx="69" cy="26" r="4" fill="white" />
+</svg>

@@ -2,9 +2,9 @@
 Contributors: sendlayer, jaredatch, smub, capuderg
 Tags: email, smtp, email logs, gmail, outlook
 Requires at least: 5.2
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.13.1
+Stable tag: 2.14.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -312,6 +312,10 @@ And we will try to help out as soon as possible.
 10. Setup Wizard - Step 2
 
 == Changelog ==
+
+= 2.14.0 - 2026-03-31 =
+* Changed: Improved plugin security.
+* Added: SendLayer Quick Connect - allows connecting to SendLayer without DNS setup in 2 minutes.
 
 = 2.13.1 - 2025-11-27 =
 Added: WordPress playground blueprint file.

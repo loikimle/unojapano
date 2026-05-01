@@ -469,6 +469,7 @@ class ComposerStaticInita0b8d9ed88be7ac6271d1a375dcb9443
         'EasyWPSMTP\\Providers\\Sendinblue\\Options' => __DIR__ . '/../..' . '/src/Providers/Sendinblue/Options.php',
         'EasyWPSMTP\\Providers\\Sendlayer\\Mailer' => __DIR__ . '/../..' . '/src/Providers/Sendlayer/Mailer.php',
         'EasyWPSMTP\\Providers\\Sendlayer\\Options' => __DIR__ . '/../..' . '/src/Providers/Sendlayer/Options.php',
+        'EasyWPSMTP\\Providers\\Sendlayer\\QuickConnect' => __DIR__ . '/../..' . '/src/Providers/Sendlayer/QuickConnect.php',
         'EasyWPSMTP\\Providers\\SparkPost\\Mailer' => __DIR__ . '/../..' . '/src/Providers/SparkPost/Mailer.php',
         'EasyWPSMTP\\Providers\\SparkPost\\Options' => __DIR__ . '/../..' . '/src/Providers/SparkPost/Options.php',
         'EasyWPSMTP\\Providers\\Zoho\\Options' => __DIR__ . '/../..' . '/src/Providers/Zoho/Options.php',

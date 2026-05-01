@@ -440,6 +440,7 @@ return array(
     'EasyWPSMTP\\Providers\\Sendinblue\\Options' => $baseDir . '/src/Providers/Sendinblue/Options.php',
     'EasyWPSMTP\\Providers\\Sendlayer\\Mailer' => $baseDir . '/src/Providers/Sendlayer/Mailer.php',
     'EasyWPSMTP\\Providers\\Sendlayer\\Options' => $baseDir . '/src/Providers/Sendlayer/Options.php',
+    'EasyWPSMTP\\Providers\\Sendlayer\\QuickConnect' => $baseDir . '/src/Providers/Sendlayer/QuickConnect.php',
     'EasyWPSMTP\\Providers\\SparkPost\\Mailer' => $baseDir . '/src/Providers/SparkPost/Mailer.php',
     'EasyWPSMTP\\Providers\\SparkPost\\Options' => $baseDir . '/src/Providers/SparkPost/Options.php',
     'EasyWPSMTP\\Providers\\Zoho\\Options' => $baseDir . '/src/Providers/Zoho/Options.php',

@@ -1,3017 +1,500 @@
 <?php
 namespace ULTP\blocks;
 
-defined('ABSPATH') || exit;
+defined( 'ABSPATH' ) || exit;
 
-class Post_List_1{
+class Post_List_1 {
 
-    public function __construct() {
-        add_action('init', array($this, 'register'));
-    }
+	public function __construct() {
+		add_action( 'init', array( $this, 'register' ) );
+	}
 
-    public function get_attributes($default = false) {
+	public function get_attributes() {
 
-        $attributes = array(
-            'blockId' => [
-                'type' => 'string',
-                'default' => '',
-            ],
-            'previewImg' => [
-                'type' => 'string',
-                'default' => '',
-            ],
-            //--------------------------
-            //      Layout
-            //--------------------------
-            'layout' => [
-                'type' => 'string',
-                'default' => 'layout1',
-            ],
-            //--------------------------
-            //      Query Setting
-            //--------------------------
-            'queryQuick' => [
-                'type' => 'string',
-                'default' => '',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryNumPosts' => [
-                'type' => 'object',
-                'default' => (object)['lg'=>6,'sm'=>6,'xs'=>6],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryNumber' => [
-                'type' => 'string',
-                'default' => 6,
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryType' => [
-                'type' => 'string',
-                'default' => 'post'
-            ],
-            'queryTax' => [
-                'type' => 'string',
-                'default' => 'category',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryTaxValue' => [
-                'type' => 'string',
-                'default' => '[]',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryTax','condition' => '!=','value' => ''],
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryRelation' => [
-                'type' => 'string',
-                'default' => 'OR',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryTaxValue','condition' => '!=','value' => '[]'],
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryOrderBy' => [
-                'type' => 'string',
-                'default' => 'date',
-            ],
-            'metaKey' => [
-                'type' => 'string',
-                'default' => 'custom_meta_key',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryOrderBy','condition' => '==','value' => 'meta_value_num'],
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryOrder' => [
-                'type' => 'string',
-                'default' => 'desc',
-            ],
-            // Include Remove from Version 2.5.4
-            'queryInclude' => [
-                'type' => 'string',
-                'default' => '',
-            ],
-            'queryExclude' => [
-                'type' => 'string',
-                'default' => '[]',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryAuthor' => [
-                'type' => 'string',
-                'default' => '[]',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryOffset' => [
-                'type' => 'string',
-                'default' => '0',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryExcludeTerm' => [
-                'type' => 'string',
-                'default' => '[]',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryExcludeAuthor' => [
-                'type' => 'string',
-                'default' => '[]',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'querySticky' => [
-                'type' => 'boolean',
-                'default' => true,
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryUnique' => [
-                'type' => 'string',
-                'default' => '',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '!=','value' => array('customPosts', 'posts', 'archiveBuilder')]
-                        ]
-                    ],
-                ],
-            ],
-            'queryPosts' => [
-                'type' => 'string',
-                'default' => '[]',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '==','value' => 'posts']
-                        ]
-                    ],
-                ],
-            ],
-            'queryCustomPosts' => [
-                'type' => 'string',
-                'default' => '[]',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key' => 'queryType','condition' => '==','value' => 'customPosts']
-                        ]
-                    ],
-                ],
-            ],
-            //--------------------------
-            //      General Setting
-            //--------------------------
-            'gridStyle' => [
-                'type' => 'string',
-                'default' => 'style1',
-            ],
-            'columns' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'2'],
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-row { grid-template-columns: repeat({{columns}}, 1fr); }'
-                    ],
-                ],
-            ],
-            'columnGridGap' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'30', 'unit' =>'px'],
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-row { grid-column-gap: {{columnGridGap}}; }'
-                    ],
-                ],
-            ],
-            'rowSpace' => [
-                'type' => 'object',
-                'default' => (object)['lg'=>'30'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'separatorShow','condition'=>'!=','value'=> true]
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-row {row-gap: {{rowSpace}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'separatorShow','condition'=>'==','value'=> true]
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-item { padding-bottom: {{rowSpace}}px; margin-bottom:{{rowSpace}}px; }'
-                    ],
-                ],
-            ],
-            'titleShow' => [
-                'type' => 'boolean',
-                'default' => true,
-            ],
-            'titleStyle' => [ 
-                'type' => 'string',
-                'default' => 'none',
-            ],
-            'titleAnimColor' => [ 
-                'type' => 'string',
-                'default' => 'black',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'titleStyle','condition'=>'==','value'=>'style1']
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-title-style1 a { 
-                            cursor: pointer;
-                            text-decoration: none;
-                            display: inline;
-                            padding-bottom: 2px;
-                            transition: all 0.35s linear !important;
-                            background: linear-gradient(
-                              to bottom,
-                              {{titleAnimColor}} 0%,
-                              {{titleAnimColor}} 98%
-                            );      
-                            background-size: 0px 2px;
-                            background-repeat: no-repeat;
-                            background-position: left 100%;
-                           }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'titleStyle','condition'=>'==','value'=>'style2']
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-title-style2 a:hover { 
-                            border-bottom:none;
-                            padding-bottom: 2px;
-                            background-position:0 100%;
-                            background-repeat: repeat;
-                            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id=\'squiggle-link\' xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' xmlns:ev=\'http://www.w3.org/2001/xml-events\' viewBox=\'0 0 10 18\'%3E%3Cstyle type=\'text/css\'%3E.squiggle%7Banimation:shift .5s linear infinite;%7D@keyframes shift %7Bfrom %7Btransform:translateX(-10px);%7Dto %7Btransform:translateX(0);%7D%7D%3C/style%3E%3Cpath fill=\'none\' stroke=\'{{titleAnimColor}}\' stroke-width=\'1\' class=\'squiggle\' d=\'M0,17.5 c 2.5,0,2.5,-1.5,5,-1.5 s 2.5,1.5,5,1.5 c 2.5,0,2.5,-1.5,5,-1.5 s 2.5,1.5,5,1.5\' /%3E%3C/svg%3E");
-                        }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'titleStyle','condition'=>'==','value'=>'style3']
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-title-style3 a { 
-                            text-decoration: none;
-                            $thetransition: all 1s cubic-bezier(1,.25,0,.75) 0s;
-                            position: relative;
-                            transition: all 0.35s ease-out;
-                            padding-bottom: 3px;
-                            border-bottom:none;
-                            padding-bottom: 2px;
-                            background-position:0 100%;
-                            background-repeat: repeat;
-                            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id=\'squiggle-link\' xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' xmlns:ev=\'http://www.w3.org/2001/xml-events\' viewBox=\'0 0 10 18\'%3E%3Cstyle type=\'text/css\'%3E.squiggle%7Banimation:shift .5s linear infinite;%7D@keyframes shift %7Bfrom %7Btransform:translateX(-10px);%7Dto %7Btransform:translateX(0);%7D%7D%3C/style%3E%3Cpath fill=\'none\' stroke=\'{{titleAnimColor}}\' stroke-width=\'1\' class=\'squiggle\' d=\'M0,17.5 c 2.5,0,2.5,-1.5,5,-1.5 s 2.5,1.5,5,1.5 c 2.5,0,2.5,-1.5,5,-1.5 s 2.5,1.5,5,1.5\' /%3E%3C/svg%3E");
-                        }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'titleStyle','condition'=>'==','value'=>'style4']
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-title-style4 a {
-                            cursor: pointer;
-                            font-weight: 600;
-                            text-decoration: none;
-                            display: inline;
-                            padding-bottom: 2px;
-                            transition: all 0.3s linear !important;
-                            background: linear-gradient(
-                              to bottom,
-                              {{titleAnimColor}} 0%,
-                              {{titleAnimColor}} 98%
-                            );      
-                            background-size: 100% 2px;
-                            background-repeat: no-repeat;
-                            background-position: left 100%;
-                        }'
-                        ]  ,
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'titleStyle','condition'=>'==','value'=>'style5']
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-title-style5 a:hover{
-                            text-decoration: none;
-                            transition: all 0.35s ease-out;
-                            border-bottom:none;
-                            padding-bottom: 2px;
-                            background-position:0 100%;
-                            background-repeat: repeat;
-                            background-size:auto;
-                            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id=\'squiggle-link\' xmlns=\'http://www.w3.org/2000/svg\' xmlns:xlink=\'http://www.w3.org/1999/xlink\' xmlns:ev=\'http://www.w3.org/2001/xml-events\' viewBox=\'0 0 10 18\'%3E%3Cstyle type=\'text/css\'%3E.squiggle%7Banimation:shift .5s linear infinite;%7D@keyframes shift %7Bfrom %7Btransform:translateX(-10px);%7Dto %7Btransform:translateX(0);%7D%7D%3C/style%3E%3Cpath fill=\'none\' stroke=\'{{titleAnimColor}}\' stroke-width=\'1\' class=\'squiggle\' d=\'M0,17.5 c 2.5,0,2.5,-1.5,5,-1.5 s 2.5,1.5,5,1.5 c 2.5,0,2.5,-1.5,5,-1.5 s 2.5,1.5,5,1.5\' /%3E%3C/svg%3E");
-                         } '
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'titleStyle','condition'=>'==','value'=>'style5']
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-title-style5 a {
-                            cursor: pointer;
-                            text-decoration: none;
-                            display: inline;
-                            padding-bottom: 2px;
-                            transition: all 0.3s linear !important;
-                            background: linear-gradient(
-                              to bottom,
-                              {{titleAnimColor}} 0%,
-                              {{titleAnimColor}} 98%
-                            );      
-                            background-size: 100% 2px;
-                            background-repeat: no-repeat;
-                            background-position: left 100%;
-                        }'
-                        ],
-                        (object)[
-                            'depends' => [
-                                (object)['key'=>'titleStyle','condition'=>'==','value'=>'style6']
-                            ],
-                            'selector'=>'{{ULTP}} .ultp-title-style6  a{
-                                background-image: linear-gradient(120deg, {{titleAnimColor}} 0%, {{titleAnimColor}} 100%);
-                                background-repeat: no-repeat;
-                                background-size: 100% 2px;
-                                background-position: 0 88%;
-                                transition: background-size 0.15s ease-in;
-                                padding: 5px 5px;
-                            }'
-                            ],
-                            (object)[
-                                'depends' => [
-                                    (object)['key'=>'titleStyle','condition'=>'==','value'=>'style7']
-                                ],
-                                'selector'=>'{{ULTP}} .ultp-title-style7  a {
-                                    cursor: pointer;
-                                    text-decoration: none;
-                                    display: inline;
-                                    padding-bottom: 2px;
-                                    transition: all 0.3s linear !important;
-                                    background: linear-gradient(
-                                      to bottom,
-                                      {{titleAnimColor}} 0%,
-                                      {{titleAnimColor}} 98%
-                                    );      
-                                    background-size: 0px 2px;
-                                    background-repeat: no-repeat;
-                                    background-position: right 100%;
-                                 } '
-                            ],
-                            (object)[
-                                'depends' => [
-                                    (object)['key'=>'titleStyle','condition'=>'==','value'=>'style8']
-                                ],
-                                'selector'=>'{{ULTP}} .ultp-title-style8  a {
-                                    cursor: pointer;
-                                    text-decoration: none;
-                                    display: inline;
-                                    padding-bottom: 2px;
-                                    transition: all 0.3s linear !important;
-                                    background: linear-gradient(
-                                      to bottom,
-                                      {{titleAnimColor}} 0%,
-                                      {{titleAnimColor}} 98%
-                                    );      
-                                    background-size: 0px 2px;
-                                    background-repeat: no-repeat;
-                                    background-position: center 100%;
-                                 } '
-                            ],
-                            (object)[
-                                'depends' => [
-                                    (object)['key'=>'titleStyle','condition'=>'==','value'=>'style9']
-                                ],
-                                'selector'=>'{{ULTP}} .ultp-title-style9  a {
-                                    background-image: linear-gradient(120deg,{{titleAnimColor}}  0%, {{titleAnimColor}} 100%);
-                                    background-repeat: no-repeat;
-                                    background-size: 100% 10px;
-                                    background-position: 0 88%;
-                                    transition: 0.3s ease-in;
-                                    padding: 3px 5px;
-                                 } '
-                            ]
-                    ],
-            ],
-            'headingShow' => [
-                'type' => 'boolean',
-                'default' => true,
-            ],
-            'excerptShow' => [
-                'type' => 'boolean',
-                'default' => true
-            ],
-            'catShow' => [
-                'type' => 'boolean',
-                'default' => true,
-            ],
-            'metaShow' => [
-               'type' => 'boolean',
-                'default' => true,
-            ],
-            'showImage' => [
-               'type' => 'boolean',
-                'default' => true,
-            ],
-            'filterShow' => [
-                'type' => 'boolean',
-                'default' => false,
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'queryType','condition'=>'!=','value'=>['posts','customPosts']],
-                        ],
-                    ],
-                ]
-            ],
-            'paginationShow' => [
-                'type' => 'boolean',
-                'default' => true,
-            ],
-            'readMore' => [
-                'type' => 'boolean',
-                'default' => true,
-            ],
-            'contentTag' => [
-                'type' => 'string',
-                'default' => 'div',
-            ],
-            'openInTab' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
+		return array(
+			'blockId'             => '',
+			'previewImg'          => '',
 
-            //--------------------------
-            //      Heading Setting/Style
-            //--------------------------
-            'headingText' => [
-                'type' => 'string',
-                'default' => 'Post List #1',
-            ],
-            'headingURL' => [
-                'type' => 'string',
-                'default' => '',
-            ],
-            'headingBtnText' => [
-                'type' => 'string',
-                'default' =>  'View More',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style11'],
-                        ],
-                    ],
-                ],
-            ],
-            'headingStyle' => [
-                'type' => 'string',
-                'default' => 'style9',
-            ],
-            'headingTag' => [
-                'type' => 'string',
-                'default' => 'h2',
-            ],
-            'headingAlign' => [
-                'type' => 'string',
-                'default' =>  'left',
-                'style' => [(object)['selector' => '{{ULTP}} .ultp-heading-inner, {{ULTP}} .ultp-sub-heading-inner{ text-align:{{headingAlign}}; }']]
-            ],
-            'headingTypo' => [
-                'type' => 'object',
-                'default' =>  (object)['openTypography' => 1,'size' => (object)['lg' => '20', 'unit' => 'px'], 'height' => (object)['lg' => '', 'unit' => 'px'],'decoration' => 'none', 'transform' => '', 'family'=>'','weight'=>'700'],
-                'style' => [(object)['selector' => '{{ULTP}} .ultp-heading-wrap .ultp-heading-inner']]
-            ],
-            'headingColor' => [
-                'type' => 'string',
-                'default' =>  '#0e1523',
-                'style' => [(object)['selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { color:{{headingColor}}; }']],
-            ],
-            'headingBorderBottomColor' => [
-                'type' => 'string',
-                'default' =>  '#0e1523',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style3'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner { border-bottom-color:{{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style4'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner { border-color:{{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style6'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span:before { background-color: {{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style7'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span:before, {{ULTP}} .ultp-heading-inner span:after { background-color: {{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style8'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:after { background-color:{{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style9'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:before { background-color:{{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style10'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:before { background-color:{{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style13'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner { border-color:{{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style14'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:before { background-color:{{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style15'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span:before { background-color:{{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style16'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span:before { background-color:{{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style17'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:before { background-color:{{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style18'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:after { background-color:{{headingBorderBottomColor}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style19'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:before { border-color:{{headingBorderBottomColor}}; }'
-                    ],
-                ],
-            ],
-            'headingBorderBottomColor2' => [
-                'type' => 'string',
-                'default' =>  '#e5e5e5',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style8'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:before { background-color:{{headingBorderBottomColor2}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style10'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:after { background-color:{{headingBorderBottomColor2}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style14'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:after { background-color:{{headingBorderBottomColor2}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style19'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:after { background-color:{{headingBorderBottomColor2}}; }'
-                    ],
-                ],
-            ],
-            'headingBg' => [
-                'type' => 'string',
-                'default' =>  '#037fff',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style5'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-style5 .ultp-heading-inner span:before { border-color:{{headingBg}} transparent transparent; } {{ULTP}} .ultp-heading-inner span { background-color:{{headingBg}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style2'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span { background-color:{{headingBg}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style21'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span, {{ULTP}} .ultp-heading-inner span:after { background-color:{{headingBg}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style3'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span { background-color:{{headingBg}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style12'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span { background-color:{{headingBg}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style13'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span { background-color:{{headingBg}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style18'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner { background-color:{{headingBg}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style20'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span:before { border-color:{{headingBg}} transparent transparent; } {{ULTP}} .ultp-heading-inner { background-color:{{headingBg}}; }'
-                    ],
-                ],
-            ],
-            'headingBg2' => [
-                'type' => 'string',
-                'default' =>  '#e5e5e5',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style12'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner { background-color:{{headingBg2}}; }'
-                    ],
-                ],
-            ],
-            'headingBtnTypo' => [
-                'type' => 'object',
-                'default' =>  (object)['openTypography' => 1,'size' => (object)['lg' => '14', 'unit' => 'px'], 'height' => (object)['lg' => '', 'unit' => 'px'],'decoration' => 'none','family'=>''],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style11'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-btn'
-                    ],
-                ],
-            ],
-            'headingBtnColor' => [
-                'type' => 'string',
-                'default' =>  '#037fff',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style11'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-btn { color:{{headingBtnColor}}; } {{ULTP}} .ultp-heading-wrap .ultp-heading-btn svg { fill:{{headingBtnColor}}; }'
-                    ],
-                ],
-            ],
-            'headingBtnHoverColor' => [
-                'type' => 'string',
-                'default' =>  '#0a31da',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style11'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-btn:hover { color:{{headingBtnHoverColor}}; } {{ULTP}} .ultp-heading-wrap .ultp-heading-btn:hover svg { fill:{{headingBtnHoverColor}}; }'
-                    ],
-                ],
-            ],
-            
-            'headingBorder' => [
-                'type' => 'string',
-                'default' => '3',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style3'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner { border-bottom-width:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style4'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner { border-width:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style6'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span:before { width:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style7'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span:before, {{ULTP}} .ultp-heading-inner span:after { height:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style8'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:before, {{ULTP}} .ultp-heading-inner:after { height:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style9'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:before { height:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style10'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:before, {{ULTP}} .ultp-heading-inner:after { height:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style13'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner { border-width:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style14'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:before, {{ULTP}} .ultp-heading-inner:after { height:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style15'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span:before { height:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style16'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span:before { height:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style17'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:before { height:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style19'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:after { width:{{headingBorder}}px; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style18'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner:after { width:{{headingBorder}}px; }'
-                    ],
-                ],
-            ],
-            'headingSpacing' => [
-                'type' => 'object',
-                'default' => (object)['lg'=>20, 'unit'=>'px'],
-                'style' => [(object)['selector'=>'{{ULTP}} .ultp-heading-wrap {margin-top:0; margin-bottom:{{headingSpacing}}; }']]
-            ],
+			/*
+			============================
+				General Setting
+			============================*/
+			'layout'              => 'layout1',
+			'gridStyle'           => 'style1',
+			'columns'             => (object) array(
+				'lg' => '2',
+				'xs' => '2',
+			),
+			'titleShow'           => true,
+			'titleStyle'          => 'none',
+			'headingShow'         => true,
+			'excerptShow'         => true,
+			'catShow'             => true,
+			'metaShow'            => true,
+			'showImage'           => true,
+			'filterShow'          => false,
+			'paginationShow'      => true,
+			'readMore'            => true,
+			'contentTag'          => 'div',
+			'openInTab'           => false,
+			'notFoundMessage'     => 'No Post Found',
 
-            'headingRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '','left' => '', 'right' => '', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style2'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { border-radius:{{headingRadius}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style3'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { border-radius:{{headingRadius}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style4'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner { border-radius:{{headingRadius}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style5'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { border-radius:{{headingRadius}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style12'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner { border-radius:{{headingRadius}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style13'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner { border-radius:{{headingRadius}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style18'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner { border-radius:{{headingRadius}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style20'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner { border-radius:{{headingRadius}}; }'
-                    ],
-                ]
-            ],
+			/*
+			============================
+				Query Setting
+			============================*/
+			'queryQuick'          => '',
+			'queryNumPosts'       => (object) array( 'lg' => 6 ),
+			'queryNumber'         => 6,
+			'queryType'           => 'post',
+			'queryTax'            => 'category',
+			'queryTaxValue'       => '[]',
+			'queryRelation'       => 'OR',
+			'queryOrderBy'        => 'date',
+			'metaKey'             => 'custom_meta_key',
+			'queryOrder'          => 'desc',
+			// Include Remove from Version 2.5.4
+			'queryInclude'        => '',
+			'queryExclude'        => '[]',
+			'queryAuthor'         => '[]',
+			'queryOffset'         => '0',
+			'queryExcludeTerm'    => '[]',
+			'queryExcludeAuthor'  => '[]',
+			'querySticky'         => true,
+			'queryUnique'         => '',
+			'queryPosts'          => '[]',
+			'queryCustomPosts'    => '[]',
 
+			/*
+			============================
+				Heading Style
+			============================*/
+			'headingText'         => 'Post List #1',
+			'headingURL'          => '',
+			'headingBtnText'      => 'View More',
+			'headingStyle'        => 'style1',
+			'headingTag'          => 'h2',
+			'headingAlign'        => 'left',
+			'subHeadingShow'      => false,
+			'subHeadingText'      => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut sem augue. Sed at felis ut enim dignissim sodales.',
 
-            'headingPadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style2'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { padding:{{headingPadding}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style3'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { padding:{{headingPadding}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style4'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { padding:{{headingPadding}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style5'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { padding:{{headingPadding}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style6'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { padding:{{headingPadding}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style12'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { padding:{{headingPadding}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style13'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { padding:{{headingPadding}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style18'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { padding:{{headingPadding}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style19'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { padding:{{headingPadding}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style20'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-wrap .ultp-heading-inner span { padding:{{headingPadding}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'headingStyle','condition'=>'==','value'=>'style21'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-inner span { padding:{{headingPadding}}; }'
-                    ],
-                ]
-            ],
-            'subHeadingShow' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'subHeadingText' => [
-                'type' => 'string',
-                'default' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ut sem augue. Sed at felis ut enim dignissim sodales.',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'subHeadingShow','condition'=>'==','value'=>true],
-                        ],
-                    ],
-                ],
-            ],
-            'subHeadingTypo' => [
-                'type' => 'object',
-                'default' => (object)['openTypography'=>1,'size'=>(object)['lg'=>'16', 'unit'=>'px'], 'spacing'=>(object)[ 'lg'=>'0', 'unit'=>'px'], 'height'=>(object)[ 'lg'=>'27', 'unit'=>'px'],'decoration'=>'none','transform' => '','family'=>'','weight'=>'500'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'subHeadingShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-sub-heading div'
-                    ],
-                ],
-            ],
-            'subHeadingColor' => [
-                'type' => 'string',
-                'default' =>  '#989898',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'subHeadingShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-sub-heading div{ color:{{subHeadingColor}}; }'
-                    ],
-                ],
-            ],
-            'subHeadingSpacing' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '8', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'subHeadingShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} div.ultp-sub-heading-inner{ margin:{{subHeadingSpacing}}; }'
-                    ],
-                ],
-            ],
+			/*
+			============================
+				Title Style
+			============================*/
+			'titleTag'            => 'h3',
+			'titlePosition'       => true,
+			'titleLength'         => 0,
 
-            //--------------------------
-            //      Title Setting/Style
-            //--------------------------
-            'titleTag' => [
-                'type' => 'string',
-                'default' => 'h3',
-            ],
-            'titlePosition' => [
-                'type' => 'boolean',
-                'default' => true,
-            ],
-            'titleColor' => [
-                'type' => 'string',
-                'default' => '#0e1523',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'titleShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading .ultp-block-title a { color:{{titleColor}} !important; }'
-                    ],
-                ],
-            ],
-            'titleHoverColor' => [
-                'type' => 'string',
-                'default' => '#828282',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'titleShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading .ultp-block-title a:hover { color:{{titleHoverColor}} 
-                         !important; }'
-                    ],
-                ],
-            ],
-            'titleTypo' => [
-                'type' => 'object',
-                'default' => (object)['openTypography'=>1,'size'=>(object)['lg'=>'24', 'unit'=>'px'], 'spacing'=>(object)[ 'lg'=>'0', 'unit'=>'px'], 'height'=>(object)[ 'lg'=>'30', 'unit'=>'px'],'decoration'=>'none','transform' => '','family'=>'','weight'=>'500'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'titleShow','condition'=>'==','value'=>true],
-                            (object)['key'=>'gridStyle','condition'=>'==','value'=>"style1"],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-items-wrap .ultp-block-item .ultp-block-title, {{ULTP}} .ultp-block-items-wrap .ultp-block-item .ultp-block-title a'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'titleShow','condition'=>'==','value'=>true],
-                            (object)['key'=>'gridStyle','condition'=>'!=','value'=>"style1"],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-items-wrap .ultp-block-item:first-child .ultp-block-title, {{ULTP}} .ultp-block-items-wrap .ultp-block-item:first-child .ultp-block-title a'
-                    ],
-                ],
-            ],
-            'postListTypo' => [
-                'type' => 'object',
-                'default' =>  (object)['openTypography' => 1,'size' => (object)['lg' => '20', 'unit' => 'px'], 'height' => (object)['lg' => '', 'unit' => 'px'],'decoration' => 'none', 'transform' => '', 'family'=>'','weight'=>'700'],
-                'style' => [(object)[
-                    'depends' => [
-                        (object)['key'=>'titleShow','condition'=>'==','value'=>true],
-                        (object)['key'=>'gridStyle','condition'=>'!=','value'=>"style1"],
-                    ],
-                    'selector' => '{{ULTP}} .ultp-block-items-wrap .ultp-block-item:not(:first-child) .ultp-block-title, {{ULTP}} .ultp-block-items-wrap .ultp-block-item:not(:first-child) .ultp-block-title a'
-                      ],
-                 ],
-            ],
-            'titlePadding' => [
-                'type' => 'object',
-                'default' => (object)['lg'=>(object)['top'=>10,'bottom'=>5, 'unit'=>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'titleShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading .ultp-block-title { padding:{{titlePadding}}; }'
-                    ],
-                ],
-            ],
-            'titleLength' => [
-                'type' => 'string',
-                'default' => 0,
-            ],
+			/*
+			============================
+				Meta Style
+			============================*/
+			'metaPosition'        => 'top',
+			'metaStyle'           => 'icon',
+			'metaSeparator'       => '',
+			'authorLink'          => true,
+			'metaList'            => '["metaAuthor","metaDate","metaRead"]',
+			'metaMinText'         => 'min read',
+			'metaAuthorPrefix'    => 'By',
+			'metaDateFormat'      => 'M j, Y',
 
-            //--------------------------
-            // Content Setting/Style
-            //--------------------------
-            'showSeoMeta' => [
-                'type' => 'boolean',
-                'default'=> false
-            ],
-            'showFullExcerpt' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'excerptLimit' => [
-                'type' => 'string',
-                'default' => 40,
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'showFullExcerpt','condition'=>'==','value'=>false]
-                        ],
-                    ],
-                ],
-            ],
-            'excerptColor' => [
-                'type' => 'string',
-                'default' => '#777',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'excerptShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-excerpt { color:{{excerptColor}}; }'
-                    ],
-                ],
-            ],
-            'excerptTypo' => [
-                'type' => 'object',
-                'default' => (object)['openTypography' => 1,'size' => (object)['lg' =>14, 'unit' =>'px'],'height' => (object)['lg' =>20, 'unit' =>'px'], 'decoration' => 'none','family'=>''],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'excerptShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-excerpt, {{ULTP}} .ultp-block-excerpt p'
-                    ],
-                ],
-            ],
-            'excerptPadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => 5,'bottom' => '', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'excerptShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-excerpt{ padding: {{excerptPadding}}; }'
-                    ],
-                ],
-            ],
+			/*
+			============================
+				Category Style
+			============================*/
+			'maxTaxonomy'         => '30',
+			'taxonomy'            => 'category',
+			'catStyle'            => 'classic',
+			'catPosition'         => 'aboveTitle',
+			'customCatColor'      => false,
+			'seperatorLink'       => admin_url( 'edit-tags.php?taxonomy=category' ),
+			'onlyCatColor'        => false,
 
-            //--------------------------
-            // Category Setting/Style
-            //--------------------------
-            'taxonomy' => [
-                'type' => 'string',
-                'default' => 'category'
-            ],
-            'catStyle' => [
-                'type' => 'string',
-                'default' => 'classic',
-            ],
-            'catPosition' => [
-                'type' => 'string',
-                'default' => 'aboveTitle',
-            ],
-            'customCatColor' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'seperatorLink' => [
-                'type' => 'string',
-                'default' => admin_url( 'edit-tags.php?taxonomy=category' ),
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'customCatColor','condition'=>'==','value'=>true],
-                        ]
-                    ]
-                ]
-            ],
-            'onlyCatColor' => [
-                'type' => 'boolean',
-                'default' => false,
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'customCatColor','condition'=>'==','value'=>true],
-                        ]
-                    ]
-                ]
-            ],
-            'catLineWidth' => [
-                'type' => 'object',
-                'default' => (object)['lg'=>'20'],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'catStyle','condition'=>'!=','value'=>'classic'],
-                        ],
-                        'selector' => '{{ULTP}} .ultp-category-borderRight .ultp-category-in:before, {{ULTP}} .ultp-category-borderBoth .ultp-category-in:before, {{ULTP}} .ultp-category-borderBoth .ultp-category-in:after, {{ULTP}} .ultp-category-borderLeft .ultp-category-in:before  { width:{{catLineWidth}}px; }'
-                    ],
-                ]
-            ],
-            'catLineSpacing' => [
-                'type' => 'object',
-                'default' => (object)['lg'=>'30'],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'catStyle','condition'=>'!=','value'=>'classic'],
-                        ],
-                        'selector' => '{{ULTP}} .ultp-category-borderBoth .ultp-category-in { padding-left: {{catLineSpacing}}px; padding-right: {{catLineSpacing}}px; }
-                        {{ULTP}} .ultp-category-borderLeft .ultp-category-in { padding-left: {{catLineSpacing}}px; }
-                        {{ULTP}} .ultp-category-borderRight .ultp-category-in { padding-right:{{catLineSpacing}}px; }'
-                    ],
-                ]
-            ],
-            'catLineColor' => [
-                'type' => 'string',
-                'default' => '#037fff',
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'catStyle','condition'=>'!=','value'=>'classic'],
-                        ],
-                        'selector' => '{{ULTP}} .ultp-category-borderRight .ultp-category-in:before, {{ULTP}} .ultp-category-borderLeft .ultp-category-in:before, {{ULTP}} .ultp-category-borderBoth .ultp-category-in:after, {{ULTP}} .ultp-category-borderBoth .ultp-category-in:before { background:{{catLineColor}}; }'
-                    ],
-                ]
-            ],
-            'catLineHoverColor' => [
-                'type' => 'string',
-                'default' => '#828282',
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'catStyle','condition'=>'!=','value'=>'classic'],
-                        ],
-                        'selector' => '{{ULTP}} .ultp-category-borderBoth:hover .ultp-category-in:before, {{ULTP}} .ultp-category-borderBoth:hover .ultp-category-in:after, {{ULTP}} .ultp-category-borderLeft:hover .ultp-category-in:before, {{ULTP}} .ultp-category-borderRight:hover .ultp-category-in:before { background:{{catLineHoverColor}}; }'
-                    ],
-                ]
-            ],
-            'catTypo' => [
-                'type' => 'object',
-                'default' => (object)['openTypography' => 1, 'size' => (object)['lg' =>14, 'unit' =>'px'], 'height' => (object)['lg' =>20, 'unit' =>'px'], 'spacing' => (object)['lg' =>0, 'unit' =>'px'], 'transform' => '', 'weight' => '400', 'decoration' => 'none','family'=>'' ],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'catShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-items-wrap .ultp-block-item .ultp-category-grid a'
-                    ],
-                ],
-            ],
-            'catColor' => [
-                'type' => 'string',
-                'default' => '#037fff',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'catShow','condition'=>'==','value'=>true],
-                            (object)['key'=>'customCatColor','condition'=>'!=','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-items-wrap .ultp-block-item .ultp-category-grid a { color:{{catColor}}; }'
-                    ],
-                ],
-            ],
-            'catBgColor' => [
-                'type' => 'object',
-                'default' => (object)['openColor' => 1,'type' => 'color', 'color' => ''],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'catShow','condition'=>'==','value'=>true],
-                            (object)['key'=>'customCatColor','condition'=>'!=','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-category-grid a'
-                    ],
-                ],
-            ],
-            'catBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)[ 'top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid' ],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'catShow','condition'=>'==','value'=>true],
-                            (object)['key'=>'onlyCatColor','condition'=>'!=','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-category-grid a'
-                    ],
-                ],
-            ],
-            'catRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'', 'unit' =>'px'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'catShow','condition'=>'==','value'=>true],
-                            (object)['key'=>'onlyCatColor','condition'=>'!=','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-category-grid a { border-radius:{{catRadius}}; }'
-                    ],
-                ],
-            ],
-            'catHoverColor' => [
-                'type' => 'string',
-                'default' => '#828282',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'catShow','condition'=>'==','value'=>true],
-                            (object)['key'=>'customCatColor','condition'=>'!=','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-items-wrap .ultp-category-grid a:hover { color:{{catHoverColor}}; }'
-                    ],
-                ],
-            ],
-            'catBgHoverColor' => [
-                'type' => 'object',
-                'default' => (object)['openColor' => 1, 'type' => 'color', 'color' => ''],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'catShow','condition'=>'==','value'=>true],
-                            (object)['key'=>'customCatColor','condition'=>'!=','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-category-grid a:hover'
-                    ],
-                ],
-            ],
-            'catHoverBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'catShow','condition'=>'==','value'=>true],
-                            (object)['key'=>'onlyCatColor','condition'=>'!=','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-category-grid a:hover'
-                    ],
-                ],
-            ],
-            'catSacing' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['bottom' => 5, 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'catShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-category-grid { margin:{{catSacing}}; }'
-                    ],
-                ],
-            ],
-            'catPadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => "0",'bottom' => "0",'left' => "0",'right' => "0", 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'catShow','condition'=>'==','value'=>true],
-                            (object)['key'=>'onlyCatColor','condition'=>'!=','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-category-grid a { padding:{{catPadding}}; }'
-                    ],
-                ],
-            ],
+			/*
+			============================
+				Image Style
+			============================*/
+			'imgCrop'             => 'full',
+			'imgCropSmall'        => ( ultimate_post()->get_setting( 'disable_image_size' ) == 'yes' ? 'full' : 'ultp_layout_square' ),
+			'imgAnimation'        => 'none',
+			'imgOverlay'          => false,
+			'imgOverlayType'      => 'default',
+			'fallbackEnable'      => true,
+			'fallbackImg'         => '',
+			'imgSrcset'           => false,
+			'imgLazy'             => false,
 
-            //--------------------------
-            // Meta Setting/Style
-            //--------------------------
-            'metaPosition' => [
-                'type' => 'string',
-                'default' => 'top',
-            ],
-            'metaStyle' => [
-                'type' => 'string',
-                'default' => 'icon',
-            ],
-            'metaSeparator' => [
-                'type' => 'string',
-                'default' => 'dot',
-            ],
-            'authorLink' => [
-                'type' => 'boolean',
-                'default' => true,
-            ],
-            'metaList' => [
-                'type' => 'string',
-                'default' => '["metaAuthor","metaDate","metaRead"]',
-            ],
-            'metaMinText' => [
-                'type' => 'string',
-                'default' => 'min read',
-            ],
-            'metaAuthorPrefix' => [
-                'type' => 'string',
-                'default' => 'By',
-            ],
-            'metaDateFormat' => [
-                'type' => 'string',
-                'default' => 'M j, Y',
-            ],
-            'metaTypo' => [
-                'type' => 'object',
-                'default' => (object)['openTypography' => 1,'size' => (object)['lg' =>12, 'unit' =>'px'],'height' => (object)['lg' =>20, 'unit' =>'px'], 'transform' => '', 'decoration' => 'none','family'=>''],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'metaShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-meta span, {{ULTP}} .ultp-block-item .ultp-block-meta span a'
-                    ],
-                ],
-            ],
-            'metaColor' => [
-                'type' => 'string',
-                'default' => '#989898',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'metaShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-items-wrap .ultp-block-meta span { color: {{metaColor}}; } {{ULTP}} .ultp-block-items-wrap .ultp-block-meta span svg { fill: {{metaColor}}; } {{ULTP}} .ultp-block-items-wrap .ultp-block-meta span a { color: {{metaColor}}; }{{ULTP}} .ultp-block-meta-dot span:after { background:{{metaColor}}; }  {{ULTP}} .ultp-block-meta span:after { color:{{metaColor}}; }'
-                    ],
-                ],
-            ],
-            'metaHoverColor' => [
-                'type' => 'string',
-                'default' => '#000',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'metaShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-items-wrap .ultp-block-meta span a:hover { color: {{metaHoverColor}}; }'
-                    ],
-                ],
-            ],
-            'metaSpacing' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'15', 'unit' =>'px'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'metaShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-meta span { margin-right:{{metaSpacing}}; } {{ULTP}} .ultp-block-meta span { padding-left: {{metaSpacing}}; } .rtl {{ULTP}} .ultp-block-meta span {margin-right:0; margin-left:{{metaSpacing}}; } .rtl {{ULTP}} .ultp-block-meta span { padding-left:0; padding-right: {{metaSpacing}}; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'metaShow','condition'=>'==','value'=>true],
-                            (object)['key'=>'contentAlign','condition'=>'==','value'=>'right'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-items-wrap .ultp-block-meta span:last-child{margin-right:0px;}'
-                    ],
-                ],
-            ],
-            'metaMargin' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '20', 'left'=>'','right'=>'', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'metaShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-meta { margin:{{metaMargin}}; }'
-                    ],
-                ],
-            ],
-            'metaPadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '5','bottom' => '5', 'left'=>'','right'=>'', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'metaShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-meta { padding:{{metaPadding}}; }'
-                    ],
-                ],
-            ],
-            'metaBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)['top' => 1, 'right' => '0', 'bottom' => '0', 'left' => '0'],'color' => '#009fd4','type' => 'solid'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'metaShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-meta'
-                    ],
-                ],
-            ],
-            'metaBg' => [
-                'type' => 'string',
-                'default' => '',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'metaShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-meta { background:{{metaBg}}; }'
-                    ],
-                ],
-            ],
+			/*
+			============================
+				Video Style
+			============================*/
+			'vidIconEnable'       => true,
+			'popupAutoPlay'       => true,
+			'iconSize'            => (object) array(
+				'lg'   => '70',
+				'sm'   => '50',
+				'xs'   => '50',
+				'unit' => 'px',
+			),
+			// by default should be off
+			'enablePopup'         => false,
+			'enablePopupTitle'    => true,
 
-            'contentAlign' => [
-                'type' => 'string',
-                'default' => "left",
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'contentAlign','condition'=>'==','value'=>'left'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-content-wrap .ultp-block-entry-content, {{ULTP}} .ultp-block-content-wrap .ultp-block-content { text-align:{{contentAlign}}; } {{ULTP}} .ultp-block-meta {justify-content: flex-start;}  {{ULTP}} .ultp-block-image img { margin-right: auto; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'contentAlign','condition'=>'==','value'=>'center'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-content-wrap .ultp-block-entry-content, {{ULTP}} .ultp-block-content-wrap .ultp-block-content { text-align:{{contentAlign}}; } {{ULTP}} .ultp-block-meta {justify-content: center;}  {{ULTP}} .ultp-block-image img { margin: 0 auto; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'contentAlign','condition'=>'==','value'=>'right'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-content-wrap .ultp-block-entry-content, {{ULTP}} .ultp-block-content-wrap .ultp-block-content { text-align:{{contentAlign}}; } {{ULTP}} .ultp-block-meta {justify-content: flex-end;} .rtl {{ULTP}} .ultp-block-meta {justify-content: start;}  {{ULTP}} .ultp-block-image img { margin-left: auto; }'
-                    ],
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'contentAlign','condition'=>'==','value'=>'right'],
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'  .rtl {{ULTP}} .ultp-block-items-wrap .ultp-block-item .ultp-block-readmore a {display:flex; flex-direction:row-reverse;justify-content: flex-end;}'
-                    ],
-                ],
-            ],
+			/*
+			============================
+				Filter Style
+			============================*/
+			'filterBelowTitle'    => false,
+			'filterType'          => 'category',
+			'filterText'          => 'all',
+			'filterValue'         => '[]',
+			'filterMobile'        => true,
+			'filterMobileText'    => 'More',
 
-            'contentWrapBg' => [
-                'type' => 'string',
-                'default' => '',
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-content-wrap { background:{{contentWrapBg}}; }'
-                    ],
-                ],
-            ],
-            'contentWrapHoverBg' => [
-                'type' => 'string',
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-content-wrap:hover { background:{{contentWrapHoverBg}}; }'
-                    ],
-                ],
-            ],
-            'contentWrapBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)[ 'top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid' ],
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-content-wrap'
-                    ],
-                ],
-            ],
-            'contentWrapHoverBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)[ 'top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid' ],
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-content-wrap:hover'
-                    ],
-                ],
-            ],
-            'contentWrapRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-content-wrap { border-radius: {{contentWrapRadius}}; }'
-                    ],
-                ],
-            ],
-            'contentWrapHoverRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-content-wrap:hover { border-radius: {{contentWrapHoverRadius}}; }'
-                    ],
-                ],
-            ],
-            'contentWrapShadow' => [
-                'type' => 'object',
-                'default' => (object)['openShadow' => 0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4'],
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-content-wrap'
-                    ],
-                ],
-            ],
-            'contentWrapHoverShadow' => [
-                'type' => 'object',
-                'default' => (object)['openShadow' => 0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4'],
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-content-wrap:hover'
-                    ],
-                ],
-            ],
+			/*
+			============================
+				Pagination Style
+			============================*/
+			'paginationType'      => 'pagination',
+			'loadMoreText'        => 'Load More',
+			'paginationText'      => 'Previous|Next',
+			'paginationNav'       => 'textArrow',
+			'paginationAjax'      => true,
+			'navPosition'         => 'topRight',
 
-            'contentWrapInnerPadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '', 'left'=>'','right'=>'', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-content, {{ULTP}} .ultp-block-entry-heading { padding: {{contentWrapInnerPadding}}; }'
-                    ],
-                ],
-            ],
-            'contentWrapPadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '', 'left'=>'','right'=>'', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-content-wrap { padding: {{contentWrapPadding}}; }'
-                    ],
-                ],
-            ],
+			/*
+			============================
+				Excerpt Style
+			============================*/
+			'showSeoMeta'         => false,
+			'showFullExcerpt'     => false,
+			'fullExcerptLg'       => false,
+			'excerptLimit'        => 25,
+			'excerptLimitLg'      => '70',
+			'excerptLimitLg'      => '70',
 
-            //--------------------------
-            // Entry header Setting/Style
-            //--------------------------
-            'headerWidth' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'70', 'unit' =>'%'],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'layout','condition'=>'!=','value'=>'layout1'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading { max-width: {{headerWidth}}; }'
-                    ],
-                ],
-            ],
-            'headerWrapBg' => [
-                'type' => 'string',
-                'default' => '#fff',
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'layout','condition'=>'!=','value'=>'layout1'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading { background:{{headerWrapBg}}; }'
-                    ],
-                ],
-            ],
-            'headerWrapHoverBg' => [
-                'type' => 'string',
-                'default' => '',
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'layout','condition'=>'!=','value'=>'layout1'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading:hover { background:{{headerWrapHoverBg}}; }'
-                    ],
-                ],
-            ],
-            'headerWrapBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)[ 'top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid' ],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'layout','condition'=>'!=','value'=>'layout1'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading'
-                    ],
-                ],
-            ],
-            'headerWrapHoverBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)[ 'top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid' ],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'layout','condition'=>'!=','value'=>'layout1'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading:hover'
-                    ],
-                ],
-            ],
-            'headerWrapRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'layout','condition'=>'!=','value'=>'layout1'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading { border-radius: {{headerWrapRadius}}; }'
-                    ],
-                ],
-            ],
-            'headerWrapHoverRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'layout','condition'=>'!=','value'=>'layout1'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading:hover { border-radius: {{headerWrapHoverRadius}}; }'
-                    ],
-                ],
-            ],
-            'headerSpaceX' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'', 'unit' =>'px'],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'layout','condition'=>'==','value'=>'layout2'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading { left: {{headerSpaceX}}; }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'layout','condition'=>'==','value'=>'layout3'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading { left: {{headerSpaceX}};transform: translateX(0%);right:auto }'
-                    ],
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'layout','condition'=>'==','value'=>'layout4'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading { right: {{headerSpaceX}};left:auto; }'
-                    ],
-                ],
-            ],
-            'headerSpaceY' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'30'],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'layout','condition'=>'!=','value'=>'layout1']
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading { top: -{{headerSpaceY}}px; } {{ULTP}} .ultp-block-item { margin-top: {{headerSpaceY}}px; }'
-                    ]
-                ],
-            ],
-            'headerWrapPadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '20','bottom' => '20', 'left'=>'20','right'=>'20', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'layout','condition'=>'!=','value'=>'layout1'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-entry-heading { padding: {{headerWrapPadding}}; }'
-                    ],
-                ],
-            ],
+			/*
+			============================
+				Read More Style
+			============================*/
+			'readMoreText'        => '',
+			'readMoreIcon'        => 'rightArrowLg',
 
-            //--------------------------
-            // Image Setting/Style
-            //--------------------------
-            'imgCrop' => [
-                'type' => 'string',
-                'default' => 'full',
-                'depends' => [(object)['key' => 'showImage','condition' => '==','value' => true]]
-            ],
-            'imgWidth' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'', 'ulg' =>'%'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'showImage','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-item .ultp-block-image { max-width: {{imgWidth}}; }'
-                    ],
-                ],
-            ],
-            'imgHeight' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'', 'unit' =>'px'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'showImage','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-item .ultp-block-image img {height: {{imgHeight}}; }'
-                    ],
-                ],
-            ],
-            'imageScale' => [
-                'type' => 'string',
-                'default' => 'cover',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'showImage','condition'=>'==','value'=>true]
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-item .ultp-block-image img {object-fit: {{imageScale}};}'
-                    ],
-                ],
-            ],
-            'imgAnimation' => [
-                'type' => 'string',
-                'default' => 'none',
-            ],
-            'imgGrayScale' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'0', 'unit' =>'%'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'showImage','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-image { filter: grayscale({{imgGrayScale}}); }'
-                    ],
-                ],
-            ],
-            'imgHoverGrayScale' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'0', 'unit' =>'%'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'showImage','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-item:hover .ultp-block-image { filter: grayscale({{imgHoverGrayScale}}); }'
-                    ],
-                ],
-            ],
-            'imgRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'', 'unit' =>'px'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'showImage','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-image { border-radius:{{imgRadius}}; }'
-                    ],
-                ],
-            ],
-            'imgHoverRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'', 'unit' =>'px'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'showImage','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-item:hover .ultp-block-image { border-radius:{{imgHoverRadius}}; }'
-                    ],
-                ],
-            ],
-            'imgShadow' => [
-                'type' => 'object',
-                'default' => (object)['openShadow' => 0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'showImage','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-image'
-                    ],
-                ],
-            ],
-            'imgHoverShadow' => [
-                'type' => 'object',
-                'default' => (object)['openShadow' => 0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'showImage','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-item:hover .ultp-block-image'
-                    ],
-                ],
-            ],
-            'imgSpacing' => [
-                'type' => 'object',
-                'default' => (object)['lg'=>'20'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'showImage','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-item .ultp-block-image { margin-bottom: {{imgSpacing}}px; }'
-                    ],
-                ],
-            ],
-            'imgOverlay' => [
-               'type' => 'boolean',
-                'default' => false,
-            ],
-            'imgOverlayType' => [
-                'type' => 'string',
-                'default' => 'default',
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'imgOverlay','condition'=>'==','value'=>true],
-                        ]
-                    ],
-                ]         
-            ],
-            'overlayColor' => [
-                'type' => 'object',
-                'default' => (object)['openColor' => 1, 'type' => 'color', 'color' => '#0e1523'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'imgOverlayType','condition'=>'==','value'=>'custom'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-image-custom > a::before'
-                    ],
-                ],
+			/*
+			============================
+				Separator Style
+			============================*/
+			'separatorShow'       => false,
 
-            ],
-            'imgOpacity' => [
-                'type' => 'string',
-                'default' => .7,
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'imgOverlayType','condition'=>'==','value'=>'custom'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-image-custom > a::before { opacity: {{imgOpacity}}; }'
-                    ],
-                ],
-            ],
-            'imgSrcset' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
-            'imgLazy' => [
-                'type' => 'boolean',
-                'default' => false,
-            ],
+			/*
+			============================
+				Advance Wrapper Style
+			============================*/
+			'advanceId'           => '',
+			'advanceZindex'       => '',
+			'hideExtraLarge'      => false,
+			'hideTablet'          => false,
+			'hideMobile'          => false,
+			'advanceCss'          => '',
+			'currentPostId'       => '',
 
-            //--------------------------
-            // Separator
-            //--------------------------
-            'separatorShow' => [
-                'type' => 'boolean',
-                'default' => true,
-            ],
-            'septColor' => [
-                'type' => 'string',
-                'default' => '#e5e5e5',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'separatorShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-item { border-bottom-color:{{septColor}}; }'
-                    ],
-                ],
-            ],
-            'septStyle' => [
-                'type' => 'string',
-                'default' => 'dashed',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'separatorShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-item { border-bottom-style:{{septStyle}}; }'
-                    ],
-                ],
-            ],
-            'septSize' => [
-                'type' => 'string',
-                'default' => (object)['lg'=>'1'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'separatorShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-item { border-bottom-width: {{septSize}}px; }'
-                    ],
-                ],
-            ],
+			// --------------------------------
+			// Advance Filter Block Compatibility
+			// --------------------------------
+			'advFilterEnable'     => false,
+			'querySearch'         => '',
 
-            //--------------------------
-            // Read more Setting/Style
-            //--------------------------
-            'readMoreText' => [
-                'type' => 'string',
-                'default' => ''
-            ],
-            'readMoreIcon' => [
-                'type' => 'string',
-                'default' => 'rightArrowLg',
-            ],
-            'readMoreTypo' => [
-                'type' => 'object',
-                'default' => (object)['openTypography' => 1, 'size' => (object)['lg' =>12, 'unit' =>'px'], 'height' => (object)['lg' =>'', 'unit' =>'px'], 'spacing' => (object)['lg' =>1, 'unit' =>'px'], 'transform' => '', 'weight' => '400', 'decoration' => 'none','family'=>'' ],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-items-wrap .ultp-block-item .ultp-block-readmore a'
-                    ],
-                ],
-            ],
-            'readMoreIconSize' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'', 'unit' =>'px'],
-                'style' => [
-                    (object)[
-                        'depends' => [ 
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector' => '{{ULTP}} .ultp-block-readmore svg{ width:{{readMoreIconSize}}; }'
-                    ],
-                ]
-            ],
-            'readMoreColor' => [
-                'type' => 'string',
-                'default' => '#0d1523',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-items-wrap .ultp-block-readmore a { color:{{readMoreColor}}; } {{ULTP}} .ultp-block-readmore a svg { fill:{{readMoreColor}}; }'
-                    ],
-                ],
-            ],
-            'readMoreBgColor' => [
-                'type' => 'object',
-                'default' => (object)['openColor' => 0,'type' => 'color', 'color' => ''],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-readmore a'
-                    ],
-                ],
-            ],
-            'readMoreBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)[ 'top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid' ],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-readmore a'
-                    ],
-                ],
-            ],
-            'readMoreRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'', 'unit' =>'px'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-readmore a { border-radius:{{readMoreRadius}}; }'
-                    ],
-                ],
-            ],
-            'readMoreHoverColor' => [
-                'type' => 'string',
-                'default' => '#0c32d8',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-items-wrap .ultp-block-readmore a:hover { color:{{readMoreHoverColor}}; } {{ULTP}} .ultp-block-readmore a:hover svg { fill:{{readMoreHoverColor}}; }'
-                    ],
-                ],
-            ],
-            'readMoreBgHoverColor' => [
-                'type' => 'object',
-                'default' => (object)['openColor' => 0, 'type' => 'color', 'color' => ''],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-readmore a:hover'
-                    ],
-                ],
-            ],
-            'readMoreHoverBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-readmore a:hover'
-                    ],
-                ],
-            ],
-            'readMoreHoverRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'', 'unit' =>'px'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-readmore a:hover { border-radius:{{readMoreHoverRadius}}; }'
-                    ],
-                ],
-            ],
-            'readMoreSacing' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => 25,'bottom' => '','left' => '','right' => '', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-readmore { margin:{{readMoreSacing}}; }'
-                    ],
-                ],
-            ],
-            'readMorePadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '','left' => '','right' => '', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'readMore','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-block-readmore a { padding:{{readMorePadding}}; }'
-                    ],
-                ],
-            ],
+			// --------------------------------
+			// Pagination block compatibility
+			// --------------------------------
+			'advPaginationEnable' => false,
+			'defQueryTax'         => array(),
+			'advRelation'         => 'AND',
 
-            //--------------------------
-            // Filter Setting/Style
-            //--------------------------
-            'filterBelowTitle' => [
-                'type' => 'boolean',
-                'default' => false,
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-filter .ultp-filter-navigation { position: relative; display: block; margin: auto 0 0 0; height: auto;}'
-                    ],
-                ],
-            ],
-            'filterAlign' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>''],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterBelowTitle','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-heading-filter .ultp-filter-navigation { text-align:{{filterAlign}}; }'
-                    ],
-                ],
-            ],
-            'filterType' => [
-                'type' => 'string',
-                'default' => 'category'
-            ],
-            'filterText' => [
-                'type' => 'string',
-                'default' => 'all'
-            ],
-            'filterValue' => [
-                'type' => 'string',
-                'default' => '[]',
-                'style' => [
-                    (object)[
-                        'depends' => [(object)['key' => 'filterType','condition' => '!=','value' => '']]
-                    ],
-                ],
-            ],
-            'fliterTypo' => [
-                'type' => 'object',
-                'default' => (object)['openTypography' => 1,'size' => (object)['lg' =>14, 'unit' =>'px'],'height' => (object)['lg' =>22, 'unit' =>'px'], 'decoration' => 'none','family'=>'','weight'=>500],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-navigation .ultp-filter-wrap ul li a'
-                    ],
-                ],
-            ],
-            'filterColor' => [
-                'type' => 'string',
-                'default' => '#0e1523',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-navigation .ultp-filter-wrap ul li a { color:{{filterColor}}; }{{ULTP}} .flexMenu-viewMore a:before { border-color:{{filterColor}}}'
-                    ],
-                ],
-            ],
-            'filterHoverColor' => [
-                'type' => 'string',
-                'default' =>  '#828282',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-navigation .ultp-filter-wrap ul li a:hover, {{ULTP}} .ultp-filter-navigation .ultp-filter-wrap ul li a.filter-active { color:{{filterHoverColor}} !important; } {{ULTP}} .ultp-flex-menu .flexMenu-viewMore a:hover::before { border-color:{{filterHoverColor}}}'
-                    ],
-                ],
-            ],
-            'filterBgColor' => [
-                'type' => 'string',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-wrap ul li.filter-item > a { background:{{filterBgColor}}; }'
-                    ],
-                ],
-            ],
-            'filterHoverBgColor' => [
-                'type' => 'string',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-wrap ul li.filter-item > a:hover, {{ULTP}} .ultp-filter-wrap ul li.filter-item > a.filter-active, {{ULTP}} .ultp-filter-wrap ul li.flexMenu-viewMore > a:hover { background:{{filterHoverBgColor}}; }'
-                    ],
-                ],
-            ],
-            'filterBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-wrap ul li.filter-item > a'
-                    ],
-                ],
-            ],
-            'filterHoverBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-wrap ul li.filter-item > a:hover'
-                    ],
-                ],
-            ],
-            'filterRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'', 'unit' =>'px'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-wrap ul li.filter-item > a { border-radius:{{filterRadius}}; }'
-                    ],
-                ],
-            ],
-            'fliterSpacing' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '', 'right' => '', 'left' => '20', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-wrap ul li { margin:{{fliterSpacing}}; }'
-                    ],
-                ],
-            ],
-            'fliterPadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-wrap ul li.filter-item > a, {{ULTP}} .ultp-filter-wrap .flexMenu-viewMore > a { padding:{{fliterPadding}}; }'
-                    ],
-                ],
-            ],
-            'filterDropdownColor' => [
-                'type' => 'string',
-                'default' =>  '#0e1523',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-wrap ul li.flexMenu-viewMore .flexMenu-popup li a { color:{{filterDropdownColor}}; }'
-                    ],
-                ],
-            ],
-            'filterDropdownHoverColor' => [
-                'type' => 'string',
-                'default' =>  '#037fff',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-wrap ul li.flexMenu-viewMore .flexMenu-popup li a:hover { color:{{filterDropdownHoverColor}}; }'
-                    ],
-                ],
-            ],
-            'filterDropdownBg' => [
-                'type' => 'string',
-                'default' =>  '#fff',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-wrap ul li.flexMenu-viewMore .flexMenu-popup { background:{{filterDropdownBg}}; }'
-                    ],
-                ],
-            ],
-            'filterDropdownRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg'=>'0'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-wrap ul li.flexMenu-viewMore .flexMenu-popup { border-radius:{{filterDropdownRadius}}; }'
-                    ],
-                ],
-            ],
-            'filterDropdownPadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '15','bottom' => '15','left' => '20','right' => '20', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-filter-wrap ul li.flexMenu-viewMore .flexMenu-popup { padding:{{filterDropdownPadding}}; }'
-                    ],
-                ],
-            ],
-            'filterMobile' =>  [
-                'type' => 'boolean',
-                'default' => true,
-            ],
-            'filterMobileText' => [
-                'type' => 'string',
-                'default' => 'More',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'filterMobile','condition'=>'==','value'=>true],
-                        ]
-                    ]
-                ]
-            ],
+			/*
+			============================
+				Dynamic Content
+			============================*/
+			'dcEnabled'           => false,
+			'dcFields'            => array(),
+			'dcSize'              => 10,
+		);
+	}
 
-            //--------------------------
-            // Pagination Setting/Style
-            //--------------------------
-            'paginationType' => [
-                'type' => 'string',
-                'default' => 'pagination',
-            ],
-            'loadMoreText' => [
-                'type' => 'string',
-                'default' => 'Load More',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationType','condition'=>'==','value'=>'loadMore'],
-                        ],
-                    ],
-                ],
-            ],
-            'paginationText' => [
-                'type' => 'string',
-                'default' => 'Previous|Next',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationType','condition'=>'==','value'=>'pagination']
-                        ]
-                    ]
-                ]
-            ],
-            'paginationNav' => [
-                'type' => 'string',
-                'default' => 'textArrow',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationType','condition'=>'==','value'=>'pagination'],
-                        ],
-                    ],
-                ],
-            ],
-            'paginationAjax' => [
-                'type' => 'boolean',
-                'default' => true,
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationType','condition'=>'==','value'=>'pagination'],
-                        ],
-                    ],
-                ],
-             ],
-            'navPosition' => [
-                'type' => 'string',
-                'default' => 'topRight',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationType','condition'=>'==','value'=>'navigation'],
-                        ],
-                    ],
-                ],
-            ],
-            'pagiAlign' => [
-                'type' => 'object',
-                'default' =>  (object)['lg' =>'left'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-loadmore, {{ULTP}} .ultp-next-prev-wrap ul, {{ULTP}} .ultp-pagination { text-align:{{pagiAlign}}; }'
-                    ],
-                ],
-            ],
-            'pagiTypo' => [
-                'type' => 'object',
-                'default' => (object)['openTypography' => 1,'size' => (object)['lg' =>14, 'unit' =>'px'],'height' => (object)['lg' =>20, 'unit' =>'px'], 'decoration' => 'none','family'=>''],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination-wrap .ultp-pagination li a, {{ULTP}} .ultp-loadmore .ultp-loadmore-action'
-                    ],
-                ],
+	public function register() {
+		register_block_type(
+			'ultimate-post/post-list-1',
+			array(
+				'editor_script'   => 'ultp-blocks-editor-script',
+				'editor_style'    => 'ultp-blocks-editor-css',
+				'render_callback' => array( $this, 'content' ),
+			)
+		);
+	}
 
-            ],
-            'pagiArrowSize' => [
-                'type' => 'object',
-                'default' => (object)['lg'=>'14'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationType','condition'=>'==','value'=>'navigation'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-next-prev-wrap ul li a svg { width:{{pagiArrowSize}}px; }'
-                    ],
-                ],
+	public function content( $attr, $noAjax ) {
+		$attr                = wp_parse_args( $attr, $this->get_attributes() );
+		$attr['queryUnique'] = isset( $attr['queryUnique'] ) ? $attr['queryUnique'] : '';
+		global $unique_ID;
 
-            ],
-            'pagiColor' => [
-                'type' => 'string',
-                'default' => '#fff',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination-wrap .ultp-pagination li a, {{ULTP}} .ultp-next-prev-wrap ul li a, {{ULTP}} .ultp-block-wrapper .ultp-loadmore .ultp-loadmore-action { color:{{pagiColor}}; } {{ULTP}} .ultp-next-prev-wrap ul li a svg, {{ULTP}} .ultp-block-wrapper .ultp-loadmore .ultp-loadmore-action svg { fill:{{pagiColor}}; } {{ULTP}} .ultp-pagination li a svg { fill:{{pagiColor}}; }'
-                    ],
-                ],
-            ],
-            'pagiBgColor' => [
-                'type' => 'object',
-                'default' => (object)['openColor' => 1, 'type' => 'color', 'color' => '#0e1523'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination-wrap .ultp-pagination li a, {{ULTP}} .ultp-next-prev-wrap ul li a, {{ULTP}} .ultp-loadmore .ultp-loadmore-action'
-                    ],
-                ],
-            ],
-            'pagiBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination li a, {{ULTP}} .ultp-next-prev-wrap ul li a, {{ULTP}} .ultp-loadmore-action'
-                    ],
-                ],
-            ],
-            'pagiShadow' => [
-                'type' => 'object',
-                'default' => (object)['openShadow' => 0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination li a, {{ULTP}} .ultp-next-prev-wrap ul li a, {{ULTP}} .ultp-loadmore-action'
-                    ],
-                ],
-            ],
-            'pagiRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '2','bottom' => '2','left' => '2','right' => '2', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination li a, {{ULTP}} .ultp-next-prev-wrap ul li a, {{ULTP}} .ultp-loadmore-action { border-radius:{{pagiRadius}}; }'
-                    ],
-                ],
-            ],
-            'pagiHoverColor' => [
-                'type' => 'string',
-                'default' => '#fff',
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination-wrap .ultp-pagination li.pagination-active a, {{ULTP}} .ultp-next-prev-wrap ul li a:hover, {{ULTP}} .ultp-block-wrapper .ultp-loadmore-action:hover { color:{{pagiHoverColor}}; } {{ULTP}} .ultp-pagination li a:hover svg, {{ULTP}} .ultp-block-wrapper .ultp-loadmore .ultp-loadmore-action:hover svg { fill:{{pagiHoverColor}}; } {{ULTP}} .ultp-next-prev-wrap ul li a:hover svg { fill:{{pagiHoverColor}}; } @media (min-width: 768px) { {{ULTP}} .ultp-pagination-wrap .ultp-pagination li a:hover { color:{{pagiHoverColor}};}}'
-                    ],
-                ],
-            ],
-            'pagiHoverbg' => [
-                'type' => 'object',
-                'default' => (object)['openColor' => 1, 'type' => 'color', 'color' => '#037fff','replace'=>1],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination-wrap .ultp-pagination li a:hover, {{ULTP}} .ultp-pagination-wrap .ultp-pagination li.pagination-active a, {{ULTP}} .ultp-pagination-wrap .ultp-pagination li a:focus, {{ULTP}} .ultp-next-prev-wrap ul li a:hover, {{ULTP}} .ultp-loadmore-action:hover{ {{pagiHoverbg}} }'
-                    ],
-                ],
-            ],
-            'pagiHoverBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination li a:hover, {{ULTP}} .ultp-pagination li.pagination-active a, {{ULTP}} .ultp-next-prev-wrap ul li a:hover, {{ULTP}} .ultp-loadmore-action:hover'
-                    ],
-                ],
-            ],
-            'pagiHoverShadow' => [
-                'type' => 'object',
-                'default' => (object)['openShadow' => 0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4'],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination li a:hover, {{ULTP}} .ultp-pagination li.pagination-active a, {{ULTP}} .ultp-next-prev-wrap ul li a:hover, {{ULTP}} .ultp-loadmore-action:hover'
-                    ],
-                ],
-            ],
-            'pagiHoverRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '2','bottom' => '2','left' => '2','right' => '2', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination li.pagination-active a, {{ULTP}} .ultp-pagination li a:hover, {{ULTP}} .ultp-next-prev-wrap ul li a:hover, {{ULTP}} .ultp-loadmore-action:hover { border-radius:{{pagiHoverRadius}}; }'
-                    ],
-                ],
-            ],
-            'pagiPadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '8','bottom' => '8','left' => '14','right' => '14', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationShow','condition'=>'==','value'=>true],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination li a, {{ULTP}} .ultp-next-prev-wrap ul li a, {{ULTP}} .ultp-loadmore-action { padding:{{pagiPadding}}; }'
-                    ],
-                ],
-            ],
-            'navMargin' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '0', 'right' => '0', 'bottom' => '0', 'left' => '0', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationType','condition'=>'==','value'=>'navigation'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-next-prev-wrap ul { margin:{{navMargin}}; }'
-                    ],
-                ],
-            ],
-            'pagiMargin' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '30', 'right' => '0', 'bottom' => '0', 'left' => '0', 'unit' =>'px']],
-                'style' => [
-                    (object)[
-                        'depends' => [
-                            (object)['key'=>'paginationType','condition'=>'!=','value'=>'navigation'],
-                        ],
-                        'selector'=>'{{ULTP}} .ultp-pagination-wrap .ultp-pagination, {{ULTP}} .ultp-loadmore { margin:{{pagiMargin}}; }'
-                    ],
-                ],
-            ],
+		if ( ! $noAjax ) {
+			$paged         = is_front_page() ? get_query_var( 'page' ) : get_query_var( 'paged' );
+			$attr['paged'] = $paged ? $paged : 1;
+		}
+		if ( $attr['queryUnique'] && isset( $attr['savedQueryUnique'] ) ) {
+			$unique_ID = $attr['savedQueryUnique'];
+		}
+		$block_name          = 'post-list-1';
+		$wraper_before       = $wraper_after = $post_loop = '';
+		$attr['queryNumber'] = ultimate_post()->get_post_number( 6, $attr['queryNumber'], $attr['queryNumPosts'] );
+		$recent_posts        = new \WP_Query( ultimate_post()->get_query( $attr ) );
+		$pageNum             = ultimate_post()->get_page_number( $attr, $recent_posts->found_posts );
+		$vid_icon_redirect   = false; // Its used for video icon do not remove it
+		// Dummy Img Url
+		$dummy_url = ULTP_URL . 'assets/img/ultp-fallback-img.png';
+		// Current Post Id For Pagination
+		$curr_post_id = '';
+		if ( is_single() ) {
+			$curr_post_id = get_the_ID();
+		}
+		// Loadmore and Unique content
+		if ( $attr['queryUnique'] && isset( $attr['loadMoreQueryUnique'] ) && $attr['paginationShow'] && ( $attr['paginationType'] == 'loadMore' ) ) {
+			$unique_ID            = $attr['loadMoreQueryUnique'];
+			$current_unique_posts = $attr['ultp_current_unique_posts'];
+		}
 
-            //--------------------------
-            //  Wrapper Style
-            //--------------------------
-            'loadingColor' => [
-                'type' => 'string',
-                'default' => '#000',
-                'style' => [
-                    (object)[
-                        'selector'=>'{{ULTP}} .ultp-loading .ultp-loading-blocks div { --loading-block-color: {{loadingColor}}; }'
-                    ],
-                ],
-            ],
-            'wrapBg' => [
-                'type' => 'object',
-                'default' => (object)['openColor' => 0, 'type' => 'color', 'color' => '#f5f5f5'],
-                'style' => [
-                     (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-wrapper'
-                    ],
-                ],
-            ],
-            'wrapBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' =>(object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid'],
-                'style' => [
-                     (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-wrapper'
-                    ],
-                ],
-            ],
-            'wrapShadow' => [
-                'type' => 'object',
-                'default' => (object)['openShadow' => 0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4'],
-                'style' => [
-                     (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-wrapper'
-                    ],
-                ],
-            ],
-            'wrapRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'', 'unit' =>'px'],
-                'style' => [
-                     (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-wrapper { border-radius:{{wrapRadius}}; }'
-                    ],
-                ],
-            ],
-            'wrapHoverBackground' => [
-                'type' => 'object',
-                'default' => (object)['openColor' => 0, 'type' => 'color', 'color' => '#037fff'],
-                'style' => [
-                     (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-wrapper:hover'
-                    ],
-                ],
-            ],
-            'wrapHoverBorder' => [
-                'type' => 'object',
-                'default' => (object)['openBorder'=>0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4','type' => 'solid'],
-                'style' => [
-                     (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-wrapper:hover'
-                    ],
-                ],
-            ],
-            'wrapHoverRadius' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>'', 'unit' =>'px'],
-                'style' => [
-                     (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-wrapper:hover { border-radius:{{wrapHoverRadius}}; }'
-                    ],
-                ],
-            ],
-            'wrapHoverShadow' => [
-                'type' => 'object',
-                'default' => (object)['openShadow' => 0, 'width' => (object)['top' => 1, 'right' => 1, 'bottom' => 1, 'left' => 1],'color' => '#009fd4'],
-                'style' => [
-                     (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-wrapper:hover'
-                    ],
-                ],
-            ],
-            'wrapMargin' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '', 'unit' =>'px']],
-                'style' => [
-                     (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-wrapper { margin:{{wrapMargin}}; }'
-                    ],
-                ],
-            ],
-            'wrapOuterPadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['top' => '','bottom' => '','left' => '', 'right' => '', 'unit' =>'px']],
-                'style' => [
-                     (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-wrapper { padding:{{wrapOuterPadding}}; }'
-                    ],
-                ],
-            ],
-            'wrapInnerPadding' => [
-                'type' => 'object',
-                'default' => (object)['lg' =>(object)['unit' =>'px']],
-                'style' => [
-                     (object)[
-                        'selector'=>'{{ULTP}} .ultp-block-wrapper { padding:{{wrapInnerPadding}}; }'
-                    ],
-                ],
-            ],
-            'advanceId' => [
-                'type' => 'string',
-                'default' => '',
-            ],
-            'advanceZindex' => [
-                'type' => 'string',
-                'default' => '',
-                'style' => [
-                    (object)[
-                        'selector' => '{{ULTP}} .ultp-block-wrapper{z-index:{{advanceZindex}};}'
-                    ],
-                ],
-            ],
-            'hideExtraLarge' => [
-                'type' => 'boolean',
-                'default' => false,
-                'style' => [
-                    (object)[
-                        'selector' => '{{ULTP}} {display:none;}'
-                    ],
-                ],
-            ],
-            'hideTablet' => [
-                'type' => 'boolean',
-                'default' => false,
-                'style' => [
-                    (object)[
-                        'selector' => '{{ULTP}} {display:none;}'
-                    ],
-                ],
-            ],
-            'hideMobile' => [
-                'type' => 'boolean',
-                'default' => false,
-                'style' => [
-                    (object)[
-                        'selector' => '{{ULTP}} {display:none;}'
-                    ],
-                ],
-            ],
-            'advanceCss' => [
-                'type' => 'string',
-                'default' => '',
-                'style' => [(object)['selector' => '']],
-            ]
-        );
-        
-        if ($default) {
-            $temp = array();
-            foreach ($attributes as $key => $value) {
-                if (isset($value['default'])) {
-                    $temp[$key] = $value['default'];
-                }
-            }
-            return $temp;
-        } else {
-            return $attributes;
-        }
-    }
+		$attr['className']      = isset( $attr['className'] ) && $attr['className'] ? preg_replace( '/[^A-Za-z0-9_ -]/', '', $attr['className'] ) : '';
+		$attr['align']          = isset( $attr['align'] ) && $attr['align'] ? preg_replace( '/[^A-Za-z0-9_ -]/', '', $attr['align'] ) : '';
+		$attr['advanceId']      = isset( $attr['advanceId'] ) ? sanitize_html_class( $attr['advanceId'] ) : '';
+		$attr['blockId']        = isset( $attr['blockId'] ) ? sanitize_html_class( $attr['blockId'] ) : '';
+		$attr['contentTag']     = in_array( $attr['contentTag'], ultimate_post()->ultp_allowed_block_tags() ) ? $attr['contentTag'] : 'div';
+		$attr['layout']         = sanitize_html_class( $attr['layout'] );
+		$attr['imgAnimation']   = sanitize_html_class( $attr['imgAnimation'] );
+		$attr['imgOverlayType'] = sanitize_html_class( $attr['imgOverlayType'] );
+		$attr['popupAutoPlay']  = $attr['popupAutoPlay'] == true;
+		$attr['readMoreText']   = wp_kses( $attr['readMoreText'], ultimate_post()->ultp_allowed_html_tags() );
+		$attr['gridStyle']      = sanitize_html_class( $attr['gridStyle'] );
 
-    public function register() {
-        register_block_type( 'ultimate-post/post-list-1',
-            array(
-                'editor_script' => 'ultp-blocks-editor-script',
-                'editor_style'  => 'ultp-blocks-editor-css',
-                'attributes' => $this->get_attributes(),
-                'render_callback' =>  array($this, 'content')
-            )
-        );
-    }
+		if ( $recent_posts->have_posts() ) {
 
-    public function content($attr, $noAjax) {
-        global $unique_ID;
-        if (!$noAjax) {
-            $paged = is_front_page() ? get_query_var('page') : get_query_var('paged');
-            $attr['paged'] = $paged ? $paged : 1;
-        }
+			// Pagination Block Html
+			include ULTP_PATH . 'blocks/template/pagination_block.php';
 
-        $block_name = 'post-list-1';
-        $page_post_id = ultimate_post()->get_ID();
-        $wraper_before = $wraper_after = $post_loop = '';
-        $attr['queryNumber'] = ultimate_post()->get_post_number(6, $attr['queryNumber'], $attr['queryNumPosts']);
-        $recent_posts = new \WP_Query( ultimate_post()->get_query( $attr ) );
-        $pageNum = ultimate_post()->get_page_number($attr, $recent_posts->found_posts);
-    
-        if ($recent_posts->have_posts()) {
-            $wraper_before .= '<div '.($attr['advanceId']?'id="'.$attr['advanceId'].'" ':'').' class="wp-block-ultimate-post-'.$block_name.' ultp-block-'.$attr["blockId"].''.(isset($attr["align"])? ' align' .$attr["align"]:'').''.(isset($attr["className"])?' '.$attr["className"]:'').'">';
-                $wraper_before .= '<div class="ultp-block-wrapper">';
-                    
-                    // Loading
-                    $wraper_before .= ultimate_post()->loading();
-                    if ($attr['headingShow'] || $attr['filterShow'] || $attr['paginationShow']) {
-                        $wraper_before .= '<div class="ultp-heading-filter">';
-                            $wraper_before .= '<div class="ultp-heading-filter-in">';
-                                
-                                // Heading
-                                include ULTP_PATH.'blocks/template/heading.php';
-                                
-                                if ($attr['filterShow'] || $attr['paginationShow']) {
-                                    $wraper_before .= '<div class="ultp-filter-navigation">';
+			$wraper_before     .= '<div ' . ( $attr['advanceId'] ? 'id="' . $attr['advanceId'] . '" ' : '' ) . ' class="ultp-post-grid-block wp-block-ultimate-post-' . $block_name . ' ultp-block-' . $attr['blockId'] . '' . ( $attr['align'] ? ' align' . $attr['align'] : '' ) . '' . ( $attr['className'] ? ' ' . $attr['className'] : '' ) . '">';
+				$wraper_before .= '<div class="ultp-block-wrapper">';
 
-                                        // Filter
-                                        if($attr['filterShow'] && $attr['queryType'] != 'posts' && $attr['queryType'] != 'customPosts') {
-                                            include ULTP_PATH.'blocks/template/filter.php';
-                                        }
+					// Loading
+					$wraper_before .= ultimate_post()->postx_loading();
+			if ( $attr['headingShow'] || $attr['filterShow'] || $attr['paginationShow'] ) {
+				$wraper_before     .= '<div class="ultp-heading-filter">';
+					$wraper_before .= '<div class="ultp-heading-filter-in">';
 
-                                        // Navigation
-                                        if ($attr['paginationShow'] && ($attr['paginationType'] == 'navigation') && ($attr['navPosition'] == 'topRight')) {
-                                            include ULTP_PATH.'blocks/template/navigation-before.php';
-                                        }
-                                    $wraper_before .= '</div>';
-                                }
+						// Heading
+						include ULTP_PATH . 'blocks/template/heading.php';
 
-                            $wraper_before .= '</div>';
-                        $wraper_before .= '</div>';
-                    }
-             
-                    $wraper_before .= '<div class="ultp-block-items-wrap ultp-block-row ultp-block-column-'.json_decode(json_encode($attr['columns']), True)['lg'].' ultp-pl1a-'.$attr['gridStyle'].' ultp-post-list1-'.$attr['layout'].'">';
-                        $idx = $noAjax ? 1 : 0;
-                        while ( $recent_posts->have_posts() ): $recent_posts->the_post();
+				if ( $attr['filterShow'] || $attr['paginationShow'] ) {
+					$wraper_before .= '<div class="ultp-filter-navigation">';
 
-                            include ULTP_PATH.'blocks/template/data.php';
+						// Filter
+					if ( $attr['filterShow'] && $attr['queryType'] != 'posts' && $attr['queryType'] != 'customPosts' ) {
+						include ULTP_PATH . 'blocks/template/filter.php';
+					}
 
-                            include ULTP_PATH.'blocks/template/category.php';
+						// Navigation
+					if ( $attr['paginationShow'] && ( $attr['paginationType'] == 'navigation' ) && ( $attr['navPosition'] == 'topRight' ) ) {
+									include ULTP_PATH . 'blocks/template/navigation-before.php';
+					}
+									$wraper_before .= '</div>';
+				}
 
-                            if ($attr['queryUnique']) {
-                                $unique_ID[$attr['queryUnique']][] = $post_id;
-                            }
-                            
-                            $post_loop .= '<'.$attr['contentTag'].' class="ultp-block-item post-id-'.$post_id.'">';
-                                $post_loop .= '<div class="ultp-block-content-wrap">';
-                                    $post_loop .= '<div class="ultp-block-entry-content">';
+					$wraper_before     .= '</div>';
+						$wraper_before .= '</div>';
+			}
 
-                                    if (($attr['gridStyle'] == 'style3' && $idx == 0) && has_post_thumbnail() && $attr['showImage']) {
-                                        $post_loop .= '<div class="ultp-block-image ultp-block-image-'.$attr['imgAnimation'].($attr["imgOverlay"] ? ' ultp-block-image-overlay ultp-block-image-'.$attr["imgOverlayType"].' ultp-block-image-'.$attr["imgOverlayType"].$idx : '' ).'">';
-                                            $post_loop .= '<a href="'.$titlelink.'" '.($attr['openInTab'] ? 'target="_blank"' : '').'>'.ultimate_post()->get_image($post_thumb_id, $attr['imgCrop'], '', $title, $attr['imgSrcset'], $attr['imgLazy']).'</a>';
-                                            if (($attr['catPosition'] != 'aboveTitle') && $attr['catShow'] ) {
-                                                $post_loop .= '<div class="ultp-category-img-grid">'.$category.'</div>';
-                                            }
-                                        $post_loop .= '</div>';
-                                    }
+					$wraper_before .= '<div class="ultp-block-items-wrap ultp-block-row ultp-block-column-' . sanitize_html_class( json_decode( wp_json_encode( $attr['columns'] ), true )['lg'] ) . ' ultp-pl1a-' . $attr['gridStyle'] . ' ultp-post-list1-' . $attr['layout'] . '">';
+						$idx        = ( $attr['paginationShow'] && ( $attr['paginationType'] == 'loadMore' ) ) ? ( $noAjax ? 1 : 0 ) : 0;
+						$index      = 0;
+			while ( $recent_posts->have_posts() ) :
+				$recent_posts->the_post();
 
-                                    $post_loop .= '<div class="ultp-block-entry-heading">';
-                                        // Category
-                                        if (($attr['catPosition'] == 'aboveTitle') && $attr['catShow']) {
-                                            $post_loop .= $category;
-                                        }
-                                        // Title
-                                        if ($title && $attr['titleShow'] && $attr['titlePosition'] == 1) {
-                                            include ULTP_PATH.'blocks/template/title.php';
-                                        }
-                                        // Meta
-                                        if ($attr['metaPosition'] =='top' ) {
-                                            include ULTP_PATH.'blocks/template/meta.php';
-                                        }
-                                        // Title
-                                        if ($title && $attr['titleShow'] && $attr['titlePosition'] == 0) {
-                                            include ULTP_PATH.'blocks/template/title.php';
-                                        }
-                                    $post_loop .= '</div>'; 
+				$dcContent = array_fill( 0, $attr['dcSize'], '' );
 
-                                    if (($attr['gridStyle'] != 'style3' || $attr['gridStyle'] == 'style3' && $idx != 0 )  && has_post_thumbnail() && $attr['showImage']) {
-                                        $post_loop .= '<div class="ultp-block-image ultp-block-image-'.$attr['imgAnimation'].($attr["imgOverlay"] ? ' ultp-block-image-overlay ultp-block-image-'.$attr["imgOverlayType"].' ultp-block-image-'.$attr["imgOverlayType"].$idx : '' ).'">';
-                                            $post_loop .= '<a href="'.$titlelink.'" '.($attr['openInTab'] ? 'target="_blank"' : '').'>'.ultimate_post()->get_image($post_thumb_id, $attr['imgCrop'], '', $title, $attr['imgSrcset'], $attr['imgLazy']).'</a>';
-                                            if (($attr['catPosition'] != 'aboveTitle') && $attr['catShow'] ) {
-                                                $post_loop .= '<div class="ultp-category-img-grid">'.$category.'</div>';
-                                            }
-                                        $post_loop .= '</div>';
-                                    }
+				if ( ultimate_post()->is_dc_active( $attr ) ) {
+					$dcContent = \ULTP\DCService::get_dc_content_for_block( $attr, $dcContent );
+				}
 
-                                    $post_loop .= '</div>';
-                                    $post_loop .= '<div class="ultp-block-content">';
-                                        // Excerpt
-                                        if ($attr['excerptShow']) {
-                                            $post_loop .= '<div class="ultp-block-excerpt">'.ultimate_post()->get_excerpt($post_id, $attr['showSeoMeta'], $attr['showFullExcerpt'], $attr['excerptLimit']).'</div>';
-                                        }
+				include ULTP_PATH . 'blocks/template/data.php';
 
-                                        // Read More
-                                        if ($attr['readMore']) {
-                                            $post_loop .= '<div class="ultp-block-readmore"><a aria-label="'.$title.'" href="'.$titlelink.'" '.($attr['openInTab'] ? 'target="_blank"' : '').'>'.($attr['readMoreText'] ? $attr['readMoreText'] : esc_html__( "Read More", "ultimate-post" )).ultimate_post()->svg_icon($attr['readMoreIcon']).'</a></div>';
-                                        }
-                                        // Meta
-                                        if ($attr['metaPosition'] =='bottom' ) {
-                                            include ULTP_PATH.'blocks/template/meta.php';
-                                        }
-                                    $post_loop .= '</div>';
-                                $post_loop .= '</div>';
-                            $post_loop .= '</'.$attr['contentTag'].'>';
-                            $idx ++;
-                        endwhile;
-                        if ($attr['paginationShow'] && ($attr['paginationType'] == 'loadMore')) {
-                            $wraper_after .= '<span class="ultp-loadmore-insert-before"></span>';
-                        }
-                    $wraper_after .= '</div>';//ultp-block-items-wrap
-                    
-                    // Load More
-                    if ($attr['paginationShow'] && ($attr['paginationType'] == 'loadMore')) {
-                        include ULTP_PATH.'blocks/template/loadmore.php';
-                    }
+				include ULTP_PATH . 'blocks/template/category.php';
 
-                    // Navigation
-                    if ($attr['paginationShow'] && ($attr['paginationType'] == 'navigation') && ($attr['navPosition'] != 'topRight')) {
-                        include ULTP_PATH.'blocks/template/navigation-after.php';
-                    }
+				if ( $attr['queryUnique'] ) {
+					$unique_ID[ $attr['queryUnique'] ][] = $post_id;
+					$current_unique_posts[]              = $post_id;
+				}
 
-                    // Pagination
-                    if ($attr['paginationShow'] && ($attr['paginationType'] == 'pagination')) {
-                        include ULTP_PATH.'blocks/template/pagination.php';
-                    }
+				$post_loop         .= '<' . $attr['contentTag'] . ' class="ultp-block-item post-id-' . $post_id . '">';
+					$post_loop     .= '<div class="ultp-block-content-wrap">';
+						$post_loop .= '<div class="ultp-block-entry-content">';
 
-                $wraper_after .= '</div>';
-            $wraper_after .= '</div>';
+						$post_loop .= $dcContent[9];
 
-            wp_reset_query();
-        }
+				if ( ( $attr['gridStyle'] == 'style3' && $idx == 0 ) && ( ( $post_thumb_id || $attr['fallbackEnable'] ) && $attr['showImage'] ) ) {
+						$post_loop     .= '<div class="ultp-block-image ultp-block-image-' . $attr['imgAnimation'] . ( $attr['imgOverlay'] ? ' ultp-block-image-overlay ultp-block-image-' . $attr['imgOverlayType'] . ' ultp-block-image-' . $attr['imgOverlayType'] . $idx : '' ) . '">';
+							$post_loop .= '<a href="' . $titlelink . '" ' . ( $attr['openInTab'] ? 'target="_blank"' : '' ) . '>';
+							// Post Image Id
+							$block_img_id = $post_thumb_id ? $post_thumb_id : ( $attr['fallbackEnable'] && isset( $attr['fallbackImg']['id'] ) ? $attr['fallbackImg']['id'] : '' );
 
-        return $noAjax ? $post_loop : $wraper_before.$post_loop.$wraper_after;
-    }
+							// Post Image
+					if ( $post_thumb_id || ( $attr['fallbackEnable'] && $block_img_id ) ) {
+						$post_loop .= ultimate_post()->get_image( $block_img_id, $attr['imgCrop'], '', $title, $attr['imgSrcset'], $attr['imgLazy'] );
+					} else {
+						$video      = ultimate_post()->get_youtube_id( $post_video );
+						$post_loop .= '<img  src="' . ( $video ? 'https://img.youtube.com/vi/' . $video . '/0.jpg' : $dummy_url ) . '" alt="dummy-img" />';
+					}
 
+					if ( $post_video && ! ( $attr['enablePopup'] ) ) {
+						$post_loop .= '<div class="ultp-block-video-content" style="display: none;" >';
+						$post_loop .= ultimate_post()->get_embeded_video( $post_video, false, true, false, true, true, false, true, array() );
+						$post_loop .= '</div>';
+					}
+							$post_loop .= '</a>';
+					if ( ( $attr['catPosition'] != 'aboveTitle' ) && $attr['catShow'] ) {
+						$post_loop .= '<div class="ultp-category-img-grid">' . $category . '</div>';
+					}
+						$post_loop .= '</div>';
+				}
+
+						$post_loop .= '<div class="ultp-block-entry-heading">';
+
+							$post_loop .= $dcContent[8];
+
+							// Category
+				if ( ( $attr['catPosition'] == 'aboveTitle' ) && $attr['catShow'] ) {
+					$post_loop .= $category;
+				}
+
+							$post_loop .= $dcContent[7];
+
+							// Title
+				if ( $title && $attr['titleShow'] && $attr['titlePosition'] == 1 ) {
+					include ULTP_PATH . 'blocks/template/title.php';
+				}
+
+							$post_loop .= $dcContent[6];
+
+							// Meta
+				if ( $attr['metaPosition'] == 'top' ) {
+					include ULTP_PATH . 'blocks/template/meta.php';
+				}
+
+							$post_loop .= $dcContent[5];
+
+							// Title
+				if ( $title && $attr['titleShow'] && $attr['titlePosition'] == 0 ) {
+					include ULTP_PATH . 'blocks/template/title.php';
+				}
+
+							$post_loop .= $dcContent[4];
+
+						$post_loop .= '</div>';
+
+				if ( ( $attr['gridStyle'] != 'style3' || $attr['gridStyle'] == 'style3' && $idx != 0 ) && ( ( $post_thumb_id || $attr['fallbackEnable'] ) && $attr['showImage'] ) ) {
+								$post_loop     .= '<div class="ultp-block-image ultp-block-image-' . $attr['imgAnimation'] . ( $attr['imgOverlay'] ? ' ultp-block-image-overlay ultp-block-image-' . $attr['imgOverlayType'] . ' ultp-block-image-' . $attr['imgOverlayType'] . $idx : '' ) . '">';
+									$post_loop .= '<a href="' . $titlelink . '" ' . ( $attr['openInTab'] ? 'target="_blank"' : '' ) . '>';
+									// Post Image Size
+									$imgSize = $attr['gridStyle'] != 'style1' ? ( $idx == 0 ? $attr['imgCrop'] : $attr['imgCropSmall'] ) : $attr['imgCrop'];
+									// Post Image Id
+									$block_img_id = $post_thumb_id ? $post_thumb_id : ( $attr['fallbackEnable'] && isset( $attr['fallbackImg']['id'] ) ? $attr['fallbackImg']['id'] : '' );
+									// Post Image
+					if ( $post_thumb_id || ( $attr['fallbackEnable'] && $block_img_id ) ) {
+								$post_loop .= ultimate_post()->get_image( $block_img_id, $imgSize, '', $title, $attr['imgSrcset'], $attr['imgLazy'] );
+					} else {
+								$video          = ultimate_post()->get_youtube_id( $post_video );
+									$post_loop .= '<img  src="' . ( $video ? 'https://img.youtube.com/vi/' . $video . '/0.jpg' : $dummy_url ) . '" alt="dummy-img" />';
+					}
+									$post_loop .= '</a>';
+					if ( $post_video && ! ( $attr['enablePopup'] ) ) {
+						$post_loop .= '<div class="ultp-block-video-content" style="display: none;" >';
+						$post_loop .= ultimate_post()->get_embeded_video( $post_video, false, true, false, true, true, false, true, array() );
+						$post_loop .= '</div>';
+					}
+					if ( $post_video ) {
+						include ULTP_PATH . 'blocks/template/video_icon.php';
+					}
+					if ( ( $attr['catPosition'] != 'aboveTitle' ) && $attr['catShow'] ) {
+						$post_loop .= '<div class="ultp-category-img-grid">' . $category . '</div>';
+					}
+								$post_loop .= '</div>';
+				}
+
+										$post_loop .= '</div>';
+										$post_loop .= '<div class="ultp-block-content">';
+
+										$post_loop .= $dcContent[3];
+
+										// Excerpt
+				if ( $attr['excerptShow'] ) {
+					$excerptLim      = $index == 0 && $attr['gridStyle'] != 'style1' ? $attr['excerptLimitLg'] : $attr['excerptLimit'];
+					$showFullexcerpt = $index == 0 && $attr['gridStyle'] != 'style1' ? $attr['fullExcerptLg'] : $attr['showFullExcerpt'];
+					$post_loop      .= '<div class="ultp-block-excerpt">' . ultimate_post()->get_excerpt( $post_id, $attr['showSeoMeta'], $showFullexcerpt, $excerptLim ) . '</div>';
+				}
+
+										$post_loop .= $dcContent[2];
+				if ( $attr['readMore'] ) {
+					$post_loop .= '<div class="ultp-block-readmore"><a aria-label="' . $title . '" href="' . $titlelink . '" ' . ( $attr['openInTab'] ? 'target="_blank"' : '' ) . '>' . ( $attr['readMoreText'] ? $attr['readMoreText'] : esc_html__( 'Read More', 'ultimate-post' ) ) . ultimate_post()->get_svg_icon( $attr['readMoreIcon'] ) . '</a></div>';
+				}
+
+										$post_loop .= $dcContent[1];
+
+										// Meta
+				if ( $attr['metaPosition'] == 'bottom' ) {
+					include ULTP_PATH . 'blocks/template/meta.php';
+				}
+
+										$post_loop .= $dcContent[0];
+
+										$post_loop .= '</div>';
+										$post_loop .= '</div>';
+				if ( $post_video && $attr['enablePopup'] ) {
+					include ULTP_PATH . 'blocks/template/video_popup.php';
+				}
+										$post_loop .= '</' . $attr['contentTag'] . '>';
+										++$idx;
+										++$index;
+						endwhile;
+			if ( $attr['queryUnique'] ) {
+				$post_loop .= "<span style='display: none;' class='ultp-current-unique-posts' data-ultp-unique-ids= " . wp_json_encode( $unique_ID ) . ' data-current-unique-posts= ' . wp_json_encode( $current_unique_posts ) . '> </span>';
+			}
+						// if ( ($attr['paginationShow'] || $attr['advPaginationEnable'] )  && ($attr['paginationType'] == 'loadMore')) {
+						// $wraper_after .= '<span class="ultp-loadmore-insert-before"></span>';
+						// }
+					$wraper_after .= '</div>';// ultp-block-items-wrap
+
+					// Load More
+			if ( $attr['paginationShow'] && ( $attr['paginationType'] == 'loadMore' ) ) {
+				include ULTP_PATH . 'blocks/template/loadmore.php';
+			}
+
+					// Navigation
+			if ( $attr['paginationShow'] && ( $attr['paginationType'] == 'navigation' ) && ( $attr['navPosition'] != 'topRight' ) ) {
+				include ULTP_PATH . 'blocks/template/navigation-after.php';
+			}
+
+					// Pagination
+			if ( $attr['paginationShow'] && ( $attr['paginationType'] == 'pagination' ) ) {
+				include ULTP_PATH . 'blocks/template/pagination.php';
+			}
+
+				$wraper_after .= '</div>';
+				$wraper_after .= $pagi_block_html;
+			$wraper_after     .= '</div>';
+
+			wp_reset_query();
+		} else {
+			$wraper_before .= ultimate_post()->get_no_result_found_html( $attr['notFoundMessage'] );
+		}
+
+		return $noAjax ? $post_loop : $wraper_before . $post_loop . $wraper_after;
+	}
 }

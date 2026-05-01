@@ -48,6 +48,31 @@ var EasyWPSMTPAdminNotices = window.EasyWPSMTPAdminNotices || ( function( docume
 
 			$( '.easy-wp-smtp-notice.is-dismissible' )
 				.on( 'click', '.notice-dismiss', app.dismiss );
+
+			$( '.easy-wp-smtp-notice__copy-btn' ).on( 'click', app.copyErrorCode );
+		},
+
+		/**
+		 * Copy error code to clipboard.
+		 *
+		 * @since 2.14.0
+		 */
+		copyErrorCode: function() {
+
+			var $btn = $( this );
+			var code = $btn.siblings( 'code' ).text();
+
+			if ( navigator.clipboard ) {
+				navigator.clipboard.writeText( code );
+			}
+
+			$btn.find( '.easy-wp-smtp-notice__icon-copy' ).hide();
+			$btn.find( '.easy-wp-smtp-notice__icon-check' ).show();
+
+			setTimeout( function() {
+				$btn.find( '.easy-wp-smtp-notice__icon-check' ).hide();
+				$btn.find( '.easy-wp-smtp-notice__icon-copy' ).show();
+			}, 2000 );
 		},
 
 		/**
