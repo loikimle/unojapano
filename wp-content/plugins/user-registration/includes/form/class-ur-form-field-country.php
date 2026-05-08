@@ -3,8 +3,6 @@
  * UR_Form_Field_Country.
  *
  * @package  UserRegistration/Form
- * @category Admin
- * @author   WPEverest
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,8 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class UR_Form_Field_Country extends UR_Form_Field {
 
+	/**
+	 * Instance Variable.
+	 *
+	 * @var [mixed]
+	 */
 	private static $_instance;
 
+	/**
+	 * Get Instance of class.
+	 */
 	public static function get_instance() {
 		// If the single instance hasn't been set, set it now.
 		if ( is_null( self::$_instance ) ) {
@@ -27,8 +33,16 @@ class UR_Form_Field_Country extends UR_Form_Field {
 		return self::$_instance;
 	}
 
+	/**
+	 * Get Country List.
+	 */
 	public function get_country() {
-
+		/**
+		 * Filter to modify countries list.
+		 *
+		 * @param array Country Names.
+		 * @return array Country Names.
+		 */
 		return apply_filters(
 			'user_registration_countries_list',
 			array(
@@ -103,6 +117,7 @@ class UR_Form_Field_Country extends UR_Form_Field {
 				'GQ' => __( 'Equatorial Guinea', 'user-registration' ),
 				'ER' => __( 'Eritrea', 'user-registration' ),
 				'EE' => __( 'Estonia', 'user-registration' ),
+				'SZ' => __( 'Eswatini', 'user-registration' ),
 				'ET' => __( 'Ethiopia', 'user-registration' ),
 				'FK' => __( 'Falkland Islands', 'user-registration' ),
 				'FO' => __( 'Faroe Islands', 'user-registration' ),
@@ -244,7 +259,6 @@ class UR_Form_Field_Country extends UR_Form_Field {
 				'SD' => __( 'Sudan', 'user-registration' ),
 				'SR' => __( 'Suriname', 'user-registration' ),
 				'SJ' => __( 'Svalbard and Jan Mayen', 'user-registration' ),
-				'SZ' => __( 'Swaziland', 'user-registration' ),
 				'SE' => __( 'Sweden', 'user-registration' ),
 				'CH' => __( 'Switzerland', 'user-registration' ),
 				'SY' => __( 'Syria', 'user-registration' ),
@@ -287,27 +301,30 @@ class UR_Form_Field_Country extends UR_Form_Field {
 
 	/**
 	 * Get selected countries list of a Country field.
+	 *
+	 * @param [int]    $form_id Form id.
+	 * @param [string] $field_name Field Name.
 	 */
 	public function get_selected_countries( $form_id, $field_name ) {
-		$countries = $this->get_country();
+		$countries          = $this->get_country();
 		$filtered_countries = array();
 		$selected_countries = array();
 
 		$form_data = UR()->form->get_form( $form_id, array( 'content_only' => true ) );
-		$fields = self::get_form_field_data( $form_data );
+		$fields    = self::get_form_field_data( $form_data );
 
-		// Get selected_countries data of the field
+		// Get selected_countries data of the field.
 		foreach ( $fields as $field ) {
-			if ( "country" === $field->field_key && $field_name === $field->general_setting->field_name ) {
+			if ( 'country' === $field->field_key && $field_name === $field->general_setting->field_name ) {
 				$advance_setting = $field->advance_setting;
-				if ( isset ( $advance_setting->selected_countries ) ) {
+				if ( isset( $advance_setting->selected_countries ) ) {
 					$selected_countries = $advance_setting->selected_countries;
 					break;
 				}
 			}
 		}
 
-		// Filter countries with selected_countries data
+		// Filter countries with selected_countries data.
 		if ( is_array( $selected_countries ) ) {
 			foreach ( $countries as $iso => $country_name ) {
 				if ( in_array( $iso, $selected_countries, true ) ) {
@@ -330,7 +347,7 @@ class UR_Form_Field_Country extends UR_Form_Field {
 		foreach ( $post_content_array as $row_index => $row ) {
 			foreach ( $row as $grid_index => $grid ) {
 				foreach ( $grid as $field_index => $field ) {
-					if ( 'confirm_user_pass' != $field->general_setting->field_name ) {
+					if ( isset( $field->general_setting->field_name ) && 'confirm_user_pass' != $field->general_setting->field_name ) {
 						array_push( $form_field_data_array, $field );
 					}
 				}
@@ -339,6 +356,9 @@ class UR_Form_Field_Country extends UR_Form_Field {
 		return ( $form_field_data_array );
 	}
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 
 		$this->id                       = 'user_registration_country';
@@ -349,27 +369,56 @@ class UR_Form_Field_Country extends UR_Form_Field {
 		);
 
 		$this->field_defaults = array(
-			'default_label'      => __( 'Country', 'user-registration' ),
-			'default_field_name' => 'country_' . ur_get_random_number(),
+			'default_label'       => __( 'Country', 'user-registration' ),
+			'default_field_name'  => 'country_' . ur_get_random_number(),
+			'default_placeholder' => __( 'Select a country', 'user-registration' ),
 		);
 	}
 
+	/**
+	 * Get Registered admin fields.
+	 */
 	public function get_registered_admin_fields() {
 
-		return '<li id="' . esc_attr( $this->id ) . '_list " class="ur-registered-item draggable" data-field-id="' .esc_attr( $this->id ) . '"><span class="' . esc_attr( $this->registered_fields_config['icon'] ). '"></span>' . esc_html( $this->registered_fields_config['label'] ) . '</li>';
+		return '<li id="' . esc_attr( $this->id ) . '_list " class="ur-registered-item draggable" data-field-id="' . esc_attr( $this->id ) . '"><span class="' . esc_attr( $this->registered_fields_config['icon'] ) . '"></span>' . esc_html( $this->registered_fields_config['label'] ) . '</li>';
 	}
 
+	/**
+	 * Validate field.
+	 *
+	 * @param [object] $single_form_field Field Data.
+	 * @param [object] $form_data Form Data.
+	 * @param [string] $filter_hook Hook.
+	 * @param [int]    $form_id Form id.
+	 */
 	public function validation( $single_form_field, $form_data, $filter_hook, $form_id ) {
-		$is_condition_enabled = isset( $single_form_field->advance_setting->enable_conditional_logic ) ? $single_form_field->advance_setting->enable_conditional_logic : '0';
-		$required             = isset( $single_form_field->general_setting->required ) ? $single_form_field->general_setting->required : 'no';
-		$field_label          = isset( $form_data->label ) ? $form_data->label : '';
-		$value                = isset( $form_data->value ) ? $form_data->value : '';
+		// Perform custom validation for the field here ...
+		$field_label     = $single_form_field->general_setting->field_name;
+		$value           = isset( $form_data->value ) ? $form_data->value : '';
+		$valid_countries = $single_form_field->advance_setting->selected_countries;
+		$required        = $single_form_field->general_setting->required;
+		if ( ! ur_string_to_bool( $required ) ) {
+			return;
+		}
 
-		if ( $is_condition_enabled !== '1' && 'yes' == $required && empty( $value ) ) {
+		$isJson = preg_match( '/^\{.*\}$/s', $value ) ? true : false;
+		if ( $isJson ) {
+			$country_data = json_decode( $value, true );
+			$value = ! empty( $value['country'] ) ? $value['country'] : '';
+		}
+		
+		if ( ! empty( $value ) && ! in_array( $value, $valid_countries, true ) ) {
+			$message = array(
+				/* translators: %s - validation message */
+				$field_label => sprintf( __( 'Please choose a different country.', 'user-registration' ) ),
+				'individual' => true,
+			);
+
 			add_filter(
 				$filter_hook,
-				function ( $msg ) use ( $field_label ) {
-					return esc_html__( $field_label . ' is required.', 'user-registration' );
+				function ( $msg ) use ( $message, $form_data ) {
+					$message = apply_filters( 'user_registration_modify_field_validation_response', $message, $form_data );
+					return $message;
 				}
 			);
 		}

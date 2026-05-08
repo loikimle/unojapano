@@ -1,6 +1,6 @@
 <?php
 /**
- * UR_Setting_Date Class
+ * UR_Setting_Date Class.
  *
  * @package  UserRegistration/Form/Settings
  */
@@ -10,21 +10,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * UR_Setting_Date Class
+ * UR_Setting_Date Class.
  */
 class UR_Setting_Date extends UR_Field_Settings {
 
 	/**
-	 * Contructor.
+	 * UR_Setting_Date Class Contructor.
 	 */
 	public function __construct() {
 		$this->field_id = 'date_advance_setting';
 	}
 
 	/**
-	 * Settings Feild Output.
+	 * Output Fields.
 	 *
 	 * @param array $field_data Render field data in html.
+	 * @return string $field_data Field Data.
 	 */
 	public function output( $field_data = array() ) {
 		$this->field_data = $field_data;
@@ -47,7 +48,7 @@ class UR_Setting_Date extends UR_Field_Settings {
 				'required'    => false,
 				'default'     => '',
 				'placeholder' => __( 'Custom Class', 'user-registration' ),
-				'tip'         => __( 'Class name to embed in this field.', 'user-registration' ),
+				'tip'         => __( 'Add a CSS class for custom styling.', 'user-registration' ),
 			),
 
 			'date_format'       => array(
@@ -68,81 +69,69 @@ class UR_Setting_Date extends UR_Field_Settings {
 			),
 
 			'enable_min_max'    => array(
-				'type'     => 'select',
+				'type'     => 'toggle',
 				'data-id'  => $this->field_id . '_enable_min_max',
-				'label'    => __( 'Enable Min-Max Date', 'user-registration' ),
+				'label'    => __( 'Enable Minimum and Maximum Date', 'user-registration' ),
 				'name'     => $this->field_id . '[enable_min_max]',
 				'class'    => $this->default_class . ' ur-settings-enable-min-max',
 				'default'  => 'false',
 				'required' => false,
-				'options'  => array(
-					'true'  => 'Yes',
-					'false' => 'No',
-				),
-				'tip'      => __( 'Enable min/max date.', 'user-registration' ),
+				'tip'      => __( 'Turn this on to set minimum and maximum dates for this field.', 'user-registration' ),
 			),
 
 			'min_date'          => array(
-				'label'    => __( 'Min Date', 'user-registration' ),
+				'label'    => __( 'Minimum Date', 'user-registration' ),
 				'data-id'  => $this->field_id . '_min_date',
 				'name'     => $this->field_id . '[min_date]',
 				'class'    => $this->default_class . ' ur-settings-min-date',
 				'type'     => 'text',
 				'required' => false,
 				'default'  => '',
-				'tip'      => __( 'Enter min date.', 'user-registration' ),
+				'tip'      => __( 'Users won’t be able to pick a date before this limit.', 'user-registration' ),
 			),
 
 			'max_date'          => array(
-				'label'    => __( 'Max Date', 'user-registration' ),
+				'label'    => __( 'Maximum Date', 'user-registration' ),
 				'data-id'  => $this->field_id . '_max_date',
 				'name'     => $this->field_id . '[max_date]',
 				'class'    => $this->default_class . ' ur-settings-max-date',
 				'type'     => 'text',
 				'required' => false,
 				'default'  => '',
-				'tip'      => __( 'Enter max date.', 'user-registration' ),
+				'tip'      => __( 'Users won’t be able to pick a date beyond this limit.', 'user-registration' ),
 			),
 
 			'set_current_date'  => array(
-				'type'     => 'select',
+				'type'     => 'toggle',
 				'data-id'  => $this->field_id . '_set_current_date',
 				'label'    => __( 'Set Current Date as Default Date', 'user-registration' ),
 				'name'     => $this->field_id . '[set_current_date]',
 				'class'    => $this->default_class . ' ur-settings-set-current-date',
-				'default'  => '',
+				'default'  => 'false',
 				'required' => false,
-				'options'  => array(
-					'today' => 'Yes',
-					''      => 'No',
-				),
-				'tip'      => __( 'Set current as default.', 'user-registration' ),
+				'tip'      => __( 'Set current date as the default value for this field.', 'user-registration' ),
 			),
 
 			'enable_date_range' => array(
-				'type'     => 'select',
+				'type'     => 'toggle',
 				'data-id'  => $this->field_id . '_enable_date_range',
 				'label'    => __( 'Enable Date Range', 'user-registration' ),
 				'name'     => $this->field_id . '[enable_date_range]',
 				'class'    => $this->default_class . ' ur-settings-enable-date-range',
-				'default'  => '',
+				'default'  => 'false',
 				'required' => false,
-				'options'  => array(
-					'range' => 'Yes',
-					''      => 'No',
-				),
-				'tip'      => __( 'Enable date range feature.', 'user-registration' ),
+				'tip'      => __( 'Turn this on to allow users to select a range of dates.', 'user-registration' ),
 			),
 
-			'date_localization'    => array(
-				'type'        => 'select',
-				'data-id'     => $this->field_id . '_date_localization',
-				'label'       => __( 'Date Localization', 'user-registration' ),
-				'name'        => $this->field_id . '[date_localization]',
-				'class'       => $this->default_class . ' ur-settings-date_localization',
-				'default'     => 'en',
-				'required'    => false,
-				'options'     => array(
+			'date_localization' => array(
+				'type'     => 'select',
+				'data-id'  => $this->field_id . '_date_localization',
+				'label'    => __( 'Date Format Localization', 'user-registration' ),
+				'name'     => $this->field_id . '[date_localization]',
+				'class'    => $this->default_class . ' ur-settings-date_localization',
+				'default'  => 'en',
+				'required' => false,
+				'options'  => array(
 					'en'    => 'English',
 					'ar'    => 'Arabic',
 					'at'    => 'Austria',
@@ -203,9 +192,17 @@ class UR_Setting_Date extends UR_Field_Settings {
 					'zh'    => 'Mandarin',
 					'zh_tw' => 'MandarinTraditional',
 				),
+				'tip'      => __( 'Choose how dates are displayed based on the user’s location or language.', 'user-registration' ),
 			),
 		);
-
+			/**
+			 * Filter to modify the date custom advance settings.
+			 *
+			 * @param $fields Custom fields for date advance settings.
+			 * @param int field_id Id of the fields to be added.
+			 * @param string default_class Default class for the field.
+			 * @return string $fields Custom fields for the advance settings.
+			 */
 			$fields = apply_filters( 'date_custom_advance_settings', $fields, $this->field_id, $this->default_class );
 			$this->render_html( $fields );
 	}

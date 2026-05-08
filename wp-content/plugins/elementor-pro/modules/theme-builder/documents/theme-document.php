@@ -2,10 +2,11 @@
 namespace ElementorPro\Modules\ThemeBuilder\Documents;
 
 use Elementor\Controls_Manager;
-use Elementor\Core\App\Modules\ImportExport\Module as Import_Export_Module;
+use Elementor\App\Modules\ImportExport\Module as Import_Export_Module;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
+use ElementorPro\Core\Behaviors\Feature_Lock;
 use ElementorPro\Modules\QueryControl\Module as QueryModule;
 use ElementorPro\Modules\ThemeBuilder\Module;
 use ElementorPro\Plugin;
@@ -16,7 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Theme_Document extends Library_Document {
 
+	const EXPORT_GROUP = 'theme-builder';
+
 	const LOCATION_META_KEY = '_elementor_location';
+
+	private const IMPORT_EXPORT_NAME = 'import-export';
+	private const IMPORT_EXPORT_CUSTOMIZATION_NAME = 'import-export-customization';
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -62,6 +68,7 @@ abstract class Theme_Document extends Library_Document {
 				'thumbnail' => static::get_site_editor_thumbnail_url(),
 			],
 			'tooltip_data' => static::get_site_editor_tooltip_data(),
+			'show_instances' => true,
 		];
 	}
 
@@ -70,7 +77,7 @@ abstract class Theme_Document extends Library_Document {
 		$document_config = static::get_properties();
 
 		if ( true === $document_config['support_site_editor'] ) {
-			$panel_config['messages']['publish_notification'] = esc_html__( 'Congrats! Your Site Part is Live', 'elementor-pro' );
+			$panel_config['messages']['publish_notification'] = esc_html__( 'Congrats! Your site part is live', 'elementor-pro' );
 		}
 
 		return $panel_config;
@@ -103,6 +110,16 @@ abstract class Theme_Document extends Library_Document {
 
 	public function get_name() {
 		return static::get_type();
+	}
+
+	protected function get_default_wrapping_html_tag() {
+		return 'div';
+	}
+
+	public static function get_lock_behavior_v2() {
+		return new Feature_Lock( [
+			'type' => static::get_type(),
+		] );
 	}
 
 	public function get_location_label() {
@@ -240,10 +257,7 @@ abstract class Theme_Document extends Library_Document {
 			$conflicts = $theme_builder->get_conditions_manager()->get_conditions_conflicts_by_location( $condition, $this->get_location() );
 
 			if ( $conflicts ) {
-				/** @var Import_Export_Module $import_export_module */
-				$import_export_module = Plugin::elementor()->app->get_component( 'import-export' );
-
-				$override_conditions = $import_export_module->import->get_settings( 'overrideConditions' );
+				$override_conditions = $this->get_import_instance()->get_settings( 'overrideConditions' );
 
 				if ( ! $override_conditions || ! in_array( $data['id'], $override_conditions, true ) ) {
 					return;
@@ -256,7 +270,7 @@ abstract class Theme_Document extends Library_Document {
 					$template_conditions = $theme_builder->get_conditions_manager()->get_document_conditions( $template_document );
 
 					foreach ( $template_conditions as $index => $template_condition ) {
-						if ( ! $template_condition['sub_id'] && ! $template_condition['sub_name'] ) {
+						if ( in_array( $template_condition, $conditions, true ) ) {
 							unset( $template_conditions[ $index ] );
 						}
 					}
@@ -267,6 +281,54 @@ abstract class Theme_Document extends Library_Document {
 		}
 
 		$theme_builder->get_conditions_manager()->save_conditions( $this->get_main_id(), $conditions );
+	}
+
+	/**
+	 * Get the import instance from the appropriate import-export component.
+	 *
+	 * Attempts to get the import instance from the customization component if the
+	 * experiment is active and has a valid import property, otherwise falls back
+	 * to the standard import-export component.
+	 *
+	 * @return mixed The import instance
+	 * @throws \Exception If no valid import instance can be found
+	 */
+	private function get_import_instance() {
+		$is_customization_active = Plugin::elementor()->experiments->is_feature_active(
+			self::IMPORT_EXPORT_CUSTOMIZATION_NAME
+		);
+
+		if ( $is_customization_active ) {
+			$import_instance = $this->try_get_import_from_component( self::IMPORT_EXPORT_CUSTOMIZATION_NAME );
+
+			if ( $import_instance ) {
+				return $import_instance;
+			}
+		}
+
+		$import_instance = $this->try_get_import_from_component( self::IMPORT_EXPORT_NAME );
+
+		if ( ! $import_instance ) {
+			throw new \Exception( 'No valid import-export component found' );
+		}
+
+		return $import_instance;
+	}
+
+	/**
+	 * Attempt to get import instance from a specific component.
+	 *
+	 * @param string $component_name The name of the component to check
+	 * @return mixed|null The import instance if valid, null otherwise
+	 */
+	private function try_get_import_from_component( $component_name ) {
+		$component = Plugin::elementor()->app->get_component( $component_name );
+
+		if ( ! $component || ! isset( $component->import ) || is_null( $component->import ) ) {
+			return null;
+		}
+
+		return $component->import;
 	}
 
 	protected function register_controls() {
@@ -300,7 +362,6 @@ abstract class Theme_Document extends Library_Document {
 				'autocomplete' => [
 					'object' => QueryModule::QUERY_OBJECT_JS,
 				],
-				'separator' => 'none',
 				'export' => false,
 				'condition' => [
 					'preview_type!' => [
@@ -330,7 +391,6 @@ abstract class Theme_Document extends Library_Document {
 				'label_block' => true,
 				'show_label' => false,
 				'text' => esc_html__( 'Apply & Preview', 'elementor-pro' ),
-				'separator' => 'none',
 				'event' => 'elementorThemeBuilder:ApplyPreview',
 			]
 		);
@@ -371,7 +431,7 @@ abstract class Theme_Document extends Library_Document {
 			[
 				'label' => esc_html__( 'HTML Tag', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'div',
+				'default' => $this->get_default_wrapping_html_tag(),
 				'options' => array_combine( $wrapper_tags, $wrapper_tags ),
 			]
 		);
@@ -401,16 +461,9 @@ abstract class Theme_Document extends Library_Document {
 			$elements_data = $this->get_elements_data();
 		}
 
-		$is_dom_optimization_active = Plugin::elementor()->experiments->is_feature_active( 'e_dom_optimization' );
 		?>
 		<<?php Utils::print_validated_html_tag( $wrapper_tag ); ?> <?php Utils::print_html_attributes( $this->get_container_attributes() ); ?>>
-		<?php if ( ! $is_dom_optimization_active ) : ?>
-			<div class="elementor-section-wrap">
-		<?php endif; ?>
-				<?php $this->print_elements( $elements_data ); ?>
-		<?php if ( ! $is_dom_optimization_active ) : ?>
-			</div>
-		<?php endif; ?>
+			<?php $this->print_elements( $elements_data ); ?>
 		</<?php Utils::print_validated_html_tag( $wrapper_tag ); ?>>
 		<?php
 	}
@@ -580,14 +633,16 @@ abstract class Theme_Document extends Library_Document {
 				];
 				break;
 			case 'taxonomy':
-				$term = get_term( $preview_id );
+			case 'post_taxonomy':
+			case 'product_taxonomy':
+				$term = $this->get_taxonomy_term( $preview_id, $preview_object_type );
 
 				if ( $term && ! is_wp_error( $term ) ) {
 					$query_args = [
 						'tax_query' => [
 							[
 								'taxonomy' => $term->taxonomy,
-								'terms' => [ $preview_id ],
+								'terms' => [ $term->term_id ],
 								'field' => 'id',
 							],
 						],
@@ -621,15 +676,11 @@ abstract class Theme_Document extends Library_Document {
 				}
 				break;
 			case 'single':
-				$post = get_post( $preview_id );
-				if ( ! $post ) {
-					break;
-				}
-
 				$query_args = [
-					'p' => $post->ID,
-					'post_type' => $post->post_type,
+					'post_type' => $preview_object_type,
+					'p' => $preview_id,
 				];
+				break;
 		} // End switch().
 
 		if ( empty( $query_args ) ) {
@@ -664,5 +715,22 @@ abstract class Theme_Document extends Library_Document {
 		$config['support_site_editor'] = static::get_property( 'support_site_editor' );
 
 		return $config;
+	}
+
+	/**
+	 * @param $preview_id
+	 * @param $preview_object_type
+	 * @return \WP_Error|\WP_Term|null
+	 */
+	private function get_taxonomy_term( $preview_id, $preview_object_type ) {
+		if ( ! empty( $preview_id ) ) {
+			return get_term( $preview_id );
+		}
+
+		$terms = get_terms( [
+			'taxonomy' => $preview_object_type,
+		] );
+
+		return reset( $terms );
 	}
 }

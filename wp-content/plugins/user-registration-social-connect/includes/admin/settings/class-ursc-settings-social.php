@@ -21,6 +21,13 @@ if ( ! class_exists( 'URSC_Settings_Social ' ) ) :
 	class URSC_Settings_Social extends UR_Settings_Page {
 
 		/**
+		 * Setting Id.
+		 *
+		 * @var string
+		 */
+		public $id = 'social_connect';
+
+		/**
 		 * Constructor.
 		 */
 		public function __construct() {

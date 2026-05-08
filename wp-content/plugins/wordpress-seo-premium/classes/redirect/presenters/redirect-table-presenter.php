@@ -26,16 +26,16 @@ class WPSEO_Redirect_Table_Presenter extends WPSEO_Redirect_Tab_Presenter {
 				'redirect_table'   => new WPSEO_Redirect_Table(
 					$this->view,
 					$this->get_first_column_value(),
-					$redirect_manager->get_redirects()
+					$redirect_manager->get_redirects(),
 				),
 				'origin_from_url'  => $this->get_old_url(),
 				'quick_edit_table' => new WPSEO_Redirect_Quick_Edit_Presenter(),
 				'form_presenter'   => new WPSEO_Redirect_Form_Presenter(
 					[
 						'origin_label_value' => $this->get_first_column_value(),
-					]
+					],
 				),
-			]
+			],
 		);
 	}
 
@@ -45,11 +45,14 @@ class WPSEO_Redirect_Table_Presenter extends WPSEO_Redirect_Tab_Presenter {
 	 * @return string The old URL.
 	 */
 	private function get_old_url() {
-		// Check if there's an old URL set.
-		$old_url = filter_input( INPUT_GET, 'old_url', FILTER_DEFAULT, [ 'default' => '' ] );
+		if ( isset( $_GET['old_url'] ) && is_string( $_GET['old_url'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Reason: We decode it before sanitization to keep encoded characters.
+			$old_url = sanitize_text_field( rawurldecode( wp_unslash( $_GET['old_url'] ) ) );
+			if ( ! empty( $old_url ) ) {
+				check_admin_referer( 'wpseo_redirects-old-url', 'wpseo_premium_redirects_nonce' );
 
-		if ( ! empty( $old_url ) ) {
-			return esc_attr( rawurldecode( $old_url ) );
+				return esc_attr( $old_url );
+			}
 		}
 
 		return '';

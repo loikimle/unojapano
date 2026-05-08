@@ -29,27 +29,86 @@
         }
       );
 
+      handleWoocommerceSettings(
+        $("#user_registration_woocommerce_settings_form")
+      );
       $(document).on(
         "change",
         "#user_registration_woocommerce_settings_form",
         function () {
-          var $this = $(this),
-            $sync_checkout = $(
-              "#user_registration_woocommrece_settings_sync_checkout"
-            ),
-            $sync_registration = $(
-              "#user_registration_woocommrece_settings_replace_login_registration"
-            );
-          if ($this.val() === "0") {
-            $sync_checkout.closest("tr").hide();
-            $sync_registration.closest("tr").hide();
-          } else {
-            $sync_checkout.closest("tr").show();
-            $sync_registration.closest("tr").show();
-          }
-          $sync_checkout.trigger("change");
+          handleWoocommerceSettings($(this));
         }
       );
+      $(document).on(
+        "change",
+        "select.urwc-product-tab-panel-select",
+        function () {
+          handleWoocommerceProductPageSettings($(this));
+        }
+      );
+
+      function handleWoocommerceSettings(node) {
+        ($sync_checkout = $(
+          "#user_registration_woocommrece_settings_sync_checkout"
+        )),
+          ($sync_registration = $(
+            "#user_registration_woocommrece_settings_replace_login_registration"
+          ));
+        if (node.val() === "0") {
+          $sync_checkout.closest(".user-registration-global-settings").hide();
+          $sync_registration
+            .closest(".user-registration-global-settings")
+            .hide();
+        } else {
+          $sync_checkout.closest(".user-registration-global-settings").show();
+          $sync_registration
+            .closest(".user-registration-global-settings")
+            .show();
+        }
+        $sync_checkout.trigger("change");
+      }
+
+	  function handleWoocommerceProductPageSettings(node){
+		if (node.val() === "0") {
+			$(document).find(".wp-list-table ").hide();
+		  } else {
+			$(document).find(".wp-list-table ").show();
+			var $table_wrapper = $(document)
+              .find("div.user_registration_woocommerce_form_fields_wrapper");
+			var data = {
+				action:
+				  "user_registration_woocommerce_setting_form_field_listing",
+				security:
+				  user_registration_woocommerce_params.user_registration_woocommerce_form_field_listing,
+				form_id: node.val(),
+				option_key: node.attr('product_form_field_key')
+			  };
+
+			  if ("0" !== node.val()) {
+				$.ajax({
+					url: user_registration_woocommerce_params.ajax_url,
+					data: data,
+					type: "POST",
+					beforeSend: function () {
+					node.attr("disabled", "disabled");
+					},
+					success: function (response) {
+					if (typeof response.data.table === "undefined") {
+						$table_wrapper.html("");
+					} else {
+						$table_wrapper.html(response.data.table);
+					}
+					},
+					complete: function () {
+					node.prop("disabled", false);
+					},
+				});
+			} else {
+			  $table_wrapper.html("");
+			}
+
+		  }
+	  }
 
       $(document).on(
         "change",

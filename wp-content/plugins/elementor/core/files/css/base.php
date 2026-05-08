@@ -9,8 +9,8 @@ use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\Frontend\Performance;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
-use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
 use Elementor\Icons_Manager;
@@ -64,6 +64,8 @@ abstract class Base extends Base_File {
 	private $icons_fonts = [];
 
 	private $dynamic_elements_ids = [];
+
+	private $preserved_dynamic_style_values = [];
 
 	/**
 	 * Stylesheet object.
@@ -213,6 +215,15 @@ abstract class Base extends Base_File {
 			return;
 		}
 
+		/**
+		 * Enqueue CSS file.
+		 *
+		 * Fires before enqueuing a CSS file.
+		 *
+		 * @param Base $this The current CSS file.
+		 */
+		do_action( 'elementor/css-file/before_enqueue', $this );
+
 		// First time after clear cache and etc.
 		if ( '' === $meta['status'] || $this->is_update_required() ) {
 			$this->update();
@@ -224,12 +235,12 @@ abstract class Base extends Base_File {
 			$dep = $this->get_inline_dependency();
 			// If the dependency has already been printed ( like a template in footer )
 			if ( wp_styles()->query( $dep, 'done' ) ) {
-				printf( '<style id="%1$s">%2$s</style>', $this->get_file_handle_id(), $meta['css'] ); // XSS ok.
+				printf( '<style id="%1$s">%2$s</style>', $this->get_file_handle_id(), $meta['css'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			} else {
 				wp_add_inline_style( $dep, $meta['css'] );
 			}
 		} elseif ( self::CSS_STATUS_FILE === $meta['status'] ) { // Re-check if it's not empty after CSS update.
-			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_enqueue_dependencies(), null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			wp_enqueue_style( $this->get_file_handle_id(), $this->get_url(), $this->get_enqueue_dependencies(), null );
 		}
 
 		// Handle fonts.
@@ -263,6 +274,15 @@ abstract class Base extends Base_File {
 		 * @param Base $this The current CSS file.
 		 */
 		do_action( "elementor/css-file/{$name}/enqueue", $this );
+
+		/**
+		 * Enqueue CSS file.
+		 *
+		 * Fires after enqueuing a CSS file.
+		 *
+		 * @param Base $this The current CSS file.
+		 */
+		do_action( 'elementor/css-file/after_enqueue', $this );
 	}
 
 	/**
@@ -275,7 +295,7 @@ abstract class Base extends Base_File {
 	 * @access public
 	 */
 	public function print_css() {
-		echo '<style>' . $this->get_content() . '</style>'; // XSS ok.
+		echo '<style>' . $this->get_content() . '</style>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		Plugin::$instance->frontend->print_fonts_links();
 	}
 
@@ -328,6 +348,8 @@ abstract class Base extends Base_File {
 
 		$stylesheet = $this->get_stylesheet();
 
+		$control = apply_filters( 'elementor/files/css/selectors', $control, $value ?? [], $this );
+
 		foreach ( $control['selectors'] as $selector => $css_property ) {
 			$output_css_property = '';
 
@@ -339,10 +361,16 @@ abstract class Base extends Base_File {
 				}
 			} else {
 				try {
+					if ( $this->unit_has_custom_selector( $control, $value ) ) {
+						$css_property = $control['unit_selectors_dictionary'][ $value['unit'] ];
+					}
+
 					$output_css_property = preg_replace_callback( '/{{(?:([^.}]+)\.)?([^}| ]*)(?: *\|\| *(?:([^.}]+)\.)?([^}| ]*) *)*}}/', function( $matches ) use ( $control, $value_callback, $controls_stack, $value, $css_property ) {
 						$external_control_missing = $matches[1] && ! isset( $controls_stack[ $matches[1] ] );
 
 						$parsed_value = '';
+
+						$value = apply_filters( 'elementor/files/css/property', $value, $css_property, $matches, $control );
 
 						if ( ! $external_control_missing ) {
 							$parsed_value = $this->parse_property_placeholder( $control, $value, $controls_stack, $value_callback, $matches[2], $matches[1] );
@@ -372,6 +400,10 @@ abstract class Base extends Base_File {
 
 								throw new \Exception();
 							}
+						}
+
+						if ( '__EMPTY__' === $parsed_value ) {
+							$parsed_value = '';
 						}
 
 						return $parsed_value;
@@ -425,6 +457,10 @@ abstract class Base extends Base_File {
 		}
 	}
 
+	protected function unit_has_custom_selector( $control, $value ) {
+		return isset( $control['unit_selectors_dictionary'] ) && isset( $control['unit_selectors_dictionary'][ $value['unit'] ] );
+	}
+
 	/**
 	 * @param array    $control
 	 * @param mixed    $value
@@ -437,13 +473,25 @@ abstract class Base extends Base_File {
 	 */
 	public function parse_property_placeholder( array $control, $value, array $controls_stack, $value_callback, $placeholder, $parser_control_name = null ) {
 		if ( $parser_control_name ) {
-			$control = $controls_stack[ $parser_control_name ];
+			// If both the processed control and the control name found in the placeholder are responsive
+			if ( ! empty( $control['responsive'] ) && ! empty( $controls_stack[ $parser_control_name ]['responsive'] ) ) {
+				$device_suffix = Controls_Manager::get_responsive_control_device_suffix( $control );
+
+				$control = $controls_stack[ $parser_control_name . $device_suffix ] ?? $controls_stack[ $parser_control_name ];
+			} else {
+				$control = $controls_stack[ $parser_control_name ];
+			}
 
 			$value = call_user_func( $value_callback, $control );
 		}
 
+		// If the control value is empty, check for global default. `0` (integer, string) are falsy but are valid values.
+		if ( empty( $value ) && '0' !== $value && 0 !== $value ) {
+			$value = $this->get_control_global_default_value( $control );
+		}
+
 		if ( Controls_Manager::FONT === $control['type'] ) {
-			$this->fonts[] = $value;
+			$this->add_font( $value );
 		}
 
 		/** @var Base_Data_Control $control_obj */
@@ -501,7 +549,7 @@ abstract class Base extends Base_File {
 	 * @param array          $replacements   Replacements.
 	 * @param array          $all_controls   All controls.
 	 */
-	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
+	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, ?array $all_controls = null ) {
 		if ( ! $all_controls ) {
 			$all_controls = $controls_stack->get_controls();
 		}
@@ -525,6 +573,11 @@ abstract class Base extends Base_File {
 				// Dynamic CSS should not be added to the CSS files.
 				// Instead it's handled by \Elementor\Core\DynamicTags\Dynamic_CSS
 				// and printed in a style tag.
+				$should_preserve_value = isset( $control['control_type'] ) && 'content' === $control['control_type'];
+				if ( $should_preserve_value ) {
+					$this->preserved_dynamic_style_values[ $control['name'] ] = $parsed_dynamic_settings[ $control['name'] ];
+				}
+
 				unset( $parsed_dynamic_settings[ $control['name'] ] );
 
 				$this->dynamic_elements_ids[] = $controls_stack->get_id();
@@ -625,6 +678,8 @@ abstract class Base extends Base_File {
 	 * @access protected
 	 */
 	protected function parse_content() {
+		Performance::set_use_style_controls( true );
+
 		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
 
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $this->get_responsive_control_duplication_mode() );
@@ -647,6 +702,8 @@ abstract class Base extends Base_File {
 		do_action( "elementor/css-file/{$name}/parse", $this );
 
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
+
+		Performance::set_use_style_controls( false );
 
 		return $this->get_stylesheet()->__toString();
 	}
@@ -674,6 +731,42 @@ abstract class Base extends Base_File {
 	}
 
 	/**
+	 * Get Control Global Default Value
+	 *
+	 * If the control has a global default value, and the corresponding global default setting is enabled, this method
+	 * fetches and returns the global default value. Otherwise, it returns null.
+	 *
+	 * @since 3.7.0
+	 * @access private
+	 *
+	 * @param $control
+	 * @return string|null
+	 */
+	private function get_control_global_default_value( $control ) {
+		if ( empty( $control['global']['default'] ) ) {
+			return null;
+		}
+
+		// If the control value is empty, and the control has a global default set, fetch the global value and use it.
+		$global_enabled = false;
+
+		if ( 'color' === $control['type'] ) {
+			$global_enabled = Plugin::$instance->kits_manager->is_custom_colors_enabled();
+		} elseif ( isset( $control['groupType'] ) && 'typography' === $control['groupType'] ) {
+			$global_enabled = Plugin::$instance->kits_manager->is_custom_typography_enabled();
+		}
+
+		$value = null;
+
+		// Only apply the global default if Global Colors are enabled.
+		if ( $global_enabled ) {
+			$value = $this->get_selector_global_value( $control, $control['global']['default'] );
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Get style control value.
 	 *
 	 * Retrieve the value of the style control for any give control and values.
@@ -694,7 +787,9 @@ abstract class Base extends Base_File {
 			return $this->get_selector_global_value( $control, $values['__globals__'][ $control['name'] ] );
 		}
 
-		$value = $values[ $control['name'] ];
+		$value = isset( $values[ $control['name'] ] )
+			? $values[ $control['name'] ]
+			: $this->preserved_dynamic_style_values[ $control['name'] ] ?? null;
 
 		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
 			$value = $control['selectors_dictionary'][ $value ];
@@ -813,7 +908,7 @@ abstract class Base extends Base_File {
 				$default_generic_fonts = Plugin::$instance->kits_manager->get_current_settings( 'default_generic_fonts' );
 
 				if ( $default_generic_fonts ) {
-					$value  .= ", $default_generic_fonts";
+					$value .= ", $default_generic_fonts";
 				}
 			}
 		} else {
@@ -823,7 +918,7 @@ abstract class Base extends Base_File {
 		return $value;
 	}
 
-	final protected function get_active_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+	final protected function get_active_controls( Controls_Stack $controls_stack, ?array $controls = null, ?array $settings = null ) {
 		if ( ! $controls ) {
 			$controls = $controls_stack->get_controls();
 		}
@@ -840,7 +935,7 @@ abstract class Base extends Base_File {
 			array_keys( $controls ), function( $active_controls, $control_key ) use ( $controls_stack, $controls, $settings ) {
 				$control = $controls[ $control_key ];
 
-				if ( $controls_stack->is_control_visible( $control, $settings ) ) {
+				if ( $controls_stack->is_control_visible( $control, $settings, $controls ) ) {
 					$active_controls[ $control_key ] = $control;
 				}
 
@@ -851,7 +946,7 @@ abstract class Base extends Base_File {
 		return $active_controls;
 	}
 
-	final public function get_style_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+	final public function get_style_controls( Controls_Stack $controls_stack, ?array $controls = null, ?array $settings = null ) {
 		$controls = $this->get_active_controls( $controls_stack, $controls, $settings );
 
 		$style_controls = [];
@@ -930,5 +1025,11 @@ abstract class Base extends Base_File {
 		$globals = $controls_stack->get_settings( '__globals__' );
 
 		return ! empty( $globals[ $control_global_key ] );
+	}
+
+	public function add_font( $font ) {
+		if ( ! in_array( $font, $this->fonts, true ) ) {
+			$this->fonts[] = $font;
+		}
 	}
 }

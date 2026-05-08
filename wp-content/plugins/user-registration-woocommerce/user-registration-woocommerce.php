@@ -1,17 +1,17 @@
 <?php
 /**
  * Plugin Name: User Registration WooCommerce
- * Plugin URI: https://wpeverest.com/wordpress-plugins/user-registration/woocommerce
+ * Plugin URI: https://wpuserregistration.com/features/woocommerce
  * Description: WooCommerce synchronization for user registration plugin.
- * Version: 1.2.7
+ * Version: 1.5.4
  * Author: WPEverest
- * Author URI: https://wpeverest.com
+ * Author URI: https://wpuserregistration.com
  * Text Domain: user-registration-woocommerce
  * Domain Path: /languages/
- * UR requires at least: 1.4.1
- * UR tested up to: 2.1.0
+ * UR Pro requires at least: 4.0.0
+ * UR Pro tested up to: 4.2.0
  * WC requires at least 2.5.0
- * WC tested up to: 5.9.0
+ * WC tested up to: 8.9.1
  * Copyright: © 2017 WPEverest.
  * License: GNU General Public License v3.0
  * License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -35,7 +35,7 @@ if ( ! class_exists( 'UserRegistrationWooCommerce' ) ) :
 		 *
 		 * @var string
 		 */
-		public $version = '1.2.7';
+		public $version = '1.5.4';
 
 		/**
 		 * Instance of this class.
@@ -93,18 +93,17 @@ if ( ! class_exists( 'UserRegistrationWooCommerce' ) ) :
 		 */
 		private function init_hooks() {
 			register_activation_hook( __FILE__, array( 'URWC_Install', 'install' ) );
-			add_action( 'user_registration_loaded', array( $this, 'plugin_updater' ) );
 			add_action( 'init', array( $this, 'init' ), 0 );
 			add_action( 'plugins_loaded', array( $this, 'third_party_support' ), 11 );
-		}
 
-		/**
-		 * Plugin Updater.
-		 */
-		public function plugin_updater() {
-			if ( function_exists( 'ur_addon_updater' ) ) {
-				ur_addon_updater( __FILE__, 348, $this->version );
-			}
+			add_action(
+				'before_woocommerce_init',
+				function () {
+					if ( class_exists( '\Automattic\WooCommerce\Utilities\FeaturesUtil' ) ) {
+						\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', URWC_PLUGIN_FILE, true );
+					}
+				}
+			);
 		}
 
 		/**
@@ -113,13 +112,12 @@ if ( ! class_exists( 'UserRegistrationWooCommerce' ) ) :
 		private function define_constants() {
 			$this->define( 'URWC_DS', DIRECTORY_SEPARATOR );
 			$this->define( 'URWC_PLUGIN_FILE', __FILE__ );
-			$this->define( 'URWC_ABSPATH', dirname( __FILE__ ) . URWC_DS );
+			$this->define( 'URWC_ABSPATH', __DIR__ . URWC_DS );
 			$this->define( 'URWC_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 			$this->define( 'URWC_VERSION', $this->version );
 			$this->define( 'URWC_TEMPLATE_DEBUG_MODE', false );
 			$this->define( 'URWC_FORM_PATH', URWC_ABSPATH . 'includes' . URWC_DS . 'form' . URWC_DS );
 			$this->define( 'URWC_NETWORK_PATH', URWC_ABSPATH . 'includes' . URWC_DS . 'networks' . URWC_DS );
-
 		}
 
 		/**
@@ -168,6 +166,7 @@ if ( ! class_exists( 'UserRegistrationWooCommerce' ) ) :
 			if ( $this->is_request( 'admin' ) ) {
 				include_once URWC_ABSPATH . 'includes/class-urwc-field-list-table.php';
 				include_once URWC_ABSPATH . 'includes/admin/class-urwc-admin.php';
+				include_once URWC_ABSPATH . 'includes/admin/class-urwc-product-page.php';
 			}
 
 			if ( $this->is_request( 'frontend' ) && 'YES' == $message ) {
@@ -219,7 +218,7 @@ if ( ! class_exists( 'UserRegistrationWooCommerce' ) ) :
 
 			unload_textdomain( 'user-registration-woocommerce' );
 			load_textdomain( 'user-registration-woocommerce', WP_LANG_DIR . '/user-registration-woocommerce/user-registration-woocommerce-' . $locale . '.mo' );
-			load_plugin_textdomain( 'user-registration-woocommerce', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
+			load_plugin_textdomain( 'user-registration-woocommerce', false, plugin_basename( __DIR__ ) . '/languages' );
 		}
 
 		/**

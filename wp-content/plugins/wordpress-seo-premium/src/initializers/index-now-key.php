@@ -2,7 +2,6 @@
 
 namespace Yoast\WP\SEO\Premium\Initializers;
 
-use WP_Query;
 use Yoast\WP\SEO\Conditionals\No_Conditionals;
 use Yoast\WP\SEO\Helpers\Options_Helper;
 use Yoast\WP\SEO\Initializers\Initializer_Interface;
@@ -33,9 +32,7 @@ class Index_Now_Key implements Initializer_Interface {
 	 *
 	 * @param Options_Helper $options_helper The option helper.
 	 */
-	public function __construct(
-		Options_Helper $options_helper
-	) {
+	public function __construct( Options_Helper $options_helper ) {
 		$this->options_helper = $options_helper;
 	}
 
@@ -86,11 +83,9 @@ class Index_Now_Key implements Initializer_Interface {
 	/**
 	 * Outputs the key when it matches the key in the database.
 	 *
-	 * @param WP_Query $wp_query The query.
-	 *
 	 * @return void
 	 */
-	public function output_key( $wp_query ) {
+	public function output_key() {
 		$key_in_url = \get_query_var( 'yoast_index_now_key' );
 		if ( empty( $key_in_url ) ) {
 			return;
@@ -102,7 +97,7 @@ class Index_Now_Key implements Initializer_Interface {
 			// Only send plain text header.
 			\header( 'Content-Type: text/plain;charset=UTF-8' );
 			echo \esc_html( $this->key );
-			die;
+			exit();
 		}
 
 		// Trying keys? Good luck.
@@ -123,6 +118,6 @@ class Index_Now_Key implements Initializer_Interface {
 		for ( $i = 0; $i < 100; $i++ ) {
 			$this->key .= \substr( $chars, \wp_rand( 0, ( \strlen( $chars ) - 1 ) ), 1 );
 		}
-		$this->options_helper->set( 'index_now_key', $this->key );
+		$this->options_helper->set( 'index_now_key', $this->key, 'wpseo' );
 	}
 }

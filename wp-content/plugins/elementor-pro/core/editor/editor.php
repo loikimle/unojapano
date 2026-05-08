@@ -2,15 +2,29 @@
 namespace ElementorPro\Core\Editor;
 
 use Elementor\Core\Base\App;
+use Elementor\Core\Utils\Assets_Config_Provider;
+use Elementor\Core\Utils\Assets_Translation_Loader;
 use ElementorPro\License\Admin as License_Admin;
 use ElementorPro\License\API as License_API;
 use ElementorPro\Plugin;
+use ElementorPro\Modules\DisplayConditions\Module as Display_Conditions_Module;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Editor extends App {
+	const APP_BAR_DEPS_V2 = [
+		'editor-site-navigation-extended',
+		'editor-documents-extended',
+	];
+	const EDITOR_V4_PACKAGES = [
+		'license-api',
+		'editor-controls-extended',
+		'editor-editing-panel-extended',
+		'editor-components-extended',
+	];
 
 	/**
 	 * Get app name.
@@ -31,12 +45,16 @@ class Editor extends App {
 		add_action( 'elementor/editor/init', [ $this, 'on_elementor_editor_init' ] );
 		add_action( 'elementor/editor/after_enqueue_styles', [ $this, 'enqueue_editor_styles' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_scripts' ] );
-
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
+
+		add_action( 'elementor/editor/v2/scripts/enqueue', function () {
+			$this->enqueue_editor_v2_scripts();
+		} );
 	}
 
 	public function get_init_settings() {
 		$settings = [
+			'version' => ELEMENTOR_PRO_VERSION,
 			'isActive' => License_API::is_license_active(),
 			'urls' => [
 				'modules' => ELEMENTOR_PRO_MODULES_URL,
@@ -65,7 +83,7 @@ class Editor extends App {
 	public function enqueue_editor_styles() {
 		wp_enqueue_style(
 			'elementor-pro',
-			$this->get_css_assets_url( 'editor', null, 'default', true ),
+			$this->get_css_assets_url( 'editor' ),
 			[
 				'elementor-editor',
 			],
@@ -92,6 +110,43 @@ class Editor extends App {
 		$this->print_config( 'elementor-pro' );
 	}
 
+	public function enqueue_editor_v2_scripts() {
+		$assets_config = ( new Assets_Config_Provider() )
+			->set_path_resolver( function ( $name ) {
+				return ELEMENTOR_PRO_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+			} );
+
+		$packages_to_load = array_merge( self::APP_BAR_DEPS_V2 );
+
+		if ( Plugin::elementor()->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME ) ) {
+			$packages_to_load = array_merge( $packages_to_load, self::EDITOR_V4_PACKAGES );
+		}
+
+		$packages = apply_filters( 'elementor-pro/editor/v2/packages', $packages_to_load );
+
+		foreach ( $packages as $package ) {
+			$assets_config->load( $package );
+		}
+
+		foreach ( $assets_config->all() as $package => $config ) {
+			wp_enqueue_script(
+				$config['handle'],
+				$this->get_js_assets_url( "packages/{$package}/{$package}" ),
+				$config['deps'],
+				ELEMENTOR_PRO_VERSION,
+				true
+			);
+
+			wp_set_script_translations( $config['handle'], 'elementor-pro' );
+		}
+
+		if ( class_exists( Assets_Translation_Loader::class ) ) {
+			$packages_handles = $assets_config->pluck( 'handle' )->all();
+
+			Assets_Translation_Loader::for_handles( $packages_handles );
+		}
+	}
+
 	public function localize_settings( array $settings ) {
 		$settings['elementPromotionURL'] = Plugin::instance()->license_admin->get_connect_url([
 			'utm_source' => '%s', // Will be replaced in the frontend to the widget name
@@ -107,11 +162,25 @@ class Editor extends App {
 			'utm_content' => 'editor-dynamic-promotion',
 		] );
 
+		if ( ! isset( $settings['promotionWidgets'] ) ) {
+			$settings['promotionWidgets'] = License_API::get_promotion_widgets();
+		}
+
+		if ( Display_Conditions_Module::can_use_display_conditions() ) {
+			$settings['displayConditions'] = Display_Conditions_Module::instance()
+				->get_conditions_manager()
+				->get_conditions_config();
+		}
+
 		return $settings;
 	}
 
 	public function on_elementor_init() {
 		Plugin::elementor()->editor->notice_bar = new Notice_Bar();
+
+		if ( isset( Plugin::elementor()->editor->promotion ) ) {
+			Plugin::elementor()->editor->promotion = new Promotion();
+		}
 	}
 
 	public function on_elementor_editor_init() {

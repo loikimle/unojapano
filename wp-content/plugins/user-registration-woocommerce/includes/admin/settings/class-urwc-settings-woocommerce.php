@@ -18,6 +18,13 @@ if ( ! class_exists( 'URWC_Settings_Woocommerce ' ) ) :
 	 */
 	class URWC_Settings_Woocommerce extends UR_Settings_Page {
 
+		/**
+		 * Setting Id.
+		 *
+		 * @var string
+		 */
+		public $id = 'woocommerce';
+
 		private $checkout_fields_option_key = 'user_registration_woocommerce_checkout_fields';
 		/**
 		 * Constructor.
@@ -30,6 +37,13 @@ if ( ! class_exists( 'URWC_Settings_Woocommerce ' ) ) :
 			add_action( 'user_registration_settings_' . $this->id, array( $this, 'output' ) );
 			add_action( 'user_registration_settings_save_' . $this->id, array( $this, 'save' ) );
 			add_filter( 'show_user_registration_setting_message', array( $this, 'urwc_setting_message_show' ) );
+		}
+
+		/**
+		 * Get Global Settings.
+		 */
+		public function get_settings() {
+			return $settings = apply_filters( 'user_registration_woocommerce_settings_' . $this->id, urwc_woocommerce_settings() );
 		}
 
 		/**
@@ -47,7 +61,7 @@ if ( ! class_exists( 'URWC_Settings_Woocommerce ' ) ) :
 			UR_Admin_Settings::output_fields( $settings );
 
 			echo '<div class="user_registration_woocommerce_form_fields_wrapper">';
-			if ( get_option( 'user_registration_woocommrece_settings_sync_checkout', 'no' ) === 'yes' ) {
+			if ( ur_string_to_bool( get_option( 'user_registration_woocommrece_settings_sync_checkout', false ) ) ) {
 				$this->display_form_field_lists( get_option( 'user_registration_woocommerce_settings_form' ), $this->checkout_fields_option_key );
 			}
 			echo '</div>';
@@ -58,15 +72,23 @@ if ( ! class_exists( 'URWC_Settings_Woocommerce ' ) ) :
 		 */
 		public function save() {
 			if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'user-registration-settings' ) ) {
-				die( __( 'Action failed. Please refresh the page and retry.', 'user-registration' ) );
+				die( __( 'Action failed. Please refresh the page and retry.', 'user-registration-woocommerce' ) );
 			}
 
 			$settings = apply_filters( 'user_registration_woocommerce_settings_' . $this->id, urwc_woocommerce_settings() );
 			UR_Admin_Settings::save_fields( $settings );
-
+			$sync_field_data = array();
 			if ( isset( $_POST[ $this->checkout_fields_option_key ] ) && ! empty( $_POST[ $this->checkout_fields_option_key ] ) ) {
-				$checkout_fields = ur_clean( $_POST[ $this->checkout_fields_option_key ] );
-				update_option( $this->checkout_fields_option_key, $checkout_fields );
+				$form_id                               = absint( $_POST['user_registration_woocommerce_settings_form'] );
+				$checkout_fields                       = ur_clean( $_POST[ $this->checkout_fields_option_key ] );
+				$saved_sync_field_data                 = get_option( $this->checkout_fields_option_key, array() );
+				$sync_field_data[ 'form-' . $form_id ] = $checkout_fields;
+				if ( empty( $saved_sync_field_data ) ) {
+					update_option( $this->checkout_fields_option_key, $sync_field_data );
+				} else {
+					$new_sync_data = array_merge( $saved_sync_field_data, $sync_field_data );
+					update_option( $this->checkout_fields_option_key, $new_sync_data );
+				}
 			}
 		}
 

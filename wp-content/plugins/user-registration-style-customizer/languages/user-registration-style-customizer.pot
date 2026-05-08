@@ -1,17 +1,17 @@
-# Copyright (C) 2021 WPEverest
+# Copyright (C) 2024 WPEverest
 # This file is distributed under the same license as the User Registration Style Customizer plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: User Registration Style Customizer 1.0.4\n"
+"Project-Id-Version: User Registration Style Customizer 1.0.8\n"
 "Report-Msgid-Bugs-To: help@wpeverest.com\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-08-02T11:17:53+05:45\n"
+"POT-Creation-Date: 2024-04-12T12:05:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.5.0\n"
+"X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: user-registration-style-customizer\n"
 
 #. Plugin Name of the plugin
@@ -19,7 +19,7 @@ msgid "User Registration Style Customizer"
 msgstr ""
 
 #. Plugin URI of the plugin
-msgid "https://wpeverest.com/wordpress-plugins/user-registration/style-customizer"
+msgid "https://wpuserregistration.com/features/style-customizer"
 msgstr ""
 
 #. Description of the plugin
@@ -31,7 +31,26 @@ msgid "WPEverest"
 msgstr ""
 
 #. Author URI of the plugin
-msgid "https://wpeverest.com"
+msgid "https://wpuserregistration.com"
+msgstr ""
+
+#: includes/class-ur-style-customizer-ajax.php:37
+#: includes/class-ur-style-customizer-ajax.php:172
+msgid "Nonce error. Please refresh the page."
+msgstr ""
+
+#: includes/class-ur-style-customizer-ajax.php:76
+#: includes/class-ur-style-customizer-ajax.php:126
+msgid "Template name exists. Please change the template name and try again."
+msgstr ""
+
+#: includes/class-ur-style-customizer-ajax.php:106
+#: includes/class-ur-style-customizer-ajax.php:156
+msgid "Template saved successfully. Please reload the page to view changes. Reload Now?"
+msgstr ""
+
+#: includes/class-ur-style-customizer-ajax.php:197
+msgid "Template deleted successfully."
 msgstr ""
 
 #: includes/class-ur-style-customizer-api.php:93
@@ -67,47 +86,59 @@ msgstr ""
 msgid "Unrecognized background setting."
 msgstr ""
 
-#: includes/class-ur-style-customizer-api.php:302
-#: includes/class-ur-style-customizer-api.php:357
+#: includes/class-ur-style-customizer-api.php:262
+msgid "Please provide a suitable template name and try again."
+msgstr ""
+
+#: includes/class-ur-style-customizer-api.php:263
+msgid "Are you sure you want to delete this template ?"
+msgstr ""
+
+#: includes/class-ur-style-customizer-api.php:264
+msgid "Please save the unsaved changes to create the template."
+msgstr ""
+
+#: includes/class-ur-style-customizer-api.php:312
+#: includes/class-ur-style-customizer-api.php:367
 #: includes/customize/class-ur-customize-templates-section.php:56
 msgid "Templates"
 msgstr ""
 
-#: includes/class-ur-style-customizer-api.php:303
-#: includes/class-ur-style-customizer-api.php:358
+#: includes/class-ur-style-customizer-api.php:313
+#: includes/class-ur-style-customizer-api.php:368
 msgid "Choose your desire templates."
 msgstr ""
 
-#: includes/class-ur-style-customizer-api.php:721
-#: includes/class-ur-style-customizer-api.php:748
+#: includes/class-ur-style-customizer-api.php:731
+#: includes/class-ur-style-customizer-api.php:758
 msgid "ScssPhp: Unable to compile content"
 msgstr ""
 
-#: includes/class-user-registration-style-customizer.php:234
+#: includes/class-user-registration-style-customizer.php:254
 msgid "Form Designer"
 msgstr ""
 
-#: includes/class-user-registration-style-customizer.php:283
-#: includes/class-user-registration-style-customizer.php:290
+#: includes/class-user-registration-style-customizer.php:303
+#: includes/class-user-registration-style-customizer.php:310
 msgid "Customize Login Form"
 msgstr ""
 
-#: includes/class-user-registration-style-customizer.php:284
+#: includes/class-user-registration-style-customizer.php:304
 msgid "Make the login form more elegant and unique. Customize the design styles for form wrapper, fields, texts, button and more."
 msgstr ""
 
-#: includes/class-user-registration-style-customizer.php:285
+#: includes/class-user-registration-style-customizer.php:305
 msgid "Customize the design style for login form."
 msgstr ""
 
 #. translators: %s: user-registration plugin link
-#: includes/class-user-registration-style-customizer.php:307
-msgid "User Registration Style Customizer requires %s version 1.7.0 or greater to work!"
+#: includes/class-user-registration-style-customizer.php:327
+msgid "User Registration Style Customizer requires %s version 4.0.0 or greater to work"
 msgstr ""
 
 #. translators: %s: user-registration plugin link
-#: includes/class-user-registration-style-customizer.php:307
-msgid "User Registration"
+#: includes/class-user-registration-style-customizer.php:327
+msgid "User Registration Pro"
 msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:21
@@ -276,11 +307,11 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:144
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:134
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:199
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:211
 #: includes/configs/login/ur-style-customizer-messages-configs.php:102
 #: includes/configs/registration/ur-style-customizer-button-configs.php:170
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:146
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:199
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:211
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:164
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:446
 msgid "Border Type"
@@ -293,11 +324,11 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:148
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:138
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:203
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:215
 #: includes/configs/login/ur-style-customizer-messages-configs.php:106
 #: includes/configs/registration/ur-style-customizer-button-configs.php:174
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:150
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:203
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:215
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:168
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:450
 msgid "None"
@@ -305,10 +336,10 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:149
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:139
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:204
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:216
 #: includes/configs/registration/ur-style-customizer-button-configs.php:175
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:151
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:204
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:216
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:169
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:451
 msgid "Hidden"
@@ -316,11 +347,11 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:150
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:140
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:205
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:217
 #: includes/configs/login/ur-style-customizer-messages-configs.php:107
 #: includes/configs/registration/ur-style-customizer-button-configs.php:176
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:152
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:205
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:217
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:170
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:452
 msgid "Dotted"
@@ -328,11 +359,11 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:151
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:141
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:206
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:218
 #: includes/configs/login/ur-style-customizer-messages-configs.php:108
 #: includes/configs/registration/ur-style-customizer-button-configs.php:177
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:153
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:206
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:218
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:171
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:453
 msgid "Dashed"
@@ -340,11 +371,11 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:152
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:142
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:207
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:219
 #: includes/configs/login/ur-style-customizer-messages-configs.php:109
 #: includes/configs/registration/ur-style-customizer-button-configs.php:178
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:154
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:207
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:219
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:172
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:454
 msgid "Solid"
@@ -352,10 +383,10 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:153
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:143
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:208
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:220
 #: includes/configs/registration/ur-style-customizer-button-configs.php:179
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:155
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:208
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:220
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:173
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:455
 msgid "Double"
@@ -363,10 +394,10 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:154
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:144
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:209
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:221
 #: includes/configs/registration/ur-style-customizer-button-configs.php:180
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:156
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:209
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:221
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:174
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:456
 msgid "Groove"
@@ -374,10 +405,10 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:155
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:145
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:210
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:222
 #: includes/configs/registration/ur-style-customizer-button-configs.php:181
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:157
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:210
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:222
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:175
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:457
 msgid "Ridge"
@@ -385,10 +416,10 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:156
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:146
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:211
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:223
 #: includes/configs/registration/ur-style-customizer-button-configs.php:182
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:158
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:211
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:223
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:176
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:458
 msgid "Inset"
@@ -396,10 +427,10 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:157
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:147
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:212
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:224
 #: includes/configs/registration/ur-style-customizer-button-configs.php:183
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:159
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:212
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:224
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:177
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:459
 msgid "Outset"
@@ -407,10 +438,10 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:158
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:148
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:213
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:225
 #: includes/configs/registration/ur-style-customizer-button-configs.php:184
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:160
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:213
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:225
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:178
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:460
 msgid "Initial"
@@ -418,10 +449,10 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:159
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:149
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:214
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:226
 #: includes/configs/registration/ur-style-customizer-button-configs.php:185
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:161
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:214
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:226
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:179
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:461
 msgid "Inherit"
@@ -429,11 +460,11 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:173
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:164
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:229
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:241
 #: includes/configs/login/ur-style-customizer-messages-configs.php:124
 #: includes/configs/registration/ur-style-customizer-button-configs.php:199
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:176
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:229
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:241
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:194
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:476
 msgid "Border Width"
@@ -446,11 +477,11 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:192
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:183
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:250
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:262
 #: includes/configs/login/ur-style-customizer-messages-configs.php:143
 #: includes/configs/registration/ur-style-customizer-button-configs.php:218
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:195
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:250
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:262
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:213
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:495
 msgid "Border Color"
@@ -473,11 +504,11 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:221
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:219
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:271
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:283
 #: includes/configs/login/ur-style-customizer-messages-configs.php:164
 #: includes/configs/registration/ur-style-customizer-button-configs.php:247
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:231
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:271
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:283
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:234
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:516
 msgid "Border Radius"
@@ -490,11 +521,11 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:232
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:230
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:282
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:294
 #: includes/configs/login/ur-style-customizer-messages-configs.php:175
 #: includes/configs/registration/ur-style-customizer-button-configs.php:258
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:242
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:282
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:294
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:245
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:527
 msgid "PX"
@@ -502,11 +533,11 @@ msgstr ""
 
 #: includes/configs/login/ur-style-customizer-button-configs.php:233
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:231
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:283
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:295
 #: includes/configs/login/ur-style-customizer-messages-configs.php:176
 #: includes/configs/registration/ur-style-customizer-button-configs.php:259
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:243
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:283
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:295
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:246
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:528
 msgid "%"
@@ -812,10 +843,10 @@ msgid "This is a form field border radius."
 msgstr ""
 
 #: includes/configs/login/ur-style-customizer-field-styles-configs.php:242
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:82
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:94
 #: includes/configs/login/ur-style-customizer-messages-configs.php:85
 #: includes/configs/registration/ur-style-customizer-field-styles-configs.php:254
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:82
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:94
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:85
 #: includes/configs/registration/ur-style-customizer-messages-configs.php:367
 msgid "Background Color"
@@ -886,112 +917,117 @@ msgctxt "enhanced select"
 msgid "Select Font Family&hellip;"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:98
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:98
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:83
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:83
+msgid "Load fonts locally"
+msgstr ""
+
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:110
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:110
 msgid "Background Image"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:111
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:111
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:123
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:123
 msgid "Background Preset"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:115
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:115
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:127
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:127
 msgctxt "Default Preset"
 msgid "Default"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:116
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:161
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:116
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:161
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:128
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:173
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:128
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:173
 msgid "Fill Screen"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:117
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:160
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:117
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:160
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:129
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:172
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:129
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:172
 msgid "Fit to Screen"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:118
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:118
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:130
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:130
 msgctxt "Repeat Image"
 msgid "Repeat"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:119
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:119
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:131
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:131
 msgctxt "Custom Preset"
 msgid "Custom"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:138
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:138
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:150
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:150
 msgid "Image Position"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:155
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:155
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:167
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:167
 msgid "Image Size"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:159
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:159
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:171
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:171
 msgid "Original"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:173
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:173
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:185
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:185
 msgid "Repeat Background Image"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:186
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:186
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:198
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:198
 msgid "Scroll with Page"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:200
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:200
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:212
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:212
 msgid "This is form wrapper border type"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:230
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:230
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:242
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:242
 msgid "This is a form wrapper border width."
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:251
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:251
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:263
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:263
 msgid "This is a form border color."
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:272
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:272
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:284
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:284
 msgid "This is a form border radius."
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:301
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:301
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:313
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:313
 #: includes/configs/registration/ur-style-customizer-section-title-configs.php:163
 msgid "Form Margin"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:302
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:302
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:314
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:314
 msgid "This is a form margin."
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:325
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:325
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:337
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:337
 #: includes/configs/registration/ur-style-customizer-section-title-configs.php:187
 msgid "Form Padding"
 msgstr ""
 
-#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:326
-#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:326
+#: includes/configs/login/ur-style-customizer-form-wrapper-configs.php:338
+#: includes/configs/registration/ur-style-customizer-form-wrapper-configs.php:338
 msgid "This is a form padding."
 msgstr ""
 
@@ -1209,8 +1245,11 @@ msgid "Radio/Checkbox Checked Color"
 msgstr ""
 
 #: includes/configs/registration/ur-style-customizer-radio-checkbox-styles-configs.php:206
-#: includes/configs/registration/ur-style-customizer-radio-checkbox-styles-configs.php:229
 msgid "Radio/Checkbox Margin"
+msgstr ""
+
+#: includes/configs/registration/ur-style-customizer-radio-checkbox-styles-configs.php:229
+msgid "Radio/Checkbox Padding"
 msgstr ""
 
 #: includes/configs/registration/ur-style-customizer-section-title-configs.php:21

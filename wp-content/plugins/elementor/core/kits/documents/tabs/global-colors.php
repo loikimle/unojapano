@@ -6,7 +6,7 @@ use Elementor\Core\Kits\Controls\Repeater as Global_Style_Repeater;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Global_Colors extends Tab_Base {
@@ -62,7 +62,6 @@ class Global_Colors extends Tab_Base {
 			[
 				'type' => Controls_Manager::COLOR,
 				'label_block' => true,
-				'dynamic' => [],
 				'selectors' => [
 					'{{WRAPPER}}' => '--e-global-color-{{_id.VALUE}}: {{VALUE}}',
 				],
@@ -132,6 +131,8 @@ class Global_Colors extends Tab_Base {
 				'fields' => $repeater->get_controls(),
 			]
 		);
+
+		do_action( 'elementor/kit/global-colors/register_controls', $this );
 
 		$this->end_controls_section();
 	}

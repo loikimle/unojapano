@@ -1,6 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -9,8 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @class           UR_Log_Handler_File
  * @since           1.0.5
  * @package         UserRegistration/Classes/Log_Handlers
- * @category        Class
- * @author          WPEverest
  */
 class UR_Log_Handler_File extends UR_Log_Handler {
 
@@ -142,10 +140,12 @@ class UR_Log_Handler_File extends UR_Log_Handler {
 		if ( $file ) {
 			if ( ! file_exists( $file ) ) {
 				$temphandle = @fopen( $file, 'w+' );
-				@fclose( $temphandle );
+				if ($temphandle !== false) {
+					@fclose( $temphandle );
 
-				if ( defined( 'FS_CHMOD_FILE' ) ) {
-					@chmod( $file, FS_CHMOD_FILE );
+					if ( defined( 'FS_CHMOD_FILE' ) ) {
+						@chmod( $file, FS_CHMOD_FILE );
+					}
 				}
 			}
 
@@ -173,7 +173,7 @@ class UR_Log_Handler_File extends UR_Log_Handler {
 	/**
 	 * Close a handle.
 	 *
-	 * @param string $handle
+	 * @param string $handle Handle.
 	 *
 	 * @return bool success
 	 */
@@ -191,8 +191,8 @@ class UR_Log_Handler_File extends UR_Log_Handler {
 	/**
 	 * Add a log entry to chosen file.
 	 *
-	 * @param string $entry  Log entry text
-	 * @param string $handle Log entry handle
+	 * @param string $entry  Log entry text.
+	 * @param string $handle Log entry handle.
 	 *
 	 * @return bool True if write was successful.
 	 */
@@ -215,7 +215,7 @@ class UR_Log_Handler_File extends UR_Log_Handler {
 	/**
 	 * Clear entries from chosen file.
 	 *
-	 * @param string $handle
+	 * @param string $handle Handle.
 	 *
 	 * @return bool
 	 */
@@ -241,23 +241,68 @@ class UR_Log_Handler_File extends UR_Log_Handler {
 	/**
 	 * Remove/delete the chosen file.
 	 *
-	 * @param string $handle
+	 * @param string $handle Handle.
 	 *
 	 * @return bool
 	 */
 	public function remove( $handle ) {
 		$removed = false;
-		$file    = self::get_log_file_path( $handle );
+		$logs    = $this->get_log_files();
+		$handle  = sanitize_title( $handle );
 
-		if ( $file ) {
-			if ( is_file( $file ) && is_writable( $file ) ) {
-				$this->close( $handle ); // Close first to be certain no processes keep it alive after it is unlinked.
-				$removed = unlink( $file );
+		if ( isset( $logs[ $handle ] ) && $logs[ $handle ] ) {
+			$file = realpath( trailingslashit( UR_LOG_DIR ) . $logs[ $handle ] );
+			if ( 0 === stripos( $file, realpath( trailingslashit( UR_LOG_DIR ) ) ) && is_file( $file ) && is_writable( $file ) ) { // phpcs:ignore WordPress.VIP.FileSystemWritesDisallow.file_ops_is_writable
+				$this->close( $file ); // Close first to be certain no processes keep it alive after it is unlinked.
+				$removed = unlink( $file ); // phpcs:ignore WordPress.VIP.FileSystemWritesDisallow.file_ops_unlink
 			}
 			do_action( 'user_registration_log_remove', $handle, $removed );
 		}
-
 		return $removed;
+	}
+
+	/**
+	 * Remove/delete all log files.
+	 *
+	 * @return bool
+	 */
+	public function remove_all() {
+		$removed = false;
+		$logs    = $this->get_log_files();
+
+		if ( count( $logs ) ) {
+			foreach ( $logs as $key => $log ) {
+				$file = realpath( trailingslashit( UR_LOG_DIR ) . $log );
+				if ( 0 === stripos( $file, realpath( trailingslashit( UR_LOG_DIR ) ) ) && is_file( $file ) && is_writable( $file ) ) { // phpcs:ignore WordPress.VIP.FileSystemWritesDisallow.file_ops_is_writable
+					$this->close( $file ); // Close first to be certain no processes keep it alive after it is unlinked.
+					$removed = unlink( $file ); // phpcs:ignore WordPress.VIP.FileSystemWritesDisallow.file_ops_unlink
+				}
+			}
+		}
+		return $removed;
+	}
+
+	/**
+	 * Get all log files in the log directory.
+	 *
+	 * @since 1.6.2
+	 * @return array
+	 */
+	public static function get_log_files() {
+		$files  = @scandir( UR_LOG_DIR ); // @codingStandardsIgnoreLine.
+		$result = array();
+
+		if ( ! empty( $files ) ) {
+			foreach ( $files as $key => $value ) {
+				if ( ! in_array( $value, array( '.', '..' ), true ) ) {
+					if ( ! is_dir( $value ) && strstr( $value, '.log' ) ) {
+						$result[ sanitize_title( $value ) ] = $value;
+					}
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**
@@ -265,7 +310,7 @@ class UR_Log_Handler_File extends UR_Log_Handler {
 	 *
 	 * Compares the size of the log file to determine whether it is over the size limit.
 	 *
-	 * @param string $handle Log handle
+	 * @param string $handle Log handle.
 	 *
 	 * @return bool True if if should be rotated.
 	 */
@@ -298,10 +343,10 @@ class UR_Log_Handler_File extends UR_Log_Handler {
 	 *     base.0.log -> base.1.log
 	 *     base.log   -> base.0.log
 	 *
-	 * @param string $handle Log handle
+	 * @param string $handle Log handle.
 	 */
 	protected function log_rotate( $handle ) {
-		for ( $i = 8; $i >= 0; $i -- ) {
+		for ( $i = 8; $i >= 0; $i-- ) {
 			$this->increment_log_infix( $handle, $i );
 		}
 		$this->increment_log_infix( $handle );
@@ -310,7 +355,7 @@ class UR_Log_Handler_File extends UR_Log_Handler {
 	/**
 	 * Increment a log file suffix.
 	 *
-	 * @param string   $handle Log handle
+	 * @param string   $handle Log handle.
 	 * @param null|int $number Optional. Default null. Log suffix number to be incremented.
 	 *
 	 * @return bool True if increment was successful, otherwise false.
@@ -336,7 +381,6 @@ class UR_Log_Handler_File extends UR_Log_Handler {
 		} else {
 			return false;
 		}
-
 	}
 
 	/**
@@ -359,8 +403,8 @@ class UR_Log_Handler_File extends UR_Log_Handler {
 	/**
 	 * Cache log to write later.
 	 *
-	 * @param string $entry  Log entry text
-	 * @param string $handle Log entry handle
+	 * @param string $entry  Log entry text.
+	 * @param string $handle Log entry handle.
 	 */
 	protected function cache_log( $entry, $handle ) {
 		$this->cached_logs[] = array(
@@ -378,4 +422,26 @@ class UR_Log_Handler_File extends UR_Log_Handler {
 		}
 	}
 
+
+	/**
+	 * Delete all logs older than a defined timestamp.
+	 *
+	 * @since 1.6.2
+	 * @param integer $timestamp Timestamp to delete logs before.
+	 */
+	public static function delete_logs_before_timestamp( $timestamp = 0 ) {
+		if ( ! $timestamp ) {
+			return;
+		}
+
+		$log_files = self::get_log_files();
+
+		foreach ( $log_files as $log_file ) {
+			$last_modified = filemtime( trailingslashit( UR_LOG_DIR ) . $log_file );
+
+			if ( $last_modified < $timestamp ) {
+				@unlink( trailingslashit( EVF_LOG_DIR ) . $log_file ); // @codingStandardsIgnoreLine.
+			}
+		}
+	}
 }

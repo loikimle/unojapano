@@ -1,15 +1,15 @@
 <?php
 /**
  * Plugin Name: User Registration Social Connect
- * Plugin URI: https://wpeverest.com/wordpress-plugins/user-registration/social-connect
+ * Plugin URI: https://wpuserregistration.com/features/social-connect
  * Description: Social connect addon for user registration plugin.
- * Version: 1.4.0
+ * Version: 1.4.8
  * Author: WPEverest
- * Author URI: https://wpeverest.com
+ * Author URI: https://wpuserregistration.com
  * Text Domain: user-registration-social-connect
  * Domain Path: /languages/
- * UR requires at least: 1.1.0
- * UR PRO tested up to: 3.0.2.1
+ * UR PRO requires at least: 4.0.0
+ * UR PRO tested up to: 4.2.1
  *
  * Copyright: © 2017 WPEverest.
  * License: GNU General Public License v3.0
@@ -34,8 +34,7 @@ if ( ! class_exists( 'UserRegistrationSocialConnect' ) ) :
 		 *
 		 * @var string
 		 */
-		public $version = '1.4.0';
-
+		public $version = '1.4.8';
 
 		/**
 		 * Instance of this class.
@@ -92,30 +91,20 @@ if ( ! class_exists( 'UserRegistrationSocialConnect' ) ) :
 		 */
 		private function init_hooks() {
 			register_activation_hook( __FILE__, array( 'URSC_Install', 'install' ) );
-			add_action( 'user_registration_loaded', array( $this, 'plugin_updater' ) );
 			add_action( 'init', array( $this, 'init' ), 0 );
 		}
 
-		/**
-		 * Plugin Updater.
-		 */
-		public function plugin_updater() {
-			if ( function_exists( 'ur_addon_updater' ) ) {
-				ur_addon_updater( __FILE__, 346, $this->version );
-			}
-		}
 		/**
 		 * Define FT Constants.
 		 */
 		private function define_constants() {
 			$this->define( 'URSC_DS', DIRECTORY_SEPARATOR );
 			$this->define( 'URSC_PLUGIN_FILE', __FILE__ );
-			$this->define( 'URSC_ABSPATH', dirname( __FILE__ ) . URSC_DS );
+			$this->define( 'URSC_ABSPATH', __DIR__ . URSC_DS );
 			$this->define( 'URSC_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 			$this->define( 'URSC_VERSION', $this->version );
 			$this->define( 'URSC_TEMPLATE_DEBUG_MODE', false );
 			$this->define( 'URSC_NETWORK_PATH', URSC_ABSPATH . 'includes' . URSC_DS . 'networks' . URSC_DS );
-
 		}
 
 		/**
@@ -180,7 +169,6 @@ if ( ! class_exists( 'UserRegistrationSocialConnect' ) ) :
 
 				include_once URSC_ABSPATH . 'includes/class-ursc-frontend.php';               // Frontend Scripts
 			}
-
 		}
 
 		/**
@@ -212,7 +200,7 @@ if ( ! class_exists( 'UserRegistrationSocialConnect' ) ) :
 
 			unload_textdomain( 'user-registration-social-connect' );
 			load_textdomain( 'user-registration-social-connect', WP_LANG_DIR . '/user-registration-social-connect/user-registration-social-connect-' . $locale . '.mo' );
-			load_plugin_textdomain( 'user-registration-social-connect', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
+			load_plugin_textdomain( 'user-registration-social-connect', false, plugin_basename( __DIR__ ) . '/languages' );
 		}
 
 		/**
@@ -262,7 +250,6 @@ endif;
  * @since  1.0.0
  * @return UserRegistrationSocialConnect
  */
-
 function URSC() {
 	return UserRegistrationSocialConnect::instance();
 }

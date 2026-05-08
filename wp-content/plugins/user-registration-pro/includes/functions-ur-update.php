@@ -8,6 +8,8 @@
  * @version 1.2.0
  */
 
+use WPEverest\URMembership\Admin\Repositories\MembershipGroupRepository;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -317,4 +319,182 @@ function ur_update_162_meta_key() {
 
 	// Delete Redirect options form general setting as previous version refered to do so.
 	delete_option( 'user_registration_general_setting_redirect_options' );
+}
+
+
+/**
+ * Set Redirect after Registration option in form settings.
+ * Change Integration to Captcha Option names.
+ *
+ * @return void
+ */
+function ur_update_30_option_migrate() {
+
+	// Get all posts with user_registration post type.
+	$posts = get_posts( 'post_type=user_registration' );
+
+	foreach ( $posts as $post ) {
+
+		$redirect_url = ur_get_single_post_meta( $post->ID, 'user_registration_form_setting_redirect_options', get_option( 'user_registration_general_setting_redirect_options', '' ) );
+
+		if ( ! empty( $redirect_url ) ) {
+			update_post_meta( $post->ID, 'user_registration_form_setting_redirect_after_registration', 'external-url' );
+		}
+	}
+
+	// Recaptcha Migrations.
+	$recaptcha_type                 = get_option( 'user_registration_integration_setting_recaptcha_version', 'v2' );
+	$invisible_recaptcha            = get_option( 'user_registration_integration_setting_invisible_recaptcha_v2', 'no' );
+	$recaptcha_invisible_site_key   = get_option( 'user_registration_integration_setting_recaptcha_invisible_site_key' );
+	$recaptcha_invisible_secret_key = get_option( 'user_registration_integration_setting_recaptcha_invisible_site_secret' );
+	$recaptcha_site_key             = get_option( 'user_registration_integration_setting_recaptcha_site_key' );
+	$recaptcha_secret_key           = get_option( 'user_registration_integration_setting_recaptcha_site_secret' );
+	$recaptcha_site_key_v3          = get_option( 'user_registration_integration_setting_recaptcha_site_key_v3' );
+	$recaptcha_site_secret_v3       = get_option( 'user_registration_integration_setting_recaptcha_site_secret_v3' );
+	$recaptcha_threshold_score_v3   = get_option( 'user_registration_integration_setting_recaptcha_threshold_score_v3' );
+	$site_key_hcaptcha              = get_option( 'user_registration_integration_setting_recaptcha_site_key_hcaptcha' );
+	$site_secret_hcaptcha           = get_option( 'user_registration_integration_setting_recaptcha_site_secret_hcaptcha' );
+	$auto_generated_pass_email      = get_option( 'user_registration_enable_pro_auto_generated_password_email', true );
+
+	update_option( 'user_registration_captcha_setting_recaptcha_version', $recaptcha_type );
+	update_option( 'user_registration_captcha_setting_invisible_recaptcha_v2', $invisible_recaptcha );
+	update_option( 'user_registration_captcha_setting_recaptcha_invisible_site_key', $recaptcha_invisible_site_key );
+	update_option( 'user_registration_captcha_setting_recaptcha_invisible_site_secret', $recaptcha_invisible_secret_key );
+	update_option( 'user_registration_captcha_setting_recaptcha_site_key', $recaptcha_site_key );
+	update_option( 'user_registration_captcha_setting_recaptcha_site_secret', $recaptcha_secret_key );
+	update_option( 'user_registration_captcha_setting_recaptcha_site_key_v3', $recaptcha_site_key_v3 );
+	update_option( 'user_registration_captcha_setting_recaptcha_site_secret_v3', $recaptcha_site_secret_v3 );
+	update_option( 'user_registration_captcha_setting_recaptcha_threshold_score_v3', $recaptcha_threshold_score_v3 );
+	update_option( 'user_registration_captcha_setting_recaptcha_site_key_hcaptcha', $site_key_hcaptcha );
+	update_option( 'user_registration_captcha_setting_recaptcha_site_secret_hcaptcha', $site_secret_hcaptcha );
+	update_option( 'user_registration_enable_auto_generated_password_email', $auto_generated_pass_email );
+
+	delete_option( 'user_registration_integration_setting_recaptcha_version' );
+	delete_option( 'user_registration_integration_setting_invisible_recaptcha_v2' );
+	delete_option( 'user_registration_integration_setting_recaptcha_invisible_site_key' );
+	delete_option( 'user_registration_integration_setting_recaptcha_invisible_site_secret' );
+	delete_option( 'user_registration_integration_setting_recaptcha_site_key' );
+	delete_option( 'user_registration_integration_setting_recaptcha_site_secret' );
+	delete_option( 'user_registration_integration_setting_recaptcha_site_key_v3' );
+	delete_option( 'user_registration_integration_setting_recaptcha_site_secret_v3' );
+	delete_option( 'user_registration_integration_setting_recaptcha_threshold_score_v3' );
+	delete_option( 'user_registration_integration_setting_recaptcha_site_key_hcaptcha' );
+	delete_option( 'user_registration_integration_setting_recaptcha_site_secret_hcaptcha' );
+	delete_option( 'user_registration_enable_pro_auto_generated_password_email' );
+}
+
+/**
+ * Set user registration installed date option.
+ *
+ * @return void
+ */
+function ur_update_322_option_migrate() {
+
+	$activation_date = get_option( 'user_registration_activated', false );
+
+	update_option( 'user_registration_installation_date', $activation_date );
+	$days_to_validate = strtotime( $activation_date );
+	$days_to_validate = strtotime( '+1 day', $days_to_validate );
+	$days_to_validate = date_i18n( 'Y-m-d', $days_to_validate );
+
+	$current_date = date_i18n( 'Y-m-d' );
+
+	if ( $activation_date && $current_date >= $days_to_validate ) {
+		update_option( 'user_registration_quick_setup_completed', true );
+	}
+}
+
+/**
+ * URM v5.0 migration functions.
+ *
+ * @return void
+ */
+function urm_update_50_option_migrate() {
+
+	$args      = array(
+		'order'         => 'ASC',
+		'numberposts'   => -1,
+		'status'        => 'publish',
+		'post_type'     => array( 'user_registration' ),
+		'orderby'       => 'ID',
+		'order'         => 'DESC',
+		'no_found_rows' => true,
+		'nopaging'      => true,
+	);
+	$all_forms = get_posts( $args );
+
+	if ( count( $all_forms ) > 1 ) {
+		$enabled_features = get_option( 'user_registration_enabled_features', array() );
+		if ( ! isset( $enabled_features['user-registration-multiple-registration'] ) ) {
+			$enabled_features[] = 'user-registration-multiple-registration';
+			update_option( 'user_registration_enabled_features', $enabled_features );
+		}
+	}
+
+	$group_args = array(
+		'order'         => 'ASC',
+		'numberposts'   => -1,
+		'status'        => 'publish',
+		'post_type'     => array( 'ur_membership_groups' ),
+		'orderby'       => 'ID',
+		'order'         => 'DESC',
+		'no_found_rows' => true,
+		'nopaging'      => true,
+	);
+
+	$all_groups = get_posts( $group_args );
+
+	if ( count( $all_groups ) > 0 ) {
+		$enabled_features = get_option( 'user_registration_enabled_features', array() );
+		if ( ! isset( $enabled_features['user-registration-membership-groups'] ) ) {
+			$enabled_features[] = 'user-registration-membership-groups';
+			update_option( 'user_registration_enabled_features', $enabled_features );
+		}
+	}
+}
+
+/**
+ * Migrate global thank you page to per-form redirect settings (v5.1.5).
+ * Runs only for forms that contain the membership field.
+ *
+ * @return void
+ */
+function ur_update_515_redirect_thank_you_page_migrate() {
+
+	if ( ! function_exists( 'ur_check_module_activation' ) || ! ur_check_module_activation( 'membership' ) ) {
+		return;
+	}
+
+	$thank_you_page_id = get_option( 'user_registration_thank_you_page_id', '' );
+
+	$posts = get_posts(
+		array(
+			'post_type'      => 'user_registration',
+			'posts_per_page' => -1,
+			'post_status'    => 'any',
+		)
+	);
+
+	foreach ( $posts as $post ) {
+		$form_content = isset( $post->post_content ) ? $post->post_content : '';
+		if ( false === strpos( $form_content, '"field_key":"membership"' ) ) {
+			continue;
+		}
+
+		if ( empty( $thank_you_page_id ) || ! get_post_status( $thank_you_page_id ) ) {
+			update_post_meta( $post->ID, 'user_registration_form_setting_redirect_after_registration', 'no-redirection' );
+		} else {
+			if ( 'no-redirection' === ( get_post_meta( $post->ID, 'user_registration_form_setting_redirect_after_registration', true ) ) ) {
+				update_post_meta( $post->ID, 'user_registration_form_setting_redirect_after_registration', 'internal-page' );
+				update_post_meta( $post->ID, 'user_registration_form_setting_redirect_page', $thank_you_page_id );
+			} else {
+				update_post_meta( $post->ID, 'user_registration_form_setting_redirect_after_registration', 'internal-page' );
+
+				if ( empty( get_post_meta( $post->ID, 'user_registration_form_setting_redirect_page', true ) ) ) {
+					update_post_meta( $post->ID, 'user_registration_form_setting_redirect_page', $thank_you_page_id );
+				}
+			}
+
+		}
+	}
 }

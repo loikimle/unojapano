@@ -11,6 +11,7 @@ class Header extends Header_Footer_Base {
 		$properties = parent::get_properties();
 
 		$properties['location'] = 'header';
+		$properties['support_lazyload'] = false;
 
 		return $properties;
 	}
@@ -31,9 +32,13 @@ class Header extends Header_Footer_Base {
 		return 'eicon-header';
 	}
 
+	protected function get_default_wrapping_html_tag() {
+		return 'header';
+	}
+
 	protected static function get_site_editor_tooltip_data() {
 		return [
-			'title' => esc_html__( 'What is a Header Template?', 'elementor-pro' ),
+			'title' => esc_html__( 'What is a header template?', 'elementor-pro' ),
 			'content' => esc_html__( 'The header template allows you to easily design and edit custom WordPress headers so you are no longer constrained by your theme’s header design limitations.', 'elementor-pro' ),
 			'tip' => esc_html__( 'You can create multiple headers, and assign each to different areas of your site.', 'elementor-pro' ),
 			'docs' => 'https://go.elementor.com/app-theme-builder-header',

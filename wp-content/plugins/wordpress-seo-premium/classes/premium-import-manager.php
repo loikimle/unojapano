@@ -96,8 +96,7 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 			$result = $this->import_redirects_from_loader( $loader );
 
 			$this->set_import_success( $result );
-		}
-		catch ( WPSEO_Redirect_Import_Exception $e ) {
+		} catch ( WPSEO_Redirect_Import_Exception $e ) {
 			$this->set_import_message( $e->getMessage() );
 		}
 	}
@@ -119,8 +118,7 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 			$result = $this->import_redirects_from_loader( $loader );
 
 			$this->set_import_success( $result );
-		}
-		catch ( WPSEO_Redirect_Import_Exception $e ) {
+		} catch ( WPSEO_Redirect_Import_Exception $e ) {
 			$this->set_import_message( $e->getMessage() );
 		}
 	}
@@ -145,8 +143,7 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 			$result = $this->import_redirects_from_loader( $loader );
 
 			$this->set_import_success( $result );
-		}
-		catch ( WPSEO_Redirect_Import_Exception $e ) {
+		} catch ( WPSEO_Redirect_Import_Exception $e ) {
 			$this->set_import_message( $e->getMessage() );
 		}
 	}
@@ -173,7 +170,7 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 		$this->import->success = true;
 
 		$this->set_import_message(
-			$this->get_success_message( $result['total_imported'], $result['total_redirects'] )
+			$this->get_success_message( $result['total_imported'], $result['total_redirects'] ),
 		);
 	}
 
@@ -191,7 +188,7 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 				/* translators: 1: link to redirects overview, 2: closing link tag */
 				__( 'All redirects have been imported successfully. Go to the %1$sredirects overview%2$s to see the imported redirects.', 'wordpress-seo-premium' ),
 				'<a href="' . esc_url( admin_url( 'admin.php?page=wpseo_redirects' ) ) . '">',
-				'</a>'
+				'</a>',
 			);
 		}
 
@@ -200,7 +197,7 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 				/* translators: 1: link to redirects overview, 2: closing link tag */
 				__( 'No redirects have been imported. Probably they already exist as a redirect. Go to the %1$sredirects overview%2$s to see the existing redirects.', 'wordpress-seo-premium' ),
 				'<a href="' . esc_url( admin_url( 'admin.php?page=wpseo_redirects' ) ) . '">',
-				'</a>'
+				'</a>',
 			);
 		}
 
@@ -210,12 +207,12 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 				'Imported %1$s/%2$s redirects successfully. Go to the %3$sredirects overview%4$s to see the imported redirect.',
 				'Imported %1$s/%2$s redirects successfully. Go to the %3$sredirects overview%4$s to see the imported redirects.',
 				$total_imported,
-				'wordpress-seo-premium'
+				'wordpress-seo-premium',
 			),
 			$total_imported,
 			$total_redirects,
 			'<a href="' . esc_url( admin_url( 'admin.php?page=wpseo_redirects' ) ) . '">',
-			'</a>'
+			'</a>',
 		);
 	}
 
@@ -238,7 +235,7 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 				// Only do import if Redirections is active.
 				if ( ! defined( 'REDIRECTION_VERSION' ) ) {
 					throw new WPSEO_Redirect_Import_Exception(
-						__( 'Redirect import failed: the Redirection plugin is not installed or activated.', 'wordpress-seo-premium' )
+						__( 'Redirect import failed: the Redirection plugin is not installed or activated.', 'wordpress-seo-premium' ),
 					);
 				}
 				return new WPSEO_Redirect_Redirection_Loader( $wpdb );
@@ -248,7 +245,7 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 				return new WPSEO_Redirect_Simple_301_Redirect_Loader();
 			default:
 				throw new WPSEO_Redirect_Import_Exception(
-					__( 'Redirect import failed: the selected redirect plugin is not installed or activated.', 'wordpress-seo-premium' )
+					__( 'Redirect import failed: the selected redirect plugin is not installed or activated.', 'wordpress-seo-premium' ),
 				);
 		}
 	}
@@ -306,7 +303,7 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 	protected function import_redirects_from_loader( WPSEO_Redirect_Loader $loader ) {
 		if ( ! $loader ) {
 			throw new WPSEO_Redirect_Import_Exception(
-				__( 'Redirect import failed: we can\'t recognize this type of import.', 'wordpress-seo-premium' )
+				__( 'Redirect import failed: we can\'t recognize this type of import.', 'wordpress-seo-premium' ),
 			);
 		}
 
@@ -314,7 +311,7 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 
 		if ( count( $redirects ) === 0 ) {
 			throw new WPSEO_Redirect_Import_Exception(
-				__( 'Redirect import failed: no redirects found.', 'wordpress-seo-premium' )
+				__( 'Redirect import failed: no redirects found.', 'wordpress-seo-premium' ),
 			);
 		}
 
@@ -330,12 +327,13 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 	 * @return string The posted htaccess.
 	 */
 	protected function get_posted_htaccess() {
-		$htaccess = filter_input( INPUT_POST, 'htaccess' );
-		if ( $htaccess === null ) {
-			return '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Reason: We are validating a nonce here.
+		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'wpseo-import' ) // nosemgrep scanner.php.wp.security.csrf.verify-nonce-inverted -- Nonce check logic is correct, returns data only when nonce is valid.
+			&& isset( $_POST['htaccess'] ) && is_string( $_POST['htaccess'] ) ) {
+			return sanitize_text_field( wp_unslash( $_POST['htaccess'] ) );
 		}
 
-		return stripcslashes( $htaccess );
+		return '';
 	}
 
 	/**
@@ -346,13 +344,14 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 	 * @return string|null The posted import plugin.
 	 */
 	protected function get_posted_import_plugin() {
-		$wpseo_post = filter_input( INPUT_POST, 'wpseo', FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
-
-		if ( ! isset( $wpseo_post['import_plugin'] ) ) {
-			return null;
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Reason: We are validating a nonce here.
+		if ( isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'wpseo-import' ) // nosemgrep scanner.php.wp.security.csrf.verify-nonce-inverted -- Nonce check logic is correct, returns data only when nonce is valid.
+			&& isset( $_POST['wpseo'] ) && is_array( $_POST['wpseo'] )
+			&& isset( $_POST['wpseo']['import_plugin'] ) && is_string( $_POST['wpseo']['import_plugin'] ) ) {
+			return sanitize_text_field( wp_unslash( $_POST['wpseo']['import_plugin'] ) );
 		}
 
-		return $wpseo_post['import_plugin'];
+		return null;
 	}
 
 	/**
@@ -367,6 +366,7 @@ class WPSEO_Premium_Import_Manager implements WPSEO_WordPress_Integration {
 			return null;
 		}
 
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- File array is handled by WordPress core and validated by subsequent processing.
 		return $_FILES['redirects_csv_file'];
 	}
 }

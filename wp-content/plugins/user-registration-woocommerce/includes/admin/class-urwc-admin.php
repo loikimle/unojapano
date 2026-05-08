@@ -169,6 +169,7 @@ class URWC_Admin {
 		if ( class_exists( 'UR_Settings_Page' ) ) {
 			$settings[] = include 'settings/class-urwc-settings-woocommerce.php';
 		}
+		return $settings;
 	}
 
 	/**
@@ -189,7 +190,7 @@ class URWC_Admin {
 		$screen_id = $screen ? $screen->id : '';
 
 		wp_register_style( 'user-registration-woocommerce-admin-style', URWC()->plugin_url() . '/assets/css/user-registration-woocommerce-admin-style.css', array(), URWC_VERSION );
-		if ( 'user-registration_page_user-registration-settings' === $screen_id ) {
+		if ( 'user-registration_page_user-registration-settings' === $screen_id || 'product' === $screen_id ) {
 			wp_enqueue_style( 'user-registration-woocommerce-admin-style' );
 		}
 	}
@@ -204,7 +205,7 @@ class URWC_Admin {
 
 		wp_register_script( 'urwc-admin-script', URWC()->plugin_url() . '/assets/js/admin/urwc-admin' . $suffix . '.js', array(), URWC_VERSION );
 
-		if ( 'user-registration_page_user-registration-settings' === $screen_id ) {
+		if ( 'user-registration_page_user-registration-settings' === $screen_id || 'product' === $screen_id ) {
 			wp_enqueue_script( 'urwc-admin-script' );
 			wp_localize_script(
 				'urwc-admin-script',

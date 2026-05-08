@@ -241,11 +241,6 @@ class Xpo {
 				'medium'   => 'final-hour-sale',
 				'campaign' => 'postx-dashboard',
 			),
-			'massive_sale'       => array(
-				'source'   => 'db-postx-notice-text',
-				'medium'   => 'massive-sale',
-				'campaign' => 'postx-dashboard',
-			),
 			// 'flash_sale'         => array(
 			// 'source'   => 'db-postx-notice-logo',
 			// 'medium'   => 'flash-sale',
@@ -254,27 +249,6 @@ class Xpo {
 			'new_year_sale'      => array(
 				'source'   => 'db-postx-notice-text',
 				'medium'   => 'new-year-sale',
-				'campaign' => 'postx-dashboard',
-			),
-			// Flash sale.
-			'flash_sale'         => array(
-				'source'   => 'db-postx-notice',
-				'medium'   => 'flash-sale',
-				'campaign' => 'postx-dashboard',
-			),
-			'final_hour'         => array(
-				'source'   => 'db-postx-notice',
-				'medium'   => 'final-hour-sale',
-				'campaign' => 'postx-dashboard',
-			),
-			'flash_sale_meta'    => array(
-				'source'   => 'db-postx-plugin-meta',
-				'medium'   => 'flash-sale',
-				'campaign' => 'postx-dashboard',
-			),
-			'final_hour_meta'    => array(
-				'source'   => 'db-postx-plugin-meta',
-				'medium'   => 'final-hour-sale',
 				'campaign' => 'postx-dashboard',
 			),
 			'spring_sale'        => array(
@@ -297,6 +271,79 @@ class Xpo {
 				'medium'   => 'spring-sale',
 				'campaign' => 'postx-dashboard',
 			),
+
+			// Flash sale.
+			'flash_sale'        => array(
+				'source'   => 'db-postx-notice',
+				'medium'   => 'spring-sale',
+				'campaign' => 'postx-dashboard',
+			),
+			'flash_sale_text'         => array(
+				'source'   => 'db-postx-notice',
+				'medium'   => 'flash-sale-text',
+				'campaign' => 'postx-dashboard',
+			),
+			'flash_sale_content'         => array(
+				'source'   => 'db-postx-notice-content',
+				'medium'   => 'flash-sale',
+				'campaign' => 'postx-dashboard',
+			),
+			'flash_sale_meta'    => array(
+				'source'   => 'db-postx-plugin-meta',
+				'medium'   => 'flash-sale',
+				'campaign' => 'postx-dashboard',
+			),
+			// Massive Sale  
+			'massive_sale'        => array(
+				'source'   => 'db-postx-notice',
+				'medium'   => 'massive-sale',
+				'campaign' => 'postx-dashboard',
+			),
+			'massive_sale_content'       => array(
+				'source'   => 'db-postx-notice-content',
+				'medium'   => 'massive-sale',
+				'campaign' => 'postx-dashboard',
+			),
+			'massive_sale_meta'       => array(
+				'source'   => 'db-postx-plugin-meta',
+				'medium'   => 'massive-sale',
+				'campaign' => 'postx-dashboard',
+			),
+			// Surprise Sale
+			'surprise_sale'        => array(
+				'source'   => 'db-postx-notice',
+				'medium'   => 'surprise-sale',
+				'campaign' => 'postx-dashboard',
+			),
+			'surprise_sale_content'        => array(
+				'source'   => 'db-postx-notice-content',
+				'medium'   => 'surprise-sale',
+				'campaign' => 'postx-dashboard',
+			),
+			'surprise_sale_meta'        => array(
+				'source'   => 'db-postx-plugin-meta',
+				'medium'   => 'surprise-sale',
+				'campaign' => 'postx-dashboard',
+			),
+
+			// Final Hours Sale
+			'final_hours_sale'        => array(
+				'source'   => 'db-postx-notice',
+				'medium'   => 'final-hour-sale',
+				'campaign' => 'postx-dashboard',
+			),
+			'final_hour_content'         => array(
+				'source'   => 'db-postx-notice-content',
+				'medium'   => 'final-hour-sale',
+				'campaign' => 'postx-dashboard',
+			),
+			'final_hour_meta'    => array(
+				'source'   => 'db-postx-plugin-meta',
+				'medium'   => 'final-hour-sale',
+				'campaign' => 'postx-dashboard',
+			),
+
+			
 		);
 
 		// Step 1: Get parameters

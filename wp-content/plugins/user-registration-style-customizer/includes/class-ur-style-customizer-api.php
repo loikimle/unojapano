@@ -228,7 +228,7 @@ class UR_Style_Customizer_API {
 			'_urCustomizePreviewL10n',
 			array(
 				'form_id'   => $this->form_id,
-				'templates' => $this->get_template_choices(),
+				'templates' => isset( $_GET['ur-customize-login'] ) ? $this->get_login_template_choices() : $this->get_template_choices(),
 			)
 		);
 	}
@@ -254,6 +254,16 @@ class UR_Style_Customizer_API {
 				'form_id'          => $this->form_id,
 				'panelTitle'       => esc_html( 'User Registration &ndash; Styles', 'user-registration-style-customizer' ),
 				'panelDescription' => esc_html( 'User Registration &ndash; Styles Customizer allows you to preview changes and customize any form elements.', 'user-registration-style-customizer' ),
+				'ajax_url'         => admin_url( 'admin-ajax.php' ),
+				'customize'        => isset( $_GET['ur-customize-login'] ) ? 'login' : 'registration',
+				'save_nonce'       => wp_create_nonce( 'save_template' ),
+				'delete_nonce'     => wp_create_nonce( 'delete_template' ),
+				'messages'         => array(
+					'invalid_template_name' => __( "Please provide a suitable template name and try again.", 'user-registration-style-customizer' ),
+					'delete_template_confirmation' => __( 'Are you sure you want to delete this template ?', 'user-registration-style-customizer' ),
+					'error_save_changes' => __( 'Please save the unsaved changes to create the template.', 'user-registration-style-customizer' ),
+
+				)
 			)
 		);
 	}
@@ -707,9 +717,9 @@ class UR_Style_Customizer_API {
 		$scss = ob_get_clean();
 
 		try {
-			$compiler = new Leafo\ScssPhp\Compiler(); // phpcs:ignore PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ns_separatorFound
+			$compiler = new ScssPhp\ScssPhp\Compiler(); // phpcs:ignore PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ns_separatorFound
 			$compiler->setVariables( array( 'form_id' => $this->form_id ) );
-			$compiler->setFormatter( 'Leafo\ScssPhp\Formatter\Compressed' );
+			$compiler->setFormatter( 'ScssPhp\ScssPhp\Formatter\Compressed' );
 			$compiler->addImportPath( plugin_dir_path( UR_STYLE_CUSTOMIZER_PLUGIN_FILE ) . '/assets/css/bourbon/' );
 			$compiled_css = $compiler->compile( trim( $scss ) );
 			return $compiled_css;
@@ -735,8 +745,8 @@ class UR_Style_Customizer_API {
 		$scss = ob_get_clean();
 
 		try {
-			$compiler = new Leafo\ScssPhp\Compiler(); // phpcs:ignore PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ns_separatorFound
-			$compiler->setFormatter( 'Leafo\ScssPhp\Formatter\Compressed' );
+			$compiler = new ScssPhp\ScssPhp\Compiler(); // phpcs:ignore PHPCompatibility.LanguageConstructs.NewLanguageConstructs.t_ns_separatorFound
+			$compiler->setFormatter( 'ScssPhp\ScssPhp\Formatter\Compressed' );
 			$compiler->addImportPath( plugin_dir_path( UR_STYLE_CUSTOMIZER_PLUGIN_FILE ) . '/assets/css/bourbon/' );
 			$compiled_css = $compiler->compile( trim( $scss ) );
 			return $compiled_css;
@@ -779,12 +789,9 @@ class UR_Style_Customizer_API {
 		$templates = get_transient( 'ur_style_templates' );
 
 		if ( false === $templates ) {
-			$raw_templates = wp_safe_remote_get( 'https://raw.githubusercontent.com/wpeverest/user-registration-form-templates/master/style-templates.json' );
+			$templates = file_get_contents(plugins_url( 'assets/json/style-templates.json', UR_STYLE_CUSTOMIZER_PLUGIN_FILE ) );
 
-			if ( ! is_wp_error( $raw_templates ) ) {
-				$templates = wp_remote_retrieve_body( $raw_templates );
 				set_transient( 'ur_style_templates', $templates, WEEK_IN_SECONDS );
-			}
 		}
 
 		return apply_filters( 'user_registration_style_templates', $templates );
@@ -836,12 +843,8 @@ class UR_Style_Customizer_API {
 		$templates = get_transient( 'ur_login_style_templates' );
 
 		if ( false === $templates ) {
-			$raw_templates = wp_safe_remote_get( 'https://raw.githubusercontent.com/wpeverest/user-registration-form-templates/master/login-style-templates.json' );
-
-			if ( ! is_wp_error( $raw_templates ) ) {
-				$templates = wp_remote_retrieve_body( $raw_templates );
-				set_transient( 'ur_login_style_templates', $templates, WEEK_IN_SECONDS );
-			}
+			$templates = file_get_contents(plugins_url( 'assets/json/login-style-templates.json', UR_STYLE_CUSTOMIZER_PLUGIN_FILE ) );
+			set_transient( 'ur_login_style_templates', $templates, WEEK_IN_SECONDS );
 		}
 
 		return apply_filters( 'user_registration_login_style_templates', $templates );

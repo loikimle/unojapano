@@ -34,7 +34,27 @@ class My_Account extends Base_Widget {
 		return [ 'woocommerce-elements' ];
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::elementor()->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-woocommerce-my-account' ];
+	}
+
 	protected function register_controls() {
+		$start = is_rtl() ? 'end' : 'start';
+		$end = is_rtl() ? 'start' : 'end';
 
 		$this->start_controls_section(
 			'section_menu_icon_content',
@@ -63,7 +83,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--tab-content-spacing: {{SIZE}}{{UNIT}};',
 				],
@@ -78,19 +98,19 @@ class My_Account extends Base_Widget {
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor-pro' ),
-						'icon' => 'eicon-h-align-left',
+						'icon' => "eicon-align-$start-h",
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor-pro' ),
-						'icon' => 'eicon-h-align-center',
+						'icon' => 'eicon-align-center-h',
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor-pro' ),
-						'icon' => 'eicon-h-align-right',
+						'icon' => "eicon-align-$end-h",
 					],
 					'stretch' => [
 						'title' => esc_html__( 'Stretch', 'elementor-pro' ),
-						'icon' => 'eicon-h-align-stretch',
+						'icon' => 'eicon-align-stretch-h',
 					],
 				],
 				'condition' => [
@@ -251,9 +271,9 @@ class My_Account extends Base_Widget {
 			'customize_dashboard_description',
 			[
 				'raw' => sprintf(
-					/* translators: %1$s: HTML <a> opening tag. %2$s: HTML </a> closing tag */
+					/* translators: 1: Saved templates link opening tag. 2: Link closing tag. */
 					esc_html__( 'Replaces the default WooCommerce customer dashboard screen with a custom template. (Don\'t have one? Head over to %1$sSaved Templates%2$s.)', 'elementor-pro' ),
-					'<a href="' . admin_url( 'edit.php?post_type=elementor_library&tabs_group=library#add_new' ) . '" target="_blank">',
+					sprintf( '<a href="%s" target="_blank">', admin_url( 'edit.php?post_type=elementor_library&tabs_group=library#add_new' ) ),
 					'</a>'
 				),
 				'type' => Controls_Manager::RAW_HTML,
@@ -307,7 +327,7 @@ class My_Account extends Base_Widget {
 		$this->add_control(
 			'edit_button',
 			[
-				'raw' => sprintf( '<a href="#" target="_blank" class="elementor-button elementor-button-default elementor-edit-template" style="margin-top:0px;"><i class="eicon-pencil" style="margin-left:10px;"></i>%s</a>', esc_html__( 'Edit Template', 'elementor-pro' ) ),
+				'raw' => sprintf( '<a href="#" target="_blank" class="elementor-button elementor-edit-template" style="margin-top:0px;"><i class="eicon-pencil" style="margin-left:10px;"></i>%s</a>', esc_html__( 'Edit Template', 'elementor-pro' ) ),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-edit-template-wrapper',
 				'condition' => [
@@ -350,7 +370,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'tabs_normal_box_shadow',
-				'label' => esc_html__( 'Box Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .e-my-account-tab .woocommerce .woocommerce-MyAccount-navigation ul li:not(.is-active) a',
 			]
 		);
@@ -382,7 +401,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'tabs_hover_box_shadow',
-				'label' => esc_html__( 'Box Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .e-my-account-tab .woocommerce .woocommerce-MyAccount-navigation ul li a:hover',
 			]
 		);
@@ -428,7 +446,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'tabs_active_box_shadow',
-				'label' => esc_html__( 'Box Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .woocommerce-MyAccount-navigation ul li.is-active a',
 			]
 		);
@@ -480,7 +497,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .e-my-account-tab .woocommerce .woocommerce-MyAccount-navigation ul li a' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -509,7 +526,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--tabs-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -521,7 +538,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--tabs-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -533,14 +550,18 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
+					],
 				],
-				'default' => [ 'px' => 0 ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--tabs-spacing: {{SIZE}}{{UNIT}};',
 				],
@@ -572,7 +593,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--tabs-divider-weight: {{SIZE}}{{UNIT}};',
 				],
@@ -604,7 +625,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'my_account_sections_box_shadow',
-				'label' => esc_html__( 'Box Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .e-my-account-tab__dashboard:not(.e-my-account-tab__dashboard--custom) .woocommerce-MyAccount-content-wrapper, {{WRAPPER}} .e-my-account-tab__orders .woocommerce-MyAccount-content-wrapper, {{WRAPPER}} .e-my-account-tab__downloads .woocommerce-MyAccount-content-wrapper, {{WRAPPER}} address, {{WRAPPER}} .e-my-account-tab__edit-account .woocommerce-MyAccount-content-wrapper, {{WRAPPER}} .e-my-account-tab__view-order .order_details, {{WRAPPER}} .woocommerce-form-login, {{WRAPPER}} .woocommerce-form-register, {{WRAPPER}} .woocommerce-ResetPassword, {{WRAPPER}} .e-my-account-tab__payment-methods .woocommerce-MyAccount-content-wrapper',
 			]
 		);
@@ -626,7 +646,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--sections-border-top-width: {{TOP}}{{UNIT}}; --sections-border-right-width: {{RIGHT}}{{UNIT}}; --sections-border-bottom-width: {{BOTTOM}}{{UNIT}}; --sections-border-left-width: {{LEFT}}{{UNIT}};',
 				],
@@ -655,7 +675,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--sections-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -667,7 +687,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--sections-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}; --edit-link-margin-top: {{TOP}}{{UNIT}}; --edit-link-margin-start: {{LEFT}}{{UNIT}};',
 					'{{WRAPPER}} .e-my-account-tab__edit-address .woocommerce-Address address' => 'padding-top: calc( {{TOP}}{{UNIT}} + 40px );',
@@ -718,7 +738,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'section_titles_typography_text_shadow',
-				'label' => esc_html__( 'Text Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) h2, {{WRAPPER}} .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) h3',
 			]
 		);
@@ -728,11 +747,16 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
 				'selectors' => [
@@ -908,14 +932,18 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Columns Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
+					],
 				],
-				'default' => [ 'px' => 0 ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--forms-columns-gap-padding-right: calc( {{SIZE}}{{UNIT}}/2 ); --forms-columns-gap-padding-left: calc( {{SIZE}}{{UNIT}}/2 ); --forms-columns-gap-margin-left: calc( -{{SIZE}}{{UNIT}}/2 ); --forms-columns-gap-margin-right: calc( -{{SIZE}}{{UNIT}}/2 );',
 				],
@@ -927,14 +955,18 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Rows Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
-						'max' => 60,
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
-				'default' => [ 'px' => 0 ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--forms-rows-gap: {{SIZE}}{{UNIT}};',
 				],
@@ -973,14 +1005,18 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
-						'max' => 60,
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
-				'default' => [ 'px' => 0 ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--forms-label-spacing: {{SIZE}}{{UNIT}};',
 				],
@@ -1034,7 +1070,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'forms_fields_normal_box_shadow',
-				'label' => esc_html__( 'Box Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .input-text, {{WRAPPER}} select, {{WRAPPER}} .select2-container--default .select2-selection--single, {{WRAPPER}} .e-my-account-tab__payment-methods input[type=text]',
 			]
 		);
@@ -1067,7 +1102,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'forms_fields_focus_box_shadow',
-				'label' => esc_html__( 'Box Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .input-text:focus, {{WRAPPER}} select:focus, {{WRAPPER}} .select2-container--default .select2-selection--single:focus, {{WRAPPER}} .e-my-account-tab__payment-methods input[type=text]:focus',
 			]
 		);
@@ -1091,14 +1125,15 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'{{WRAPPER}}' => '--forms-fields-focus-transition-duration: {{SIZE}}ms',
-				],
 				'range' => [
 					'px' => [
 						'min' => 0,
 						'max' => 3000,
+						'step' => 100,
 					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--forms-fields-focus-transition-duration: {{SIZE}}ms',
 				],
 			]
 		);
@@ -1121,7 +1156,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--forms-fields-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1133,7 +1168,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--forms-fields-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 					// style select2
@@ -1164,7 +1199,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'forms_button_text_shadow',
-				'label' => esc_html__( 'Text Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} button.button, {{WRAPPER}} #add_payment_method #payment #place_order',
 			]
 		);
@@ -1196,7 +1230,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'forms_buttons_normal_box_shadow',
-				'label' => esc_html__( 'Box Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce-EditAccountForm .button, {{WRAPPER}} .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce-address-fields .button, {{WRAPPER}} button.button, {{WRAPPER}} #add_payment_method #payment #place_order',
 			]
 		);
@@ -1228,7 +1261,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'forms_buttons_focus_box_shadow',
-				'label' => esc_html__( 'Box Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce-EditAccountForm .button:hover, {{WRAPPER}} .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce-address-fields .button:hover, {{WRAPPER}} button.button:hover, {{WRAPPER}} #add_payment_method #payment #place_order:hover',
 			]
 		);
@@ -1252,14 +1284,15 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'{{WRAPPER}}' => '--forms-buttons-hover-transition-duration: {{SIZE}}ms',
-				],
 				'range' => [
 					'px' => [
 						'min' => 0,
 						'max' => 3000,
+						'step' => 100,
 					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--forms-buttons-hover-transition-duration: {{SIZE}}ms',
 				],
 			]
 		);
@@ -1292,7 +1325,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--forms-buttons-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1304,7 +1337,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--forms-buttons-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1326,14 +1359,18 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Rows Gap', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
-						'max' => 60,
+						'max' => 100,
+					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
 					],
 				],
-				'default' => [ 'px' => 0 ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--order-summary-rows-gap-top: calc( {{SIZE}}{{UNIT}}/2 ); --order-summary-rows-gap-bottom: calc( {{SIZE}}{{UNIT}}/2 );',
 				],
@@ -1345,7 +1382,7 @@ class My_Account extends Base_Widget {
 			'tables_titles',
 			[
 				'type' => Controls_Manager::HEADING,
-				'label' => esc_html__( 'Titles &amp; Totals', 'elementor-pro' ),
+				'label' => esc_html__( 'Titles & Totals', 'elementor-pro' ),
 			]
 		);
 
@@ -1372,7 +1409,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'tables_titles_text_shadow',
-				'label' => esc_html__( 'Text Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .order_details thead th, {{WRAPPER}} .order_details tfoot td, {{WRAPPER}} .order_details tfoot th, {{WRAPPER}} .nobr',
 			]
 		);
@@ -1499,14 +1535,18 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
+					],
 				],
-				'default' => [ 'px' => 0 ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--tables-divider-border-width: {{SIZE}}{{UNIT}};',
 				],
@@ -1550,7 +1590,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Text_Shadow::get_type(),
 			[
 				'name' => 'tables_button_text_shadow',
-				'label' => esc_html__( 'Text Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .shop_table .button, {{WRAPPER}} .order-again .button, {{WRAPPER}} .woocommerce-pagination .button, {{WRAPPER}} .e-my-account-tab__payment-methods .woocommerce-MyAccount-content-wrapper .button',
 			]
 		);
@@ -1582,7 +1621,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'tables_button_normal_box_shadow',
-				'label' => esc_html__( 'Box Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .shop_table .button, {{WRAPPER}} .order-again .button, {{WRAPPER}} .woocommerce-pagination .button, {{WRAPPER}} .e-my-account-tab__payment-methods .woocommerce-MyAccount-content-wrapper .button',
 			]
 		);
@@ -1614,7 +1652,6 @@ class My_Account extends Base_Widget {
 			Group_Control_Box_Shadow::get_type(),
 			[
 				'name' => 'tables_button_hover_box_shadow',
-				'label' => esc_html__( 'Box Shadow', 'elementor-pro' ),
 				'selector' => '{{WRAPPER}} .shop_table .button:hover, {{WRAPPER}} .order-again .button:hover, {{WRAPPER}} .woocommerce-pagination .button:hover, {{WRAPPER}} .e-my-account-tab__payment-methods .woocommerce-MyAccount-content-wrapper .button:hover',
 			]
 		);
@@ -1638,14 +1675,15 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Transition Duration', 'elementor-pro' ) . ' (ms)',
 				'type' => Controls_Manager::SLIDER,
-				'selectors' => [
-					'{{WRAPPER}}' => '--tables-button-hover-transition-duration: {{SIZE}}ms',
-				],
 				'range' => [
 					'px' => [
 						'min' => 0,
 						'max' => 3000,
+						'step' => 100,
 					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => '--tables-button-hover-transition-duration: {{SIZE}}ms',
 				],
 			]
 		);
@@ -1682,7 +1720,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Width', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .shop_table .button, {{WRAPPER}} .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .order-again .button, {{WRAPPER}} .e-my-account-tab:not(.e-my-account-tab__dashboard--custom) .woocommerce .woocommerce-pagination .button, {{WRAPPER}} .e-my-account-tab:not(.e-my-account-tab__dashboard--custom).e-my-account-tab__payment-methods .woocommerce-MyAccount-content-wrapper .button' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1711,7 +1749,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--tables-button-border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1723,7 +1761,7 @@ class My_Account extends Base_Widget {
 			[
 				'label' => esc_html__( 'Padding', 'elementor-pro' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}' => '--tables-button-padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -1790,6 +1828,7 @@ class My_Account extends Base_Widget {
 		add_action( 'woocommerce_account_content', [ $this, 'after_account_content' ], 95 );
 		add_filter( 'woocommerce_get_myaccount_page_permalink', [ $this, 'woocommerce_get_myaccount_page_permalink' ], 10, 1 );
 		add_filter( 'woocommerce_logout_default_redirect_url', [ $this, 'woocommerce_logout_default_redirect_url' ], 10, 1 );
+		add_filter( 'woocommerce_is_account_page', '__return_true' );
 
 		if ( $this->has_custom_template() && 'dashboard' === $this->get_current_endpoint() ) {
 			remove_action( 'woocommerce_account_content', 'woocommerce_account_content', 10 );
@@ -1807,9 +1846,10 @@ class My_Account extends Base_Widget {
 		remove_action( 'woocommerce_account_navigation', [ $this, 'woocommerce_account_navigation' ], 2 );
 		remove_action( 'woocommerce_account_menu_items', [ $this, 'modify_menu_items' ], 10 );
 		remove_action( 'woocommerce_account_content', [ $this, 'before_account_content' ], 5 );
-		remove_action( 'woocommerce_account_content', [ $this, 'after_account_content' ], 95 );
+		remove_action( 'woocommerce_account_content', [ $this, 'after_account_content' ], 99 );
 		remove_filter( 'woocommerce_get_myaccount_page_permalink', [ $this, 'woocommerce_get_myaccount_page_permalink' ], 10, 1 );
 		remove_filter( 'woocommerce_logout_default_redirect_url', [ $this, 'woocommerce_logout_default_redirect_url' ], 10, 1 );
+		remove_filter( 'woocommerce_is_account_page', '__return_true' );
 
 		if ( $this->has_custom_template() && 'dashboard' === $this->get_current_endpoint() ) {
 			remove_action( 'woocommerce_account_content', [ $this, 'display_custom_template' ], 10 );
@@ -1912,7 +1952,6 @@ class My_Account extends Base_Widget {
 		}
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '<div class="e-my-account-tab e-my-account-tab__' . sanitize_html_class( $current_endpoint ) . ' ' . $custom_dashboard_class . '">'; ?>
-			<span class="elementor-hidden">[[woocommerce_my_account]]</span>
 			<?php echo do_shortcode( '[woocommerce_my_account]' ); ?>
 		</div>
 		<?php
@@ -1940,7 +1979,6 @@ class My_Account extends Base_Widget {
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		echo '<div class="e-my-account-tab e-my-account-tab__dashboard ' . $custom_dashboard_class . '">';
 		?>
-			<span class="elementor-hidden">[[woocommerce_my_account]]</span>
 			<div class="woocommerce">
 			<?php
 			if ( 'horizontal' === $settings['tabs_layout'] ) {

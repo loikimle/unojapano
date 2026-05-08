@@ -4,7 +4,7 @@ Tags: post grid, post list, post slider, ajax filter, post filter
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 5.0.17
+Stable tag: 5.0.18
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -17,7 +17,7 @@ Design professional blogs with advanced Gutenberg blocks, premade templates, dyn
 💕 A plugin by **WPXPO**, that empowers **65K+** businesses!
 📞 Dedicated support team with **4.9/5** customer satisfaction on [**Trustpilot**](https://uk.trustpilot.com/review/wpxpo.com)
 
-😲 [**Free Demo**](https://trypostx.wpxpo.com/) | 🔥 [**PostX Pro**](https://www.wpxpo.com/postx/) | 📃 [**Starter Templates**](https://www.wpxpo.com/product/postx/templates/) | 📦 [**All Blocks**](https://www.wpxpo.com/product/postx/features/blocks/)
+😲 [**Free Demo**](https://trypostx.wpxpo.com/) | 🔥 [**PostX Pro**](https://www.wpxpo.com/product/postx/) | 📃 [**Starter Templates**](https://www.wpxpo.com/product/postx/templates/) | 📦 [**All Blocks**](https://www.wpxpo.com/product/postx/features/blocks/)
 
 == Ultimate Blog Website Builder for WordPress ==
 
@@ -360,10 +360,16 @@ It is a Gutenberg plugin it works great with WordPress version 5.x.x or more. An
 11. With the help of the Elementor and Saved Template addons, you can use any of the post blocks of PostX to any pages while editing with Elementor builder.
 
 == Changelog ==
+= 5.0.18 – 06 May 2026 =
+* Fix: List block spacing issue
+* Fix: Dark light block logo color issue
+* Fix: Query builder unwanted query removed  
+* Fix: Block Theme Editor width conflict issue
+
 = 5.0.17 – 26 April 2026 =
-* Fix: Advanced fIlter dynamic label issue 
+* Fix: Advanced filter dynamic label issue 
 * Fix: Advanced filter tag inline view issue 
-* Fix: Advanced fIlter reset button nameing issue
+* Fix: Advanced filter reset button nameing issue
 * Fix: Advanced filter postid removed from backend
 
 = 5.0.16 – 16 April 2026 =

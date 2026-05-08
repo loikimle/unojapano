@@ -2,7 +2,7 @@
 /**
  * Configure Email
  *
- * @class    User_Registration_Settings_Delete_Account_Admin_Email
+ * @class    UR_Settings_Delete_Account_Admin_Email
  * @extends  User_Registration_Settings_Email
  * @category Class
  * @author   WPEverest
@@ -12,17 +12,48 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'User_Registration_Settings_Delete_Account_Admin_Email', false ) ) :
+if ( ! class_exists( 'UR_Settings_Delete_Account_Admin_Email', false ) ) :
 
 	/**
-	 * User_Registration_Settings_Delete_Account_Admin_Email Class.
+	 * UR_Settings_Delete_Account_Admin_Email Class.
 	 */
-	class User_Registration_Settings_Delete_Account_Admin_Email {
+	class UR_Settings_Delete_Account_Admin_Email {
+		/**
+		 * UR_Settings_Delete_Account_Admin_Email Id.
+		 *
+		 * @var string
+		 */
+		public $id;
 
+		/**
+		 * UR_Settings_Delete_Account_Admin_Email Title.
+		 *
+		 * @var string
+		 */
+		public $title;
+
+		/**
+		 * UR_Settings_Delete_Account_Admin_Email Description.
+		 *
+		 * @var string
+		 */
+		public $description;
+
+		/**
+		 * UR_Settings_Delete_Account_Admin_Email Receiver.
+		 *
+		 * @var string
+		 */
+		public $receiver;
+
+		/**
+		 * Constructor.
+		 */
 		public function __construct() {
 			$this->id          = 'delete_account_admin_email';
-			$this->title       = esc_html__( 'Delete Account Admin Email', 'user-registration' );
-			$this->description = esc_html__( 'Email sent to the admin when user delete thier own account', 'user-registration' );
+			$this->title       = esc_html__( 'Account – Deletion Notification', 'user-registration' );
+			$this->description = esc_html__( 'Notifies admins that a user has deleted their account.', 'user-registration' );
+			$this->receiver    = 'Admin';
 		}
 
 		/**
@@ -35,20 +66,24 @@ if ( ! class_exists( 'User_Registration_Settings_Delete_Account_Admin_Email', fa
 			$settings = apply_filters(
 				'user_registration_delete_account_admin_email',
 				array(
-					'title' => __( 'Emails', 'user-registration' ),
-					'sections' => array (
+					'title'    => __( 'Emails', 'user-registration' ),
+					'sections' => array(
 						'delete_account_admin_email' => array(
-							'title' => __( 'Delete Account Admin Email', 'user-registration' ),
-							'type'  => 'card',
-							'desc'  => '',
-							'back_link' => ur_back_link( __( 'Return to emails', 'user-registration' ), admin_url( 'admin.php?page=user-registration-settings&tab=email' ) ),
-							'settings' => array(
+							'title'        => __( 'Account – Deletion Notification Email', 'user-registration' ),
+							'type'         => 'card',
+							'desc'         => '',
+							'back_link'    => ur_back_link( __( 'Return to emails', 'user-registration' ), admin_url( 'admin.php?page=user-registration-settings&tab=email' ) ),
+							'preview_link' => ur_email_preview_link(
+								__( 'Preview', 'user-registration' ),
+								$this->id
+							),
+							'settings'     => array(
 								array(
 									'title'    => __( 'Enable this email', 'user-registration' ),
 									'desc'     => __( 'Enable this email sent to the admin after user deletes thier own account', 'user-registration' ),
-									'id'       => 'user_registration_pro_enable_delete_account_admin_email',
+									'id'       => 'user_registration_enable_delete_account_admin_email',
 									'default'  => 'yes',
-									'type'     => 'checkbox',
+									'type'     => 'toggle',
 									'autoload' => false,
 								),
 
@@ -67,7 +102,7 @@ if ( ! class_exists( 'User_Registration_Settings_Delete_Account_Admin_Email', fa
 									'desc'     => __( 'The email subject you want to customize.', 'user-registration' ),
 									'id'       => 'user_registration_pro_delete_account_admin_email_subject',
 									'type'     => 'text',
-									'default'  => __( '{{blog_info}} Account deleted', 'user-registration' ),
+									'default'  => __( 'Member Account Deleted: {{username}}', 'user-registration' ),
 									'css'      => 'min-width: 350px;',
 									'desc_tip' => true,
 								),
@@ -94,19 +129,37 @@ if ( ! class_exists( 'User_Registration_Settings_Delete_Account_Admin_Email', fa
 			 */
 		public static function user_registration_get_delete_account_admin_email() {
 
-			$message = apply_filters(
-				'user_registration_get_delete_account_admin_email',
-				sprintf(
-					__(
-						'{{username}} has just deleted their {{blog_info}} account.',
-						'user-registration'
-					)
-				)
+			$body_content = __(
+				'<p style="margin:0 0 20px 0; color:#000000; font-size:16px; line-height:1.6;">
+					Hi Admin,
+			    </p>
+			    <p style="margin:0 0 20px 0; color:#000000; font-size:16px; line-height:1.6;">
+			    A member has deleted their account.
+			    </p>
+			    <ul>
+			    <li style="margin-bottom:10px;">
+			    <strong>Member</strong>: {{username}}
+				</li>
+				<li style="margin-bottom:10px;">
+			    <strong>Email</strong>: {{user_email}}
+				</li>
+				<li style="margin-bottom:10px;">
+			    <strong>Deletion Date</strong>: {{deletion_date}}
+				</li>
+				</ul>
+			    <p style="margin:0 0 20px 0; color:#000000; font-size:16px; line-height:1.6;">
+			      Thanks
+			    </p>',
+				'user-registration'
 			);
+
+			$body_content = ur_wrap_email_body_content( $body_content );
+
+			$message = apply_filters( 'user_registration_get_delete_account_admin_email', $body_content );
 
 			return $message;
 		}
 	}
 endif;
 
-return new User_Registration_Settings_Delete_Account_Admin_Email();
+return new UR_Settings_Delete_Account_Admin_Email();

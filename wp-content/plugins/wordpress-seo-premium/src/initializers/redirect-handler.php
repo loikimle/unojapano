@@ -4,6 +4,7 @@ namespace Yoast\WP\SEO\Premium\Initializers;
 
 use WP_Query;
 use WPSEO_Premium_Redirect_Option;
+use WPSEO_Redirect_Option;
 use WPSEO_Redirect_Util;
 use Yoast\WP\SEO\Conditionals\Front_End_Conditional;
 use Yoast\WP\SEO\Initializers\Initializer_Interface;
@@ -33,20 +34,6 @@ class Redirect_Handler implements Initializer_Interface {
 	 * @var bool
 	 */
 	protected $is_redirected = false;
-
-	/**
-	 * The options where the URL redirects are stored.
-	 *
-	 * @var string
-	 */
-	private $normal_option_name = 'wpseo-premium-redirects-export-plain';
-
-	/**
-	 * The option name where the regex redirects are stored.
-	 *
-	 * @var string
-	 */
-	private $regex_option_name = 'wpseo-premium-redirects-export-regex';
 
 	/**
 	 * The URL that is called at the moment.
@@ -82,15 +69,15 @@ class Redirect_Handler implements Initializer_Interface {
 			return;
 		}
 
-		// Set the requested URL.
-		$this->set_request_url();
-
-		// Check the normal redirects.
-		$this->handle_normal_redirects( $this->request_url );
-
-		// Check the regex redirects.
-		if ( $this->is_redirected() === false ) {
-			$this->handle_regex_redirects();
+		if ( ! \function_exists( 'is_plugin_active_for_network' ) ) {
+			require_once \ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+		// If the plugin is network activated, we wait for the plugins to be loaded before initializing.
+		if ( \is_plugin_active_for_network( \WPSEO_PREMIUM_BASENAME ) ) {
+			\add_action( 'plugins_loaded', [ $this, 'handle_redirects' ], 16 );
+		}
+		else {
+			$this->handle_redirects();
 		}
 	}
 
@@ -175,7 +162,7 @@ class Redirect_Handler implements Initializer_Interface {
 	 */
 	protected function handle_normal_redirects( $request_url ) {
 		// Setting the redirects.
-		$redirects       = $this->get_redirects( $this->normal_option_name );
+		$redirects       = $this->get_redirects( WPSEO_Redirect_Option::OPTION_PLAIN );
 		$this->redirects = $this->normalize_redirects( $redirects );
 
 		$request_url = $this->normalize_url( $request_url );
@@ -219,7 +206,7 @@ class Redirect_Handler implements Initializer_Interface {
 	 */
 	protected function handle_regex_redirects() {
 		// Setting the redirects.
-		$this->redirects = $this->get_redirects( $this->regex_option_name );
+		$this->redirects = $this->get_redirects( WPSEO_Redirect_Option::OPTION_REGEX );
 
 		foreach ( $this->redirects as $regex => $redirect ) {
 			// Check if the URL matches the $regex.
@@ -253,7 +240,7 @@ class Redirect_Handler implements Initializer_Interface {
 			$redirect_url = \preg_replace_callback(
 				'/\$[0-9]+/',
 				[ $this, 'format_regex_redirect_url' ],
-				$redirect['url']
+				$redirect['url'],
 			);
 
 			$this->do_redirect( $redirect_url, $redirect['type'] );
@@ -271,7 +258,11 @@ class Redirect_Handler implements Initializer_Interface {
 	 * @return array Returns the redirects for the given option.
 	 */
 	protected function get_redirects( $option ) {
-		$redirects = $this->get_redirects_from_options();
+		static $redirects;
+
+		if ( ! isset( $redirects[ $option ] ) ) {
+			$redirects[ $option ] = \get_option( $option, false );
+		}
 
 		if ( ! empty( $redirects[ $option ] ) ) {
 			return $redirects[ $option ];
@@ -300,6 +291,10 @@ class Redirect_Handler implements Initializer_Interface {
 		if ( \in_array( $redirect_type, $redirect_types_without_target, true ) ) {
 			$this->handle_redirect_without_target( $redirect_type );
 
+			return;
+		}
+
+		if ( $this->is_yoast_wp_json_request() ) {
 			return;
 		}
 
@@ -350,6 +345,8 @@ class Redirect_Handler implements Initializer_Interface {
 
 	/**
 	 * Saves the default redirects options to the DB.
+	 *
+	 * @return void
 	 */
 	public function save_default_redirect_options() {
 		$redirect_option = WPSEO_Premium_Redirect_Option::get_instance();
@@ -357,23 +354,19 @@ class Redirect_Handler implements Initializer_Interface {
 	}
 
 	/**
-	 * Gets the request URI, with fallback for super global.
+	 * Gets the request URI.
 	 *
 	 * @return string
 	 */
 	protected function get_request_uri() {
-		$options     = [ 'options' => [ 'default' => '' ] ];
-		$request_uri = \filter_input( \INPUT_SERVER, 'REQUEST_URI', \FILTER_SANITIZE_URL, $options );
+		$request_uri = '';
 
-		// Because there isn't an usable value, try the fallback.
-		if ( empty( $request_uri ) && isset( $_SERVER['REQUEST_URI'] ) ) {
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- this value is compared. I don't want to change the behavior.
-			$request_uri = \filter_var( $_SERVER['REQUEST_URI'], \FILTER_SANITIZE_URL, $options );
+		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- We sanitize after decoding.
+			$request_uri = \sanitize_text_field( \rawurldecode( \wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
 		}
 
-		$request_uri = $this->strip_subdirectory( $request_uri );
-
-		return \rawurldecode( $request_uri );
+		return $this->strip_subdirectory( $request_uri );
 	}
 
 	/**
@@ -566,33 +559,6 @@ class Redirect_Handler implements Initializer_Interface {
 	}
 
 	/**
-	 * Returns the redirects from the option table in the database.
-	 *
-	 * @return array The stored redirects.
-	 */
-	protected function get_redirects_from_options() {
-		global $wpdb;
-		static $redirects;
-
-		if ( $redirects !== null ) {
-			return $redirects;
-		}
-
-		// The code below is needed because we used to not autoload our redirect options. This fixes that.
-		$all_options = \wp_cache_get( 'alloptions', 'options' );
-		foreach ( [ $this->normal_option_name, $this->regex_option_name ] as $option ) {
-			$redirects[ $option ] = isset( $all_options[ $option ] ) ? \maybe_unserialize( $all_options[ $option ] ) : false;
-			if ( $redirects[ $option ] === false ) {
-				$redirects[ $option ] = \get_option( $option, false );
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Normal methods only work if the option value has changed.
-				$wpdb->update( $wpdb->options, [ 'autoload' => 'yes' ], [ 'option_name' => $option ] );
-			}
-		}
-
-		return $redirects;
-	}
-
-	/**
 	 * Sets the hook for setting the template include. This is the file that we want to show.
 	 *
 	 * @param string $template_to_set The template to look for.
@@ -667,8 +633,9 @@ class Redirect_Handler implements Initializer_Interface {
 			require_once \ABSPATH . 'wp-includes/pluggable.php';
 		}
 
+		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Location is validated by redirect logic before calling this method.
 		\wp_redirect( $location, $status, 'Yoast SEO Premium' );
-		exit;
+		exit();
 	}
 
 	/**
@@ -691,5 +658,37 @@ class Redirect_Handler implements Initializer_Interface {
 	 */
 	protected function get_query_template( $filename ) {
 		return \get_query_template( $filename );
+	}
+
+	/**
+	 * Actually handles redirects.
+	 *
+	 * @return void
+	 */
+	public function handle_redirects() {
+		// Set the requested URL.
+		$this->set_request_url();
+
+		// Check the normal redirects.
+		$this->handle_normal_redirects( $this->request_url );
+
+		// Check the regex redirects.
+		if ( $this->is_redirected() === false ) {
+			$this->handle_regex_redirects();
+		}
+	}
+
+	/**
+	 * Checks if the current request is a Yoast WP JSON request.
+	 *
+	 * @return bool True when it is a Yoast WP JSON request.
+	 */
+	private function is_yoast_wp_json_request(): bool {
+		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
+		$path = \sanitize_text_field( \wp_unslash( $_SERVER['REQUEST_URI'] ) );
+
+		return ( \strpos( $path, 'yoast/v1/redirects/' ) !== false );
 	}
 }

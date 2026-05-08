@@ -10,7 +10,7 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -88,6 +88,7 @@ class Documents_Manager {
 		add_filter( 'page_row_actions', [ $this, 'filter_post_row_actions' ], 11, 2 );
 		add_filter( 'user_has_cap', [ $this, 'remove_user_edit_cap' ], 10, 3 );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
+		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
 	}
 
 	/**
@@ -136,16 +137,16 @@ class Documents_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param string $type  Document type name.
-	 * @param string $class The name of the class that registers the document type.
-	 *                      Full name with the namespace.
+	 * @param string $type       Document type name.
+	 * @param string $class_name The name of the class that registers the document type.
+	 *                           Full name with the namespace.
 	 *
 	 * @return Documents_Manager The updated document manager instance.
 	 */
-	public function register_document_type( $type, $class ) {
-		$this->types[ $type ] = $class;
+	public function register_document_type( $type, $class_name ) {
+		$this->types[ $type ] = $class_name;
 
-		$cpt = $class::get_property( 'cpt' );
+		$cpt = $class_name::get_property( 'cpt' );
 
 		if ( $cpt ) {
 			foreach ( $cpt as $post_type ) {
@@ -153,7 +154,7 @@ class Documents_Manager {
 			}
 		}
 
-		if ( $class::get_property( 'register_type' ) ) {
+		if ( $class_name::get_property( 'register_type' ) ) {
 			Source_Local::add_template_type( $type );
 		}
 
@@ -194,32 +195,48 @@ class Documents_Manager {
 		$post_id = apply_filters( 'elementor/documents/get/post_id', $post_id );
 
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
-
-			if ( wp_is_post_autosave( $post_id ) ) {
-				$post_type = get_post_type( wp_get_post_parent_id( $post_id ) );
-			} else {
-				$post_type = get_post_type( $post_id );
-			}
-
-			$doc_type = 'post';
-
-			if ( isset( $this->cpt[ $post_type ] ) ) {
-				$doc_type = $this->cpt[ $post_type ];
-			}
-
-			$meta_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
-
-			if ( $meta_type && isset( $this->types[ $meta_type ] ) ) {
-				$doc_type = $meta_type;
-			}
-
+			$doc_type = $this->get_doc_type_by_id( $post_id );
 			$doc_type_class = $this->get_document_type( $doc_type );
+
 			$this->documents[ $post_id ] = new $doc_type_class( [
 				'post_id' => $post_id,
 			] );
 		}
 
 		return $this->documents[ $post_id ];
+	}
+
+	/**
+	 * Retrieve a document after checking it exist and allowed to edit.
+	 *
+	 * @param string $id
+	 * @return Document
+	 * @throws \Exception If the document is not found or the current user is not allowed to edit it.
+	 * @since 3.13.0
+	 */
+	public function get_with_permissions( $id ): Document {
+		$document = $this->get( $id );
+
+		if ( ! $document ) {
+			throw new \Exception( 'Not found.' );
+		}
+
+		if ( ! $document->is_editable_by_current_user() ) {
+			throw new \Exception( 'Access denied.' );
+		}
+
+		return $document;
+	}
+
+	/**
+	 * A `void` version for `get_with_permissions`.
+	 *
+	 * @param string $id
+	 * @return void
+	 * @throws \Exception If the document is not found or the current user is not allowed to edit it.
+	 */
+	public function check_permissions( $id ) {
+		$this->get_with_permissions( $id );
 	}
 
 	/**
@@ -257,7 +274,11 @@ class Documents_Manager {
 	 * @return false|Document The document if it exist, False otherwise.
 	 */
 	public function get_doc_for_frontend( $post_id ) {
-		if ( is_preview() || Plugin::$instance->preview->is_preview_mode() ) {
+		$preview_id = (int) Utils::get_super_global_value( $_GET, 'preview_id' );
+		$is_preview = is_preview();
+		$is_nonce_verify = wp_verify_nonce( Utils::get_super_global_value( $_GET, 'preview_nonce' ), 'post_preview_' . $preview_id );
+
+		if ( ( $is_preview && $is_nonce_verify ) || Plugin::$instance->preview->is_preview_mode() ) {
 			$document = $this->get_doc_or_auto_save( $post_id, get_current_user_id() );
 		} else {
 			$document = $this->get( $post_id );
@@ -302,8 +323,8 @@ class Documents_Manager {
 	 * @since  2.0.0
 	 * @access public
 	 *
-	 * @param array $args      Optional. An array of key => value arguments to match against
-	 *                               the properties. Default is empty array.
+	 * @param array  $args      Optional. An array of key => value arguments to match against
+	 *                                the properties. Default is empty array.
 	 * @param string $operator Optional. The logical operation to perform. 'or' means only one
 	 *                               element from the array needs to match; 'and' means all elements
 	 *                               must match; 'not' means no elements may match. Default 'and'.
@@ -458,7 +479,7 @@ class Documents_Manager {
 	 *
 	 * Let the Document to filter the array of row action links on the Posts list table.
 	 *
-	 * @param array $actions
+	 * @param array    $actions
 	 * @param \WP_Post $post
 	 *
 	 * @return array
@@ -481,7 +502,7 @@ class Documents_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 *
-	 * @param $request Post ID.
+	 * @param array $request Post ID.
 	 *
 	 * @throws \Exception If current user don't have permissions to edit the post or the post is not using Elementor.
 	 *
@@ -526,11 +547,14 @@ class Documents_Manager {
 
 		$document->save( $data );
 
+		$post = $document->get_post();
+		$main_post = $document->get_main_post();
+
 		// Refresh after save.
-		$document = $this->get( $document->get_post()->ID, false );
+		$document = $this->get( $post->ID, false );
 
 		$return_data = [
-			'status' => $document->get_post()->post_status,
+			'status' => $post->post_status,
 			'config' => [
 				'document' => [
 					'last_edited' => $document->get_last_edited(),
@@ -540,6 +564,15 @@ class Documents_Manager {
 				],
 			],
 		];
+
+		$post_status_object = get_post_status_object( $main_post->post_status );
+
+		if ( $post_status_object ) {
+			$return_data['config']['document']['status'] = [
+				'value' => $post_status_object->name,
+				'label' => $post_status_object->label,
+			];
+		}
 
 		/**
 		 * Returned documents ajax saved data.
@@ -561,15 +594,16 @@ class Documents_Manager {
 	 *
 	 * Load the document data from an autosave, deleting unsaved changes.
 	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @param $request
+	 * @param array $request
 	 *
 	 * @return bool True if changes discarded, False otherwise.
+	 * @throws \Exception If current user don't have permissions to edit the post or the post is not using Elementor.
+	 *
+	 * @since 2.0.0
+	 * @access public
 	 */
 	public function ajax_discard_changes( $request ) {
-		$document = $this->get( $request['editor_post_id'] );
+		$document = $this->get_with_permissions( $request['editor_post_id'] );
 
 		$autosave = $document->get_autosave();
 
@@ -590,7 +624,7 @@ class Documents_Manager {
 		$document = $this->get_doc_or_auto_save( $post_id );
 
 		if ( ! $document ) {
-			throw new \Exception( 'Not Found.' );
+			throw new \Exception( 'Not found.' );
 		}
 
 		if ( ! $document->is_editable_by_current_user() ) {
@@ -698,7 +732,7 @@ class Documents_Manager {
 	 *
 	 * Retrieve a custom URL for creating a new post/page using Elementor.
 	 *
-	 * @param string $post_type Optional. Post type slug. Default is 'page'.
+	 * @param string      $post_type Optional. Post type slug. Default is 'page'.
 	 * @param string|null $template_type Optional. Query arg 'template_type'. Default is null.
 	 *
 	 * @return string A URL for creating new post using Elementor.
@@ -718,5 +752,70 @@ class Documents_Manager {
 		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
 
 		return $new_post_url;
+	}
+
+	private function get_doc_type_by_id( $post_id ) {
+		// Auto-save inherits from the original post.
+		if ( wp_is_post_autosave( $post_id ) ) {
+			$post_id = wp_get_post_parent_id( $post_id );
+		}
+
+		// Content built with Elementor.
+		$template_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+
+		if ( $template_type && isset( $this->types[ $template_type ] ) ) {
+			return $template_type;
+		}
+
+		// Elementor installation on a site with existing content (which doesn't contain Elementor's meta).
+		$post_type = get_post_type( $post_id );
+
+		return $this->cpt[ $post_type ] ?? 'post';
+	}
+
+	public function register_rest_routes() {
+		register_rest_route('elementor/v1/documents', '/(?P<id>\d+)/media/import', [
+			'methods' => \WP_REST_Server::CREATABLE,
+			'callback' => function( $request ) {
+				$post_id = $request->get_param( 'id' );
+
+				try {
+					$document = $this->get_with_permissions( $post_id );
+
+					$elements_data = $document->get_elements_data();
+
+					$import_data = $document->get_import_data( [
+						'content' => $elements_data,
+					] );
+
+					$document->save( [
+						'elements' => $import_data['content'],
+					] );
+
+					return new \WP_REST_Response( [
+						'success' => true,
+						'document_saved' => true,
+					], 200 );
+
+				} catch ( \Exception $e ) {
+					return new \WP_Error(
+						'elementor_import_error',
+						$e->getMessage(),
+						[ 'status' => 500 ]
+					);
+				}
+			},
+			'permission_callback' => function() {
+				return current_user_can( 'manage_options' );
+			},
+			'args' => [
+				'id' => [
+					'required' => true,
+					'validate_callback' => function( $param ) {
+						return is_numeric( $param );
+					},
+				],
+			],
+		]);
 	}
 }

@@ -2,7 +2,7 @@
 /**
  * Configure Email
  *
- * @package  User_Registration_Settings_Email_Verified_Admin_Email
+ * @package  UR_Settings_Email_Verified_Admin_Email
  * @extends  UR_Settings_Email
  */
 
@@ -10,12 +10,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-if ( ! class_exists( 'User_Registration_Settings_Email_Verified_Admin_Email', false ) ) :
+if ( ! class_exists( 'UR_Settings_Email_Verified_Admin_Email', false ) ) :
 
 	/**
-	 * User_Registration_Settings_Email_Verified_Admin_Email Class.
+	 * UR_Settings_Email_Verified_Admin_Email Class.
 	 */
-	class User_Registration_Settings_Email_Verified_Admin_Email {
+	class UR_Settings_Email_Verified_Admin_Email {
+		/**
+		 * UR_Settings_Email_Verified_Admin_Email Id.
+		 *
+		 * @var string
+		 */
+		public $id;
+
+		/**
+		 * UR_Settings_Email_Verified_Admin_Email Title.
+		 *
+		 * @var string
+		 */
+		public $title;
+
+		/**
+		 * UR_Settings_Email_Verified_Admin_Email Description.
+		 *
+		 * @var string
+		 */
+		public $description;
+
+		/**
+		 * UR_Settings_Email_Verified_Admin_Email Receiver.
+		 *
+		 * @var string
+		 */
+		public $receiver;
+
 		/**
 		 * Constructor.
 		 */
@@ -23,6 +51,7 @@ if ( ! class_exists( 'User_Registration_Settings_Email_Verified_Admin_Email', fa
 			$this->id          = 'email_verified_admin_email';
 			$this->title       = __( 'Email Verified - Awaiting Admin Approval Email', 'user-registration' );
 			$this->description = __( 'Email sent to the admin when a user confirmed his/her email', 'user-registration' );
+			$this->receiver    = 'Admin';
 		}
 
 		/**
@@ -35,20 +64,24 @@ if ( ! class_exists( 'User_Registration_Settings_Email_Verified_Admin_Email', fa
 			$settings = apply_filters(
 				'user_registration_pro_email_verified_admin_email',
 				array(
-					'title' => __( 'Emails', 'user-registration' ),
+					'title'    => __( 'Emails', 'user-registration' ),
 					'sections' => array(
 						'admin_email' => array(
-							'title' => __( 'Email Verified - Awaiting Admin Approval Email', 'user-registration' ),
-							'type'  => 'card',
-							'desc'  => '',
-							'back_link' => ur_back_link( __( 'Return to emails', 'user-registration' ), admin_url( 'admin.php?page=user-registration-settings&tab=email' ) ),
-							'settings' => array(
+							'title'        => __( 'Email Verified - Awaiting Admin Approval Email', 'user-registration' ),
+							'type'         => 'card',
+							'desc'         => '',
+							'back_link'    => ur_back_link( __( 'Return to emails', 'user-registration' ), admin_url( 'admin.php?page=user-registration-settings&tab=email' ) ),
+							'preview_link' => ur_email_preview_link(
+								__( 'Preview', 'user-registration' ),
+								$this->id
+							),
+							'settings'     => array(
 								array(
 									'title'    => __( 'Enable this email', 'user-registration' ),
 									'desc'     => __( 'Enable this email to send to admin requesting admin approval after user has successfully confirmed email.', 'user-registration' ),
-									'id'       => 'user_registration_pro_enable_email_verified_admin_email',
+									'id'       => 'user_registration_enable_email_verified_admin_email',
 									'default'  => 'yes',
-									'type'     => 'checkbox',
+									'type'     => 'toggle',
 									'autoload' => false,
 								),
 								array(
@@ -93,22 +126,40 @@ if ( ! class_exists( 'User_Registration_Settings_Email_Verified_Admin_Email', fa
 		 */
 		public function ur_get_email_verified_admin_email() {
 
-			$message = apply_filters(
-				'user_registration_pro_email_verified_admin_email_message',
-				sprintf(
-					__(
-						'Hi Admin,<br/>
-						The user {{username}} has successfully verified the email address - {{email}}.<br/>
-						Please review the user role and details from the \'<b>Users</b>\' menu in your WP dashboard and approve accordingly.<br/>
-						Thank You!',
-						'user-registration'
-					)
-				)
+			$body_content = __(
+				'<p style="margin:0 0 20px 0; color:#000000; font-size:16px; line-height:1.6;">
+				 Hi Admin,
+			    </p>
+			    <p style="margin:0 0 20px 0; color:#000000; font-size:16px; line-height:1.6;">
+			        The user {{username}} has successfully verified the email address - {{email}}.
+			    </p>
+			    <p style="margin:0 0 20px 0; color:#000000; font-size:16px; line-height:1.6;">
+			        Please review the user role and details from the \'<b>Users</b>\' menu in your WP dashboard and approve accordingly.
+			    </p>
+			    <p style="margin:0 0 20px 0;">
+			        Click on this link to approve this user directly:
+			        <a href="{{approval_link}}" rel="noreferrer noopener" target="_blank" style="color:#4A90E2; text-decoration:none;">Approve</a><br />
+			        Click on this link to deny this user directly:
+			        <a href="{{denial_link}}" rel="noreferrer noopener" target="_blank" style="color:#4A90E2; text-decoration:none;">Deny</a>
+			    </p>
+			    <p style="margin:0 0 20px 0; color:#000000; font-size:16px; line-height:1.6;">
+			        Thank You!
+			    </p>',
+				'user-registration'
 			);
+
+			$body_content = ur_wrap_email_body_content( $body_content );
+
+			/**
+			 * Filter to modify the verified admin email message content.
+			 *
+			 * @param string $body_content Message to be overridden for admin email.
+			 */
+			$message = apply_filters( 'user_registration_pro_email_verified_admin_email_message', $body_content );
 
 			return $message;
 		}
 	}
 endif;
 
-return new User_Registration_Settings_Email_Verified_Admin_Email();
+return new UR_Settings_Email_Verified_Admin_Email();

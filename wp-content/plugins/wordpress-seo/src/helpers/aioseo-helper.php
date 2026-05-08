@@ -3,7 +3,6 @@
 namespace Yoast\WP\SEO\Helpers;
 
 use wpdb;
-use Yoast\WP\SEO\Helpers\Wpdb_Helper;
 
 /**
  * The AIOSEO Helper.
@@ -30,10 +29,7 @@ class Aioseo_Helper {
 	 * @param wpdb        $wpdb        The WordPress database instance.
 	 * @param Wpdb_Helper $wpdb_helper The wpdb helper.
 	 */
-	public function __construct(
-		wpdb $wpdb,
-		Wpdb_Helper $wpdb_helper
-	) {
+	public function __construct( wpdb $wpdb, Wpdb_Helper $wpdb_helper ) {
 		$this->wpdb        = $wpdb;
 		$this->wpdb_helper = $wpdb_helper;
 	}

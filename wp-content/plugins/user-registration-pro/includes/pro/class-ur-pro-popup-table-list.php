@@ -12,6 +12,8 @@ if ( ! class_exists( 'UR_List_Table' ) ) {
 	include_once dirname( UR_PLUGIN_FILE ) . '/includes/abstracts/abstract-ur-list-table.php';
 }
 
+ob_start();
+
 /**
  * Pro Popup list class.
  */
@@ -42,7 +44,7 @@ class User_Registration_Pro_Popup_Table_List extends UR_List_Table {
 		$this->popup_type = ! empty( $_REQUEST['popup_type'] ) ? $_REQUEST['popup_type'] : $latest;
 
 		$this->post_type       = 'ur_pro_popup';
-		$this->page            = 'user-registration-settings&tab=user-registration-pro&section=popups';
+		$this->page            = 'user-registration-settings&tab=registration_login&section=popup';
 		$this->per_page_option = 'user_registration_pro_popups_per_page';
 		parent::__construct(
 			array(
@@ -72,7 +74,7 @@ class User_Registration_Pro_Popup_Table_List extends UR_List_Table {
 	 * No items found text.
 	 */
 	public function no_items() {
-		$add_popup_link = esc_url( admin_url( 'admin.php?page=user-registration-settings&tab=user-registration-pro&section=add-new-popup' ) );
+		$add_popup_link = esc_url( admin_url( 'admin.php?page=user-registration-settings&tab=registration_login&section=popup&action=add-new-popup' ) );
 		if ( isset( $_REQUEST['status'] ) && $_REQUEST['status'] === 'active' ) {
 			esc_html_e( 'Whoops, it appears you do not have any active popups yet.', 'user-registration' );
 			echo '<a href="' . $add_popup_link . '"> Add now? </a>';
@@ -143,7 +145,7 @@ class User_Registration_Pro_Popup_Table_List extends UR_List_Table {
 	 * @return string
 	 */
 	public function get_edit_links( $row ) {
-		return admin_url( 'admin.php?page=user-registration-settings&tab=user-registration-pro&section=add-new-popup&amp;edit-popup=' . $row->ID );
+		return admin_url( 'admin.php?page=user-registration-settings&tab=registration_login&section=popup&action=add-new-popup&amp;edit-popup=' . $row->ID );
 	}
 
 	/**
@@ -154,7 +156,7 @@ class User_Registration_Pro_Popup_Table_List extends UR_List_Table {
 	 * @return string
 	 */
 	public function get_duplicate_link( $row ) {
-		return admin_url( 'admin.php?page=user-registration-settings&tab=user-registration-pro&section=add-new-popup&amp;edit-popup=' . $row->ID );
+		return admin_url( 'admin.php?page=user-registration-settings&tab=registration_login&section=popup&action=add-new-popup&amp;edit-popup=' . $row->ID );
 	}
 
 	/**
@@ -176,6 +178,7 @@ class User_Registration_Pro_Popup_Table_List extends UR_List_Table {
 			}
 		}
 	}
+
 
 	/**
 	 * Return status popup type.
@@ -201,9 +204,21 @@ class User_Registration_Pro_Popup_Table_List extends UR_List_Table {
 	function column_shortcode( $items ) {
 
 		$shortcode = '[user_registration_popup id="' . $items->ID . '"]';
-
-		return sprintf( '<span class="shortcode"><input type="text" onfocus="this.select();" readonly="readonly" value=\'%s\' class="large-text code"></span>', $shortcode );
-
+		ob_start();
+		?>
+		<div class='urm-shortcode'>
+			<input type="text" onfocus="this.select();" readonly="readonly"
+					value="<?php echo esc_attr($shortcode); ?>"
+					class="widefat code" size="35">
+			<button id="login-copy-shortcode" class="button ur-copy-shortcode" href="#" data-tip="<?php esc_attr_e( 'Copy Shortcode ! ', 'user-registration' ); ?>" data-copied="<?php esc_attr_e( 'Copied ! ', 'user-registration' ); ?>">
+				<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'>
+					<path fill='#383838' fill-rule='evenodd' d='M3.116 3.116A1.25 1.25 0 0 1 4 2.75h9A1.25 1.25 0 0 1 14.25 4v1a.75.75 0 0 0 1.5 0V4A2.75 2.75 0 0 0 13 1.25H4A2.75 2.75 0 0 0 1.25 4v9A2.75 2.75 0 0 0 4 15.75h1a.75.75 0 0 0 0-1.5H4A1.25 1.25 0 0 1 2.75 13V4c0-.332.132-.65.366-.884ZM9.75 11c0-.69.56-1.25 1.25-1.25h9c.69 0 1.25.56 1.25 1.25v9c0 .69-.56 1.25-1.25 1.25h-9c-.69 0-1.25-.56-1.25-1.25v-9ZM11 8.25A2.75 2.75 0 0 0 8.25 11v9A2.75 2.75 0 0 0 11 22.75h9A2.75 2.75 0 0 0 22.75 20v-9A2.75 2.75 0 0 0 20 8.25h-9Z' clip-rule='evenodd'></path>
+				</svg>
+			</button>
+		</div>
+		<?php
+		$shortcode_div = ob_get_clean();
+		return $shortcode_div;
 	}
 
 
@@ -363,12 +378,12 @@ class User_Registration_Pro_Popup_Table_List extends UR_List_Table {
 		$total_count = $active_count + $inactive_count;
 
 		/* translators: %s: count */
-		$status_links['all']      = "<a href='admin.php?page=user-registration-settings&tab=user-registration-pro&section=popups' class=" . $class . '>' . sprintf( _nx( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $total_count, 'codes', 'user-registration' ), number_format_i18n( $total_count ) ) . '</a>';
-		$status_links['active']   = "<a href='admin.php?page=user-registration-settings&tab=user-registration-pro&section=popups&status=active' class=" . $active_class . '>' . sprintf( _nx( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $active_count, 'codes', 'user-registration' ), number_format_i18n( $active_count ) ) . '</a>';
-		$status_links['inactive'] = "<a href='admin.php?page=user-registration-settings&tab=user-registration-pro&section=popups&status=inactive' class=" . $inactive_class . '>' . sprintf( _nx( 'In Active <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $inactive_count, 'codes', 'user-registration' ), number_format_i18n( $inactive_count ) ) . '</a>';
+		$status_links['all']      = "<a href='admin.php?page=user-registration-settings&tab=registration_login&section=popup' class=" . $class . '>' . sprintf( _nx( 'All <span class="count">(%s)</span>', 'All <span class="count">(%s)</span>', $total_count, 'codes', 'user-registration' ), number_format_i18n( $total_count ) ) . '</a>';
+		$status_links['active']   = "<a href='admin.php?page=user-registration-settings&tab=registration_login&section=popup&status=active' class=" . $active_class . '>' . sprintf( _nx( 'Active <span class="count">(%s)</span>', 'Active <span class="count">(%s)</span>', $active_count, 'codes', 'user-registration' ), number_format_i18n( $active_count ) ) . '</a>';
+		$status_links['inactive'] = "<a href='admin.php?page=user-registration-settings&tab=registration_login&section=popup&status=inactive' class=" . $inactive_class . '>' . sprintf( _nx( 'In Active <span class="count">(%s)</span>', 'Inactive <span class="count">(%s)</span>', $inactive_count, 'codes', 'user-registration' ), number_format_i18n( $inactive_count ) ) . '</a>';
 
 		if ( $trash_count > 0 ) {
-			$status_links['trashed'] = "<a href='admin.php?page=user-registration-settings&tab=user-registration-pro&section=popups&status=trashed' class=" . $trash_class . '>' . sprintf( _nx( 'Trash <span class="count">(%s)</span>', 'Trash <span class="count">(%s)</span>', $trash_count, 'codes', 'user-registration' ), number_format_i18n( $trash_count ) ) . '</a>';
+			$status_links['trashed'] = "<a href='admin.php?page=user-registration-settings&tab=registration_login&section=popup&status=trashed' class=" . $trash_class . '>' . sprintf( _nx( 'Trash <span class="count">(%s)</span>', 'Trash <span class="count">(%s)</span>', $trash_count, 'codes', 'user-registration' ), number_format_i18n( $trash_count ) ) . '</a>';
 		}
 
 		return $status_links;
@@ -383,7 +398,7 @@ class User_Registration_Pro_Popup_Table_List extends UR_List_Table {
 	 */
 	protected function extra_tablenav( $which ) {
 		if ( 'top' == $which && isset( $_GET['status'] ) && 'trashed' == $_GET['status'] && current_user_can( 'delete_posts' ) ) {
-			echo '<div class="alignleft actions"><a id="delete_all" class="button apply" href="' . esc_url( wp_nonce_url( admin_url( 'admin.php?page=user-registration-settings&tab=user-registration-pro&section=popups&status=trashed&empty_trash=1' ), 'empty_trash' ) ) . '">' . __( 'Empty trash', 'user-registration' ) . '</a></div>';
+			echo '<div class="alignleft actions"><a id="delete_all" class="button apply" href="' . esc_url( wp_nonce_url( admin_url( 'admin.php?page=user-registration-settings&tab=registration_login&section=popup&status=trashed&empty_trash=1' ), 'empty_trash' ) ) . '">' . __( 'Empty trash', 'user-registration' ) . '</a></div>';
 		}
 	}
 
@@ -394,12 +409,11 @@ class User_Registration_Pro_Popup_Table_List extends UR_List_Table {
 		$this->prepare_items();
 		?>
 
-		<div class="wrap">
+		<div class="wrap" id="urm-popup-table">
 			<h3 class="ur-settings-section-header main_header">
-				<?php esc_html_e( 'User Registration Popups', 'user-registration' ); ?>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=user-registration-settings&tab=user-registration-pro&section=add-new-popup' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'user-registration' ); ?></a>
+				<?php esc_html_e( 'User Registration & Membership Popups', 'user-registration' ); ?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=user-registration-settings&tab=registration_login&section=popup&action=add-new-popup' ) ); ?>" class="page-title-action"><?php esc_html_e( 'Add New', 'user-registration' ); ?></a>
 			</h3>
-			<hr class="wp-header-end">
 			<br class="clear">
 			<?php
 
@@ -426,9 +440,9 @@ class User_Registration_Pro_Popup_Table_List extends UR_List_Table {
 
 			<form id="popups-select" method="get">
 				<input type="hidden" name="page" value="user-registration-settings" />
-				<input type="hidden" name="tab" value="user-registration-pro" />
+				<input type="hidden" name="tab" value="misc" />
 				<input type="hidden" name="section" value="popups" />
-				<select id = "form-select" name ="popup_type">
+				<select id = "form-select" name="popup_type" class="ur-enhanced-select">
 					<?php
 					foreach ( $forms as $key => $form ) {
 						echo '<option value="' . $key . '" ' . selected( $selected, $key, false ) . '>' . $form . '</option>';
@@ -441,7 +455,7 @@ class User_Registration_Pro_Popup_Table_List extends UR_List_Table {
 
 			<form id="popups-list" method="get">
 				<input type="hidden" name="page" value="user-registration-settings" />
-				<input type="hidden" name="tab" value="user-registration-pro" />
+				<input type="hidden" name="tab" value="misc" />
 				<input type="hidden" name="section" value="popups" />
 				<?php
 					$this->views();
@@ -451,5 +465,6 @@ class User_Registration_Pro_Popup_Table_List extends UR_List_Table {
 			</form>
 		</div>
 		<?php
+		ob_end_flush();
 	}
 }

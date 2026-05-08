@@ -7,7 +7,7 @@ use Elementor\Group_Control_Typography;
 use Elementor\Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Global_Typography extends Tab_Base {
@@ -109,6 +109,11 @@ class Global_Typography extends Tab_Base {
 							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-letter-spacing: {{SIZE}}{{UNIT}}',
 						],
 					],
+					'word_spacing' => [
+						'selectors' => [
+							'{{SELECTOR}}' => '--e-global-typography-{{external._id.VALUE}}-word-spacing: {{SIZE}}{{UNIT}}',
+						],
+					],
 				],
 			]
 		);
@@ -195,8 +200,13 @@ class Global_Typography extends Tab_Base {
 				'description' => esc_html__( 'The list of fonts used if the chosen font is not available.', 'elementor' ),
 				'label_block' => true,
 				'separator' => 'before',
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
+
+		do_action( 'elementor/kit/global-typography/register_controls', $this );
 
 		$this->end_controls_section();
 	}

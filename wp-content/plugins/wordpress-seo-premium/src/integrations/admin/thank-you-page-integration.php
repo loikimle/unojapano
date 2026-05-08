@@ -53,6 +53,10 @@ class Thank_You_Page_Integration implements Integration_Interface {
 	 * @return void
 	 */
 	public function maybe_redirect() {
+		if ( \wp_doing_ajax() || \wp_doing_cron() || \wp_is_serving_rest_request() || \wp_is_json_request() ) {
+			return;
+		}
+
 		if ( ! $this->options_helper->get( 'should_redirect_after_install' ) ) {
 			return;
 		}
@@ -64,7 +68,7 @@ class Thank_You_Page_Integration implements Integration_Interface {
 		$this->options_helper->set( 'activation_redirect_timestamp', \time() );
 
 		\wp_safe_redirect( \admin_url( 'admin.php?page=wpseo_installation_successful' ), 302, 'Yoast SEO Premium' );
-		exit;
+		exit();
 	}
 
 	/**
@@ -76,12 +80,12 @@ class Thank_You_Page_Integration implements Integration_Interface {
 	 */
 	public function add_submenu_page( $submenu_pages ) {
 		\add_submenu_page(
-			null,
+			'',
 			\__( 'Installation Successful', 'wordpress-seo-premium' ),
-			null,
+			'',
 			'manage_options',
 			'wpseo_installation_successful',
-			[ $this, 'render_page' ]
+			[ $this, 'render_page' ],
 		);
 
 		return $submenu_pages;
@@ -89,6 +93,8 @@ class Thank_You_Page_Integration implements Integration_Interface {
 
 	/**
 	 * Enqueue assets on the Thank you page.
+	 *
+	 * @return void
 	 */
 	public function enqueue_assets() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Date is not processed or saved.
@@ -103,6 +109,8 @@ class Thank_You_Page_Integration implements Integration_Interface {
 
 	/**
 	 * Renders the thank you page.
+	 *
+	 * @return void
 	 */
 	public function render_page() {
 		require \WPSEO_PREMIUM_PATH . 'classes/views/thank-you.php';

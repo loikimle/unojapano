@@ -38,7 +38,7 @@ class UR_Setting_Shipping_city extends UR_Field_Settings {
 				'type'        => 'text',
 				'required'    => false,
 				'default'     => '',
-				'placeholder' => esc_html__( 'Custom Class', 'user-registration' ),
+				'placeholder' => esc_html__( 'Custom Class', 'user-registration-woocommerce' ),
 				'tip'         => __( 'Custom css class to embed in this field.', 'user-registration-woocommerce' ),
 			),
 		);

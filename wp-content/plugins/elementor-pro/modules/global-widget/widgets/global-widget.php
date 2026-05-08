@@ -36,6 +36,7 @@ class Global_Widget extends Base_Widget {
 			$template_data = Plugin::elementor()->templates_manager->get_template_data( [
 				'source' => 'local',
 				'template_id' => $data['templateID'],
+				'check_permissions' => false,
 			] );
 
 			if ( is_wp_error( $template_data ) ) {
@@ -54,7 +55,7 @@ class Global_Widget extends Base_Widget {
 			);
 
 			if ( ! $original_widget_type ) {
-				throw new \Exception( 'Original Widget Type not found.' );
+				throw new \Exception( 'Original widget type not found.' );
 			}
 
 			// If it saved as draft it already have the recent settings.
@@ -83,6 +84,10 @@ class Global_Widget extends Base_Widget {
 		return false;
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::elementor()->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	public function get_raw_data( $with_html_content = false ) {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
@@ -100,6 +105,12 @@ class Global_Widget extends Base_Widget {
 			// If: Item saved as draft
 			// Then: the the `$raw_data` hold recently saved draft template, with original widget type.
 			$raw_data['widgetType'] = $this->get_template_widget_type();
+
+			return $raw_data;
+		}
+
+		if ( apply_filters( 'elementor/element/should_render_shortcode', false ) ) {
+			$raw_data['widgetType'] = $this->get_name();
 
 			return $raw_data;
 		}

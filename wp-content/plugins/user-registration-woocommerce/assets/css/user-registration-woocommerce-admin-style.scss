@@ -1,13 +1,153 @@
-.user_registration_woocommerce_form_fields_wrapper {
-	#cb {
-		width: 16px;
+.ur-setting-hidden {
+	display: none;
+}
 
-		input[type="checkbox"] {
-			margin-left: 0px;
-		}
+.select2-container {
+	.select2-dropdown {
+		box-shadow: none !important;
 	}
 }
 
-.ur-setting-hidden {
-	display: none;
+#woocommerce-product-data {
+	.product_data {
+		&_tabs {
+			.urwc_woocommerce_product_tabs_options {
+				a {
+					&::before {
+						content: '';
+						background-image: url("data:image/svg+xml,%3C!-- sample rectangle --%3E%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23475bb2' d='M27.58 4a27.9 27.9 0 0 0-5.17 4 27 27 0 0 0-4.09 5.08 33.06 33.06 0 0 1 2 4.65A23.78 23.78 0 0 1 24 12.15V18a8 8 0 0 1-5.89 7.72l-.21.05a27 27 0 0 0-1.9-8.16A27.9 27.9 0 0 0 9.59 8a27.9 27.9 0 0 0-5.17-4L4 3.77V18a12 12 0 0 0 9.93 11.82h.14a11.72 11.72 0 0 0 3.86 0h.14A12 12 0 0 0 28 18V3.77zM8 18v-5.85a23.86 23.86 0 0 1 5.89 13.57A8 8 0 0 1 8 18zm8-16a3 3 0 1 0 3 3 3 3 0 0 0-3-3z'/%3E%3C/svg%3E");
+						transition: background-image .05s ease-in-out;
+						margin-top: -2px;
+	
+						@media screen and (min-width: 901px) {
+							display: inline-block;
+							height: 16px;
+							vertical-align: middle;
+							width: 16px;
+						}
+	
+						@media screen and (max-width: 900px) {
+							background-size: 14px;
+							background-repeat: no-repeat;
+							background-position: center;
+							height: 40px;
+							width: 100%;
+						}					
+					}
+	
+					// &:hover,
+					// &:focus {
+					// 	&::before {
+					// 		background-image: url("data:image/svg+xml,%3C!-- sample rectangle --%3E%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23475bb2' d='M27.58 4a27.9 27.9 0 0 0-5.17 4 27 27 0 0 0-4.09 5.08 33.06 33.06 0 0 1 2 4.65A23.78 23.78 0 0 1 24 12.15V18a8 8 0 0 1-5.89 7.72l-.21.05a27 27 0 0 0-1.9-8.16A27.9 27.9 0 0 0 9.59 8a27.9 27.9 0 0 0-5.17-4L4 3.77V18a12 12 0 0 0 9.93 11.82h.14a11.72 11.72 0 0 0 3.86 0h.14A12 12 0 0 0 28 18V3.77zM8 18v-5.85a23.86 23.86 0 0 1 5.89 13.57A8 8 0 0 1 8 18zm8-16a3 3 0 1 0 3 3 3 3 0 0 0-3-3z'/%3E%3C/svg%3E");
+					// 	}
+					// }
+				}
+	
+				// &.active {
+				// 	a {
+				// 		&::before {
+				// 			background-image: url("data:image/svg+xml,%3C!-- sample rectangle --%3E%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23475bb2' d='M27.58 4a27.9 27.9 0 0 0-5.17 4 27 27 0 0 0-4.09 5.08 33.06 33.06 0 0 1 2 4.65A23.78 23.78 0 0 1 24 12.15V18a8 8 0 0 1-5.89 7.72l-.21.05a27 27 0 0 0-1.9-8.16A27.9 27.9 0 0 0 9.59 8a27.9 27.9 0 0 0-5.17-4L4 3.77V18a12 12 0 0 0 9.93 11.82h.14a11.72 11.72 0 0 0 3.86 0h.14A12 12 0 0 0 28 18V3.77zM8 18v-5.85a23.86 23.86 0 0 1 5.89 13.57A8 8 0 0 1 8 18zm8-16a3 3 0 1 0 3 3 3 3 0 0 0-3-3z'/%3E%3C/svg%3E");
+				// 		}
+				// 	}
+				// }
+			}
+		}
+
+		#urwc_product_data {
+			padding: 24px;
+
+			.user-registration-card {
+				margin-bottom: 30px;
+
+				&__header {
+					padding-bottom: 16px;
+					margin-bottom: 20px;
+					border-bottom: 1px solid #e2e2e2;
+				}
+
+				&__title {
+					margin: 0;
+					font-size: 17px;
+				}
+
+				&__body {
+					.user-registration-global-settings {
+						display: flex;
+						flex-direction: column;
+						gap: 6px;
+
+						label {
+							font-size: 14px;
+							width: auto;
+							margin-left: 0;
+							color: #383838;
+						}
+
+						&--field {
+							height: 36px;
+
+							.select2-container {
+								&--focus,
+								&--open {
+									.select2-selection--single {
+										box-shadow: none;
+									}
+								}
+
+								.select2-selection {
+									height: 36px;
+
+									&__rendered {
+										line-height: 34px;
+									}
+
+									&__arrow {
+										top: 4px;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			.user_registration_woocommerce_form_fields_wrapper {
+				table {
+					thead,
+					tfoot {
+						tr {
+							th {
+								padding: 12px 10px;
+								font-size: 14px;
+								font-weight: 600;
+
+								&#cb {
+									width: 16px;
+
+									input[type="checkbox"] {
+										margin-top: 2px;
+										margin-left: 0px;
+									}
+								}
+							}
+						}
+					}
+
+					tbody {
+						tr {
+							td {
+								padding: 12px 10px;
+
+								input {
+									&[type="checkbox"] {
+										margin-top: -2px;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }

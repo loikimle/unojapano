@@ -55,6 +55,10 @@ class WeForms extends Widget_Base
         ];
     }
 
+    public function has_widget_inner_wrapper(): bool {
+        return ! Helper::eael_e_optimized_markup();
+    }
+
     public function get_custom_help_url()
     {
         return 'https://essential-addons.com/elementor/docs/weforms/';
@@ -796,7 +800,7 @@ class WeForms extends Widget_Base
 
         if (!empty($settings['wpuf_contact_form'])) {
             echo '<div class="eael-weform-container">
-			' . do_shortcode('[weforms id="' . $settings['wpuf_contact_form'] . '" ]') . '
+			' . do_shortcode('[weforms id="' . esc_attr( $settings['wpuf_contact_form'] ) . '" ]') . '
 		</div>';
         }
     }

@@ -89,6 +89,50 @@ class Options {
 				),
 				'utmKey' => 'spring_sale_meta',
 			),
+
+			// Flash sale
+			array(
+				'start'  => '2026-05-07 00:00 Asia/Dhaka',
+				'end'    => '2026-05-21 23:59 Asia/Dhaka',
+				'text'   => __(
+					'Flash Sale - Up to 45% OFF',
+					'ultimate-post'
+				),
+				'utmKey' => 'flash_sale_meta',
+			),
+
+			// Surprise Sale
+			array(
+				'start'  => '2026-05-22 00:00 Asia/Dhaka',
+				'end'    => '2026-06-01 23:59 Asia/Dhaka',
+				'text'   => __(
+					'Surprise Sale - Up to 50% OFF',
+					'ultimate-post'
+				),
+				'utmKey' => 'surprise_sale_meta',
+			),
+
+			// Massive Sale
+			array(
+				'start'  => '2026-06-02 00:00 Asia/Dhaka',
+				'end'    => '2026-06-20 23:59 Asia/Dhaka',
+				'text'   => __(
+					'Massive Sale - Up to 50% OFF',
+					'ultimate-post'
+				),
+				'utmKey' => 'massive_sale_meta',
+			),
+
+			// Final hours sale
+			array(
+				'start'  => '2026-06-21 00:00 Asia/Dhaka',
+				'end'    => '2026-06-30 23:59 Asia/Dhaka',
+				'text'   => __(
+					'Final Hours Sale - Up to 50% OFF',
+					'ultimate-post'
+				),
+				'utmKey' => 'final_hour_meta',
+			),
 		);
 
 		$setting_link = array(

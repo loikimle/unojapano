@@ -18,6 +18,28 @@ if ( ! class_exists( 'User_Registration_Settings_Redirection_After_Login', false
 	 * User_Registration_Settings_Redirection_After_Login Class.
 	 */
 	class User_Registration_Settings_Redirection_After_Login {
+		/**
+		 * User_Registration_Settings_Redirection_After_Login Id.
+		 *
+		 * @var string
+		 */
+		public $id;
+
+		/**
+		 * User_Registration_Settings_Redirection_After_Login Title.
+		 *
+		 * @var string
+		 */
+		public $title;
+
+		/**
+		 * User_Registration_Settings_Redirection_After_Login Description.
+		 *
+		 * @var string
+		 */
+		public $description;
+
+
 
 		public function __construct() {
 			$this->id          = 'redirection_after_login';
@@ -35,19 +57,19 @@ if ( ! class_exists( 'User_Registration_Settings_Redirection_After_Login', false
 			$settings = apply_filters(
 				'user_registration_redirection_after_login',
 				array(
-					'title' => __( 'Role Based Redirection', 'user-registration' ),
-					'sections' => array (
+					'title'    => __( 'Role Based Redirection', 'user-registration' ),
+					'sections' => array(
 						'redirection_after_login' => array(
-							'title' => __( 'Redirection After Login Settings', 'user-registration' ),
-							'id'	=> 'redirection_after_login',
-							'type'  => 'card',
-							'desc'  => '',
-							'back_link' => ur_back_link( __( 'Return to Redirection Type', 'user-registration' ), admin_url( 'admin.php?page=user-registration-settings&tab=user-registration-pro&section=role-based-redirection' ) ),
-							'settings' => array(
+							'title'     => __( 'Redirection After Login Settings', 'user-registration' ),
+							'id'        => 'redirection_after_login',
+							'type'      => 'card',
+							'desc'      => '',
+							'back_link' => ur_back_link( __( 'Return to Redirection Type', 'user-registration' ), admin_url( 'admin.php?page=user-registration-settings&tab=registration_login&section=role-based-redirection' ) ),
+							'settings'  => array(
 
 								array(
-									'id'       => 'user_registration_pro_redirection_after_login',
-									'type'     => 'redirection_after_login',
+									'id'   => 'user_registration_pro_redirection_after_login',
+									'type' => 'redirection_after_login',
 								),
 							),
 						),
@@ -65,31 +87,31 @@ if ( ! class_exists( 'User_Registration_Settings_Redirection_After_Login', false
 		 */
 		public function redirection_after_login( $settings ) {
 
-		    $settings .= '<tr valign="top">';
+			$settings .= '<tr valign="top">';
 			$settings .= '<td class="ur_emails_wrapper" colspan="2">';
 			$settings .= '<table class="ur_emails widefat" cellspacing="0">';
 			$settings .= '<tbody>';
 
-			$selected_roles_pages = get_option('ur_pro_settings_redirection_after_login', array() );
+			$selected_roles_pages = get_option( 'ur_pro_settings_redirection_after_login', array() );
 
 			foreach ( ur_get_default_admin_roles() as $key => $value ) {
 				$settings .= '<tr><td class="ur-email-settings-table">';
-				$settings .=  __( $value, 'user-registration' );
+				$settings .= __( $value, 'user-registration' );
 				$settings .= '</td>';
 				$settings .= '<td class="ur-email-settings-table">';
-				$settings .= '<select name="'.$key.'" id="'.$key.'" >';
-				$pages = get_pages();
+				$settings .= '<select name="' . $key . '" id="' . $key . '" >';
+				$pages     = get_pages();
 				$settings .= '<option value="" >---Select a page---</option>';
 
 				foreach ( $pages as $page ) {
 
-					if ( !empty( $selected_roles_pages ) && $selected_roles_pages[$key] === $page->ID ) {
-						$selected ='selected=selected';
+					if ( ! empty( $selected_roles_pages ) && $selected_roles_pages[ $key ] === $page->ID ) {
+						$selected = 'selected=selected';
 					} else {
 						$selected = '';
 					}
 
-					$settings .= '<option value="'.$page->ID.'" '.$selected.' >'.$page->post_title.'</option>';
+					$settings .= '<option value="' . $page->ID . '" ' . $selected . ' >' . $page->post_title . '</option>';
 				}
 				$settings .= '</select>';
 				$settings .= '</td>';

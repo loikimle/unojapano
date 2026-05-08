@@ -61,7 +61,7 @@ class UR_Setting_Billing_country extends UR_Field_Settings {
 				'type'        => 'text',
 				'required'    => false,
 				'default'     => '',
-				'placeholder' => esc_html__( 'Custom Class', 'user-registration' ),
+				'placeholder' => esc_html__( 'Custom Class', 'user-registration-woocommerce' ),
 				'tip'         => __( 'Custom css class to embed in this field.', 'user-registration-woocommerce' ),
 			),
 		);
@@ -74,11 +74,7 @@ class UR_Setting_Billing_country extends UR_Field_Settings {
 	 */
 	public function get_default_value_options() {
 
-		if ( ! isset( $this->field_data->advance_setting->selected_countries ) ) {
-			return array();
-		}
-
-		$selected_countries = $this->field_data->advance_setting->selected_countries;
+		$selected_countries = isset( $this->field_data->advance_setting->selected_countries ) ? $this->field_data->advance_setting->selected_countries : null;
 		$value              = UR_Form_Field_Billing_Country::get_instance()->get_country();
 
 		// Get only the selected countries

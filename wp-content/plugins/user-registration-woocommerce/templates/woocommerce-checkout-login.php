@@ -5,7 +5,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-if ( is_user_logged_in() || 'no' === get_option( 'woocommerce_enable_checkout_login_reminder' ) ) {
+if ( is_user_logged_in() || ! ur_string_to_bool( get_option( 'woocommerce_enable_checkout_login_reminder' ) ) ) {
 	return;
 }
 

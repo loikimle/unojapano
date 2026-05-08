@@ -393,6 +393,10 @@
 				template_style = $wrapper.attr("data-template-" + template),
 				setting_link = "user_registration_styles[" + data.form_id + "]";
 
+			if ( 'undefined' === typeof template_style ) {
+				return false;
+			}
+
 			template_style = JSON.parse(template_style);
 
 			$.each(template_style, function (section, section_values) {
@@ -412,6 +416,10 @@
 				$wrapper = $controls.find("ul.image-radio-wrapper"),
 				template_style = $wrapper.attr("data-template-" + template),
 				setting_link = "user_registration_login_styles";
+
+				if ( 'undefined' === typeof template_style ) {
+					return false;
+				}
 
 			template_style = JSON.parse(template_style);
 
@@ -445,6 +453,7 @@
 							".image-checkbox-hidden-value"
 						);
 						$input.val(JSON.stringify(values)).trigger("change");
+						values = maybe_parse_json( values );
 						$.each(values, function (index, value) {
 							$container
 								.find(
@@ -804,4 +813,190 @@
 			}
 		);
 	});
+
+	$(function () {
+		/**
+		 * Render fields to create style templates.
+		 */
+		var render_save_template = function () {
+			var form_id = _urCustomizeControlsL10n.form_id;
+			var templates_box = $(
+				"#customize-control-user_registration_styles-" +
+					form_id +
+					"-template"
+			);
+
+			if ( 'login' === data.customize ) {
+				var templates_box = $(
+					"#customize-control-user_registration_login_styles-template"
+				);
+			}
+
+			var save_template_container = $(
+				"<div id='user-registration-save-template-container'></div>"
+			);
+
+			save_template_container.append(
+				$(
+					'<span class="customize-control-title">Create Style Template</span>'
+				)
+			);
+			save_template_container.append(
+				$(
+					'<span class="description customize-control-description">Create a new style template from current styles.</span>'
+				)
+			);
+			save_template_container.append(
+				$(
+					"<input type='text' id='user-registration-new-template-name' placeholder='Template Name' />"
+				)
+			);
+			save_template_container.append(
+				$(
+					"<div><button class='button button-primary' id='user-registration-save-template-button'>Create</button></div>"
+				)
+			);
+
+			templates_box.before(save_template_container);
+			var save_template_btn = save_template_container.find("div button");
+
+			save_template_btn.bind("click", function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+
+				if ("disabled" === $("#save.save").attr("disabled")) {
+					send_save_template_request( this );
+				} else {
+					alert( data.messages.error_save_changes );
+				}
+			});
+		};
+
+
+		/**
+		 * Send post ajax request to save template.
+		 */
+		var send_save_template_request = function ( el ) {
+			var template_name = $("#user-registration-new-template-name").val();
+			if (template_name.length) {
+				$.post(_urCustomizeControlsL10n.ajax_url, {
+					action: "save_template",
+					name: template_name,
+					customize: data.customize,
+					form_id: _urCustomizeControlsL10n.form_id,
+					_nonce: _urCustomizeControlsL10n.save_nonce,
+				}).done(function (response) {
+					if ( response.success ) {
+						var control_id = '';
+
+						if ( 'login' === data.customize ) {
+							control_id = 'user_registration_login_styles[template]';
+						} else {
+							control_id = "user_registration_styles[" + data.form_id + "][template]";
+						}
+
+						api.control(
+							control_id,
+							function (control) {
+								control.setting.set( response.data.template_id );
+								api.previewer.save();
+
+								api.bind( 'saved', function() {
+									location.reload();
+								});
+							}
+						);
+					} else {
+						alert( response.data.message );
+					}
+				});
+			} else {
+				alert(data.messages.invalid_template_name);
+			}
+		};
+
+
+		/**
+		 * Add delete icon to templates.
+		 */
+		var add_delete_template_icon = function() {
+			var form_id = _urCustomizeControlsL10n.form_id;
+			var templates_box = $(
+				"#customize-control-user_registration_styles-" +
+					form_id +
+					"-template"
+			);
+
+			if ( 'login' === data.customize ) {
+				var templates_box = $(
+					"#customize-control-user_registration_login_styles-template"
+				);
+			}
+
+			var templates = templates_box.find( '.image-radio-wrapper li' );
+			var delete_btn = $( '<span class="ur-delete-template-btn dashicons dashicons-no" title="Delete Template"></span>' );
+
+			templates.each(function() {
+				var $this = $(this);
+				if ( ! ( ['default', 'layout-two'].includes( $this.find('input').val() ) ) ) {
+
+					var custom_delete_btn = delete_btn.clone().hide();
+
+					custom_delete_btn.bind( 'click', function() {
+						var confirm_delete = confirm( data.messages.delete_template_confirmation );
+
+							if ( confirm_delete ) {
+								send_delete_template_request( $this );
+							}
+					});
+
+					$this.append( custom_delete_btn );
+
+					$this.bind( 'mouseover', function() {
+						custom_delete_btn.show();
+					});
+
+					$this.bind( 'mouseout', function() {
+						custom_delete_btn.hide();
+					});
+				}
+			});
+
+
+			/**
+			 * Send post ajax request to delete template.
+			 */
+			var send_delete_template_request = function( el ) {
+				var template = $( el );
+				var template_name = template.find('input').val();
+
+				$.post(_urCustomizeControlsL10n.ajax_url, {
+					action: "delete_template",
+					name: template_name,
+					customize: data.customize,
+					_nonce: _urCustomizeControlsL10n.delete_nonce,
+				}).done(function (data) {
+					if ( data.success ) {
+						template.remove();
+					}
+				});
+			}
+		}
+
+		render_save_template();
+		add_delete_template_icon();
+	});
 })(jQuery, wp.customize, _urCustomizeControlsL10n);
+
+function maybe_parse_json( value ) {
+	try{
+		var o = JSON.parse( value );
+
+		if ( o && typeof o === 'object' ) {
+			return JSON.parse( value );
+		}
+	}
+	catch (e) {}
+
+	return value;
+}

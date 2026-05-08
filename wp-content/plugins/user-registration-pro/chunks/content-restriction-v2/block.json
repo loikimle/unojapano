@@ -1,0 +1,73 @@
+{
+  "$schema": "https://schemas.wp.org/block-json/1.1",
+  "apiVersion": 3,
+  "name": "user-registration/content-restriction-v2",
+  "version": "1.0.0",
+  "title": "Content Restriction",
+  "category": "user-registration",
+  "description": "A basic wrapper block with partial content restriction capabilities for pages and posts.",
+  "keywords": [
+    "user registration content restriction",
+    "content restriction"
+  ],
+  "textdomain": "user-registration",
+  "example": {
+    "attributes": {},
+    "innerBlocks": [
+      {
+        "name": "core/gallery",
+        "attributes": {
+          "columns": 3,
+          "imageCrop": true,
+          "linkTo": "none"
+        }
+      },
+      {
+        "name": "core/paragraph",
+        "attributes": {
+          "content": "This block is restricted!!"
+        }
+      }
+    ],
+    "viewportWidth": 400
+  },
+  "supports": {
+    "className": true,
+    "customClassName": false,
+    "reusable": false
+  },
+  "attributes": {
+    "controlType": {
+      "type": "string",
+      "default": "access"
+    },
+    "controlCase": {
+      "type": "string",
+      "default": ""
+    },
+    "accessSpecificRoles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "accessMembershipRoles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "customRestrictionMessage": {
+      "type": "string",
+      "default": "The content is restricted!"
+    },
+    "restrictionMessageType": {
+      "type": "string",
+      "default": "global"
+    }
+  },
+  "editorScript": "user-registration-blocks-editor",
+  "editorStyle": "user-registration-blocks-editor"
+}

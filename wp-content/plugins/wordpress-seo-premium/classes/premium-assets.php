@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore Yoast.Files.FileName.InvalidClassFileName -- Reason: this is an old premium file.
 /**
  * WPSEO Premium plugin file.
  *
@@ -19,6 +19,7 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 	 */
 	public function register_hooks() {
 		add_action( 'admin_init', [ $this, 'register_assets' ] );
+		add_action( 'init', [ $this, 'register_frontend_assets' ], 11 );
 	}
 
 	/**
@@ -33,6 +34,18 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 
 		array_walk( $scripts, [ $this, 'register_script' ] );
 		array_walk( $styles, [ $this, 'register_style' ] );
+	}
+
+	/**
+	 * Registers the assets for premium.
+	 *
+	 * @return void
+	 */
+	public function register_frontend_assets() {
+		$version = $this->get_version();
+		$scripts = $this->get_frontend_scripts( $version );
+
+		array_walk( $scripts, [ $this, 'register_script' ] );
 	}
 
 	/**
@@ -55,16 +68,44 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 	 *
 	 * @param string $version Current version number.
 	 *
-	 * @return array The scripts.
+	 * @return array<array<string|array>> The scripts.
+	 */
+	protected function get_frontend_scripts( $version ) {
+		return [
+			[
+				'name'         => 'yoast-seo-premium-frontend-inspector',
+				'path'         => 'assets/js/dist/',
+				'filename'     => 'frontend-inspector-' . $version . WPSEO_CSSJS_SUFFIX . '.js',
+				'dependencies' => [
+					'lodash',
+					'react',
+					'react-dom',
+					'wp-api-fetch',
+					'wp-data',
+					'wp-dom-ready',
+					'wp-element',
+					'wp-i18n',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'frontend-inspector-resources',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'prop-types-package',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'style-guide',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'yoast-components',
+				],
+				'in_footer'    => true,
+			],
+		];
+	}
+
+	/**
+	 * Retrieves an array of script to register.
+	 *
+	 * @codeCoverageIgnore Returns a simple dataset.
+	 *
+	 * @param string $version Current version number.
+	 *
+	 * @return array<array<string|array>> The scripts.
 	 */
 	protected function get_scripts( $version ) {
 		return [
-			[
-				'name'         => 'yoast-seo-premium-commons',
-				'path'         => 'assets/js/dist/',
-				'filename'     => 'commons-premium-' . $version . WPSEO_CSSJS_SUFFIX . '.js',
-				'dependencies' => [],
-			],
 			[
 				'name'         => 'yoast-seo-premium-metabox',
 				'path'         => 'assets/js/dist/',
@@ -72,6 +113,7 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 				'dependencies' => [
 					'clipboard',
 					'jquery',
+					'regenerator-runtime',
 					'underscore',
 					'wp-api-fetch',
 					'wp-components',
@@ -79,15 +121,23 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 					'wp-element',
 					'wp-i18n',
 					'wp-util',
-					'yoast-seo-premium-commons',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'analysis',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'editor-modules',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'help-scout-beacon',
-					WPSEO_Admin_Asset_Manager::PREFIX . 'legacy-components',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'search-metadata-previews',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'social-metadata-forms',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'social-metadata-previews-package',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'yoast-components',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'related-keyphrase-suggestions-package',
+				],
+			],
+			[
+				'name'         => 'yoast-seo-premium-draft-js-plugins',
+				'path'         => 'assets/js/dist/',
+				'filename'     => 'wp-seo-premium-draft-js-plugins-' . $version . WPSEO_CSSJS_SUFFIX . '.js',
+				'in_footer'    => true,
+				'dependencies' => [
+					WPSEO_Admin_Asset_Manager::PREFIX . 'search-metadata-previews',
 				],
 			],
 			[
@@ -97,6 +147,7 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 				'dependencies' => [
 					'clipboard',
 					'lodash',
+					'regenerator-runtime',
 					'wp-api-fetch',
 					'wp-a11y',
 					'wp-components',
@@ -105,10 +156,8 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 					'wp-dom-ready',
 					'wp-element',
 					'wp-i18n',
-					'yoast-seo-premium-commons',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'analysis',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'admin-modules',
-					WPSEO_Admin_Asset_Manager::PREFIX . 'react-select',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'yoast-components',
 				],
 			],
@@ -154,7 +203,6 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 				'filename'     => 'wp-seo-premium-custom-fields-plugin-' . $version . WPSEO_CSSJS_SUFFIX . '.js',
 				'dependencies' => [
 					'jquery',
-					'yoast-seo-premium-commons',
 				],
 			],
 			[
@@ -165,7 +213,6 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 					'jquery',
 					'wp-api',
 					'wp-api-fetch',
-					'yoast-seo-premium-commons',
 				],
 			],
 			[
@@ -176,7 +223,6 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 					'jquery',
 					'wp-api',
 					'wp-api-fetch',
-					'yoast-seo-premium-commons',
 				],
 			],
 			[
@@ -219,8 +265,8 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 					'wp-i18n',
 					'yoast-seo-premium-metabox',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'editor-modules',
-					WPSEO_Admin_Asset_Manager::PREFIX . 'legacy-components',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'yoast-components',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'ai-frontend-package',
 				],
 			],
 			[
@@ -228,7 +274,7 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 				'path'         => 'assets/js/dist/',
 				'filename'     => 'yoast-premium-prominent-words-indexation-' . $version . WPSEO_CSSJS_SUFFIX . '.js',
 				'dependencies' => [
-					'yoast-seo-premium-commons',
+					'regenerator-runtime',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'analysis',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'editor-modules',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'indexation',
@@ -241,6 +287,7 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 				'dependencies' => [
 					'clipboard',
 					'jquery',
+					'regenerator-runtime',
 					'underscore',
 					'wp-api-fetch',
 					'wp-components',
@@ -249,32 +296,106 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 					'wp-hooks',
 					'wp-i18n',
 					'wp-util',
-					'yoast-seo-premium-commons',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'analysis',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'editor-modules',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'help-scout-beacon',
-					WPSEO_Admin_Asset_Manager::PREFIX . 'legacy-components',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'search-metadata-previews',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'social-metadata-forms',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'social-metadata-previews-package',
 					WPSEO_Admin_Asset_Manager::PREFIX . 'yoast-components',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'related-keyphrase-suggestions-package',
 				],
 				'footer'       => true,
 			],
 			[
-				'name'         => 'wp-seo-premium-schema-blocks',
+				'name'         => 'wp-seo-premium-ai-optimize',
 				'path'         => 'assets/js/dist/',
-				'filename'     => 'wp-seo-premium-schema-blocks-' . $version . WPSEO_CSSJS_SUFFIX . '.js',
+				'filename'     => 'ai-fix-assessments-' . $version . WPSEO_CSSJS_SUFFIX . '.js',
 				'dependencies' => [
-					WPSEO_Admin_Asset_Manager::PREFIX . 'schema-blocks-package',
+					'lodash',
+					'react',
+					'regenerator-runtime',
+					'wp-api-fetch',
+					'wp-blocks',
+					'wp-components',
+					'wp-data',
+					'wp-dom',
+					'wp-dom-ready',
+					'wp-element',
+					'wp-hooks',
+					'wp-html-entities',
+					'wp-i18n',
+					'wp-polyfill',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'ai-frontend-package',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'analysis',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'editor-modules',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'prop-types-package',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'react-helmet-package',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'redux-js-toolkit-package',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'ui-library-package',
 				],
 			],
 			[
-				'name'         => 'wp-seo-premium-crawl-settings',
+				'name'         => 'wp-seo-premium-introductions',
 				'path'         => 'assets/js/dist/',
-				'filename'     => 'crawl-settings-' . $version . WPSEO_CSSJS_SUFFIX . '.js',
+				'filename'     => 'introductions-' . $version . WPSEO_CSSJS_SUFFIX . '.js',
+				'dependencies' => [
+					'lodash',
+					'regenerator-runtime',
+					'wp-api-fetch',
+					'wp-components',
+					'wp-data',
+					'wp-dom-ready',
+					'wp-element',
+					'wp-hooks',
+					'wp-i18n',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'introductions',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'ui-library-package',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'react-helmet-package',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'ai-frontend-package',
+				],
+			],
+			[
+				'name'         => 'wp-seo-premium-update-plugins',
+				'path'         => 'assets/js/dist/',
+				'filename'     => 'wp-seo-premium-update-plugins-' . $version . WPSEO_CSSJS_SUFFIX . '.js',
 				'dependencies' => [
 					'jquery',
+				],
+			],
+			[
+				'name'         => 'wp-seo-premium-admin-redirects',
+				'path'         => 'assets/js/dist/',
+				'filename'     => 'redirects-' . $version . WPSEO_CSSJS_SUFFIX . '.js',
+				'dependencies' => [
+					'wp-api',
+					'wp-api-fetch',
+					'wp-polyfill',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'editor-modules',
+				],
+			],
+			[
+				'name'         => 'wp-seo-premium-ai-blocks',
+				'path'         => 'assets/js/dist/',
+				'filename'     => 'ai-blocks-' . $version . WPSEO_CSSJS_SUFFIX . '.js',
+				'dependencies' => [
+					'lodash',
+					'react',
+					'react-jsx-runtime',
+					'wp-block-editor',
+					'wp-blocks',
+					'wp-components',
+					'wp-data',
+					'wp-dom-ready',
+					'wp-element',
+					'wp-i18n',
+					'wp-polyfill',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'ai-frontend-package',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'analysis',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'editor-modules',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'prop-types-package',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'redux-js-toolkit-package',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'ui-library-package',
 				],
 			],
 		];
@@ -287,9 +408,11 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 	 *
 	 * @param string $version Current version number.
 	 *
-	 * @return array The styles.
+	 * @return array<array<string|array>> The styles.
 	 */
 	protected function get_styles( $version ) {
+		$rtl_suffix = ( is_rtl() ) ? '-rtl' : '';
+
 		return [
 			[
 				'name'         => WPSEO_Admin_Asset_Manager::PREFIX . 'premium-metabox',
@@ -311,16 +434,53 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 				],
 			],
 			[
-				'name'         => WPSEO_Admin_Asset_Manager::PREFIX . 'premium-schema-blocks',
-				'source'       => 'assets/css/dist/premium-schema-blocks-' . $version . '.css',
-				'dependencies' => [
-					WPSEO_Admin_Asset_Manager::PREFIX . 'schema-blocks',
-				],
+				'name'         => WPSEO_Admin_Asset_Manager::PREFIX . 'premium-draft-js-plugins',
+				'source'       => 'assets/css/dist/premium-draft-js-plugins-' . $version . '.css',
+				'dependencies' => [],
 			],
 			[
 				'name'         => WPSEO_Admin_Asset_Manager::PREFIX . 'premium-thank-you',
 				'source'       => 'assets/css/dist/premium-thank-you-' . $version . '.css',
 				'dependencies' => [],
+			],
+			[
+				'name'         => WPSEO_Admin_Asset_Manager::PREFIX . 'premium-post-overview',
+				'source'       => 'assets/css/dist/premium-post-overview-' . $version . '.css',
+				'dependencies' => [],
+			],
+			[
+				'name'         => WPSEO_Admin_Asset_Manager::PREFIX . 'premium-tailwind',
+				// Note: The RTL suffix is not added here.
+				// Tailwind and our UI library provide styling that should be standalone compatible with RTL.
+				// To make it easier we should use the logical properties and values when possible.
+				// If there are exceptions, we can use the Tailwind modifier, e.g. `rtl:yst-space-x-reverse`.
+				'source'       => 'assets/css/dist/premium-tailwind-' . $version . '.css',
+				'dependencies' => [],
+			],
+			[
+				'name'         => WPSEO_Admin_Asset_Manager::PREFIX . 'premium-ai-fix-assessments',
+				'source'       => 'assets/css/dist/premium-ai-fix-assessments-' . $version . $rtl_suffix . '.css',
+				'dependencies' => [
+					WPSEO_Admin_Asset_Manager::PREFIX . 'ai-frontend',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'premium-tailwind',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'monorepo',
+				],
+			],
+			[
+				'name'         => WPSEO_Admin_Asset_Manager::PREFIX . 'premium-block-editor',
+				'source'       => 'assets/css/dist/premium-block-editor-' . $version . $rtl_suffix . '.css',
+				'dependencies' => [
+					WPSEO_Admin_Asset_Manager::PREFIX . 'ai-frontend',
+				],
+			],
+			[
+				'name'         => WPSEO_Admin_Asset_Manager::PREFIX . 'premium-ai-summarize',
+				'source'       => 'assets/css/dist/premium-ai-summarize-' . $version . $rtl_suffix . '.css',
+				'dependencies' => [
+					WPSEO_Admin_Asset_Manager::PREFIX . 'ai-frontend',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'premium-tailwind',
+					WPSEO_Admin_Asset_Manager::PREFIX . 'monorepo',
+				],
 			],
 		];
 	}
@@ -330,7 +490,7 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 	 *
 	 * @codeCoverageIgnore Method calls a WordPress function.
 	 *
-	 * @param array $script The script to register.
+	 * @param array<string|array> $script The script to register.
 	 *
 	 * @return void
 	 */
@@ -341,14 +501,14 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 			$url = 'http://localhost:8081/' . $script['filename'];
 		}
 
-		$in_footer = isset( $script['in_footer'] ) ? $script['in_footer'] : false;
+		$in_footer = ( $script['in_footer'] ?? false );
 
 		wp_register_script(
 			$script['name'],
 			$url,
 			$script['dependencies'],
 			WPSEO_PREMIUM_VERSION,
-			$in_footer
+			$in_footer,
 		);
 	}
 
@@ -357,7 +517,7 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 	 *
 	 * @codeCoverageIgnore Method calls a WordPress function.
 	 *
-	 * @param array $style The style to register.
+	 * @param array<string|array> $style The style to register.
 	 *
 	 * @return void
 	 */
@@ -366,7 +526,7 @@ class WPSEO_Premium_Assets implements WPSEO_WordPress_Integration {
 			$style['name'],
 			plugin_dir_url( WPSEO_PREMIUM_FILE ) . $style['source'],
 			$style['dependencies'],
-			WPSEO_PREMIUM_VERSION
+			WPSEO_PREMIUM_VERSION,
 		);
 	}
 }

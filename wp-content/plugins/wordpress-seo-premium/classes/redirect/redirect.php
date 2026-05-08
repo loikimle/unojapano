@@ -10,7 +10,7 @@ use Yoast\WP\SEO\Helpers\Home_Url_Helper;
 /**
  * Represents a single redirect
  */
-class WPSEO_Redirect implements ArrayAccess {
+class WPSEO_Redirect implements ArrayAccess, JsonSerializable {
 
 	/**
 	 * Redirect origin.
@@ -63,9 +63,7 @@ class WPSEO_Redirect implements ArrayAccess {
 	 * @param string $format The format of the redirect.
 	 */
 	public function __construct( $origin, $target = '', $type = WPSEO_Redirect_Types::PERMANENT, $format = WPSEO_Redirect_Formats::PLAIN ) {
-		if ( static::$home_url === null ) {
-			static::$home_url = new Home_Url_Helper();
-		}
+		static::$home_url ??= new Home_Url_Helper();
 
 		$this->origin = ( $format === WPSEO_Redirect_Formats::PLAIN ) ? $this->sanitize_origin_url( $origin ) : $origin;
 		$this->target = $this->sanitize_target_url( $target );
@@ -203,6 +201,21 @@ class WPSEO_Redirect implements ArrayAccess {
 	}
 
 	/**
+	 * This method is called automatically when an instance of the class is passed to json_encode().
+	 *
+	 * @return array<string, int> An associative array containing redirect data.
+	 */
+	#[ReturnTypeWillChange]
+	public function jsonSerialize() {
+		return [
+			'origin'             => $this->get_origin(),
+			'target'             => $this->get_target(),
+			'type'               => $this->get_type(),
+			'format'             => $this->get_format(),
+		];
+	}
+
+	/**
 	 * Strip the trailing slashes for relative URLs.
 	 *
 	 * @param string $url_to_sanitize The URL to sanitize.
@@ -215,7 +228,6 @@ class WPSEO_Redirect implements ArrayAccess {
 		if ( $url !== '/' && ! isset( $url_pieces['scheme'] ) ) {
 			return trim( $url_to_sanitize, '/' );
 		}
-
 
 		return $url;
 	}
@@ -247,7 +259,7 @@ class WPSEO_Redirect implements ArrayAccess {
 		if ( $this->match_home_url( $home_url_pieces, $url_pieces ) ) {
 			$url = substr(
 				$this->strip_scheme_from_url( $url_pieces['scheme'], $url ),
-				strlen( $this->strip_scheme_from_url( $home_url_pieces['scheme'], $home_url ) )
+				strlen( $this->strip_scheme_from_url( $home_url_pieces['scheme'], $home_url ) ),
 			);
 
 			$url_pieces['scheme'] = null;
@@ -270,7 +282,7 @@ class WPSEO_Redirect implements ArrayAccess {
 		if ( $this->match_home_url( $home_url_pieces, $url_pieces ) ) {
 			$url = substr(
 				$this->strip_scheme_from_url( $url_pieces['scheme'], $url ),
-				strlen( $home_url_pieces['host'] )
+				strlen( $home_url_pieces['host'] ),
 			);
 
 			$url_pieces['scheme'] = null;

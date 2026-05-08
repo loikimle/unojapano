@@ -12,10 +12,28 @@ defined( 'ABSPATH' ) || exit;
 $styles = get_option( 'user_registration_login_styles' );
 
 // Filter empty values.
-$styles = array_map( 'array_filter', $styles );
+$styles = array_map( function( $style ) {
+	if ( is_array( $style ) ) {
+		return array_filter( $style );
+	} else {
+		return $style;
+	}
+}, $styles );
+
 $styles = array_filter( $styles );
 
 $values = array_replace_recursive( $this->defaults, $styles ); // phpcs:ignore PHPCompatibility.PHP.NewFunctions.array_replace_recursiveFound
+
+// Search for JSON formatted values and convert it to array format.
+foreach ( $values as $key => $styles ) {
+	if ( is_array( $styles ) ) {
+		foreach( $styles as $style => $value ) {
+			if ( is_string( $value ) && ur_is_json( $value ) ) {
+				$values[ $key ][ $style ] = (array) json_decode( $value );
+			}
+		}
+	}
+}
 
 // Font styles.
 $font_styles         = array(

@@ -40,6 +40,8 @@ class WPSEO_Export_Keywords_CSV {
 
 	/**
 	 * Echoes the CSV headers
+	 *
+	 * @return void
 	 */
 	public function print_headers() {
 		// phpcs:ignore WordPress.Security.EscapeOutput -- Correctly escaped in get_headers() method below.
@@ -54,6 +56,7 @@ class WPSEO_Export_Keywords_CSV {
 	 * @return void
 	 */
 	public function print_row( $row ) {
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is CSV data formatted by internal method.
 		echo $this->format( $row );
 	}
 
@@ -82,9 +85,7 @@ class WPSEO_Export_Keywords_CSV {
 			}
 		}
 
-		$csv .= PHP_EOL;
-
-		return $csv;
+		return $csv . PHP_EOL;
 	}
 
 	/**

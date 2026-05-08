@@ -5,6 +5,7 @@ use Elementor\Controls_Manager;
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Typography;
+use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -26,6 +27,24 @@ class Product_Upsell extends Products_Base {
 
 	public function get_keywords() {
 		return [ 'woocommerce', 'shop', 'store', 'upsell', 'product' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::elementor()->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-woocommerce-products' ];
 	}
 
 	protected function register_controls() {
@@ -137,18 +156,23 @@ class Product_Upsell extends Products_Base {
 				'label' => esc_html__( 'Text Align', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor-pro' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor-pro' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor-pro' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor-pro' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor-pro' ),
 						'icon' => 'eicon-text-align-right',
 					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-wc-products .products > h2' => 'text-align: {{VALUE}}',
@@ -164,7 +188,7 @@ class Product_Upsell extends Products_Base {
 			[
 				'label' => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}.elementor-wc-products .products > h2' => 'margin-bottom: {{SIZE}}{{UNIT}}',
 				],
@@ -206,14 +230,20 @@ class Product_Upsell extends Products_Base {
 
 		ob_start();
 
-		woocommerce_upsell_display( $limit, $columns, $orderby, $order );
+		woocommerce_upsell_display(
+			sanitize_text_field( $limit ),
+			sanitize_text_field( $columns ),
+			sanitize_text_field( $orderby ),
+			sanitize_text_field( $order )
+		);
 
 		$upsells_html = ob_get_clean();
 
 		if ( $upsells_html ) {
 			$upsells_html = str_replace( '<ul class="products', '<ul class="products elementor-grid', $upsells_html );
 
-			echo wp_kses_post( $upsells_html );
+			// PHPCS - Doesn't need to be escaped since it's a WooCommerce template, and 3rd party plugins might hook into it.
+			echo $upsells_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
 		if ( 'yes' === $settings['automatically_align_buttons'] ) {

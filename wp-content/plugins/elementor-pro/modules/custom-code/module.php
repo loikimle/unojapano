@@ -1,26 +1,42 @@
 <?php
 namespace ElementorPro\Modules\CustomCode;
 
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Documents_Manager;
-use ElementorPro\Plugin;
+use Elementor\Icons_Manager;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Settings;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
+use ElementorPro\Base\Editor_One_Trait;
 use ElementorPro\Base\Module_Base;
+use ElementorPro\License\API;
+use ElementorPro\Modules\CustomCode\AdminMenuItems\Custom_Code_Menu_Item;
+use ElementorPro\Modules\CustomCode\AdminMenuItems\Custom_Code_Promotion_Menu_Item;
+use ElementorPro\Modules\CustomCode\EditorOneMenuItems\Editor_One_Custom_Code_Menu_Item;
+use ElementorPro\Modules\CustomCode\EditorOneMenuItems\Editor_One_Custom_Code_Promotion;
+use ElementorPro\Modules\CustomCode\ImportExport\Import_Export as Custom_Code_Import_Export;
+use ElementorPro\Modules\CustomCode\ImportExportCustomization\Import_Export_Customization as Custom_Code_Import_Export_Customization;
 use ElementorPro\Modules\ThemeBuilder\Classes\Conditions_Manager;
 use ElementorPro\Modules\ThemeBuilder\Classes\Locations_Manager;
+use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Module extends Module_Base {
+	use Editor_One_Trait;
+
 	const CAPABILITY = 'manage_options';
 	const CPT = 'elementor_snippet';
 	const MODULE_NAME = 'custom_code';
 	const DOCUMENT_TYPE = 'code_snippet';
 
 	const ADDITIONAL_COLUMN_INSTANCES = 'instances';
+
+	const MENU_SLUG = 'edit.php?post_type=' . self::CPT;
+	const PROMOTION_MENU_SLUG = 'e-custom-code';
 
 	/**
 	 * @var \ElementorPro\Modules\CustomCode\Custom_Code_Metabox
@@ -33,8 +49,13 @@ class Module extends Module_Base {
 		$this->meta_box = new Custom_Code_Metabox();
 
 		$this->actions();
-		$this->register_custom_post_type();
-		$this->register_metabox();
+
+		if ( $this->can_use_custom_code() ) {
+			$this->register_custom_post_type();
+			$this->register_metabox();
+		}
+
+		$this->register_import_export();
 	}
 
 	public function get_name() {
@@ -42,17 +63,51 @@ class Module extends Module_Base {
 	}
 
 	private function actions() {
-		add_action( 'elementor/documents/register', function ( $documents_manager ) {
-			return $this->register_documents( $documents_manager );
+		if ( $this->can_use_custom_code() ) {
+			add_action( 'elementor/documents/register', function ( $documents_manager ) {
+				return $this->register_documents( $documents_manager );
+			} );
+
+			add_action( 'elementor/theme/register_locations', function ( $location_manager ) {
+				return $this->register_location( $location_manager );
+			} );
+
+			add_action( 'init', function () {
+				$this->register_rest_meta_fields();
+			} );
+		}
+
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
+			if ( $this->is_editor_one_active() ) {
+				return;
+			}
+
+			$this->add_admin_menu( $admin_menu_manager );
 		} );
 
-		add_action( 'elementor/theme/register_locations', function ( $location_manager ) {
-			return $this->register_location( $location_manager );
-		} );
-
+		// TODO: BC - Remove after `Admin_Menu_Manager` will be the standard.
 		add_action( 'admin_menu', function () {
-			return $this->add_admin_menu();
+			if ( did_action( 'elementor/admin/menu/register' ) ) {
+				return;
+			}
+
+			$menu_title = esc_html__( 'Custom Code', 'elementor-pro' );
+			add_submenu_page(
+				Settings::PAGE_ID,
+				$menu_title,
+				$menu_title,
+				self::CAPABILITY,
+				static::MENU_SLUG
+			);
 		}, /* After custom icons */  51 );
+
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			if ( $this->can_use_custom_code() ) {
+				$menu_data_provider->register_menu( new Editor_One_Custom_Code_Menu_Item() );
+			} else {
+				$menu_data_provider->register_menu( new Editor_One_Custom_Code_Promotion() );
+			}
+		} );
 
 		add_action( 'current_screen', function () {
 			if ( ! is_admin() ) {
@@ -69,6 +124,12 @@ class Module extends Module_Base {
 					$this->enqueue_assets();
 				}, 0 /* elementor-app-base styles should be loaded in early stages */ );
 			}
+		} );
+
+		add_filter( 'elementor/editor-one/admin-edit-post-types', function ( array $post_types ) {
+			$post_types[] = self::CPT;
+
+			return $post_types;
 		} );
 
 		$this->frontend_actions();
@@ -122,9 +183,10 @@ class Module extends Module_Base {
 			'show_in_menu' => false,
 			'show_in_nav_menus' => false,
 			'exclude_from_search' => true,
+			'show_in_rest' => true,
 			'capability_type' => 'post',
 			'hierarchical' => false,
-			'supports' => [ 'title', 'author' ],
+			'supports' => [ 'title', 'author', 'custom-fields' ],
 			'capabilities' => [
 				'publish_posts' => 'manage_options',
 				'edit_posts' => 'manage_options',
@@ -155,7 +217,8 @@ class Module extends Module_Base {
 					__( 'Custom code saved.', 'elementor-pro' ),
 					__( 'Custom code submitted.', 'elementor-pro' ),
 					sprintf(
-						__( 'Custom code scheduled for: %1$s.', 'elementor-pro' ),
+						/* translators: %s: The scheduled date. */
+						__( 'Custom code scheduled for %s.', 'elementor-pro' ),
 						'<strong>' . date_i18n( esc_html__( 'M j, Y @ G:i', 'elementor-pro' ), strtotime( $post->post_date ) ) . '</strong>'
 					),
 					__( 'Custom code draft updated.', 'elementor-pro' ),
@@ -224,7 +287,7 @@ class Module extends Module_Base {
 			'elementor-icons',
 			$this->get_css_assets_url( 'elementor-icons', 'assets/lib/eicons/css/' ),
 			[],
-			'5.6.2'
+			Icons_Manager::ELEMENTOR_ICONS_VERSION
 		);
 
 		wp_enqueue_script( 'react' );
@@ -254,10 +317,9 @@ class Module extends Module_Base {
 				true
 			);
 
-			$direction_suffix = is_rtl() ? '-rtl' : '';
 			wp_enqueue_style(
 				'custom-code',
-				ELEMENTOR_PRO_ASSETS_URL . 'css/modules/custom-code' . $direction_suffix . $min_suffix . '.css',
+				ELEMENTOR_PRO_ASSETS_URL . 'css/modules/custom-code' . $min_suffix . '.css',
 				[
 					'elementor-app-base',
 				],
@@ -269,8 +331,12 @@ class Module extends Module_Base {
 				'custom-code-metabox',
 				ELEMENTOR_PRO_ASSETS_URL . 'js/custom-code' . $min_suffix . '.js',
 				[
+					'elementor-v2-ui',
+					'elementor-v2-icons',
 					'react',
 					'select2',
+					// Temporary dependency until we will have a better way to load AI app in the admin.
+					'elementor-ai-admin',
 				],
 				ELEMENTOR_PRO_VERSION
 			);
@@ -284,15 +350,25 @@ class Module extends Module_Base {
 		}, 10, 2 );
 	}
 
-	private function add_admin_menu() {
-		$menu_title = esc_html__( 'Custom Code', 'elementor-pro' );
-		add_submenu_page(
-			Settings::PAGE_ID,
-			$menu_title,
-			$menu_title,
-			self::CAPABILITY,
-			'edit.php?post_type=' . self::CPT
-		);
+	private function add_admin_menu( Admin_Menu_Manager $admin_menu_manager ) {
+		if ( $this->can_use_custom_code() ) {
+			$admin_menu_manager->register( static::MENU_SLUG, new Custom_Code_Menu_Item() );
+		} else {
+			$admin_menu_manager->register( static::PROMOTION_MENU_SLUG, new Custom_Code_Promotion_Menu_Item() );
+		}
+	}
+
+	private function can_use_custom_code() {
+		return ( API::is_license_active() && API::is_licence_has_feature( static::MODULE_NAME, API::BC_VALIDATION_CALLBACK ) || $this->has_custom_code_snippets() );
+	}
+
+	private function has_custom_code_snippets() {
+		$existing_snippets = get_posts( [
+			'posts_per_page' => 1, // Avoid fetching too much data
+			'post_type' => static::CPT,
+		] );
+
+		return ! empty( $existing_snippets );
 	}
 
 	private function register_documents( Documents_Manager $documents_manager ) {
@@ -354,7 +430,7 @@ class Module extends Module_Base {
 			}
 
 			echo esc_html( $value );
-		} else if ( self::ADDITIONAL_COLUMN_INSTANCES === $column_name ) {
+		} elseif ( self::ADDITIONAL_COLUMN_INSTANCES === $column_name ) {
 			/** @var Conditions_Manager $conditions_manager */
 			$conditions_manager = Plugin::instance()->modules_manager->get_modules( 'theme-builder' )->get_conditions_manager();
 
@@ -401,5 +477,88 @@ class Module extends Module_Base {
 		}
 
 		elementor_theme_do_location( $location );
+	}
+
+	private function register_rest_meta_fields() {
+		$this->register_rest_meta_location();
+		$this->register_rest_meta_priority();
+		$this->register_rest_meta_code();
+	}
+
+	private function register_rest_meta_location() {
+		$enum = [
+			Custom_Code_Metabox::OPTION_LOCATION_HEAD,
+			Custom_Code_Metabox::OPTION_LOCATION_BODY_START,
+			Custom_Code_Metabox::OPTION_LOCATION_BODY_END,
+		];
+		register_meta( 'post', '_elementor_' . Custom_Code_Metabox::FIELD_LOCATION, [
+			'object_subtype'   => self::CPT,
+			'show_in_rest'     => [
+				'schema' => [
+					'type' => 'string',
+					'enum' => $enum,
+				],
+			],
+			'single'           => true,
+			'type'             => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+			'auth_callback'    => function( $allowed, $meta_key, $object_id ) {
+				$post = get_post( $object_id );
+				if ( ! $post || self::CPT !== $post->post_type ) {
+					return false;
+				}
+				return current_user_can( self::CAPABILITY );
+			},
+			'default' => Custom_Code_Metabox::DEFAULT_LOCATION,
+		] );
+	}
+
+	private function register_rest_meta_priority() {
+		register_meta( 'post', '_elementor_' . Custom_Code_Metabox::FIELD_PRIORITY, [
+			'object_subtype'   => self::CPT,
+			'show_in_rest'     => [
+				'schema' => [ 'type' => 'integer' ],
+			],
+			'single'           => true,
+			'type'             => 'integer',
+			'sanitize_callback' => 'absint',
+			'auth_callback'    => function( $allowed, $meta_key, $object_id ) {
+				$post = get_post( $object_id );
+				if ( ! $post || self::CPT !== $post->post_type ) {
+					return false;
+				}
+				return current_user_can( self::CAPABILITY );
+			},
+			'default' => Custom_Code_Metabox::DEFAULT_PRIORITY,
+		] );
+	}
+
+	private function register_rest_meta_code() {
+		register_meta( 'post', '_elementor_' . Custom_Code_Metabox::FIELD_CODE, [
+			'object_subtype'   => self::CPT,
+			'show_in_rest'     => [
+				'schema' => [ 'type' => 'string' ],
+			],
+			'single'           => true,
+			'type'             => 'string',
+			'auth_callback'    => function( $allowed, $meta_key, $object_id ) {
+				$post = get_post( $object_id );
+				if ( ! $post || self::CPT !== $post->post_type ) {
+					return false;
+				}
+				return current_user_can( self::CAPABILITY );
+			},
+			'sanitize_callback' => function( $value ) {
+				if ( ! current_user_can( 'unfiltered_html' ) ) {
+					return wp_kses_post( $value );
+				}
+				return $value;
+			},
+		] );
+	}
+
+	private function register_import_export() {
+		( new Custom_Code_Import_Export() )->register_hooks();
+		( new Custom_Code_Import_Export_Customization() )->register_hooks();
 	}
 }

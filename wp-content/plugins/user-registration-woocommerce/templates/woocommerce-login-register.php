@@ -31,12 +31,12 @@ if ( 0 < $form_id ) {
 	<div class="ur-frontend-form login-registration">
 		<div class="ur-form-row">
 			<div class="ur-form-grid">
-				<h2 class="ur-form-title"><?php echo __( 'Login', 'user-registration' ); ?></h2>
+				<h2 class="ur-form-title"><?php echo __( 'Login', 'user-registration-woocommerce' ); ?></h2>
 				<?php echo do_shortcode( '[user_registration_my_account]' ); ?>
 			</div>
-			<?php if ( 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ) ) { ?>
+			<?php if ( ur_string_to_bool( get_option( 'woocommerce_enable_myaccount_registration' ) ) ) { ?>
 			<div class="ur-form-grid">
-				<h2 class="ur-form-title"><?php echo __( 'Registration', 'user-registration' ); ?></h2>
+				<h2 class="ur-form-title"><?php echo __( 'Registration', 'user-registration-woocommerce' ); ?></h2>
 				<?php echo do_shortcode( $registration_shortcode ); ?>
 			</div>
 			<?php } ?>

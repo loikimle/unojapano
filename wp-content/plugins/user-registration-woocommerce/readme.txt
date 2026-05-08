@@ -1,9 +1,10 @@
 === User Registration WooCommerce ===
 Contributors: WPEverest
 Tags: user registration, addon, woocommerce, user registration woocommerce
-Requires at least: 4.0
-Tested up to: 5.8.2
-Stable tag: 1.2.7
+Requires at least: 5.2
+Requires PHP: 7.2
+Tested up to: 6.5.3
+Stable tag: 1.5.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -13,7 +14,7 @@ User Registration addon for WooCommerce
 
 WooCommerce synchronization for user registration plugin.
 
-Get [free support](https://wpeverest.com/support-forum/)
+Get [free support](https://wpeverest.com/support-ticket/)
 
 
 ### Features And Options:
@@ -39,6 +40,72 @@ Yes, the plugin is designed to work with any themes that have been coded followi
 == Screenshots ==
 
 == Changelog ==
+
+= 1.5.4    - 31/05/2024 =
+* Enhance - Template made overridable from Theme.
+
+= 1.5.3    - 15/04/2024 =
+* Feature  - Added smart phone number in billing phone number.
+* Enhance  - File upload field sync on Product Page.
+* Enhance  - Addon dependency on User Registration Pro.
+* Tweak    - Addon update check triggered from User Registration Pro.
+* Tweak    - Error message consistent with User Registration and Woocommerce.
+* Fix      - WooCommerce my account edit profile sync.
+* Fix      - Fatal error when woocommerce session not set
+* Fix      - Backend and Frontend Validation on synced fields on Product Page.
+
+= 1.5.2    - 12/02/2024
+* Fix      - Billing Address and Shipping Address not saved.
+* Fix      - WooCommerce Memberships undefined function error.
+* Fix      - Add user with customer role to customer list of WooCommerce.
+* Fix      - Placeholder not working in country state of billing and shiping.
+* Fix      - Backend validation not working on Invite Codes fields on product page.
+* Fix 	   - Country and file upload field not working in woocommerce checkout page.
+
+= 1.5.1    - 13/12/2023 =
+* Fix      - Conditional logic not working on checkout page.
+* Fix      - Parse billing and shipping country name instead of country code.
+* Fix      - Range field error message not being displayed in WooCommerce's my account page.
+
+= 1.5.0    - 13/10/2023 =
+* Feature  - Form fields integration on WooCommerce product page.
+* Dev      - Declared HPOS feature compatibility.
+* Tweak    - Changed hook to trigger for checking updates.
+
+= 1.4.1    - 10/08/2023 =
+* Fix      - Validation error when registering from checkout.
+* Fix      - Translation and critical issue for WooCommerce My Account.
+* Fix      - Undefined variable wp_button_class in Orders tab in my account page.
+
+= 1.4.0    - 31/05/2023 =
+* Enhance  - Changed checkbox option to toggle in global settings.
+* Dev      - Compatibility with search global settings.
+* Tweak    - Compatibility with new global settings design.
+* Fix      - Edit address form not loading.
+* Fix      - Translation Issue for Extra Information Text.
+* Fix      - Error on WooCommerce My Account when syncing our form fields.
+* Fix      - Critical issue due to array not supplied in in_array as parameter.
+
+= 1.3.2    - 26/04/2023 =
+* Fix      - Form Id not found in WooCommerce checkout.
+* Fix      - Required validation in shipping fields when empty.
+
+= 1.3.1    - 02/01/2023 =
+* Enhance  - Hide payment fields from sync table.​
+* Fix      - Billing phone field accepting invalid characters.​
+* Fix      - Tooltip not showing in WooCommerce fields in frontend.
+
+= 1.3.0    - 10/11/2022 =
+* Feature  - Support Conditional logic in WooCommerce My Account.
+* Feature  - Implement login options for WooCommerce checkout registration.
+* Dev      - Check learndash function exists.
+
+= 1.2.9    - 01/06/2022 =
+* Enhance  - Learndash compatibility in checkout page.
+* Fix 	   - Value checked issue while switching form.
+
+= 1.2.8    - 14/03/2022 =
+* Fix      - Required issue in checkout when conditionally hide.
 
 = 1.2.7    - 13/12/2021 =
 * Tweak    - User Registration Pro compatibility.

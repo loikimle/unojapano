@@ -146,7 +146,7 @@ class Meta_Tags_Context_Memoizer {
 					'blocks'    => $blocks,
 					'post'      => $post,
 					'page_type' => $page_type,
-				]
+				],
 			);
 
 			$context->presentation = $this->presentation_memoizer->get( $indexable, $context, $page_type );
@@ -161,16 +161,30 @@ class Meta_Tags_Context_Memoizer {
 	 * Clears the memoization of either a specific indexable or all indexables.
 	 *
 	 * @param Indexable|int|string|null $indexable Optional. The indexable or indexable id to clear the memoization of.
+	 *
+	 * @return void
 	 */
 	public function clear( $indexable = null ) {
 		if ( $indexable instanceof Indexable ) {
 			unset( $this->cache[ $indexable->id ] );
+			$this->presentation_memoizer->clear( $indexable->id );
 			return;
 		}
 		if ( $indexable !== null ) {
 			unset( $this->cache[ $indexable ] );
+			$this->presentation_memoizer->clear( $indexable );
 			return;
 		}
 		$this->cache = [];
+		$this->presentation_memoizer->clear();
+	}
+
+	/**
+	 * Clears the memoization of the current page.
+	 *
+	 * @return void
+	 */
+	public function clear_for_current_page() {
+		unset( $this->cache['current_page'] );
 	}
 }

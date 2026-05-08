@@ -59,7 +59,11 @@ class Scroll_to_Top
                 'eael_ext_scroll_to_top_global_warning_text',
                 [
                     'type' => Controls_Manager::RAW_HTML,
-                    'raw' => __('You can modify the Global Scroll to Top by <strong><a href="' . get_bloginfo('url') . '/wp-admin/post.php?post=' . $global_settings['eael_ext_scroll_to_top']['post_id'] . '&action=elementor">Clicking Here</a></strong>', 'essential-addons-for-elementor-lite'),
+                    'raw' => sprintf(
+                        /* translators: %s: Edit link to the Global Scroll to Top settings. */
+                        __('You can modify the Global Scroll to Top by <strong><a href="%s">Clicking Here</a></strong>', 'essential-addons-for-elementor-lite'),
+                        esc_url( get_bloginfo('url') . '/wp-admin/post.php?post=' . $global_settings['eael_ext_scroll_to_top']['post_id'] . '&action=elementor' )
+                    ),
                     'content_classes' => 'eael-warning',
                     'separator' => 'before',
                     'condition' => [
@@ -353,6 +357,18 @@ class Scroll_to_Top
                 ],
             ]
         );
+
+        $element->add_control(
+			'eael_ext_scroll_to_top_button_icon_note',
+			[
+				'type'            => Controls_Manager  :: RAW_HTML,
+				'raw'             => __( 'If a page is not supported <strong>Font Awesome Icon</strong> please use <strong>SVG</strong> icon instead of it.', 'essential-addons-for-elementor-lite' ),
+				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'condition'       => [
+					'eael_ext_scroll_to_top' => 'yes',
+				],
+			]
+		);
 
         $element->add_control(
             'eael_ext_scroll_to_top_button_icon_size',

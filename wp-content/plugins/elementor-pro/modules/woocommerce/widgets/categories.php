@@ -6,6 +6,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Typography;
+use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -31,10 +32,28 @@ class Categories extends Base_Widget {
 		return [ 'woocommerce-elements', 'shop', 'store', 'categories', 'product' ];
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::elementor()->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	public function get_categories() {
 		return [
 			'woocommerce-elements',
 		];
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-woocommerce-products', 'widget-woocommerce-categories' ];
 	}
 
 	protected function register_controls() {
@@ -170,9 +189,9 @@ class Categories extends Base_Widget {
 		$this->add_control(
 			'wc_style_warning',
 			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => esc_html__( 'The style of this widget is often affected by your theme and plugins. If you experience any such issue, try to switch to a basic theme and deactivate related plugins.', 'elementor-pro' ),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+				'type' => Controls_Manager::ALERT,
+				'alert_type' => 'info',
+				'content' => esc_html__( 'The style of this widget is often affected by your theme and plugins. If you experience any such issue, try to switch to a basic theme and deactivate related plugins.', 'elementor-pro' ),
 			]
 		);
 
@@ -190,12 +209,12 @@ class Categories extends Base_Widget {
 			[
 				'label'     => esc_html__( 'Columns Gap', 'elementor-pro' ),
 				'type'      => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default'   => [
 					'size' => 20,
 				],
 				'range'     => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
 				],
@@ -210,12 +229,12 @@ class Categories extends Base_Widget {
 			[
 				'label'     => esc_html__( 'Rows Gap', 'elementor-pro' ),
 				'type'      => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'default'   => [
 					'size' => 40,
 				],
 				'range'     => [
 					'px' => [
-						'min' => 0,
 						'max' => 100,
 					],
 				],
@@ -273,7 +292,7 @@ class Categories extends Base_Widget {
 			[
 				'label'      => esc_html__( 'Border Radius', 'elementor-pro' ),
 				'type'       => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors'  => [
 					'{{WRAPPER}} a > img' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}}',
 				],
@@ -285,7 +304,7 @@ class Categories extends Base_Widget {
 			[
 				'label'      => esc_html__( 'Spacing', 'elementor-pro' ),
 				'type'       => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', 'em' ],
+				'size_units' => [ 'px', 'em', 'rem', 'custom' ],
 				'selectors'  => [
 					'{{WRAPPER}} a > img' => 'margin-bottom: {{SIZE}}{{UNIT}}',
 				],
@@ -392,7 +411,8 @@ class Categories extends Base_Widget {
 		if ( $product_categories_html ) {
 			$product_categories_html = str_replace( '<ul class="products', '<ul class="products elementor-grid', $product_categories_html );
 
-			echo wp_kses_post( $product_categories_html );
+			// PHPCS - Doesn't need to be escaped since it's a WooCommerce template, and 3rd party plugins might hook into it.
+			echo $product_categories_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 

@@ -8,7 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_post_id() );
 ?>
 <script type="text/template" id="tmpl-elementor-panel">
-	<div id="elementor-mode-switcher"></div>
 	<div id="elementor-panel-state-loading">
 		<i class="eicon-loading eicon-animation-spin"></i>
 	</div>
@@ -17,6 +16,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<footer id="elementor-panel-footer">
 		<div class="elementor-panel-container"></div>
 	</footer>
+	<div id="elementor-mode-switcher"></div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-menu">
@@ -25,7 +25,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<div id="elementor-panel__editor__help">
 		<a id="elementor-panel__editor__help__link" href="{{{ elementor.config.document.panel.needHelpUrl }}}" target="_blank">
 			<?php echo esc_html__( 'Need Help', 'elementor' ); ?>
-			<i class="eicon-help-o"></i>
+			<i class="eicon-help-o" aria-hidden="true"></i>
 		</a>
 	</div>
 	<# } #>
@@ -49,45 +49,58 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 	<# } #>
 </script>
 
+<script type="text/template" id="tmpl-elementor-exit-dialog">
+	<div><?php echo esc_html__( 'Now you can choose where you want to go on the site from the following options', 'elementor' ); ?></div>
+	<div>
+		<?php printf(
+			/* translators: 1: Opening HTML <a> tag, 2: closing HTML <a> tag. */
+			esc_html__( 'Any time you can change the settings in %1$sUser Preferences%2$s', 'elementor' ),
+			'<a id="user-preferences">',
+			'</a>'
+		); ?>
+	</div>
+	<select id="exit-to-preferences"></select> <!--  Adding options by JS  -->
+</script>
+
 <script type="text/template" id="tmpl-elementor-panel-header">
-	<div id="elementor-panel-header-menu-button" class="elementor-header-button">
-		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Menu', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'Menu', 'elementor' ); ?></span>
-	</div>
-	<div id="elementor-panel-header-title"></div>
-	<div id="elementor-panel-header-add-button" class="elementor-header-button">
-		<i class="elementor-icon eicon-apps tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Widgets Panel', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'Widgets Panel', 'elementor' ); ?></span>
-	</div>
+	<button id="elementor-panel-header-menu-button" class="elementor-header-button" aria-label="<?php echo esc_attr__( 'Menu', 'elementor' ); ?>">
+		<i class="elementor-icon eicon-menu-bar tooltip-target" aria-hidden="true" data-tooltip="<?php echo esc_attr__( 'Menu', 'elementor' ); ?>"></i>
+	</button>
+	<h2 id="elementor-panel-header-title"></h2>
+	<# const extraClass = $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ? '' : 'elementor-visibility-hidden'; #>
+	<button id="elementor-panel-header-add-button" class="elementor-header-button {{{ extraClass }}}" aria-label="<?php echo esc_attr__( 'Widgets Panel', 'elementor' ); ?>">
+		<i class="elementor-icon eicon-apps tooltip-target" aria-hidden="true" data-tooltip="<?php echo esc_attr__( 'Widgets Panel', 'elementor' ); ?>"></i>
+	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-footer-content">
-	<div id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'Settings', 'elementor' ); ?>">
+	<button id="elementor-panel-footer-settings" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php echo esc_attr__( 'Settings', 'elementor' ); ?>" aria-label="<?php
+	printf(
+		/* translators: %s: Document title. */
+		esc_attr__( '%s Settings', 'elementor' ),
+		esc_attr( $document::get_title() )
+	); ?>">
 		<i class="eicon-cog" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php printf( esc_html__( '%s Settings', 'elementor' ), esc_html( $document::get_title() ) ); ?></span>
-	</div>
-	<div id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Navigator', 'elementor' ); ?>">
+	</button>
+	<# if ( $e.components.get( 'document/elements' ).utils.showNavigator() ) { #>
+	<button id="elementor-panel-footer-navigator" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php echo esc_attr__( 'Structure', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Structure', 'elementor' ); ?>">
 		<i class="eicon-navigator" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'Navigator', 'elementor' ); ?></span>
-	</div>
-	<div id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php esc_attr_e( 'History', 'elementor' ); ?>">
+	</button>
+	<# } #>
+	<button id="elementor-panel-footer-history" class="elementor-panel-footer-tool elementor-leave-open tooltip-target" data-tooltip="<?php echo esc_attr__( 'History', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'History', 'elementor' ); ?>">
 		<i class="eicon-history" aria-hidden="true"></i>
-		<span class="elementor-screen-only"><?php echo esc_html__( 'History', 'elementor' ); ?></span>
-	</div>
-	<div id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state">
-		<i class="eicon-device-responsive tooltip-target" aria-hidden="true" data-tooltip="<?php esc_attr_e( 'Responsive Mode', 'elementor' ); ?>"></i>
-		<span class="elementor-screen-only">
-			<?php echo esc_html__( 'Responsive Mode', 'elementor' ); ?>
-		</span>
-	</div>
-	<div id="elementor-panel-footer-saver-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php esc_attr_e( 'Preview Changes', 'elementor' ); ?>">
+	</button>
+	<button id="elementor-panel-footer-responsive" class="elementor-panel-footer-tool elementor-toggle-state tooltip-target" data-tooltip="<?php echo esc_attr__( 'Responsive Mode', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Responsive Mode', 'elementor' ); ?>">
+		<i class="eicon-device-responsive" aria-hidden="true"></i>
+	</button>
+	<button id="elementor-panel-footer-saver-preview" class="elementor-panel-footer-tool tooltip-target" data-tooltip="<?php echo esc_attr__( 'Preview Changes', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Preview Changes', 'elementor' ); ?>">
 		<span id="elementor-panel-footer-saver-preview-label">
 			<i class="eicon-preview-medium" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php echo esc_html__( 'Preview Changes', 'elementor' ); ?></span>
 		</span>
-	</div>
+	</button>
 	<div id="elementor-panel-footer-saver-publish" class="elementor-panel-footer-tool">
-		<button id="elementor-panel-saver-button-publish" class="elementor-button elementor-button-success elementor-disabled">
+		<# const publishTitle = $e.components.get( 'document/elements' ).utils.getTitleForPublishButton(); #>
+		<button id="elementor-panel-saver-button-publish" class="elementor-button e-primary elementor-disabled" title="{{{ publishTitle }}}">
 			<span class="elementor-state-icon">
 				<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 			</span>
@@ -97,9 +110,8 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		</button>
 	</div>
 	<div id="elementor-panel-footer-saver-options" class="elementor-panel-footer-tool elementor-toggle-state">
-		<button id="elementor-panel-saver-button-save-options" class="elementor-button elementor-button-success tooltip-target elementor-disabled" data-tooltip="<?php esc_attr_e( 'Save Options', 'elementor' ); ?>" data-tooltip-offset="7">
-			<i class="eicon-caret-up" aria-hidden="true"></i>
-			<span class="elementor-screen-only"><?php echo esc_html__( 'Save Options', 'elementor' ); ?></span>
+		<button id="elementor-panel-saver-button-save-options" class="elementor-button e-primary tooltip-target elementor-disabled" data-tooltip="<?php echo esc_attr__( 'Save Options', 'elementor' ); ?>" data-tooltip-offset="7" aria-label="<?php echo esc_attr__( 'Save Options', 'elementor' ); ?>">
+			<i class="eicon-chevron-right" aria-hidden="true"></i>
 		</button>
 		<div class="elementor-panel-footer-sub-menu-wrapper">
 			<p class="elementor-last-edited-wrapper">
@@ -118,17 +130,23 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 					<i class="elementor-icon eicon-folder" aria-hidden="true"></i>
 					<span class="elementor-title"><?php echo esc_html__( 'Save as Template', 'elementor' ); ?></span>
 				</div>
+				<# if ( $e.components.get( 'document/elements' ).utils.showCopyAndShareButton() ) { #>
+				<div id="elementor-panel-footer-sub-menu-item-copy-share-link" class="elementor-panel-footer-sub-menu-item">
+					<i class="elementor-icon eicon-link" aria-hidden="true"></i>
+					<span class="elementor-title"><?php echo esc_html__( 'Copy and Share Link', 'elementor' ); ?></span>
+				</div>
+				<# } #>
 			</div>
 		</div>
 	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-mode-switcher-content">
-	<input id="elementor-mode-switcher-preview-input" type="checkbox">
-	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview">
-		<i class="eicon" aria-hidden="true" title="<?php esc_attr_e( 'Hide Panel', 'elementor' ); ?>"></i>
+	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview" title="<?php echo esc_attr__( 'Hide Panel', 'elementor' ); ?>">
+		<i class="eicon eicon-angle-left" aria-hidden="true" tabindex="0"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Hide Panel', 'elementor' ); ?></span>
 	</label>
+	<input id="elementor-mode-switcher-preview-input" type="checkbox">
 </script>
 
 <script type="text/template" id="tmpl-editor-content">
@@ -139,16 +157,16 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 			}
 			$e.bc.ensureTab( 'panel/editor', tabSlug );
 			#>
-			<div class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
-				<a href="#">{{{ tabTitle }}}</a>
-			</div>
+			<button class="elementor-component-tab elementor-panel-navigation-tab elementor-tab-control-{{ tabSlug }}" data-tab="{{ tabSlug }}">
+				<span>{{{ tabTitle }}}</span>
+			</button>
 		<# } ); #>
 	</div>
 	<# if ( elementData.reload_preview ) { #>
 		<div class="elementor-update-preview">
 			<div class="elementor-update-preview-title"><?php echo esc_html__( 'Update changes to page', 'elementor' ); ?></div>
 			<div class="elementor-update-preview-button-wrapper">
-				<button class="elementor-update-preview-button elementor-button elementor-button-success"><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>
+				<button class="elementor-update-preview-button elementor-button"><?php echo esc_html__( 'Apply', 'elementor' ); ?></button>
 			</div>
 		</div>
 	<# } #>
@@ -157,14 +175,31 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 		<div id="elementor-panel__editor__help">
 			<a id="elementor-panel__editor__help__link" href="{{ elementData.help_url }}" target="_blank">
 				<?php echo esc_html__( 'Need Help', 'elementor' ); ?>
-				<i class="eicon-help-o"></i>
+				<i class="eicon-help-o" aria-hidden="true"></i>
 			</a>
 		</div>
+	<# } #>
+
+	<# if ( elementData.upsale_data && elementData.upsale_data.condition ) { #>
+	<div class="elementor-nerd-box elementor-nerd-box--upsale">
+		<# if ( elementData.upsale_data.image ) { #>
+		<img class="elementor-nerd-box-icon" src="{{ elementData.upsale_data.image }}" loading="lazy" alt="{{ elementData.upsale_data.image_alt }}" />
+		<# } #>
+		<# if ( elementData.upsale_data.title ) { #>
+		<div class="elementor-nerd-box-title">{{{ elementData.upsale_data.title }}}</div>
+		<# } #>
+		<# if ( elementData.upsale_data.description ) { #>
+		<div class="elementor-nerd-box-message">{{{ elementData.upsale_data.description }}}</div>
+		<# } #>
+		<# if ( elementData.upsale_data.upgrade_url && elementData.upsale_data.upgrade_text ) { #>
+		<a class="elementor-button go-pro" href="{{ elementData.upsale_data.upgrade_url }}" target="_blank">{{{ elementData.upsale_data.upgrade_text }}}</a>
+		<# } #>
+	</div>
 	<# } #>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-schemes-disabled">
-	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" />
+	<img class="elementor-nerd-box-icon" src="<?php Utils::print_unescaped_internal_string( ELEMENTOR_ASSETS_URL . 'images/information.svg' ); ?>" loading="lazy" alt="<?php echo esc_attr__( 'Elementor', 'elementor' ); ?>" />
 	<div class="elementor-nerd-box-title">{{{ '<?php echo esc_html__( '%s are disabled', 'elementor' ); // phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment ?>'.replace( '%s', disabledTitle ) }}}</div>
 	<div class="elementor-nerd-box-message"><?php
 		printf(
@@ -184,7 +219,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 <script type="text/template" id="tmpl-elementor-panel-scheme-typography-item">
 	<div class="elementor-panel-heading">
 		<div class="elementor-panel-heading-toggle">
-			<i class="eicon" aria-hidden="true"></i>
+			<i class="eicon-caret-right" aria-hidden="true"></i>
 		</div>
 		<div class="elementor-panel-heading-title">{{{ title }}}</div>
 	</div>
@@ -242,9 +277,9 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 				var deviceLabel = 'desktop' === device ? '<?php esc_html_e( 'Desktop', 'elementor' ); ?>' : activeBreakpoints[ device ].label,
 					tooltipDir = "<?php echo is_rtl() ? 'e' : 'w'; ?>";
 			#>
-				<a class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}">
-					<i class="{{ elementor.config.responsive.icons_map[ device ] }}"></i>
-				</a>
+				<button class="elementor-responsive-switcher tooltip-target elementor-responsive-switcher-{{ device }}" data-device="{{ device }}" data-tooltip="{{ deviceLabel }}" data-tooltip-pos="{{ tooltipDir }}" aria-label="{{ deviceLabel }}">
+					<i class="{{ elementor.config.responsive.icons_map[ device ] }}" aria-hidden="true"></i>
+				</button>
 			<# } );
 		#>
 		</div>
@@ -252,14 +287,15 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-switcher">
-	<div class="elementor-control-dynamic-switcher elementor-control-unit-1" data-tooltip="<?php echo esc_html__( 'Dynamic Tags', 'elementor' ); ?>">
-		<i class="eicon-database"></i>
-	</div>
+	<button class="elementor-control-dynamic-switcher elementor-control-unit-1" data-tooltip="<?php echo esc_attr__( 'Dynamic Tags', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Dynamic Tags', 'elementor' ); ?>">
+		<i class="eicon-database" aria-hidden="true"></i>
+	</button>
 </script>
+
 <script type="text/template" id="tmpl-elementor-control-element-color-picker">
-	<div class="elementor-control-element-color-picker e-control-tool" data-tooltip="<?php echo esc_attr__( 'Color Sampler', 'elementor' ); ?>">
-		<i class="eicon-eyedropper"></i>
-	</div>
+	<button class="elementor-control-element-color-picker e-control-tool" data-tooltip="<?php echo esc_attr__( 'Color Sampler', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Color Sampler', 'elementor' ); ?>">
+		<i class="eicon-eyedropper" aria-hidden="true"></i>
+	</button>
 </script>
 
 <script type="text/template" id="tmpl-elementor-control-dynamic-cover">
@@ -283,7 +319,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 			<?php echo esc_html__( 'You’re missing out!', 'elementor' ); ?><br />
 			<?php echo esc_html__( 'Get more dynamic capabilities by incorporating dozens of Elementor\'s native dynamic tags.', 'elementor' ); ?>
 			<a href="{{{ promotionUrl }}}" class="elementor-tags-list__teaser-link" target="_blank">
-				<?php echo esc_html__( 'See it in action', 'elementor' ); ?>
+				<?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
 			</a>
 		</div>
 	</div>

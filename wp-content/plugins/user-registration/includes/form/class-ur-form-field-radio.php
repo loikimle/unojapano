@@ -3,8 +3,6 @@
  * UR_Form_Field_Radio.
  *
  * @package  UserRegistration/Form
- * @category Admin
- * @author   WPEverest
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,8 +14,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class UR_Form_Field_Radio extends UR_Form_Field {
 
+	/**
+	 * Instance Variable.
+	 *
+	 * @var [mixed]
+	 */
 	private static $_instance;
 
+	/**
+	 * Get Instance of class.
+	 */
 	public static function get_instance() {
 		// If the single instance hasn't been set, set it now.
 		if ( is_null( self::$_instance ) ) {
@@ -28,7 +34,7 @@ class UR_Form_Field_Radio extends UR_Form_Field {
 	}
 
 	/**
-	 * Hook in tabs.
+	 * Constructor.
 	 */
 	public function __construct() {
 
@@ -40,34 +46,63 @@ class UR_Form_Field_Radio extends UR_Form_Field {
 		);
 
 		$this->field_defaults = array(
-			'default_label'      => __( 'Radio', 'user-registration' ),
-			'default_field_name' => 'radio_' . ur_get_random_number(),
-			'default_options'    => array(
+			'default_label'         => __( 'Radio', 'user-registration' ),
+			'default_field_name'    => 'radio_' . ur_get_random_number(),
+			'default_options'       => array(
 				__( 'First Choice', 'user-registration' ),
 				__( 'Second Choice', 'user-registration' ),
 				__( 'Third Choice', 'user-registration' ),
 			),
+			'default_image_options' => array(
+				array(
+					'label' => __( 'First Choice', 'user-registration' ),
+					'image' => '',
+				),
+				array(
+					'label' => __( 'Second Choice', 'user-registration' ),
+					'image' => '',
+				),
+				array(
+					'label' => __( 'Third Choice', 'user-registration' ),
+					'image' => '',
+				),
+			),
 		);
 	}
 
-
+	/**
+	 * Get Registered admin fields.
+	 */
 	public function get_registered_admin_fields() {
 
 		return '<li id="' . $this->id . '_list " class="ur-registered-item draggable" data-field-id="' . $this->id . '"><span class="' . $this->registered_fields_config['icon'] . '"></span>' . $this->registered_fields_config['label'] . '</li>';
 	}
 
-
+	/**
+	 * Validate field.
+	 *
+	 * @param [object] $single_form_field Field Data.
+	 * @param [object] $form_data Form Data.
+	 * @param [string] $filter_hook Hook.
+	 * @param [int]    $form_id Form id.
+	 */
 	public function validation( $single_form_field, $form_data, $filter_hook, $form_id ) {
-		$is_condition_enabled = isset( $single_form_field->advance_setting->enable_conditional_logic ) ? $single_form_field->advance_setting->enable_conditional_logic : '0';
-		$required             = isset( $single_form_field->general_setting->required ) ? $single_form_field->general_setting->required : 'no';
-		$field_label          = isset( $form_data->label ) ? $form_data->label : '';
-		$value                = isset( $form_data->value ) ? $form_data->value : '';
 
-		if ( $is_condition_enabled !== '1' && 'yes' == $required && empty( $value ) ) {
+		$value   = isset( $form_data->value ) ? $form_data->value : '';
+		$label   = $single_form_field->general_setting->field_name;
+		$options = $single_form_field->general_setting->options;
+
+		if ( ! empty( $value ) && ! in_array( $value, $options, true ) ) {
+			$message = array(
+				/* translators: %s - validation message */
+				$label       => sprintf( __( 'Please choose a valid option', 'user-registration' ) ),
+				'individual' => true,
+			);
 			add_filter(
 				$filter_hook,
-				function ( $msg ) use ( $field_label ) {
-					return __( $field_label . ' is required.', 'user-registration' );
+				function ( $msg ) use ( $message, $form_data ) {
+					$message = apply_filters( 'user_registration_modify_field_validation_response', $message, $form_data );
+					return $message;
 				}
 			);
 		}

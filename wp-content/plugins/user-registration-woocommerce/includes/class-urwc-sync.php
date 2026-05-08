@@ -28,9 +28,12 @@ class URWC_Sync {
 
 		// Checkout Task.
 		add_action( 'woocommerce_after_checkout_registration_form', array( $this, 'checkout_fields' ) );
-		add_action( 'woocommerce_checkout_update_user_meta', array( $this, 'checkout_process_form' ), 10, 2 );
-		add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_checkout_fields' ), 10, 2 );
-		add_filter('woocommerce_form_field_args', array( $this, 'checkout_fields_args' ), 10, 3);
+		// add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_checkout_fields' ), 10, 2 );
+		add_filter( 'woocommerce_form_field_args', array( $this, 'checkout_fields_args' ), 10, 3 );
+
+		// Add to cart Validation
+		add_filter( 'woocommerce_add_to_cart_validation', array( $this, 'validate_product_page_fields' ), 10, 5 );
+
 		/**
 		 * Below filter is no longer needed because required validation we are checking from our field class itself,
 		 * Using this filter throws required error message twice.
@@ -53,11 +56,13 @@ class URWC_Sync {
 
 		$edit_account_form_id = get_option( 'user_registration_woocommerce_settings_form', 0 );
 
+		// allows multiple forms to be added or changed  on the same edit account page of woocommerce.
+		$edit_account_forms_change = apply_filters( 'user_registration_edit_account_form_change', false );
 		// Check if current user is registerd through the UR form that is synced to woocommerce edit profile and checkout page.
-		if ( 0 !== $user_registered_form_id && $user_registered_form_id === $edit_account_form_id && 0 < $edit_account_form_id ) {
+		if ( ( 0 !== $user_registered_form_id && $user_registered_form_id === $edit_account_form_id && 0 < $edit_account_form_id ) || true === $edit_account_forms_change ) {
 
 			// Enqueue Faltpickr.
-			$has_date = ur_has_date_field( $edit_account_form_id );
+			$has_date = ur_has_flatpickr_field( $edit_account_form_id );
 			wp_enqueue_script( 'user-registration' );
 			$form_data_array = ( $edit_account_form_id ) ? UR()->form->get_form( $edit_account_form_id, array( 'content_only' => true ) ) : array();
 
@@ -68,7 +73,7 @@ class URWC_Sync {
 				wp_enqueue_script( 'flatpickr' );
 			}
 
-			echo '<div class="user-registration"><h1>Extra Information</h1>';
+			echo '<div class="user-registration" data-form-id="' . esc_attr( $edit_account_form_id ) . '"><h1>' . esc_html__( 'Extra Information', 'user-registration-woocommerce' ) . '</h1>';
 
 			$profile   = user_registration_form_data( $user_id, $edit_account_form_id );
 			$user_data = get_userdata( $user_id );
@@ -94,12 +99,28 @@ class URWC_Sync {
 			foreach ( $profile as $profile_key => $profile_field ) {
 				$key = str_replace( 'user_registration_', '', $profile_key );
 
-				if ( ! in_array( $key, urwc_get_excluded_fields(), true ) ) {
-					echo '<div data-field-id="' . $key . '" class="ur-field-item field-' . $profile_field['field_key'] . ' ">';
-					user_registration_form_field( $profile_key, $profile_field, ! empty( $_POST[ $profile_key ] ) ? ur_clean( $_POST[ $profile_key ] ) : $profile_field['value'] );
-					echo '</div>';
+				$checkout_all_form_fields = urwc_get_form_fields( $edit_account_form_id );
+				$checkout_form_fields     = array_keys( $checkout_all_form_fields );
+				if ( is_array( $checkout_form_fields ) && ! empty( $checkout_form_fields ) ) {
+
+					if ( in_array( $profile_key, $checkout_form_fields, true ) ) {
+						$profile_field['input_class'] = array( 'urwc-field-input' );
+						$cl_html                      = '';
+
+						if ( isset( $profile_field['enable_conditional_logic'] ) && true === $profile_field['enable_conditional_logic'] ) {
+							$cl_map  = isset( $profile_field['cl_map'] ) ? $profile_field['cl_map'] : '';
+							$cl_html = sprintf( 'data-conditional-logic-enabled="yes" data-conditional-logic-map="%s"', esc_attr( $cl_map ) );
+						}
+						echo '<div data-field-id="' . $profile_key . '" class="ur-field-item field-' . $profile_field['field_key'] . ' "' . $cl_html . '>';
+						echo '<div data-field-id="' . $key . '" class="ur-field-item field-' . $profile_field['field_key'] . ' "' . $cl_html . '>';
+
+						user_registration_form_field( $profile_key, $profile_field, ! empty( $_POST[ $profile_key ] ) ? ur_clean( $_POST[ $profile_key ] ) : $profile_field['value'] );
+						echo '</div>';
+						echo '</div>';
+					}
 				}
 			}
+			echo '<input type="hidden" id="urcl_hide_fields" name="urcl_hide_fields" value="[]">';
 			echo '</div>';
 		}
 	}
@@ -193,6 +214,8 @@ class URWC_Sync {
 	public function validate_edit_account_fields( $errors, $user ) {
 
 		$edit_account_form_id = get_option( 'user_registration_woocommerce_settings_form', 0 );
+		$checkout_form_fields = get_option( 'user_registration_woocommerce_checkout_fields', array() );
+		$urcl_hide_fields     = isset( $_POST['urcl_hide_fields'] ) ? (array) json_decode( stripslashes( $_POST['urcl_hide_fields'] ), true ) : array();
 
 		if ( 0 < $edit_account_form_id ) {
 			$profile = user_registration_form_data( $user->ID, $edit_account_form_id );
@@ -200,25 +223,29 @@ class URWC_Sync {
 			if ( ! is_wp_error( $profile ) ) {
 
 				foreach ( $profile as $profile_key => $profile_field ) {
-					if ( ! in_array( $profile_field['field_key'], urwc_get_excluded_fields(), true ) ) {
-						$field_key   = $profile_field['field_key'];
-						$class_name  = ur_load_form_field_class( $field_key );
-						$filter_hook = "user_registration_validate_{$field_key}_message";
-						$class       = $class_name::get_instance();
+					$new_key = str_replace( 'user_registration_', '', $profile_key );
 
-						$field_data        = new StdClass();
-						$field_data->label = '<strong>' . $profile_field['label'] . '</strong>';
-						$field_data->value = isset( $_POST[ $profile_key ] ) ? $_POST[$profile_key] : '';
-						$single_form_field                            = new StdClass();
-						$single_form_field->general_setting           = new StdClass();
-						$single_form_field->general_setting->required = $profile_field['required'];
+					if ( ! in_array( $new_key, $urcl_hide_fields, true ) ) {
+						if ( in_array( $profile_key, $checkout_form_fields, true ) ) {
+							$field_key   = $profile_field['field_key'];
+							$class_name  = ur_load_form_field_class( $field_key );
+							$filter_hook = "user_registration_validate_{$field_key}_message";
+							$class       = $class_name::get_instance();
 
-						$class->validation( $single_form_field, $field_data, $filter_hook, $edit_account_form_id );
-						$response = apply_filters( $filter_hook, '' );
+							$field_data                                   = new StdClass();
+							$field_data->label                            = '<strong>' . $profile_field['label'] . '</strong>';
+							$field_data->value                            = isset( $_POST[ $profile_key ] ) ? $_POST[ $profile_key ] : '';
+							$single_form_field                            = new StdClass();
+							$single_form_field->general_setting           = new StdClass();
+							$single_form_field->general_setting->required = $profile_field['required'];
+
+							$class->validation( $single_form_field, $field_data, $filter_hook, $edit_account_form_id );
+							$response = apply_filters( $filter_hook, '' );
 
 							if ( ! empty( $response ) ) {
 								$errors->add( 'error', $response );
 							}
+						}
 					}
 				}
 			}
@@ -233,13 +260,13 @@ class URWC_Sync {
 	public function checkout_fields( $checkout ) {
 
 		$checkout_form_id     = get_option( 'user_registration_woocommerce_settings_form', 0 );
-		$checkout_sync        = get_option( 'user_registration_woocommrece_settings_sync_checkout', 'no' );
+		$checkout_sync        = ur_string_to_bool( get_option( 'user_registration_woocommrece_settings_sync_checkout', false ) );
 		$checkout_form_fields = get_option( 'user_registration_woocommerce_checkout_fields', array() );
 
-		if ( 0 < $checkout_form_id && 'yes' === $checkout_sync && 0 < count( $checkout_form_fields ) ) {
-
+		if ( 0 < $checkout_form_id && $checkout_sync && 0 < count( $checkout_form_fields ) ) {
+			$mapped_checkout_form_fields = map_checkout_form_fields( $checkout_form_fields, $checkout_form_id );
 			// Enqueue Faltpickr.
-			$has_date = ur_has_date_field( $checkout_form_id );
+			$has_date = ur_has_flatpickr_field( $checkout_form_id );
 			wp_enqueue_script( 'user-registration' );
 			$form_data_array = ( $checkout_form_id ) ? UR()->form->get_form( $checkout_form_id, array( 'content_only' => true ) ) : array();
 
@@ -252,11 +279,11 @@ class URWC_Sync {
 
 			$profile = urwc_get_form_fields( $checkout_form_id );
 
-			echo '<div class="user-registration">';
+			echo '<div class="user-registration urwc-form" data-form-id="' . esc_attr( $checkout_form_id ) . '">';
 			foreach ( $profile as $profile_key => $profile_field ) {
 				$key = str_replace( 'user_registration_', '', $profile_key );
 
-				if ( in_array( $profile_key, $checkout_form_fields, true ) ) {
+				if ( in_array( $profile_key, $mapped_checkout_form_fields, true ) ) {
 					$profile_field['input_class'] = array( 'urwc-field-input' );
 					$cl_html                      = '';
 
@@ -276,71 +303,6 @@ class URWC_Sync {
 	}
 
 	/**
-	 * Process Form submission in WooCommerce Checkout page.
-	 *
-	 * @param int   $customer_id User ID.
-	 * @param array $data Form Data.
-	 */
-	public function checkout_process_form( $customer_id, $data ) {
-		$checkout = WC()->checkout();
-		if ( ! $checkout->is_registration_required() && empty( $_POST['createaccount'] ) ) {
-			return;
-		}
-
-		$form_id       = get_option( 'user_registration_woocommerce_settings_form', 0 );
-		$checkout_sync = get_option( 'user_registration_woocommrece_settings_sync_checkout', 'no' );
-		$form_fields   = get_option( 'user_registration_woocommerce_checkout_fields', array() );
-		$data          = $_POST;
-
-		if ( 0 < $form_id && 'yes' === $checkout_sync ) {
-			$profile = urwc_get_form_fields( $form_id );
-
-			foreach ( $profile as $key => $field ) {
-				$default_value = isset( $field['default'] ) ? ur_clean( $field['default'] ) : '';
-
-				// Check if data is sent from our fields from checkout page.
-				if ( isset( $data[ $key ] ) ) {
-					// If data is set then send data value else send default value or null.
-					$data[ $key ] = '' !== $data[ $key ] ? $data[ $key ] : $default_value;
-				} else {
-					/** In case data is not sent from checkout field,
-					 * check if that specific data key has value previously set when the user was registered.
-					*/
-					$user_datas   = get_user_meta( $customer_id, $key, true );
-					$data[ $key ] = '' !== $user_datas ? $user_datas : $default_value;
-				}
-			}
-
-			$user_data = array();
-
-			foreach ( $profile as $key => $field ) {
-				$new_key = str_replace( 'user_registration_', '', $key );
-
-				if ( in_array( $key, $form_fields, true ) ) {
-					if ( in_array( $key, ur_get_user_table_fields(), true ) ) {
-						$user_data[ $new_key ] = $data[ $key ];
-					} else {
-						$update_key = $key;
-
-						if ( in_array( $new_key, ur_get_registered_user_meta_fields(), true ) ) {
-							$update_key = str_replace( 'user_', '', $new_key );
-						}
-
-						update_user_meta( $customer_id, $update_key, $data[ $key ] );
-					}
-				}
-			}
-
-			if ( count( $user_data ) > 0 ) {
-				$user_data['ID'] = $customer_id;
-				wp_update_user( $user_data );
-			}
-
-			update_user_meta( $customer_id, 'ur_form_id', $form_id );
-		}
-	}
-
-	/**
 	 * Get fields to validate required fields.
 	 *
 	 * @param array $fields WooCommerce Field array.
@@ -352,17 +314,18 @@ class URWC_Sync {
 		}
 
 		$checkout_form_id     = get_option( 'user_registration_woocommerce_settings_form', 0 );
-		$checkout_sync        = get_option( 'user_registration_woocommrece_settings_sync_checkout', 'no' );
+		$checkout_sync        = ur_string_to_bool( get_option( 'user_registration_woocommrece_settings_sync_checkout', false ) );
 		$checkout_form_fields = get_option( 'user_registration_woocommerce_checkout_fields', array() );
 
-		if ( 0 < $checkout_form_id && 'yes' === $checkout_sync && ! is_user_logged_in() ) {
-			$profile = urwc_get_form_fields( $checkout_form_id );
+		if ( 0 < $checkout_form_id && $checkout_sync && ! is_user_logged_in() ) {
+			$profile                     = urwc_get_form_fields( $checkout_form_id );
+			$mapped_checkout_form_fields = map_checkout_form_fields( $checkout_form_fields, $checkout_form_id );
 
 			if ( ! is_wp_error( $profile ) ) {
 				$fields['user-registration'] = array();
 
 				foreach ( $profile as $profile_key => $profile_field ) {
-					if ( in_array( $profile_key, $checkout_form_fields, true ) ) {
+					if ( in_array( $profile_key, $mapped_checkout_form_fields, true ) ) {
 						$fields['user-registration'][ $profile_key ] = array(
 							'label'    => $profile_field['label'],
 							'required' => $profile_field['required'],
@@ -389,44 +352,120 @@ class URWC_Sync {
 		}
 
 		$checkout_form_id     = get_option( 'user_registration_woocommerce_settings_form', 0 );
-		$checkout_sync        = get_option( 'user_registration_woocommrece_settings_sync_checkout', 'no' );
+		$checkout_sync        = ur_string_to_bool( get_option( 'user_registration_woocommrece_settings_sync_checkout', false ) );
 		$checkout_form_fields = get_option( 'user_registration_woocommerce_checkout_fields', array() );
-		$urcl_hide_fields = isset( $_POST['urcl_hide_fields'] ) ? (array) json_decode( stripslashes( $_POST['urcl_hide_fields'] ), true ) : array();
+		$urcl_hide_fields     = isset( $_POST['urcl_hide_fields'] ) ? (array) json_decode( stripslashes( $_POST['urcl_hide_fields'] ), true ) : array();
 
-		if ( 0 < $checkout_form_id && 'yes' === $checkout_sync && ! is_user_logged_in() ) {
-			$profile = urwc_get_form_fields( $checkout_form_id );
+		if ( 0 < $checkout_form_id && $checkout_sync && ! is_user_logged_in() ) {
+			$profile                     = urwc_get_form_fields( $checkout_form_id );
+			$mapped_checkout_form_fields = map_checkout_form_fields( $checkout_form_fields, $checkout_form_id );
 
 			if ( ! is_wp_error( $profile ) ) {
 
 				foreach ( $profile as $profile_key => $profile_field ) {
+					$field_name = str_replace( 'user_registration_', '', $profile_key );
 
-					if ( !in_array( $profile_field['field_key'], $urcl_hide_fields, true ) ) {
-						if ( in_array( $profile_key, $checkout_form_fields, true ) ) {
-
-							$field_key   = $profile_field['field_key'];
-							$class_name  = ur_load_form_field_class( $field_key );
-							$filter_hook = "user_registration_validate_{$field_key}_message";
-							$class       = $class_name::get_instance();
-
-							$field_data                  = new StdClass();
-							$field_data->label           = '<strong>' . $profile_field['label'] . '</strong>';
-							$field_data->value           = isset( $_POST[ $profile_key ] ) ? $_POST[ $profile_key ] : '';
-							$required                    =
-							array(
-								'required' => '1' == $profile_field['required'] ? 'yes' : 'no',
-							);
-							$field_data->extra_params    = array( 'field_key' => $field_key );
-							$field_data->general_setting = (object) $required;
-							$class->validation( $field_data, $field_data, $filter_hook, $checkout_form_id );
-							$response = apply_filters( $filter_hook, '' );
-							if ( ! empty( $response ) ) {
-								wc_add_notice( $response, 'error' );
-							}
+					if ( ! in_array( $field_name, $urcl_hide_fields, true ) ) {
+						if ( in_array( $profile_key, $mapped_checkout_form_fields, true ) ) {
+							$passed = $this->validate_single_fields( $profile_field, $field_name, $profile_key, $checkout_form_id );
 						}
 					}
 				}
 			}
 		}
+	}
+
+	public function validate_product_page_fields( $passed, $product_id, $quantity, $variation_id = '', $variations = '' ) {
+
+		$form_id                 = get_post_meta( $product_id, 'user_registration_woocommerce_product_page_settings_form_' . $product_id, true );
+		$product_all_form_fields = get_option( 'user_registration_woocommerce_product_page_fields_' . $product_id, array() );
+
+		if ( array_key_exists( 'form-' . $form_id, $product_all_form_fields ) ) {
+			$product_form_fields = $product_all_form_fields[ 'form-' . $form_id ];
+		}
+
+		$urcl_hide_fields = isset( $_POST['urcl_hide_fields'] ) ? (array) json_decode( stripslashes( $_POST['urcl_hide_fields'] ), true ) : array();
+
+		$profile = urwc_get_form_fields( $form_id );
+
+		if ( ! is_wp_error( $profile ) ) {
+
+			foreach ( $profile as $profile_key => $profile_field ) {
+				$field_name = str_replace( 'user_registration_', '', $profile_key );
+
+				if ( ! in_array( $field_name, $urcl_hide_fields, true ) ) {
+					if ( in_array( $profile_key, $product_form_fields, true ) && ( isset( $_POST[ $profile_key ] ) || 'checkbox' === $profile_field['type'] ) ) {
+						$passed = $this->validate_single_fields( $profile_field, $field_name, $profile_key, $form_id, $passed );
+					}
+				}
+			}
+		}
+
+		return $passed;
+	}
+
+	public function validate_single_fields( $profile_field, $field_name, $profile_key, $form_id, $passed = true ) {
+
+		$field_key   = $profile_field['field_key'];
+		$class_name  = ur_load_form_field_class( $field_key );
+		$filter_hook = "user_registration_validate_{$field_key}_message";
+		$class       = $class_name::get_instance();
+
+		$single_form_field                  = new StdClass();
+		$single_form_field->field_key       = $profile_field['field_key'];
+		$single_form_field->field_name      = $field_name;
+		$single_form_field->general_setting = $profile_field['general_setting'];
+		$single_form_field->advance_setting = $profile_field['advance_setting'];
+
+		$single_form_field->general_setting->required = '1' == $profile_field['required'] ? 'yes' : 'no';
+
+		$form_data = (object) array(
+			'value'        => isset( $_POST[ $profile_key ] ) ? $_POST[ $profile_key ] : '',
+			'field_type'   => $profile_field['type'],
+			'field_name'   => $field_name,
+			'label'        => $profile_field['label'],
+			'extra_params' => array(
+				'field_key' => $profile_field['field_key'],
+				'label'     => $profile_field['label'],
+			),
+		);
+
+		if ( class_exists( 'UR_Form_Validation' ) ) {
+			$validation_class  = new UR_Form_Validation();
+			$field_validations = $validation_class->get_field_validations( $single_form_field->field_key );
+
+			if ( $validation_class->is_field_required( $single_form_field, $form_data ) ) {
+				array_unshift( $field_validations, 'required' );
+			}
+
+			if ( ! empty( $field_validations ) ) {
+				if ( in_array( 'required', $field_validations, true ) || ! empty( $form_data->value ) ) {
+					foreach ( $field_validations as $validation ) {
+						$result = $validation_class::$validation( $form_data->value );
+						if ( is_wp_error( $result ) ) {
+								$error_code = $result->get_error_code();
+								$message    = $validation_class->get_error_message( $error_code, $single_form_field->general_setting->label );
+
+							if ( ! empty( $message ) ) {
+								wc_add_notice( $message, 'error' );
+								$passed = false;
+							}
+
+								break;
+						}
+					}
+				}
+			}
+		}
+
+		$class->validation( $single_form_field, $form_data, $filter_hook, $form_id );
+		$response = apply_filters( $filter_hook, '' );
+		if ( ! empty( $response ) ) {
+			wc_add_notice( $response, 'error' );
+			$passed = false;
+		}
+
+		return $passed;
 	}
 
 	/**
@@ -441,22 +480,22 @@ class URWC_Sync {
 	 */
 	public function checkout_fields_args( $args, $key, $value ) {
 
-		if(	is_user_logged_in() ) {
-			$user = wp_get_current_user();
+		if ( is_user_logged_in() ) {
+			$user       = wp_get_current_user();
 			$first_name = $user ? $user->user_firstname : '';
-			$last_name = $user ? $user->user_lastname : '';
+			$last_name  = $user ? $user->user_lastname : '';
 
-			if( 'billing_first_name' === $key ) {
-				$args['default'] = empty($value) ? $first_name : $value ;
+			if ( 'billing_first_name' === $key ) {
+				$args['default'] = empty( $value ) ? $first_name : $value;
 
 			}
-			if( 'billing_last_name' === $key ) {
-				$args['default'] = empty($value) ? $last_name : $value ;
+			if ( 'billing_last_name' === $key ) {
+				$args['default'] = empty( $value ) ? $last_name : $value;
 
 			}
 		}
-        return $args;
-    }
+		return $args;
+	}
 
 
 
@@ -472,16 +511,20 @@ class URWC_Sync {
 	 */
 	public function replace_myaccount_login_register_edit_account_templates( $located, $template_name, $args = '', $template_path = '', $default_path = '' ) {
 		$form_id           = get_option( 'user_registration_woocommerce_settings_form', 0 );
-		$sync_registration = get_option( 'user_registration_woocommrece_settings_replace_login_registration', 'no' );
-		$checkout_login    = get_option( 'user_registration_woocommrece_settings_replace_checkout_login', 'no' );
+		$sync_registration = ur_string_to_bool( get_option( 'user_registration_woocommrece_settings_replace_login_registration', false ) );
+		$checkout_login    = ur_string_to_bool( get_option( 'user_registration_woocommrece_settings_replace_checkout_login', false ) );
 		if ( ! is_user_logged_in() ) {
 			if ( $template_name == 'myaccount/form-login.php' ) {
-				if ( 0 < $form_id && 'yes' === $sync_registration ) {
-					$located = URWC_ABSPATH . '/templates/woocommerce-login-register.php';
+				if ( 0 < $form_id && $sync_registration ) {
+					ob_start();
+					ur_get_template( 'woocommerce-login-register.php', array(), 'user-registration-woocommerce', URWC_ABSPATH . '/templates/' );
+					$located = ob_get_clean();
 				}
 			} elseif ( $template_name == 'checkout/form-login.php' ) {
-				if ( 'yes' === get_option( 'woocommerce_enable_checkout_login_reminder' ) && 'yes' === $checkout_login ) {
-					$located = URWC_ABSPATH . '/templates/woocommerce-checkout-login.php';
+				if ( ur_string_to_bool( get_option( 'woocommerce_enable_checkout_login_reminder' ) ) && $checkout_login ) {
+					ob_start();
+					ur_get_template( 'woocommerce-checkout-login', array(), 'user-registration-woocommerce', URWC_ABSPATH . '/templates/' );
+					$located = ob_get_clean();
 				}
 			}
 		}

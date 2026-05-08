@@ -16,14 +16,42 @@ if ( ! class_exists( 'UR_Settings_Successfully_Registered_Email', false ) ) :
 	 * UR_Settings_Successfully_Registered_Email Class.
 	 */
 	class UR_Settings_Successfully_Registered_Email {
+		/**
+		 * UR_Settings_Successfully_Registered_Email Id.
+		 *
+		 * @var string
+		 */
+		public $id;
+
+		/**
+		 * UR_Settings_Successfully_Registered_Email Title.
+		 *
+		 * @var string
+		 */
+		public $title;
+
+		/**
+		 * UR_Settings_Successfully_Registered_Email Description.
+		 *
+		 * @var string
+		 */
+		public $description;
+
+		/**
+		 * UR_Settings_Approval_Link_Email Receiver.
+		 *
+		 * @var string
+		 */
+		public $receiver;
 
 		/**
 		 * Constructor.
 		 */
 		public function __construct() {
 			$this->id          = 'successfully_registered_email';
-			$this->title       = __( 'Successfully Registered Email', 'user-registration' );
-			$this->description = __( 'Email sent to the user after successful registration', 'user-registration' );
+			$this->title       = __( 'Registration Success', 'user-registration' );
+			$this->description = __( 'Confirms successful registration to the user.', 'user-registration' );
+			$this->receiver    = 'User';
 		}
 
 		/**
@@ -33,23 +61,32 @@ if ( ! class_exists( 'UR_Settings_Successfully_Registered_Email', false ) ) :
 		 */
 		public function get_settings() {
 
+			/**
+			 * Filter to add the options on settings.
+			 *
+			 * @param array Options to be enlisted.
+			 */
 			$settings = apply_filters(
 				'user_registration_successfully_registered_email',
 				array(
 					'title'    => __( 'Emails', 'user-registration' ),
 					'sections' => array(
 						'successfully_registered_email' => array(
-							'title'     => __( 'Successfully Registered Email', 'user-registration' ),
-							'type'      => 'card',
-							'desc'      => '',
-							'back_link' => ur_back_link( __( 'Return to emails', 'user-registration' ), admin_url( 'admin.php?page=user-registration-settings&tab=email' ) ),
-							'settings'  => array(
+							'title'        => __( 'Registration Success', 'user-registration' ),
+							'type'         => 'card',
+							'desc'         => '',
+							'back_link'    => ur_back_link( __( 'Return to emails', 'user-registration' ), admin_url( 'admin.php?page=user-registration-settings&tab=email&section=to-user' ) ),
+							'preview_link' => ur_email_preview_link(
+								__( 'Preview', 'user-registration' ),
+								$this->id
+							),
+							'settings'     => array(
 								array(
 									'title'    => __( 'Enable this email', 'user-registration' ),
 									'desc'     => __( 'Enable this email sent to the user after successful user registration.', 'user-registration' ),
 									'id'       => 'user_registration_enable_successfully_registered_email',
 									'default'  => 'yes',
-									'type'     => 'checkbox',
+									'type'     => 'toggle',
 									'autoload' => false,
 								),
 								array(
@@ -57,8 +94,8 @@ if ( ! class_exists( 'UR_Settings_Successfully_Registered_Email', false ) ) :
 									'desc'     => __( 'The email subject you want to customize.', 'user-registration' ),
 									'id'       => 'user_registration_successfully_registered_email_subject',
 									'type'     => 'text',
-									'default'  => __( 'Congratulations! Registration Complete on {{blog_info}}', 'user-registration' ),
-									'css'      => 'min-width: 350px;',
+									'default'  => __( 'Welcome to {{blog_info}}!', 'user-registration' ),
+									'css'      => '',
 									'desc_tip' => true,
 								),
 								array(
@@ -67,8 +104,11 @@ if ( ! class_exists( 'UR_Settings_Successfully_Registered_Email', false ) ) :
 									'id'       => 'user_registration_successfully_registered_email',
 									'type'     => 'tinymce',
 									'default'  => $this->ur_get_successfully_registered_email(),
-									'css'      => 'min-width: 350px;',
+									'css'      => '',
 									'desc_tip' => true,
+									'show-ur-registration-form-button' => false,
+									'show-smart-tags-button' => true,
+									'show-reset-content-button' => true,
 								),
 							),
 						),
@@ -76,29 +116,60 @@ if ( ! class_exists( 'UR_Settings_Successfully_Registered_Email', false ) ) :
 				)
 			);
 
+			/**
+			 * Filter to get the settings.
+			 *
+			 * @param array $settings Setting options to be enlisted.
+			 */
 			return apply_filters( 'user_registration_get_settings_' . $this->id, $settings );
 		}
 
 		/**
 		 * Email Format.
+		 *
+		 * @return string $message Message content for successfully registered email.
 		 */
 		public function ur_get_successfully_registered_email() {
 
-			$message = apply_filters(
-				'user_registration_get_successfully_registered_email',
-				sprintf(
-					__(
-						'Hi {{username}}, <br/>
-
-You have successfully completed user registration on <a href="{{home_url}}">{{blog_info}}</a>. <br/>
-
-Please visit \'<b>My Account</b>\' page to edit your account details and create your user profile on <a href="{{home_url}}">{{blog_info}}</a>. <br/>
-
-Thank You!',
-						'user-registration'
-					)
-				)
+			/**
+			 * Filter to overwrite the successfully registered email.
+			 *
+			 * @param string Message content to overwrite the existing email content.
+			 */
+			$body_content = __(
+				'<p style="margin: 0 0 16px 0; color: #000000; font-size: 16px; line-height: 1.6;">
+					Hi {{username}},
+				</p>
+				<p style="margin: 0 0 16px 0; color: #000000; font-size: 16px; line-height: 1.6;">
+				Welcome to <a href="{{home_url}}" style="color: #4A90E2; text-decoration: none;">{{blog_info}}</a>! Your registration is complete.
+				</p>
+				<p style="margin: 0 0 16px 0; color: #000000; font-size: 16px; line-height: 1.6;">
+					{{membership_plan_details}}
+				</p>
+				<p style="margin: 0 0 16px 0; color: #000000; font-size: 16px; line-height: 1.6;">
+				Get started by visiting your account dashboard:
+				</p>
+				<p style="margin: 0 0 16px 0; color: #000000; font-size: 16px; line-height: 1.6;">
+				{{my_account_link}}
+				</p>
+				<p style="margin: 0 0 16px 0; color: #000000; font-size: 16px; line-height: 1.6;">
+				Thanks
+				</p>
+				',
+				'user-registration'
 			);
+			$body_content = ur_wrap_email_body_content( $body_content );
+
+			if ( UR_PRO_ACTIVE && function_exists( 'ur_get_email_template_wrapper' ) ) {
+				$body_content = ur_get_email_template_wrapper( $body_content, false );
+			}
+
+			/**
+			 * Filter to modify the message content for successfully registered email.
+			 *
+			 * @param string $body_content Message content for successfully registered email to be overridden.
+			 */
+			$message = apply_filters( 'user_registration_get_successfully_registered_email', $body_content );
 
 			return $message;
 		}

@@ -8,9 +8,10 @@ use Elementor\Core\Utils\Http;
 use Elementor\Core\Utils\Str;
 use Elementor\Plugin;
 use Elementor\Tracker;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Base_App {
@@ -78,13 +79,16 @@ abstract class Base_App {
 
 		if ( $this->is_connected() ) {
 			$remote_user = $this->get( 'user' );
-			/* translators: %s: Remote user. */
-			$title = sprintf( esc_html__( 'Connected as %s', 'elementor' ), '<strong>' . esc_html( $remote_user->email ) . '</strong>' );
+			$title = sprintf(
+				/* translators: %s: Remote user. */
+				esc_html__( 'Connected as %s', 'elementor' ),
+				'<strong>' . esc_html( $remote_user->email ) . '</strong>'
+			);
 			$label = esc_html__( 'Disconnect', 'elementor' );
 			$url = $this->get_admin_url( 'disconnect' );
 			$attr = '';
 
-			echo sprintf(
+			printf(
 				'%s <a %s href="%s">%s</a>',
 				// PHPCS - the variable $title is already escaped above.
 				$title, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -166,11 +170,6 @@ abstract class Base_App {
 	}
 
 	public function action_reset() {
-		if ( current_user_can( 'manage_options' ) ) {
-			delete_option( static::OPTION_CONNECT_SITE_KEY );
-			delete_option( 'elementor_remote_info_library' );
-		}
-
 		$this->redirect_to_admin_page();
 	}
 
@@ -183,14 +182,17 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
-		if ( empty( $_REQUEST['state'] ) || $_REQUEST['state'] !== $this->get( 'state' ) ) {
+		//phpcs:ignore WordPress.Security.NonceVerification.Recommended - The user as been authorized before in 'connect'.
+		$state = Utils::get_super_global_value( $_REQUEST, 'state' );
+
+		if ( $state !== $this->get( 'state' ) ) {
 			$this->add_notice( 'Get Token: Invalid Request.', 'error' );
 			$this->redirect_to_admin_page();
 		}
 
 		$response = $this->request( 'get_token', [
 			'grant_type' => 'authorization_code',
-			'code' => $_REQUEST['code'],
+			'code' => Utils::get_super_global_value( $_REQUEST, 'code' ), //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			'redirect_uri' => rawurlencode( $this->get_admin_url( 'get_token' ) ),
 			'client_id' => $this->get( 'client_id' ),
 		] );
@@ -201,17 +203,17 @@ abstract class Base_App {
 			$this->redirect_to_admin_page();
 		}
 
+		$this->delete( 'state' );
+		$this->set( (array) $response );
+
 		if ( ! empty( $response->data_share_opted_in ) && current_user_can( 'manage_options' ) ) {
 			Tracker::set_opt_in( true );
 		}
 
-		$this->delete( 'state' );
-		$this->set( (array) $response );
-
 		$this->after_connect();
 
 		// Add the notice *after* the method `after_connect`, so an app can redirect without the notice.
-		$this->add_notice( esc_html__( 'Connected Successfully.', 'elementor' ) );
+		$this->add_notice( esc_html__( 'Connected successfully.', 'elementor' ) );
 
 		$this->redirect_to_admin_page();
 	}
@@ -223,7 +225,7 @@ abstract class Base_App {
 	public function action_disconnect() {
 		if ( $this->is_connected() ) {
 			$this->disconnect();
-			$this->add_notice( esc_html__( 'Disconnected Successfully.', 'elementor' ) );
+			$this->add_notice( esc_html__( 'Disconnected successfully.', 'elementor' ) );
 		}
 
 		$this->redirect_to_admin_page();
@@ -286,10 +288,10 @@ abstract class Base_App {
 	 * @since 2.3.0
 	 * @access public
 	 */
-	public function get( $key, $default = null ) {
+	public function get( $key, $default_value = null ) {
 		$this->init_data();
 
-		return isset( $this->data[ $key ] ) ? $this->data[ $key ] : $default;
+		return isset( $this->data[ $key ] ) ? $this->data[ $key ] : $default_value;
 	}
 
 	/**
@@ -328,8 +330,8 @@ abstract class Base_App {
 	 * @since 2.3.0
 	 * @access protected
 	 */
-	protected function add( $key, $value, $default = '' ) {
-		$new_value = $this->get( $key, $default );
+	protected function add( $key, $value, $default_value = '' ) {
+		$new_value = $this->get( $key, $default_value );
 
 		if ( is_array( $new_value ) ) {
 			$new_value[] = $value;
@@ -377,12 +379,14 @@ abstract class Base_App {
 	}
 
 	/**
-	 * Get all the connect information
+	 * Get Base Connect Info
+	 *
+	 * Returns an array of connect info.
 	 *
 	 * @return array
 	 */
-	protected function get_connect_info() {
-		$connect_info = [
+	protected function get_base_connect_info() {
+		return [
 			'app' => $this->get_slug(),
 			'access_token' => $this->get( 'access_token' ),
 			'client_id' => $this->get( 'client_id' ),
@@ -390,6 +394,15 @@ abstract class Base_App {
 			'site_key' => $this->get_site_key(),
 			'home_url' => trailingslashit( home_url() ),
 		];
+	}
+
+	/**
+	 * Get all the connect information
+	 *
+	 * @return array
+	 */
+	protected function get_connect_info() {
+		$connect_info = $this->get_base_connect_info();
 
 		$additional_info = [];
 
@@ -453,7 +466,7 @@ abstract class Base_App {
 			$args
 		);
 
-		if ( is_wp_error( $response ) ) {
+		if ( is_wp_error( $response ) && empty( $options['with_error_data'] ) ) {
 			// PHPCS - the variable $response does not contain a user input value.
 			wp_die( $response, [ 'back_link' => true ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
@@ -476,6 +489,10 @@ abstract class Base_App {
 			return new \WP_Error( 422, 'Wrong Server Response' );
 		}
 
+		if ( 201 === $response_code ) {
+			return $body;
+		}
+
 		if ( 200 !== $response_code ) {
 			// In case $as_array = true.
 			$body = (object) $body;
@@ -483,12 +500,22 @@ abstract class Base_App {
 			$message = isset( $body->message ) ? $body->message : wp_remote_retrieve_response_message( $response );
 			$code = (int) ( isset( $body->code ) ? $body->code : $response_code );
 
+			if ( ! $code ) {
+				$code = $response_code;
+			}
+
 			if ( 401 === $code ) {
 				$this->delete();
 
-				if ( 'xhr' !== $this->auth_mode ) {
+				$should_retry = ! in_array( $this->auth_mode, [ 'xhr', 'cli' ], true );
+
+				if ( $should_retry ) {
 					$this->action_authorize();
 				}
+			}
+
+			if ( isset( $options['with_error_data'] ) && true === $options['with_error_data'] ) {
+				return new \WP_Error( $code, $message, $body );
 			}
 
 			return new \WP_Error( $code, $message );
@@ -504,7 +531,7 @@ abstract class Base_App {
 	 *
 	 * @return false|string
 	 */
-	private function generate_signature( $payload = [] ) {
+	protected function generate_signature( $payload = [] ) {
 		return hash_hmac(
 			'sha256',
 			wp_json_encode( $payload, JSON_NUMERIC_CHECK ),
@@ -557,6 +584,16 @@ abstract class Base_App {
 				'reconnect_nonce' => wp_create_nonce( $this->get_slug() . 'reconnect' ),
 			] );
 
+		$utm_campaign = get_transient( 'elementor_core_campaign' );
+
+		if ( ! empty( $utm_campaign ) ) {
+			foreach ( [ 'source', 'medium', 'campaign' ] as $key ) {
+				if ( ! empty( $utm_campaign[ $key ] ) ) {
+					$query_params->offsetSet( 'utm_' . $key, $utm_campaign[ $key ] );
+				}
+			}
+		}
+
 		return add_query_arg( $query_params->all(), $this->get_remote_site_url() );
 	}
 
@@ -575,6 +612,7 @@ abstract class Base_App {
 				break;
 
 			case 'cli':
+			case 'rest':
 				$this->admin_notice();
 				die;
 
@@ -589,11 +627,11 @@ abstract class Base_App {
 	 * @access protected
 	 */
 	protected function set_client_id() {
+		$source = Utils::get_super_global_value( $_REQUEST, 'source' ) ?? ''; //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 		$response = $this->request(
 			'get_client_id',
 			[
-				// phpcs:ignore WordPress.Security.NonceVerification
-				'source' => isset( $_REQUEST['source'] ) ? esc_attr( $_REQUEST['source'] ) : '',
+				'source' => esc_attr( $source ),
 			]
 		);
 
@@ -629,9 +667,11 @@ abstract class Base_App {
 		<script>
 			if ( opener && opener !== window ) {
 				opener.jQuery( 'body' ).trigger(
-					'elementor/connect/success/<?php echo esc_attr( $_REQUEST['callback_id'] ); ?>',
+					'elementor/connect/success/<?php echo esc_attr( Utils::get_super_global_value( $_REQUEST, 'callback_id' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here. ?>',
 					<?php echo wp_json_encode( $data ); ?>
 				);
+
+				opener.dispatchEvent( new CustomEvent( 'elementor/connect/success', { detail: <?php echo wp_json_encode( $data ); ?> } ) );
 
 				window.close();
 				opener.focus();
@@ -674,10 +714,11 @@ abstract class Base_App {
 	protected function redirect_to_remote_authorize_url() {
 		switch ( $this->auth_mode ) {
 			case 'cli':
-				$this->get_app_token_from_cli_token( $_REQUEST['token'] );
+			case 'rest':
+				$this->get_app_token_from_cli_token( Utils::get_super_global_value( $_REQUEST, 'token' ) ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 				return;
 			default:
-				wp_redirect( $this->get_remote_authorize_url() );
+				wp_redirect( $this->get_remote_authorize_url() ); //phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Safe redirect is used here.
 				die;
 		}
 	}
@@ -685,11 +726,17 @@ abstract class Base_App {
 	protected function get_auth_redirect_uri() {
 		$redirect_uri = $this->get_admin_url( 'get_token' );
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+		$val = Utils::get_super_global_value( $_REQUEST, 'redirect_to' );
+		if ( $val ) {
+			$redirect_uri = add_query_arg( [ 'redirect_to' => $val ], $redirect_uri );
+		}
+
 		switch ( $this->auth_mode ) {
 			case 'popup':
 				$redirect_uri = add_query_arg( [
 					'mode' => 'popup',
-					'callback_id' => esc_attr( $_REQUEST['callback_id'] ),
+					'callback_id' => esc_attr( Utils::get_super_global_value( $_REQUEST, 'callback_id' ) ), //phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 				], $redirect_uri );
 				break;
 		}
@@ -705,6 +752,13 @@ abstract class Base_App {
 					printf( '[%s] %s', wp_kses_post( $notice['type'] ), wp_kses_post( $notice['content'] ) );
 				}
 				break;
+
+			case 'rest':
+				// After `wp_send_json` the script will die.
+				$this->delete( 'notices' );
+				wp_send_json( $notices );
+				break;
+
 			default:
 				/**
 				 * @var Admin_Notices $admin_notices
@@ -742,10 +796,9 @@ abstract class Base_App {
 			// PHPCS - the values of $item['label'], $color, $status are plain strings.
 			printf( '%s: <strong style="color:%s">%s</strong><br>', $item['label'], $color, $status ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
-
 	}
 
-	private function get_generated_urls( $endpoint ) {
+	protected function get_generated_urls( $endpoint ) {
 		$base_urls = $this->get_api_url();
 
 		if ( ! is_array( $base_urls ) ) {
@@ -766,7 +819,9 @@ abstract class Base_App {
 			$this->set_auth_mode( 'xhr' );
 		}
 
-		if ( isset( $_REQUEST['mode'] ) ) { // phpcs:ignore -- nonce validation is not require here.
+		$mode = Utils::get_super_global_value( $_REQUEST, 'mode' );
+
+		if ( $mode ) {
 			$allowed_auth_modes = [
 				'popup',
 			];
@@ -775,7 +830,9 @@ abstract class Base_App {
 				$allowed_auth_modes[] = 'cli';
 			}
 
-			$mode = $_REQUEST['mode']; // phpcs:ignore -- nonce validation is not require here.
+			if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+				$allowed_auth_modes[] = 'rest';
+			}
 
 			if ( in_array( $mode, $allowed_auth_modes, true ) ) {
 				$this->set_auth_mode( $mode );

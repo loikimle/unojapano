@@ -8,7 +8,7 @@ use \Elementor\Group_Control_Typography;
 use Elementor\Plugin;
 use \Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use \Elementor\Widget_Base;
-use \Essential_Addons_Elementor\Classes\Controls;
+use Essential_Addons_Elementor\Classes\Helper;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -52,6 +52,10 @@ class Facebook_Feed extends Widget_Base
             'ea',
             'essential addons',
         ];
+    }
+
+    public function has_widget_inner_wrapper(): bool {
+        return ! Helper::eael_e_optimized_markup();
     }
 
     public function get_custom_help_url()
@@ -100,7 +104,7 @@ class Facebook_Feed extends Widget_Base
                 'label_block' => true,
                 'default' => '',
                 'ai' => [
-					'active' => false,
+					'active' => true,
 				],
             ]
         );
@@ -115,7 +119,7 @@ class Facebook_Feed extends Widget_Base
                 'separator' => 'after',
                 'description' => __('<a href="https://app.essential-addons.com/facebook/" class="eael-btn" target="_blank">Get Credentials</a>', 'essential-addons-for-elementor-lite'),
                 'ai' => [
-					'active' => false,
+					'active' => true,
 				],
             ]
         );
@@ -488,7 +492,7 @@ class Facebook_Feed extends Widget_Base
                     'show_load_more' => ['yes', '1', 'true'],
                 ],
                 'ai' => [
-					'active' => false,
+					'active' => true,
 				],
             ]
         );
@@ -820,7 +824,7 @@ class Facebook_Feed extends Widget_Base
             \Elementor\Group_Control_Box_Shadow::get_type(),
             [
                 'name' => 'eael_section_facebook_feed_hover_shadow',
-                'label' => __('Box Shadow', 'plugin-domain'),
+                'label' => __('Box Shadow', 'essential-addons-for-elementor-lite'),
                 'selector' => '{{WRAPPER}} .eael-facebook-feed-item-inner:hover',
             ]
         );
@@ -1287,7 +1291,9 @@ class Facebook_Feed extends Widget_Base
 
         ?>
         <div <?php $this->print_render_attribute_string('fb-wrap'); ?>>
-            <?php echo $this->facebook_feed_render_items($settings); ?>
+            <?php 
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+            echo $this->facebook_feed_render_items($settings); ?>
         </div>
         <div class="clearfix"></div>
         <?php
@@ -1305,7 +1311,7 @@ class Facebook_Feed extends Widget_Base
             echo '<script type="text/javascript">
                 jQuery(document).ready(function($) {
                     $(".eael-facebook-feed").each(function() {
-                        var $node_id = "' . $this->get_id() . '",
+                        var $node_id = "' . esc_attr( $this->get_id() ) . '",
                         $scope = $(".elementor-element-"+$node_id+""),
                         $settings = {
                             itemSelector: ".eael-facebook-feed-item",

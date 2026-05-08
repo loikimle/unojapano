@@ -1,8 +1,28 @@
 jQuery(function ($) {
+	var login_nonce = ur_login_params.ur_login_form_save_nonce;
+	var update_login_nonce = function() {
+		$.ajax({
+			url: user_registration_params.ajax_url,
+			data: {
+				action: 'user_registration_get_recent_nonce',
+				nonce_for: 'login'
+			},
+			type: "POST",
+			async: true,
+			complete: function (ajax_response) {
+				var response = JSON.parse(ajax_response.responseText);
+				if(response.success) {
+					login_nonce = response.data;
+				}
+			}
+		});
+	};
+	update_login_nonce();
 	$(".ur-frontend-form")
 		.find("form.login")
 		.each(function () {
 			var $ur_login_ajax_form = $(this);
+
 			$ur_login_ajax_form
 				.find("#user_registration_ajax_login_submit")
 				.on("click", function (e) {
@@ -29,6 +49,13 @@ jQuery(function ($) {
 							.closest("form")
 							.find('[name="h-captcha-response"]')
 							.val();
+					} else if (
+						"cloudflare" === ur_login_params.recaptcha_type
+					) {
+						var CaptchaResponse = $this
+							.closest("form")
+							.find('[name="cf-turnstile-response"]')
+							.val();
 					} else {
 						var CaptchaResponse = $this
 							.closest("form")
@@ -39,30 +66,44 @@ jQuery(function ($) {
 					var url =
 						ur_login_params.ajax_url +
 						"?action=user_registration_ajax_login_submit&security=" +
-						ur_login_params.ur_login_form_save_nonce;
+						login_nonce;
+
+					if (window.location.href.indexOf("pl=true") > -1) {
+						// "pl=true" is present in the URL.
+						url += "&pl=true";
+					}
 
 					$this
 						.closest("form")
-						.find(".ur-submit-button")
-						.siblings("span")
-						.addClass("ur-front-spinner");
+						.find(".ur-submit-button span")
+						.addClass("ur-spinner");
+
+					var data = {
+						username: username,
+						password: password,
+						CaptchaResponse: CaptchaResponse,
+						redirect: redirect_url,
+						previous_page: document.referrer ? document.referrer : ''
+					};
+
+					if (
+						$this
+							.closest("form")
+							.find('input[name="rememberme"]')
+							.is(":checked")
+					) {
+						data.rememberme = rememberme;
+					}
 
 					$.ajax({
 						type: "POST",
 						url: url,
-						data: {
-							username: username,
-							password: password,
-							rememberme: rememberme,
-							CaptchaResponse: CaptchaResponse,
-							redirect: redirect_url,
-						},
+						data: data,
 						success: function (res) {
 							$this
 								.closest("form")
-								.find(".ur-submit-button")
-								.siblings("span")
-								.removeClass("ur-front-spinner");
+								.find(".ur-submit-button span")
+								.removeClass("ur-spinner");
 
 							// custom error message
 							if (res.success == false) {
@@ -77,17 +118,73 @@ jQuery(function ($) {
 									.remove();
 
 								$this
-									.closest("#user-registration")
+									.closest("")
+									.find(".user-registration-message")
+									.remove();
+
+								$this
+									.closest(".ur-frontend-form")
 									.prepend(
 										'<ul class="user-registration-error">' +
 											res.data.message +
 											"</ul>"
 									);
 							} else {
-								window.location.href = res.data.message;
+								if (res.data.status) {
+									$this
+										.closest("#user-registration")
+										.find(".user-registration-error")
+										.remove();
+
+									$this
+										.closest("#user-registration")
+										.find(".user-registration-message")
+										.remove();
+
+									$this
+										.closest(".ur-frontend-form")
+										.prepend(
+											'<ul class="user-registration-message">' +
+												res.data.message +
+												"</ul>"
+										);
+
+									$this
+										.closest("#user-registration")
+										.find("input#username")
+										.val("");
+								} else {
+									window.location.href = res.data.message;
+								}
 							}
-						},
+						}
+					}).fail(function () {
+						$this
+							.closest("#user-registration")
+							.find(".user-registration-error")
+							.remove();
+						$this
+							.closest("form")
+							.find(".ur-submit-button span")
+							.removeClass("ur-spinner");
+
+						// Add a hidden input to ensure $_POST['login'] is present
+						var loginValue = 'Login',
+							$hiddenLogin = $('<input>', {
+								type: 'hidden',
+								name: 'login',
+								value: loginValue
+							}),
+							$resubmitted = $('<input>', {
+								type: 'hidden',
+								name: 'resubmitted',
+								value: true
+							});
+						$ur_login_ajax_form.append($hiddenLogin);
+						$ur_login_ajax_form.append($resubmitted);
+						$ur_login_ajax_form[0].submit();
 					});
 				});
 		});
+
 });

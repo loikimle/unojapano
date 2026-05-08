@@ -53,7 +53,7 @@ class URWC_Ajax {
 		if ( ! check_ajax_referer( 'user_registration_woocommerce_form_field_listing_nonce', 'security', false ) ) {
 			wp_send_json_error(
 				array(
-					'message' => __( 'Nonce error, please reload.', 'user-registration' ),
+					'message' => __( 'Nonce error, please reload.', 'user-registration-woocommerce' ),
 				)
 			);
 		}
@@ -72,6 +72,8 @@ class URWC_Ajax {
 
 		wp_send_json_success( $data );
 	}
+
+
 }
 
 URWC_Ajax::init();

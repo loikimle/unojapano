@@ -1,17 +1,17 @@
-# Copyright (C) 2021 WPEverest
+# Copyright (C) 2024 WPEverest
 # This file is distributed under the GNU General Public License v3.0.
 msgid ""
 msgstr ""
-"Project-Id-Version: User Registration WooCommerce 1.2.7\n"
+"Project-Id-Version: User Registration WooCommerce 1.5.4\n"
 "Report-Msgid-Bugs-To: help@wpeverest.com\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-12-09T04:23:11+00:00\n"
+"POT-Creation-Date: 2024-05-31T05:20:55+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.5.0\n"
+"X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: user-registration-woocommerce\n"
 
 #. Plugin Name of the plugin
@@ -19,7 +19,7 @@ msgid "User Registration WooCommerce"
 msgstr ""
 
 #. Plugin URI of the plugin
-msgid "https://wpeverest.com/wordpress-plugins/user-registration/woocommerce"
+msgid "https://wpuserregistration.com/features/woocommerce"
 msgstr ""
 
 #. Description of the plugin
@@ -31,7 +31,7 @@ msgid "WPEverest"
 msgstr ""
 
 #. Author URI of the plugin
-msgid "https://wpeverest.com"
+msgid "https://wpuserregistration.com"
 msgstr ""
 
 #: includes/3rd-party/class-urwc-wc-memberships.php:61
@@ -47,7 +47,7 @@ msgid "Invalid Subscription."
 msgstr ""
 
 #: includes/3rd-party/class-urwc-wc-subscriptions.php:79
-#: includes/class-urwc-frontend.php:176
+#: includes/class-urwc-frontend.php:240
 msgid "My Account"
 msgstr ""
 
@@ -59,9 +59,45 @@ msgstr ""
 msgid "WooCommerce Shipping Address"
 msgstr ""
 
-#: includes/admin/settings/class-urwc-settings-woocommerce.php:27
-#: includes/functions-urwc-core.php:227
+#: includes/admin/class-urwc-product-page.php:66
+msgid "UR Form"
+msgstr ""
+
+#: includes/admin/class-urwc-product-page.php:346
+msgid "None"
+msgstr ""
+
+#: includes/admin/class-urwc-product-page.php:352
+msgid "User Registration"
+msgstr ""
+
+#: includes/admin/class-urwc-product-page.php:355
+msgid "User Registration Form"
+msgstr ""
+
+#: includes/admin/class-urwc-product-page.php:360
+#: includes/functions-urwc-core.php:236
+msgid "Select Registration Form"
+msgstr ""
+
+#: includes/admin/class-urwc-product-page.php:361
+#: includes/functions-urwc-core.php:237
+msgid "Choose registration form to sync with WooCommerce."
+msgstr ""
+
+#: includes/admin/settings/class-urwc-settings-woocommerce.php:34
+#: includes/functions-urwc-core.php:195
+#: includes/functions-urwc-core.php:199
+#: includes/functions-urwc-core.php:228
 msgid "WooCommerce"
+msgstr ""
+
+#: includes/admin/settings/class-urwc-settings-woocommerce.php:75
+msgid "Action failed. Please refresh the page and retry."
+msgstr ""
+
+#: includes/class-urwc-ajax.php:56
+msgid "Nonce error, please reload."
 msgstr ""
 
 #: includes/class-urwc-field-list-table.php:39
@@ -76,44 +112,56 @@ msgstr ""
 msgid "Plugin"
 msgstr ""
 
-#: includes/class-urwc-frontend.php:176
+#: includes/class-urwc-field-list-table.php:122
+msgid "No fields found to sync."
+msgstr ""
+
+#: includes/class-urwc-frontend.php:240
 msgid "Invalid order."
 msgstr ""
 
-#: includes/class-urwc-frontend.php:228
+#: includes/class-urwc-frontend.php:296
 msgid "Select an option&hellip;"
 msgstr ""
 
-#: includes/class-urwc-frontend.php:301
+#: includes/class-urwc-frontend.php:370
 msgid "%s is a required field."
 msgstr ""
 
-#: includes/class-urwc-frontend.php:315
+#: includes/class-urwc-frontend.php:384
 msgid "Please enter a valid postcode / ZIP."
 msgstr ""
 
-#: includes/class-urwc-frontend.php:324
+#: includes/class-urwc-frontend.php:393
 msgid "%s is not a valid phone number."
 msgstr ""
 
-#: includes/class-urwc-frontend.php:331
+#: includes/class-urwc-frontend.php:400
 msgid "%s is not a valid email address."
 msgstr ""
 
-#: includes/class-urwc-frontend.php:362
+#: includes/class-urwc-frontend.php:431
 msgid "Address changed successfully."
 msgstr ""
 
-#: includes/class-urwc-frontend.php:383
+#: includes/class-urwc-frontend.php:452
 msgid "Orders"
 msgstr ""
 
-#: includes/class-urwc-frontend.php:384
+#: includes/class-urwc-frontend.php:453
 msgid "Downloads"
 msgstr ""
 
-#: includes/class-urwc-frontend.php:385
+#: includes/class-urwc-frontend.php:454
 msgid "Addresses"
+msgstr ""
+
+#: includes/class-urwc-frontend.php:867
+msgid "Select Options"
+msgstr ""
+
+#: includes/class-urwc-sync.php:76
+msgid "Extra Information"
 msgstr ""
 
 #: includes/form/class-ur-form-field-billing-address-1.php:44
@@ -1465,29 +1513,53 @@ msgid "Shipping Address"
 msgstr ""
 
 #: includes/form/settings/class-ur-setting-billing-address-1.php:34
+#: includes/form/settings/class-ur-setting-billing-address-1.php:41
 #: includes/form/settings/class-ur-setting-billing-address-2.php:34
+#: includes/form/settings/class-ur-setting-billing-address-2.php:41
 #: includes/form/settings/class-ur-setting-billing-address-title.php:34
+#: includes/form/settings/class-ur-setting-billing-address-title.php:41
 #: includes/form/settings/class-ur-setting-billing-city.php:34
+#: includes/form/settings/class-ur-setting-billing-city.php:41
 #: includes/form/settings/class-ur-setting-billing-company.php:34
+#: includes/form/settings/class-ur-setting-billing-company.php:41
 #: includes/form/settings/class-ur-setting-billing-email.php:34
+#: includes/form/settings/class-ur-setting-billing-email.php:41
 #: includes/form/settings/class-ur-setting-billing-first-name.php:34
+#: includes/form/settings/class-ur-setting-billing-first-name.php:41
 #: includes/form/settings/class-ur-setting-billing-last-name.php:34
+#: includes/form/settings/class-ur-setting-billing-last-name.php:41
 #: includes/form/settings/class-ur-setting-billing-phone.php:34
+#: includes/form/settings/class-ur-setting-billing-phone.php:41
 #: includes/form/settings/class-ur-setting-billing-postcode.php:34
+#: includes/form/settings/class-ur-setting-billing-postcode.php:41
 #: includes/form/settings/class-ur-setting-billing-separate-shipping.php:34
+#: includes/form/settings/class-ur-setting-billing-separate-shipping.php:41
 #: includes/form/settings/class-ur-setting-billing-state.php:34
+#: includes/form/settings/class-ur-setting-billing-state.php:41
 #: includes/form/settings/class-ur-setting-billing_country.php:57
+#: includes/form/settings/class-ur-setting-billing_country.php:64
 #: includes/form/settings/class-ur-setting-shipping-address-1.php:34
+#: includes/form/settings/class-ur-setting-shipping-address-1.php:41
 #: includes/form/settings/class-ur-setting-shipping-address-2.php:34
+#: includes/form/settings/class-ur-setting-shipping-address-2.php:41
 #: includes/form/settings/class-ur-setting-shipping-address-title.php:34
+#: includes/form/settings/class-ur-setting-shipping-address-title.php:41
 #: includes/form/settings/class-ur-setting-shipping-city.php:34
+#: includes/form/settings/class-ur-setting-shipping-city.php:41
 #: includes/form/settings/class-ur-setting-shipping-company.php:34
+#: includes/form/settings/class-ur-setting-shipping-company.php:41
 #: includes/form/settings/class-ur-setting-shipping-first-name.php:34
+#: includes/form/settings/class-ur-setting-shipping-first-name.php:41
 #: includes/form/settings/class-ur-setting-shipping-last-name.php:34
+#: includes/form/settings/class-ur-setting-shipping-last-name.php:41
 #: includes/form/settings/class-ur-setting-shipping-postcode.php:34
+#: includes/form/settings/class-ur-setting-shipping-postcode.php:41
 #: includes/form/settings/class-ur-setting-shipping-state.php:34
+#: includes/form/settings/class-ur-setting-shipping-state.php:41
 #: includes/form/settings/class-ur-setting-shipping_company.php:34
+#: includes/form/settings/class-ur-setting-shipping_company.php:41
 #: includes/form/settings/class-ur-setting-shipping_country.php:57
+#: includes/form/settings/class-ur-setting-shipping_country.php:64
 msgid "Custom Class"
 msgstr ""
 
@@ -1538,52 +1610,93 @@ msgstr ""
 msgid "Select a default country."
 msgstr ""
 
-#: includes/functions-urwc-core.php:77
-msgid "Please install <code>user-registration-pro</code> plugin to use <code>user-registration-woocommerce</code> addon."
+#: includes/functions-urwc-core.php:195
+msgid "User Registration WooCommerce  requires %1s version 4.0.0 or greater and %2s to work"
 msgstr ""
 
-#: includes/functions-urwc-core.php:86
-msgid "Please activate <code>user-registration-pro</code> plugin to use <code>user-registration-woocommerce</code> addon."
+#: includes/functions-urwc-core.php:195
+#: includes/functions-urwc-core.php:197
+msgid "User Registration Pro"
 msgstr ""
 
-#: includes/functions-urwc-core.php:92
-msgid "Please install <code>woocommerce</code> plugin to use <code>user-registration-woocommerce</code> addon."
+#: includes/functions-urwc-core.php:197
+msgid "User Registration WooCommerce  requires %1s version 4.0.0 or greater to work"
 msgstr ""
 
-#: includes/functions-urwc-core.php:100
-msgid "Please activate <code>woocommerce</code> plugin to use <code>user-registration-woocommerce</code> addon."
+#: includes/functions-urwc-core.php:199
+msgid "User Registration WooCommerce  requires %1s to work"
 msgstr ""
 
-#: includes/functions-urwc-core.php:112
-msgid "Please update your <code>user registration</code> plugin to at least 1.4.1 version to use <code>user-registration-woocommerce</code> addon."
-msgstr ""
-
-#: includes/functions-urwc-core.php:117
-msgid "Please update your <code>user-registration-pro</code> plugin(to at least 3.0.0 version) to use <code>user-registration-woocommerce</code> addon."
-msgstr ""
-
-#: includes/functions-urwc-core.php:230
+#: includes/functions-urwc-core.php:231
 msgid "WooCommerce Sync"
 msgstr ""
 
-#: includes/functions-urwc-core.php:235
-msgid "Select Registration Form"
+#: includes/functions-urwc-core.php:247
+msgid "Enable Login Options"
 msgstr ""
 
-#: includes/functions-urwc-core.php:236
-msgid "Choose registration form to sync with WooCommerce."
+#: includes/functions-urwc-core.php:248
+msgid "Apply user login option on checkout."
 msgstr ""
 
-#: includes/functions-urwc-core.php:401
+#: includes/functions-urwc-core.php:249
+msgid "Check this option to apply default user login option during checkout."
+msgstr ""
+
+#: includes/functions-urwc-core.php:257
+msgid "Replace registration page"
+msgstr ""
+
+#: includes/functions-urwc-core.php:258
+msgid "Replace default WooCommerce login and registration form with User Registration form and login"
+msgstr ""
+
+#: includes/functions-urwc-core.php:259
+msgid "Check this option to replace default WooCommerce's login and registration page"
+msgstr ""
+
+#: includes/functions-urwc-core.php:267
+msgid "Replace checkout login"
+msgstr ""
+
+#: includes/functions-urwc-core.php:268
+msgid "Replace default WooCommerce login in checkout page with User Registration login"
+msgstr ""
+
+#: includes/functions-urwc-core.php:269
+msgid "Check this option to replace default WooCommerce's login in checkout page"
+msgstr ""
+
+#: includes/functions-urwc-core.php:277
+msgid "Sync checkout registration"
+msgstr ""
+
+#: includes/functions-urwc-core.php:278
+msgid "This option lets you select registration form fields to be synced with WooCommerce Checkout page's registration form."
+msgstr ""
+
+#: includes/functions-urwc-core.php:279
+msgid "Check this option to sync user registration form with Woocommerce checkout registration"
+msgstr ""
+
+#: includes/functions-urwc-core.php:412
 msgid "Vertical"
 msgstr ""
 
-#: includes/functions-urwc-core.php:402
+#: includes/functions-urwc-core.php:413
 msgid "Horizontal"
 msgstr ""
 
-#: includes/functions-urwc-core.php:586
+#: includes/functions-urwc-core.php:661
 msgid "Form not found!"
+msgstr ""
+
+#: templates/woocommerce-login-register.php:34
+msgid "Login"
+msgstr ""
+
+#: templates/woocommerce-login-register.php:39
+msgid "Registration"
 msgstr ""
 
 #: user-registration-woocommerce.php:68

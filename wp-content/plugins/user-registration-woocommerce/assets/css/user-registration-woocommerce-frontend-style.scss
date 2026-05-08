@@ -138,6 +138,24 @@
 			}
 		}
 	}
+
+    &.single-product{ 
+        ul {
+            list-style: none;
+        }
+
+        .ur-checkbox-label{
+            display: inline !important;
+        }
+
+        .cart{
+            flex-wrap: wrap;
+        }
+
+        .urwc-form{
+            width:100%;
+        }
+    }
 }
 
 .woocommerce #ur-frontend-form form.login, .woocommerce #ur-frontend-form form.register {

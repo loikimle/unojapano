@@ -10,6 +10,7 @@ use WPSEO_Redirect_Manager;
 use WPSEO_Taxonomy_Meta;
 use Yoast\WP\SEO\Builders\Indexable_Term_Builder;
 use Yoast\WP\SEO\Conditionals\No_Conditionals;
+use Yoast\WP\SEO\Helpers\Indexable_Helper;
 use Yoast\WP\SEO\Helpers\Post_Type_Helper;
 use Yoast\WP\SEO\Main;
 use Yoast\WP\SEO\Models\Indexable;
@@ -30,49 +31,49 @@ class Workouts_Route implements Route_Interface {
 	 *
 	 * @var string
 	 */
-	const NOINDEX_ROUTE = '/noindex';
+	public const NOINDEX_ROUTE = '/noindex';
 
 	/**
 	 * Represents a remove and redirect route.
 	 *
 	 * @var string
 	 */
-	const REMOVE_REDIRECT_ROUTE = '/remove_redirect';
+	public const REMOVE_REDIRECT_ROUTE = '/remove_redirect';
 
 	/**
 	 * Represents a link suggestions route.
 	 *
 	 * @var string
 	 */
-	const LINK_SUGGESTIONS_ROUTE = '/link_suggestions';
+	public const LINK_SUGGESTIONS_ROUTE = '/link_suggestions';
 
 	/**
 	 * Represents a cornerstones route.
 	 *
 	 * @var string
 	 */
-	const CORNERSTONE_DATA_ROUTE = '/cornerstone_data';
+	public const CORNERSTONE_DATA_ROUTE = '/cornerstone_data';
 
 	/**
 	 * Represents an enable cornerstone route.
 	 *
 	 * @var string
 	 */
-	const ENABLE_CORNERSTONE = '/enable_cornerstone';
+	public const ENABLE_CORNERSTONE = '/enable_cornerstone';
 
 	/**
 	 * Represents a most linked route.
 	 *
 	 * @var string
 	 */
-	const MOST_LINKED_ROUTE = '/most_linked';
+	public const MOST_LINKED_ROUTE = '/most_linked';
 
 	/**
 	 * Represents a last_updated route.
 	 *
 	 * @var string
 	 */
-	const LAST_UPDATED_ROUTE = '/last_updated';
+	public const LAST_UPDATED_ROUTE = '/last_updated';
 
 	/**
 	 * The indexable repository.
@@ -96,6 +97,13 @@ class Workouts_Route implements Route_Interface {
 	private $indexable_term_builder;
 
 	/**
+	 * The indexable helper.
+	 *
+	 * @var Indexable_Helper
+	 */
+	private $indexable_helper;
+
+	/**
 	 * The post type helper.
 	 *
 	 * @var Post_Type_Helper
@@ -108,17 +116,20 @@ class Workouts_Route implements Route_Interface {
 	 * @param Indexable_Repository    $indexable_repository    The indexable repository.
 	 * @param Link_Suggestions_Action $link_suggestions_action The link suggestions action.
 	 * @param Indexable_Term_Builder  $indexable_term_builder  The indexable term builder.
+	 * @param Indexable_Helper        $indexable_helper        The indexable helper.
 	 * @param Post_Type_Helper        $post_type_helper        The post type helper.
 	 */
 	public function __construct(
 		Indexable_Repository $indexable_repository,
 		Link_Suggestions_Action $link_suggestions_action,
 		Indexable_Term_Builder $indexable_term_builder,
+		Indexable_Helper $indexable_helper,
 		Post_Type_Helper $post_type_helper
 	) {
 		$this->indexable_repository    = $indexable_repository;
 		$this->link_suggestions_action = $link_suggestions_action;
 		$this->indexable_term_builder  = $indexable_term_builder;
+		$this->indexable_helper        = $indexable_helper;
 		$this->post_type_helper        = $post_type_helper;
 	}
 
@@ -128,8 +139,12 @@ class Workouts_Route implements Route_Interface {
 	 * @return void
 	 */
 	public function register_routes() {
-		$edit_others_posts = static function() {
+		$edit_others_posts = static function () {
 			return \current_user_can( 'edit_others_posts' );
+		};
+
+		$delete_others_posts = static function () {
+			return \current_user_can( 'delete_others_posts' );
 		};
 
 		$noindex_route = [
@@ -160,7 +175,7 @@ class Workouts_Route implements Route_Interface {
 			[
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'remove_redirect' ],
-				'permission_callback' => $edit_others_posts,
+				'permission_callback' => $delete_others_posts,
 				'args'                => [
 					'object_id'       => [
 						'type'     => 'integer',
@@ -254,7 +269,7 @@ class Workouts_Route implements Route_Interface {
 	/**
 	 * Sets noindex on an indexable.
 	 *
-	 * @param WP_Rest_Request $request The request object.
+	 * @param WP_REST_Request $request The request object.
 	 *
 	 * @return WP_REST_Response the configuration of the workouts.
 	 */
@@ -262,29 +277,16 @@ class Workouts_Route implements Route_Interface {
 		if ( $request['object_type'] === 'post' ) {
 			WPSEO_Meta::set_value( 'meta-robots-noindex', 1, $request['object_id'] );
 		}
-		elseif ( $request['object_type'] === 'term' ) {
-			WPSEO_Taxonomy_Meta::set_value( $request['object_id'], $request['object_sub_type'], 'noindex', 'noindex' );
-			// Rebuild the indexable as WPSEO_Taxonomy_Meta does not trigger any actions on which term indexables are rebuild.
-			$indexable = $this->indexable_term_builder->build( $request['object_id'], $this->indexable_repository->find_by_id_and_type( $request['object_id'], $request['object_type'] ) );
-			if ( \is_a( $indexable, Indexable::class ) ) {
-				$indexable->save();
-			}
-			else {
-				return new WP_REST_Response(
-					[ 'json' => false ]
-				);
-			}
-		}
 
 		return new WP_REST_Response(
-			[ 'json' => true ]
+			[ 'json' => true ],
 		);
 	}
 
 	/**
 	 * Enables cornerstone on an indexable.
 	 *
-	 * @param WP_Rest_Request $request The request object.
+	 * @param WP_REST_Request $request The request object.
 	 *
 	 * @return WP_REST_Response the configuration of the workouts.
 	 */
@@ -298,24 +300,24 @@ class Workouts_Route implements Route_Interface {
 			// Rebuild the indexable as WPSEO_Taxonomy_Meta does not trigger any actions on which term indexables are rebuild.
 			$indexable = $this->indexable_term_builder->build( $request['object_id'], $this->indexable_repository->find_by_id_and_type( $request['object_id'], $request['object_type'] ) );
 			if ( \is_a( $indexable, Indexable::class ) ) {
-				$indexable->save();
+				$this->indexable_helper->save_indexable( $indexable );
 			}
 			else {
 				return new WP_REST_Response(
-					[ 'json' => false ]
+					[ 'json' => false ],
 				);
 			}
 		}
 
 		return new WP_REST_Response(
-			[ 'json' => true ]
+			[ 'json' => true ],
 		);
 	}
 
 	/**
 	 * Removes an indexable and redirects it.
 	 *
-	 * @param WP_Rest_Request $request The request object.
+	 * @param WP_REST_Request $request The request object.
 	 *
 	 * @return WP_REST_Response the configuration of the workouts.
 	 */
@@ -332,7 +334,7 @@ class Workouts_Route implements Route_Interface {
 		}
 		else {
 			return new WP_REST_Response(
-				[ 'json' => false ]
+				[ 'json' => false ],
 			);
 		}
 
@@ -340,19 +342,19 @@ class Workouts_Route implements Route_Interface {
 			$request['permalink'],
 			$request['redirect_url'],
 			'301',
-			'plain'
+			'plain',
 		);
 		$redirect_manager = new WPSEO_Redirect_Manager( 'plain' );
 		$redirect_manager->create_redirect( $redirect );
 		return new WP_REST_Response(
-			[ 'json' => true ]
+			[ 'json' => true ],
 		);
 	}
 
 	/**
 	 * Sets noindex on an indexable.
 	 *
-	 * @param WP_Rest_Request $request The request object.
+	 * @param WP_REST_Request $request The request object.
 	 *
 	 * @return WP_REST_Response the configuration of the workouts.
 	 */
@@ -360,7 +362,7 @@ class Workouts_Route implements Route_Interface {
 		$suggestions = $this->link_suggestions_action->get_indexable_suggestions_for_indexable(
 			$request['indexableId'],
 			5,
-			false
+			false,
 		);
 
 		foreach ( $suggestions as $index => $suggestion ) {
@@ -368,7 +370,7 @@ class Workouts_Route implements Route_Interface {
 		}
 
 		return new WP_REST_Response(
-			[ 'json' => $suggestions ]
+			[ 'json' => $suggestions ],
 		);
 	}
 
@@ -407,14 +409,14 @@ class Workouts_Route implements Route_Interface {
 					'cornerstones' => $cornerstones,
 					'mostLinked'   => $most_linked,
 				],
-			]
+			],
 		);
 	}
 
 	/**
 	 * Gets the last updated for a particular post Id.
 	 *
-	 * @param WP_Rest_Request $request The request object.
+	 * @param WP_REST_Request $request The request object.
 	 *
 	 * @return WP_REST_Response the configuration of the workouts.
 	 */
@@ -422,7 +424,7 @@ class Workouts_Route implements Route_Interface {
 		$post = \get_post( $request['postId'] );
 
 		return new WP_REST_Response(
-			[ 'json' => $post->post_modified ]
+			[ 'json' => $post->post_modified ],
 		);
 	}
 
@@ -454,8 +456,8 @@ class Workouts_Route implements Route_Interface {
 		$object_sub_types = \array_values(
 			\array_merge(
 				$this->post_type_helper->get_public_post_types(),
-				\get_taxonomies( [ 'public' => true ] )
-			)
+				\get_taxonomies( [ 'public' => true ] ),
+			),
 		);
 
 		$excluded_post_types = \apply_filters( 'wpseo_indexable_excluded_post_types', [ 'attachment' ] );

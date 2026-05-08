@@ -5,6 +5,10 @@ jQuery(function ($) {
 	var UR_ADDON = {
 		init: function () {
 			this.initialize_conditional_logic_settings();
+			this.initialize_prevent_active_login_settings();
+			this.handle_row_options_toggle();
+			this.handle_field_options_toggle();
+			this.handle_passwordless_login_toggle();
 		},
 		initialize_conditional_logic_settings: function () {
 			/**
@@ -25,14 +29,10 @@ jQuery(function ($) {
 			 * Default Hide show conditional logic container according to enable field.
 			 */
 			$(document)
-				.find(".ur_use_conditional_logic_wrapper")
+				.find("#ur_use_conditional_logic")
 				.each(function () {
-					var wrapper = $(this).closest(
-						".ur_conditional_logic_container"
-					);
-					if (
-						$(this).find("#ur_use_conditional_logic").is(":checked")
-					) {
+					var wrapper = $(this).closest(".form-row").parent();
+					if ($(this).is(":checked")) {
 						wrapper.find(".ur_conditional_logic_wrapper").show();
 					} else {
 						wrapper.find(".ur_conditional_logic_wrapper").hide();
@@ -43,9 +43,7 @@ jQuery(function ($) {
 			 * Hide show conditional logic container on change of enable field.
 			 */
 			$(document).on("change", "#ur_use_conditional_logic", function () {
-				var wrapper = $(this).closest(
-					".ur_conditional_logic_container"
-				);
+				var wrapper = $(this).closest(".form-row").parent();
 
 				if ($(this).is(":checked")) {
 					wrapper.find(".ur_conditional_logic_wrapper").show();
@@ -213,6 +211,143 @@ jQuery(function ($) {
 				);
 			}
 		},
+		/**
+		 * Handle prevent active login settings.
+		 */
+		initialize_prevent_active_login_settings: function () {
+			$("#user_registration_pro_general_setting_prevent_active_login").on(
+				"click",
+				function () {
+					UR_ADDON.showHideActiveLogin($(this));
+				}
+			);
+
+			UR_ADDON.showHideActiveLogin(
+				$("#user_registration_pro_general_setting_prevent_active_login")
+			);
+		},
+		/**
+		 * Show or hide active login limits option.
+		 */
+		showHideActiveLogin: function ($node) {
+			if ($node.prop("checked")) {
+				$("#user_registration_pro_general_setting_limited_login")
+					.closest(".user-registration-global-settings")
+					.show();
+			} else {
+				$("#user_registration_pro_general_setting_limited_login")
+					.closest(".user-registration-global-settings")
+					.addClass("userregistration-forms-hidden")
+					.hide();
+			}
+		},
+		/**
+		 * Hide row settings if fields other than row is clicked.
+		 */
+		handle_field_options_toggle: function () {
+			$(".ur-builder-wrapper .ur-selected-inputs .ur-selected-item").on(
+				"click",
+				function () {
+					$(
+						'.ur-tab-lists li[aria-controls="ur-row-settings"]'
+					).hide();
+					$(
+						'.ur-tab-lists li[aria-controls="ur-tab-field-options"]'
+					).show();
+				}
+			);
+		},
+		/**
+		 * Show row settings if row settings icon is clicked.
+		 */
+		handle_row_options_toggle: function () {
+			$(document).on("click", ".ur-row-settings", function () {
+				$(document).trigger("row_settings_clicked", $(this));
+			});
+
+			$(document).on("row_settings_clicked", function (e, node) {
+				$(
+					'.ur-tab-lists li[aria-controls="ur-tab-field-options"]'
+				).hide();
+				$(
+					'.ur-tab-lists li[aria-controls="ur-multipart-page-settings"]'
+				).hide();
+
+				$('.ur-tab-lists li[aria-controls="ur-row-settings"]').show();
+				$("#ur-row-options").trigger("click", ["triggered_click"]);
+
+				var row_id = $(node)
+					.closest(".ur-single-row")
+					.attr("data-row-id");
+
+				$("#ur-row-section-settings")
+					.find(".ur-individual-row-settings")
+					.each(function () {
+						if (row_id === $(this).attr("data-row-id")) {
+							$(this).show();
+						} else {
+							$(this).hide();
+						}
+					});
+
+				$(".ur-input-grids")
+					.find(".ur-single-row")
+					.each(function () {
+						if (row_id === $(this).attr("data-row-id")) {
+							$(this)
+								.find(".ur-selected-item")
+								.addClass("ur-row-setting-active");
+						} else {
+							$(this)
+								.find(".ur-selected-item")
+								.removeClass("ur-row-setting-active");
+						}
+					});
+			});
+		},
+
+		/**
+		 * Handle password less login toggle.
+		 *
+		 * @since 5.0
+		 */
+		handle_passwordless_login_toggle: function () {
+			$("#user_registration_pro_passwordless_login").on(
+				"change",
+				function () {
+					var checked = UR_ADDON.showHidePasswordLessLogin(
+						$(this).prop("checked")
+					);
+				}
+			);
+
+			var checked = $("#user_registration_pro_passwordless_login").prop(
+				"checked"
+			);
+
+			UR_ADDON.showHidePasswordLessLogin(checked);
+		},
+
+		/**
+		 * Handle show and hide passwordless login as default login.
+		 *
+		 * @since 5.0
+		 */
+		showHidePasswordLessLogin: function (checked) {
+			if (checked) {
+				$(
+					"#user_registration_pro_passwordless_login_default_login_area"
+				)
+					.closest(".user-registration-global-settings")
+					.show();
+			} else {
+				$(
+					"#user_registration_pro_passwordless_login_default_login_area"
+				)
+					.closest(".user-registration-global-settings")
+					.hide();
+			}
+		}
 	};
 
 	UR_ADDON.init();

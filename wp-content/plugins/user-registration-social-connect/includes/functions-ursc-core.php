@@ -26,7 +26,7 @@ function user_registration_social_login_templates() {
 			'ursc_theme_1' => sprintf( __( 'Style 1 %1$s', 'user-registration-social-connect' ), '<br/><img style="margin-top:10px;" src="' . URSC()->plugin_url() . '/assets/images/ursc_theme_1.jpg"/>' ),
 			'ursc_theme_2' => sprintf( __( 'Style 2 %1$s', 'user-registration-social-connect' ), '<br/><img style="margin-top:10px;" src="' . URSC()->plugin_url() . '/assets/images/ursc_theme_2.jpg"/>' ),
 			'ursc_theme_3' => sprintf( __( 'Style 3 %1$s', 'user-registration-social-connect' ), '<br/><img style="margin-top:10px;" src="' . URSC()->plugin_url() . '/assets/images/ursc_theme_3.jpg"/>' ),
-			'ursc_theme_4' => sprintf( __( 'Style 4 %1$s', 'user-registration-social-connect' ), '<br/><img style="margin-top:10px;" src="' . URSC()->plugin_url() . '/assets/images/ursc_theme_4.jpg"/>' ),
+			'ursc_theme_4' => sprintf( __( 'Style 4 %1$s', 'user-registration-social-connect' ), '<br/><img style="margin-top:10px; width: 100%;" src="' . URSC()->plugin_url() . '/assets/images/ursc_theme_4.jpg"/>' ),
 
 		)
 	);
@@ -125,7 +125,6 @@ function user_registration_session_start() {
 	if ( session_status() === PHP_SESSION_NONE ) {
 		session_start();
 	}
-
 }
 
 /**
@@ -143,13 +142,11 @@ function user_registration_social_connect_unset_session( $key ) {
 			unset( $_SESSION['user_registration_social_connect'][ $key ] );
 		}
 	}
-
 }
 
 /**
  * @param $key
  */
-
 function user_registration_social_connect_get_session( $key ) {
 	if ( session_status() === PHP_SESSION_NONE ) {
 		session_start();
@@ -164,7 +161,6 @@ function user_registration_social_connect_get_session( $key ) {
 	}
 
 	return false;
-
 }
 
 /**
@@ -172,13 +168,14 @@ function user_registration_social_connect_get_session( $key ) {
  */
 function user_registration_social_connect_admin_notice() {
 
-	$class = 'notice notice-error';
+	$class = 'error notice is-dismissible';
 
 	$message = ursc_is_compatible();
 
 	if ( 'YES' !== $message ) {
 
-		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), ( $message ) );
+		printf( '<div class="' . esc_attr( $class ) . '"><p>' . sprintf( esc_html__( 'User Registration Social Connect requires %s version 4.0.0 or greater to work', 'user-registration-social-connect' ), '<a href="https://wpuserregistration.com/" target="_blank">' . esc_html__( 'User Registration Pro', 'user-registration-social-connect' ) . '</a>' ) . '</p></div>' );
+
 	}
 }
 
@@ -196,7 +193,6 @@ function ursc_admin_notices() {
 function ursc_check_plugin_compatibility() {
 
 	add_action( 'admin_notices', 'user_registration_social_connect_admin_notice', 10 );
-
 }
 
 /**
@@ -204,20 +200,18 @@ function ursc_check_plugin_compatibility() {
  */
 function ursc_is_compatible() {
 
-	$ur_plugins_path = WP_PLUGIN_DIR . URSC_DS . 'user-registration' . URSC_DS . 'user-registration.php';
 	$ur_pro_plugins_path = WP_PLUGIN_DIR . URSC_DS . 'user-registration-pro' . URSC_DS . 'user-registration.php';
 
-	if ( ! file_exists( $ur_plugins_path ) && ! file_exists( $ur_pro_plugins_path ) ) {
-		return __( 'Please install <code>user-registration-pro</code> plugin to use <code>user-registration-social-connect</code> addon.', 'user-registration-social-connect' );
+	if ( ! file_exists( $ur_pro_plugins_path ) ) {
+		return;
 	}
 
-	$ur_plugin_file_path = 'user-registration/user-registration.php';
 	$ur_pro_plugin_file_path = 'user-registration-pro/user-registration.php';
 
 	include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-	if ( ! is_plugin_active( $ur_plugin_file_path ) && ! is_plugin_active( $ur_pro_plugin_file_path ) ) {
-		return __( 'Please activate <code>user-registration-pro</code> plugin to use <code>user-registration-social-connect</code> addon.', 'user-registration-social-connect' );
+	if ( ! is_plugin_active( $ur_pro_plugin_file_path ) ) {
+		return;
 	}
 	if ( function_exists( 'UR' ) ) {
 		$user_registration_version = UR()->version;
@@ -225,20 +219,11 @@ function ursc_is_compatible() {
 		$user_registration_version = get_option( 'user_registration_version' );
 	}
 
-	if ( ! is_plugin_active( $ur_pro_plugin_file_path ) ) {
-
-		if ( version_compare( $user_registration_version, '1.1.0', '<' ) ) {
-			return __( 'Please update your <code>user-registration</code> plugin(to at least 1.1.0 version) to <code>use user-registration-social-connect</code> addon.', 'user-registration-social-connect' );
-		}
-	} else {
-
-		if ( version_compare( $user_registration_version, '3.0.0', '<' ) ) {
-			return __( 'Please update your <code>user-registration-pro</code> plugin(to at least 3.0.0 version) to use <code>user-registration-social-connect</code> addon.', 'user-registration-social-connect' );
-		}
+	if ( version_compare( $user_registration_version, '4.0.0', '<' ) ) {
+		return;
 	}
 
 	return 'YES';
-
 }
 
 /**
@@ -324,12 +309,12 @@ function ursc_social_api_settings() {
 	return apply_filters(
 		'user_registration_social_settings',
 		array(
-			'title' =>  __( 'API settings', 'user-registration-social-connect' ),
-			'sections' => array (
+			'title'    => __( 'API settings', 'user-registration-social-connect' ),
+			'sections' => array(
 				'user_registration_social_facebook_options' => array(
-					'title' => __( 'Facebook', 'user-registration-social-connect' ),
-					'type'  => 'card',
-					'desc'  => '',
+					'title'    => __( 'Facebook', 'user-registration-social-connect' ),
+					'type'     => 'card',
+					'desc'     => '',
 					'settings' => array(
 						array(
 							'row_class' => 'ursc_enable_disable ursc_facebook_enable',
@@ -337,7 +322,7 @@ function ursc_social_api_settings() {
 							'desc'      => __( 'Tick here if you want to enable facebook login.', 'user-registration-social-connect' ),
 							'id'        => 'user_registration_social_setting_enable_facebook_connect',
 							'default'   => 'no',
-							'type'      => 'checkbox',
+							'type'      => 'toggle',
 							'autoload'  => false,
 						),
 						array(
@@ -367,9 +352,9 @@ function ursc_social_api_settings() {
 					),
 				),
 				'user_registration_social_twitter_options' => array(
-					'title' => __( 'Twitter', 'user-registration-social-connect' ),
-					'type'  => 'card',
-					'desc'  => '',
+					'title'    => __( 'Twitter', 'user-registration-social-connect' ),
+					'type'     => 'card',
+					'desc'     => '',
 					'settings' => array(
 						array(
 							'row_class' => 'ursc_enable_disable ursc_twitter_enable',
@@ -377,7 +362,7 @@ function ursc_social_api_settings() {
 							'desc'      => __( 'Tick here if you want to enable twitter login.', 'user-registration-social-connect' ),
 							'id'        => 'user_registration_social_setting_enable_twitter_connect',
 							'default'   => 'no',
-							'type'      => 'checkbox',
+							'type'      => 'toggle',
 							'autoload'  => false,
 						),
 						array(
@@ -406,10 +391,10 @@ function ursc_social_api_settings() {
 						),
 					),
 				),
-				'user_registration_social_google_options' => array(
-					'title' => __( 'Google', 'user-registration-social-connect' ),
-					'type'  => 'card',
-					'desc'  => '',
+				'user_registration_social_google_options'  => array(
+					'title'    => __( 'Google', 'user-registration-social-connect' ),
+					'type'     => 'card',
+					'desc'     => '',
 					'settings' => array(
 						array(
 							'row_class' => 'ursc_enable_disable ursc_google_enable',
@@ -417,7 +402,7 @@ function ursc_social_api_settings() {
 							'desc'      => __( 'Tick here if you want to enable google login.', 'user-registration-social-connect' ),
 							'id'        => 'user_registration_social_setting_enable_google_connect',
 							'default'   => 'no',
-							'type'      => 'checkbox',
+							'type'      => 'toggle',
 							'autoload'  => false,
 						),
 						array(
@@ -447,9 +432,9 @@ function ursc_social_api_settings() {
 					),
 				),
 				'user_registration_social_linkedin_options' => array(
-					'title' => __( 'LinkedIn', 'user-registration-social-connect' ),
-					'type'  => 'card',
-					'desc'  => '',
+					'title'    => __( 'LinkedIn', 'user-registration-social-connect' ),
+					'type'     => 'card',
+					'desc'     => '',
 					'settings' => array(
 						array(
 							'row_class' => 'ursc_enable_disable ursc_linkedin_enable',
@@ -457,7 +442,7 @@ function ursc_social_api_settings() {
 							'desc'      => __( 'Tick here if you want to enable linkedin login.', 'user-registration-social-connect' ),
 							'id'        => 'user_registration_social_setting_enable_linkedin_connect',
 							'default'   => 'no',
-							'type'      => 'checkbox',
+							'type'      => 'toggle',
 							'autoload'  => false,
 						),
 						array(
@@ -489,7 +474,6 @@ function ursc_social_api_settings() {
 			),
 		)
 	);
-
 }
 
 /**
@@ -504,28 +488,30 @@ function ursc_social_advance_settings() {
 	return apply_filters(
 		'user_registration_other_social_settings',
 		array(
-			'title' =>  __( 'Advance Settings', 'user-registration-social-connect' ),
-			'sections' => array (
+			'title'    => __( 'Advance Settings', 'user-registration-social-connect' ),
+			'sections' => array(
 				'user_registration_social_advance_options' => array(
-					'title' => __( 'Social Login', 'user-registration-social-connect' ),
-					'type'  => 'card',
-					'desc'  => '',
+					'title'    => __( 'Social Login', 'user-registration-social-connect' ),
+					'type'     => 'card',
+					'desc'     => '',
 					'settings' => array(
 						array(
 							'title'    => __( 'Enable social registration ?', 'user-registration-social-connect' ),
 							'desc'     => __( 'Tick here if you want to enable social registration', 'user-registration-social-connect' ),
 							'id'       => 'user_registration_social_setting_enable_social_registration',
 							'default'  => 'yes',
-							'type'     => 'checkbox',
+							'type'     => 'toggle',
 							'autoload' => false,
+							'desc_tip' => true,
 						),
 						array(
 							'title'    => __( 'Display social buttons in registration ?', 'user-registration-social-connect' ),
 							'desc'     => __( 'Tick here if you want to display social buttons in registration', 'user-registration-social-connect' ),
 							'id'       => 'user_registration_social_setting_display_social_buttons_in_registration',
 							'default'  => 'no',
-							'type'     => 'checkbox',
+							'type'     => 'toggle',
 							'autoload' => false,
+							'desc_tip' => true,
 						),
 						array(
 							'title'    => __( 'Default user role', 'user-registration-social-connect' ),
@@ -578,9 +564,9 @@ function ursc_social_advance_settings() {
 					),
 				),
 				'user_registration_social_advance_text_options' => array(
-					'title' => __( 'Social Text', 'user-registration-social-connect' ),
-					'type'  => 'card',
-					'desc'  => '',
+					'title'    => __( 'Social Text', 'user-registration-social-connect' ),
+					'type'     => 'card',
+					'desc'     => '',
 					'settings' => array(
 						array(
 							'title'    => __( 'Login with facebook text', 'user-registration-social-connect' ),
@@ -627,7 +613,6 @@ function ursc_social_advance_settings() {
 			),
 		)
 	);
-
 }
 
 /**
@@ -648,7 +633,7 @@ function ursc_get_username( $user_name, $email = '' ) {
 	$i        = 1;
 	while ( username_exists( $username ) ) {
 		$username = $user_name . '_' . $i;
-		$i++;
+		++$i;
 	}
 	return $username;
 }
@@ -678,4 +663,16 @@ function ursc_get_user_report() {
 	);
 
 	return $user_report;
+}
+
+if ( ! function_exists( 'ursc_string_to_bool' ) ) {
+	/**
+	 * Converts a string (e.g. 'yes' or 'no') to a bool.
+	 *
+	 * @param string $string String to convert.
+	 * @return bool
+	 */
+	function ursc_string_to_bool( $string ) {
+		return is_bool( $string ) ? $string : ( 'yes' === $string || 'on' === $string || 1 === $string || 'true' === $string || '1' === $string );
+	}
 }

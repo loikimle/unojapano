@@ -226,7 +226,7 @@ function ur_style_customizer_radio_checkbox_styles_controls( $controls ) {
 				),
 			),
 			'control' => array(
-				'label'       => __( 'Radio/Checkbox Margin', 'user-registration-style-customizer' ),
+				'label'       => __( 'Radio/Checkbox Padding', 'user-registration-style-customizer' ),
 				'description' => __( 'This is a form radio/checkbox padding.', 'user-registration-style-customizer' ),
 				'section'     => 'user_registration_radio_checkbox_style',
 				'type'        => 'UR_Customize_Dimension_Control',

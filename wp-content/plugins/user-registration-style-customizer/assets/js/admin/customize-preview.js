@@ -211,6 +211,19 @@
 		return style;
 	}
 
+	function maybe_parse_json( value ) {
+		try{
+			var o = JSON.parse( value );
+
+			if ( o && typeof o === 'object' ) {
+				return JSON.parse( value );
+			}
+		}
+		catch (e) {}
+
+		return value;
+	}
+
 	// Render style for live previews.
 	$(document).ready(function () {
 		var id = container.attr("id");
@@ -237,10 +250,12 @@
 			.find(".customize-template-name")
 			.text(data.templates[value.get()].name);
 		value.bind(function (newval) {
-			controls_wrapper
-				.find(".control-section-ur-templates")
-				.find(".customize-template-name")
-				.text(data.templates[newval].name);
+			if ( newval in data.templates ) {
+				controls_wrapper
+					.find(".control-section-ur-templates")
+					.find(".customize-template-name")
+					.text(data.templates[newval].name);
+			}
 		});
 	});
 	/* Form Wrapper start */
@@ -494,9 +509,7 @@
 	// Field Labels: font_style
 	wp.customize(settings + "[field_label][font_style]", function (value) {
 		value.bind(function (newval) {
-			if (typeof newval != "object") {
-				newval = JSON.parse(newval);
-			}
+			newval = maybe_parse_json( newval );
 
 			$.each(newval, function (prop, val) {
 				switch (prop) {
@@ -801,9 +814,7 @@
 	wp.customize(settings + "[field_styles][font_style]", function (value) {
 		value.bind(function (newval) {
 			var id = container.attr("id");
-			if (typeof newval != "object") {
-				newval = JSON.parse(newval);
-			}
+			newval = maybe_parse_json(newval);
 
 			$.each(newval, function (prop, val) {
 				var string_value = "";
@@ -2588,10 +2599,13 @@
 			.find(".customize-template-name")
 			.text(data.templates[value.get()].name);
 		value.bind(function (newval) {
-			controls_wrapper
-				.find(".control-section-ur-templates")
-				.find(".customize-template-name")
-				.text(data.templates[newval].name);
+
+			if ( newval in data.templates ) {
+				controls_wrapper
+					.find(".control-section-ur-templates")
+					.find(".customize-template-name")
+					.text(data.templates[newval].name);
+			}
 		});
 	});
 

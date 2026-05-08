@@ -2,7 +2,7 @@
 # This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: PostX 5.0.17\n"
+"Project-Id-Version: PostX 5.0.18\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ultimate-post\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"

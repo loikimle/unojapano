@@ -66,6 +66,16 @@ class Module extends BaseModule {
 	const COLOR_CATEGORY = 'color';
 
 	/**
+	 * Dynamic tags datetime category.
+	 */
+	const DATETIME_CATEGORY = 'datetime';
+
+	/**
+	 * Dynamic tags SVG category.
+	 */
+	const SVG_CATEGORY = 'svg';
+
+	/**
 	 * Dynamic tags module constructor.
 	 *
 	 * Initializing Elementor dynamic tags module.

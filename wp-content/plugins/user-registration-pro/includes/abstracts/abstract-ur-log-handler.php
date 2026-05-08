@@ -1,15 +1,17 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
-}
-
 /**
- * Abstract UR Log Handler Class
+ * Abstract UR Log Handler Class.
  *
  * @since           1.0.5
  * @package         UserRegistration/Abstracts
- * @category        Abstract Class
- * @author          WPEverest
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+/**
+ * UR_Log_Handler Class.
  */
 abstract class UR_Log_Handler implements UR_Log_Handler_Interface {
 
@@ -28,7 +30,7 @@ abstract class UR_Log_Handler implements UR_Log_Handler_Interface {
 	 * Builds a log entry text from level, timestamp and message.
 	 *
 	 * @param int    $timestamp Log timestamp.
-	 * @param string $level     emergency|alert|critical|error|warning|notice|info|debug
+	 * @param string $level     emergency|alert|critical|error|warning|notice|info|debug.
 	 * @param string $message   Log message.
 	 * @param array  $context   Additional information for log handlers.
 	 *
@@ -37,8 +39,13 @@ abstract class UR_Log_Handler implements UR_Log_Handler_Interface {
 	protected static function format_entry( $timestamp, $level, $message, $context ) {
 		$time_string  = self::format_time( $timestamp );
 		$level_string = strtoupper( $level );
-		$entry        = "{$time_string} {$level_string} {$message}";
-
+		$entry_message = is_array( $message ) ? json_encode( $message ) : $message;
+		$entry         = "{$time_string} {$level_string} {$entry_message}";
+		/**
+		 * Filter the format log entry.
+		 *
+		 * @param array $entry The entry.
+		 */
 		return apply_filters(
 			'user_registration_format_log_entry',
 			$entry,

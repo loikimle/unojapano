@@ -4,6 +4,7 @@ namespace ElementorPro\Modules\GlobalWidget\Documents;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\User;
+use ElementorPro\Core\Behaviors\Feature_Lock;
 use ElementorPro\Modules\GlobalWidget\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Widget extends Library_Document {
+
+	const EXPORT_GROUP = 'global-widget';
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -35,6 +38,12 @@ class Widget extends Library_Document {
 
 	public static function get_plural_title() {
 		return esc_html__( 'Global Widgets', 'elementor-pro' );
+	}
+
+	public static function get_lock_behavior_v2() {
+		return new Feature_Lock( [
+			'type' => static::get_type(),
+		] );
 	}
 
 	public function is_editable_by_current_user() {

@@ -39,10 +39,15 @@ class URSC_Frontend {
 		add_action( 'login_enqueue_scripts', array( $this, 'user_registration_social_scripts' ) );
 		add_filter( 'login_message', array( $this, 'login_message' ) );
 		add_filter( 'user_registration_login_form_before_notice', array( $this, 'ur_login_message' ) );
+		add_filter( 'user_registration_before_registration_form_notice', array( $this, 'ur_registration_message' ) );
 		add_action( 'user_registration_save_account_details', array( $this, 'update_bypass_current_password_meta' ), 10, 1 );
 
-		if ( 'yes' === get_option( 'user_registration_social_setting_display_social_buttons_in_registration', 'no' ) ) {
-			add_action( 'user_registration_form_registration_end', array( $this, 'add_ur_social_login' ) ); // check for the social logins
+		if ( ursc_string_to_bool( get_option( 'user_registration_social_setting_display_social_buttons_in_registration', false ) ) ) {
+			if ( 'top' === $social_position_option ) {
+				add_action( 'user_registration_before_registration_form', array( $this, 'add_ur_social_login' ) ); // check for the social logins
+			} else {
+				add_action( 'user_registration_form_registration_end', array( $this, 'add_ur_social_login' ) ); // check for the social logins
+			}
 			add_action( 'user_registration_form_registration_end', array( $this, 'user_registration_social_scripts' ) );
 		}
 	}
@@ -61,13 +66,18 @@ class URSC_Frontend {
 			ur_print_notice( $this->wp_error->get_error_message(), 'error' );
 		}
 	}
+	public function ur_registration_message() {
+		if ( is_wp_error( $this->wp_error ) ) {
+			ur_print_notice( $this->wp_error->get_error_message(), 'success' );
+		}
+	}
 
 	public function user_registration_social_scripts() {
 		wp_register_style( 'user-registration-social-connect-style', URSC()->plugin_url() . '/assets/css/user-registration-social-connect-style.css', array(), URSC_VERSION );
 		wp_enqueue_style( 'user-registration-social-connect-style' );
 	}
 
-	public function add_ur_social_login($form_id) {
+	public function add_ur_social_login( $form_id ) {
 		include 'views/social-login-template.php';
 	}
 

@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -67,6 +69,23 @@ abstract class Settings_Page {
 	 */
 	final public static function get_url() {
 		return admin_url( 'admin.php?page=' . static::PAGE_ID );
+	}
+
+	/**
+	 * Get settings tab URL.
+	 *
+	 * Retrieve the URL of a specific tab in the settings page.
+	 *
+	 * @since 3.23.0
+	 * @access public
+	 * @static
+	 *
+	 * @param string $tab_id The ID of the settings tab.
+	 *
+	 * @return string Settings tab URL.
+	 */
+	final public static function get_settings_tab_url( $tab_id ): string {
+		return admin_url( "admin.php?page=elementor-settings#tab-$tab_id" );
 	}
 
 	/**
@@ -336,6 +355,10 @@ abstract class Settings_Page {
 					echo "<div id='tab-{$sanitized_tab_id}' class='elementor-settings-form-page{$active_class}'>"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 					foreach ( $tab['sections'] as $section_id => $section ) {
+						if ( ! $this->should_render_section( $section ) ) {
+							continue;
+						}
+
 						$full_section_id = 'elementor_' . $section_id . '_section';
 
 						if ( ! empty( $section['label'] ) ) {
@@ -356,7 +379,7 @@ abstract class Settings_Page {
 					echo '</div>';
 				}
 
-				submit_button();
+				submit_button( __( 'Save Changes', 'elementor' ), 'primary', 'submit', true, [ 'data-id' => 'elementor-settings-button-save-changes' ] );
 				?>
 			</form>
 		</div><!-- /.wrap -->
@@ -366,12 +389,16 @@ abstract class Settings_Page {
 	public function get_usage_fields() {
 		return [
 			'allow_tracking' => [
-				'label' => esc_html__( 'Usage Data Sharing', 'elementor' ),
+				'label' => esc_html__( 'Data Sharing', 'elementor' ),
 				'field_args' => [
 					'type' => 'checkbox',
 					'value' => 'yes',
 					'default' => '',
-					'sub_desc' => esc_html__( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' ) . sprintf( ' <a href="%1$s" target="_blank">%2$s</a>', 'https://go.elementor.com/usage-data-tracking/', esc_html__( 'Learn more.', 'elementor' ) ),
+					'sub_desc' => sprintf(
+						'%1$s <a href="https://go.elementor.com/usage-data-tracking/" target="_blank">%2$s</a>',
+						esc_html__( 'Become a super contributor by helping us understand how you use our service to enhance your experience and improve our product.', 'elementor' ),
+						esc_html__( 'Learn more', 'elementor' )
+					),
 				],
 				'setting_args' => [ __NAMESPACE__ . '\Tracker', 'check_for_settings_optin' ],
 			],
@@ -411,12 +438,26 @@ abstract class Settings_Page {
 	/**
 	 * Should it render the settings tab
 	 *
-	 * @param $tab
+	 * @param array $tab
 	 *
 	 * @return bool
 	 */
 	private function should_render_tab( $tab ) {
 		// BC - When 'show_if' prop is not exists, it actually should render the tab.
 		return ! empty( $tab['sections'] ) && ( ! isset( $tab['show_if'] ) || $tab['show_if'] );
+	}
+
+	/**
+	 * Should it render the settings section
+	 *
+	 * @param array $section
+	 *
+	 * Since 3.19.0
+	 *
+	 * @return bool
+	 */
+	private function should_render_section( $section ) {
+		// BC - When 'show_if' prop is not exists, it actually should render the section.
+		return ! isset( $section['show_if'] ) || $section['show_if'];
 	}
 }

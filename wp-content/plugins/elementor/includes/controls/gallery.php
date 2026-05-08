@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Utils\Hints;
 use Elementor\Modules\DynamicTags\Module as TagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,6 +32,16 @@ class Control_Gallery extends Base_Data_Control {
 		return 'gallery';
 	}
 
+	public function on_export( $settings ) {
+		foreach ( $settings as $attachment ) {
+			if ( ! empty( $attachment['url'] ) ) {
+				do_action( 'elementor/templates/collect_media_url', $attachment['url'], $attachment );
+			}
+		}
+
+		return $settings;
+	}
+
 	/**
 	 * Import gallery images.
 	 *
@@ -40,7 +51,7 @@ class Control_Gallery extends Base_Data_Control {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $settings Control settings
+	 * @param array $settings Control settings.
 	 *
 	 * @return array Control settings.
 	 */
@@ -50,7 +61,18 @@ class Control_Gallery extends Base_Data_Control {
 				continue;
 			}
 
-			$attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $attachment );
+			$local_file_path = \Elementor\TemplateLibrary\Classes\Media_Mapper::get_local_file_path( $attachment['url'] );
+			$imported_attachment = false;
+
+			if ( $local_file_path !== $attachment['url'] && file_exists( $local_file_path ) ) {
+				$imported_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import_local_file( $local_file_path );
+			}
+
+			if ( ! $imported_attachment ) {
+				$imported_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import( $attachment );
+			}
+
+			$attachment = $imported_attachment;
 		}
 
 		// Filter out attachments that don't exist
@@ -80,15 +102,99 @@ class Control_Gallery extends Base_Data_Control {
 				<div class="elementor-control-media__content elementor-control-tag-area">
 					<div class="elementor-control-gallery-status elementor-control-dynamic-switcher-wrapper">
 						<span class="elementor-control-gallery-status-title"></span>
-						<span class="elementor-control-gallery-clear elementor-control-unit-1"><i class="eicon-trash-o" aria-hidden="true"></i></span>
+						<button class="elementor-control-gallery-clear elementor-control-unit-1 tooltip-target" data-tooltip="<?php echo esc_attr__( 'Clear gallery', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Clear gallery', 'elementor' ); ?>">
+							<i class="eicon-trash-o" aria-hidden="true"></i>
+						</button>
 					</div>
 					<div class="elementor-control-gallery-content">
-						<div class="elementor-control-gallery-thumbnails"></div>
-						<div class="elementor-control-gallery-edit"><span><i class="eicon-pencil" aria-hidden="true"></i></span></div>
-						<button class="elementor-button elementor-control-gallery-add" aria-label="<?php echo esc_html__( 'Add Images', 'elementor' ); ?>"><i class="eicon-plus-circle" aria-hidden="true"></i></button>
+						<div class="elementor-control-gallery-thumbnails" tabindex="0"></div>
+						<div class="elementor-control-gallery-edit">
+							<span><i class="eicon-pencil" aria-hidden="true"></i></span>
+							<span class="elementor-screen-only"><?php echo esc_html__( 'Edit gallery', 'elementor' ); ?></span>
+						</div>
+						<button class="elementor-button elementor-control-gallery-add tooltip-target" data-tooltip="<?php echo esc_attr__( 'Add Images', 'elementor' ); ?>" aria-label="<?php echo esc_attr__( 'Add Images', 'elementor' ); ?>">
+							<i class="eicon-plus-circle" aria-hidden="true"></i>
+						</button>
 					</div>
 				</div>
+
+				<?php
+				/*
+				?>
+				<div class="elementor-control-media__warnings" role="alert" style="display: none;">
+					<?php
+					Hints::get_notice_template( [
+						'type' => 'warning',
+						'content' => esc_html__( 'This image doesn’t contain ALT text - which is necessary for accessibility and SEO.', 'elementor' ),
+						'icon' => true,
+					] );
+					?>
+				</div>
+				<?php
+				*/ ?>
+				<?php $this->maybe_display_io_hints(); ?>
 			</div>
+		</div>
+		<?php
+	}
+
+	private function maybe_display_io_hints() {
+		$plugin_slug = 'image-optimization';
+
+		if ( ! Hints::should_display_hint( $plugin_slug ) ) {
+			return;
+		}
+
+		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
+		$is_installed = Hints::is_plugin_installed( 'image-optimization' );
+		$is_active = Hints::is_plugin_active( 'image-optimization' );
+
+		if ( $is_active ) {
+			return;
+		}
+
+		if ( $one_subscription ) {
+			if ( ! $is_installed ) {
+				$content = esc_html__( 'Optimize your images to improve site speed and performance. Image Optimizer is included in your ONE subscription.', 'elementor' );
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+				$source = 'io-editor-gallery-one-install';
+			} elseif ( ! $is_active ) {
+				$content = esc_html__( 'Image Optimizer is installed and included in your ONE subscription. Activate it to optimize images and improve site performance.', 'elementor' );
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+				$source = 'io-editor-gallery-one-activate';
+			}
+		} else {
+			$content = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
+			if ( ! $is_installed ) {
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+				$source = 'io-editor-gallery-install';
+			} elseif ( ! $is_active ) {
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+				$source = 'io-editor-gallery-activate';
+			}
+		}
+		?>
+		<div class="elementor-control-media__promotions" role="alert">
+			<?php
+			Hints::get_notice_template( [
+				'display' => ! Hints::is_dismissed( $plugin_slug ),
+				'type' => 'info',
+				'icon' => true,
+				'heading' => '',
+				'content' => $content,
+				'dismissible' => 'image_optimizer_hint',
+				'button_text' => $button_text,
+				'button_event' => 'image_optimizer_hint',
+				'button_data' => [
+					'action_url' => $button_url,
+					'source' => $source,
+				],
+			] );
+			?>
 		</div>
 		<?php
 	}
@@ -107,7 +213,6 @@ class Control_Gallery extends Base_Data_Control {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-			'separator' => 'none',
 			'dynamic' => [
 				'categories' => [ TagsModule::GALLERY_CATEGORY ],
 				'returnType' => 'object',

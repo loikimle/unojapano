@@ -42,7 +42,7 @@ class URSC_Network_Google extends URSC_Social_Networks {
 		}
 
 		// TODO: Implement init() method.
-		if ( ! class_exists( 'Google_Client' ) ) {
+		if ( ! class_exists( 'Google_Client', false ) ) {
 			require_once URSC_ABSPATH . 'vendor/autoload.php';
 		}
 
@@ -109,8 +109,10 @@ class URSC_Network_Google extends URSC_Social_Networks {
 	}
 
 	private function get_network_object() {
-
-		$network_object = new Google\Client();
+		if ( ! class_exists( 'Google_Client', false ) ) {
+			require_once URSC_ABSPATH . 'vendor/autoload.php';
+		}
+		$network_object = new Google_Client();
 		$network_object->setClientId( $this->api_key );
 		$network_object->setClientSecret( $this->api_secret );
 		$network_object->setRedirectUri( $this->redirect_uri );
@@ -126,7 +128,7 @@ class URSC_Network_Google extends URSC_Social_Networks {
 
 		$network_object = $this->get_network_object();
 
-		$network_object->fetchAccessTokenWithAuthCode( $_GET['code'] );
+		$network_object->authenticate( $_GET['code'] );
 
 		user_registration_social_connect_set_session( 'google_access_token', $network_object->getAccessToken() );
 
@@ -149,8 +151,20 @@ class URSC_Network_Google extends URSC_Social_Networks {
 
 				throw  new Exception( __( 'Token not found.', 'user-registration-social-connect' ) );
 			}
-
-			$network_object = $this->get_network_object();
+			if ( ! class_exists( 'Google_Service_Oauth2', false ) ) {
+				require_once URSC_ABSPATH . 'vendor/autoload.php';
+			}
+			if ( ! class_exists( 'Google_Client', false ) ) {
+				require_once URSC_ABSPATH . 'vendor/autoload.php';
+			}
+			$network_object = new Google\Client();
+			$network_object->setClientId( $this->api_key );
+			$network_object->setClientSecret( $this->api_secret );
+			$network_object->setRedirectUri( $this->redirect_uri );
+			$network_object->addScope( 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email' );
+			if ( isset( $this->encoded_url ) && $this->encoded_url != '' ) {
+				$network_object->setState( base64_encode( "redirect_to=$this->encoded_url" ) );
+			}
 
 			$network_object->setAccessToken( $google_access_token );
 			$google_service = new Google_Service_Oauth2( $network_object );

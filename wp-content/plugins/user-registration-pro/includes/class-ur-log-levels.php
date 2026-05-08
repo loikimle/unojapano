@@ -1,7 +1,14 @@
 <?php
+/**
+ * Standard log levels
+ *
+ * @class          UR_Log_Levels
+ * @version        1.0.0
+ * @package        UserRegistration/Classes
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -10,8 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @class          UR_Log_Levels
  * @version        1.0.0
  * @package        UserRegistration/Classes
- * @category       Class
- * @author         WPEverest
  */
 abstract class UR_Log_Levels {
 
@@ -25,6 +30,7 @@ abstract class UR_Log_Levels {
 	 *     'error': Error conditions.
 	 *     'warning': Warning conditions.
 	 *     'notice': Normal but significant condition.
+	 *     'success': Successful operation completion.
 	 *     'info': Informational messages.
 	 *     'debug': Debug-level messages.
 	 *
@@ -36,6 +42,7 @@ abstract class UR_Log_Levels {
 	const ERROR     = 'error';
 	const WARNING   = 'warning';
 	const NOTICE    = 'notice';
+	const SUCCESS   = 'success';
 	const INFO      = 'info';
 	const DEBUG     = 'debug';
 
@@ -51,6 +58,7 @@ abstract class UR_Log_Levels {
 		self::ERROR     => 500,
 		self::WARNING   => 400,
 		self::NOTICE    => 300,
+		self::SUCCESS   => 250,
 		self::INFO      => 200,
 		self::DEBUG     => 100,
 	);
@@ -69,6 +77,7 @@ abstract class UR_Log_Levels {
 		500 => self::ERROR,
 		400 => self::WARNING,
 		300 => self::NOTICE,
+		250 => self::SUCCESS,
 		200 => self::INFO,
 		100 => self::DEBUG,
 	);
@@ -77,7 +86,7 @@ abstract class UR_Log_Levels {
 	/**
 	 * Validate a level string.
 	 *
-	 * @param string $level
+	 * @param string $level Level.
 	 *
 	 * @return bool True if $level is a valid level.
 	 */
@@ -88,7 +97,7 @@ abstract class UR_Log_Levels {
 	/**
 	 * Translate level string to integer.
 	 *
-	 * @param string $level emergency|alert|critical|error|warning|notice|info|debug
+	 * @param string $level emergency|alert|critical|error|warning|notice|info|debug.
 	 *
 	 * @return int 100 (debug) - 800 (emergency) or 0 if not recognized
 	 */
@@ -105,7 +114,7 @@ abstract class UR_Log_Levels {
 	/**
 	 * Translate severity integer to level string.
 	 *
-	 * @param int $severity
+	 * @param int $severity Severity.
 	 *
 	 * @return bool|string False if not recognized. Otherwise string representation of level.
 	 */
@@ -116,5 +125,4 @@ abstract class UR_Log_Levels {
 			return false;
 		}
 	}
-
 }

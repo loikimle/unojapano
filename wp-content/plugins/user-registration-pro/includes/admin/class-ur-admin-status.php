@@ -2,8 +2,6 @@
 /**
  * Debug/Status page
  *
- * @author      WPEverest
- * @category    Admin
  * @package     UserRegistration/Admin/System Status
  * @version     1.0.5
  */
@@ -21,7 +19,7 @@ class UR_Admin_Status {
 	 * Handles output of the reports page in admin.
 	 */
 	public static function output() {
-		include_once dirname( __FILE__ ) . '/views/html-admin-page-status.php';
+		include_once __DIR__ . '/views/html-admin-page-status.php';
 	}
 
 
@@ -32,6 +30,7 @@ class UR_Admin_Status {
 		self::status_logs_file();
 	}
 
+
 	/**
 	 * Show the log page contents for file log handler.
 	 */
@@ -40,11 +39,14 @@ class UR_Admin_Status {
 		if ( ! empty( $_REQUEST['handle'] ) ) {
 			self::remove_log();
 		}
+		if ( ! empty( $_REQUEST['handle_all'] ) ) {
+			self::remove_all_logs();
+		}
 
 		$logs = self::scan_log_files();
 
-		if ( ! empty( $_REQUEST['log_file'] ) && isset( $logs[ sanitize_title( $_REQUEST['log_file'] ) ] ) ) {
-			$viewed_log = $logs[ sanitize_title( $_REQUEST['log_file'] ) ];
+		if ( ! empty( $_REQUEST['log_file'] ) && isset( $logs[ sanitize_title( wp_unslash( $_REQUEST['log_file'] ) ) ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			$viewed_log = $logs[ sanitize_title( wp_unslash( $_REQUEST['log_file'] ) ) ]; // phpcs:ignore WordPress.Security.NonceVerification
 		} elseif ( ! empty( $logs ) ) {
 			$viewed_log = current( $logs );
 		}
@@ -60,13 +62,13 @@ class UR_Admin_Status {
 	 *
 	 * @since  2.1.1
 	 *
-	 * @param  string $file Path to the file
+	 * @param  string $file Path to the file.
 	 *
 	 * @return string
 	 */
 	public static function get_file_version( $file ) {
 
-		// Avoid notices if file does not exist
+		// Avoid notices if file does not exist.
 		if ( ! file_exists( $file ) ) {
 			return '';
 		}
@@ -94,7 +96,7 @@ class UR_Admin_Status {
 	/**
 	 * Return the log file handle.
 	 *
-	 * @param string $filename
+	 * @param string $filename Filename.
 	 *
 	 * @return string
 	 */
@@ -105,7 +107,7 @@ class UR_Admin_Status {
 	/**
 	 * Scan the template files.
 	 *
-	 * @param  string $template_path
+	 * @param  string $template_path Template Path.
 	 *
 	 * @return array
 	 */
@@ -149,7 +151,7 @@ class UR_Admin_Status {
 
 			foreach ( $files as $key => $value ) {
 
-				if ( ! in_array( $value, array( '.', '..' ) ) ) {
+				if ( ! in_array( $value, array( '.', '..' ) ) && null !== $value ) {
 					if ( ! is_dir( $value ) && strstr( $value, '.log' ) ) {
 						$result[ sanitize_title( $value ) ] = $value;
 					}
@@ -165,16 +167,57 @@ class UR_Admin_Status {
 	 */
 	public static function remove_log() {
 
-		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], 'remove_log' ) ) {
-			wp_die( __( 'Action failed. Please refresh the page and retry.', 'user-registration' ) );
+		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'remove_log' ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			wp_die( esc_html__( 'Action failed. Please refresh the page and retry.', 'user-registration' ) );
 		}
 
 		if ( ! empty( $_REQUEST['handle'] ) ) {
 			$log_handler = new UR_Log_Handler_File();
-			$log_handler->remove( $_REQUEST['handle'] );
+			$log_handler->remove( sanitize_text_field( wp_unslash( $_REQUEST['handle'] ) ) );
+		}
+		?>
+		<script>
+		var redirect = '<?php echo esc_url( admin_url( 'admin.php?page=user-registration-status&tab=logs' ) ); ?>';
+		window.setTimeout( function () {
+			window.location.href = redirect;
+		})
+		</script>
+		<?php
+	}
+
+	/**
+	 * Remove/delete all logs.
+	 */
+	public static function remove_all_logs() {
+		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['_wpnonce'] ) ), 'remove_all_logs' ) ) {
+			wp_die( esc_html__( 'Action failed. Please refresh the page and retry.', 'user-registration' ) );
 		}
 
-		wp_safe_redirect( esc_url_raw( admin_url( 'admin.php?page=user-registration-status&tab=logs' ) ) );
-		exit();
+		if ( ! empty( $_REQUEST['handle_all'] ) ) {
+			$log_handler = new UR_Log_Handler_File();
+			$log_handler->remove_all();
+		}
+
+		?>
+		<script>
+		var redirect = '<?php echo esc_url( admin_url( 'admin.php?page=user-registration-status&tab=logs' ) ); ?>';
+		window.setTimeout( function () {
+			window.location.href = redirect;
+		})
+		</script>
+		<?php
+	}
+
+
+	/**
+	 * Displays the system information admin page.
+	 *
+	 * This method includes the system info page template
+	 * to show relevant system details in the WordPress admin panel.
+	 *
+	 * @return void
+	 */
+	public static function system_info() {
+		include_once __DIR__ . '/views/html-admin-page-system-info.php';
 	}
 }

@@ -1,14 +1,14 @@
 <?php
 namespace ElementorPro\Modules\DynamicTags\Tags;
 
-use ElementorPro\Modules\DynamicTags\Tags\Base\Data_Tag;
+use ElementorPro\Modules\DynamicTags\Tags\Base\Pro_Data_Tag;
 use ElementorPro\Modules\DynamicTags\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Post_Gallery extends Data_Tag {
+class Post_Gallery extends Pro_Data_Tag {
 
 	public function get_name() {
 		return 'post-gallery';
@@ -27,14 +27,31 @@ class Post_Gallery extends Data_Tag {
 	}
 
 	public function get_value( array $options = [] ) {
-		$images = get_attached_media( 'image' );
-
 		$value = [];
+		$images = [];
+		$blocks = parse_blocks( get_the_content() );
+
+		foreach ( $blocks as $block ) {
+			if ( 'core/image' === $block['blockName'] ) {
+				$images[] = get_post( $block['attrs']['id'] );
+			}
+			if ( 'core/gallery' === $block['blockName'] ) {
+				foreach ( $block['innerBlocks'] as $inner_block ) {
+					if ( 'core/image' === $inner_block['blockName'] ) {
+						$images[] = get_post( $inner_block['attrs']['id'] );
+					}
+				}
+			}
+		}
+
+		$images = array_merge( $images, get_attached_media( 'image', get_the_ID() ) );
 
 		foreach ( $images as $image ) {
-			$value[] = [
-				'id' => $image->ID,
-			];
+			if ( ! in_array( $image->ID, array_column( $value, 'id' ), true ) ) {
+				$value[] = [
+					'id' => $image->ID,
+				];
+			}
 		}
 
 		return $value;

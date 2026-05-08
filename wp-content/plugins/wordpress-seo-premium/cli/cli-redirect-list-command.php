@@ -5,12 +5,14 @@
  * @package WPSEO\CLI
  */
 
+use WP_CLI\Formatter;
+
 /**
  * Implementation of the 'redirect list' WP-CLI command.
  */
 final class WPSEO_CLI_Redirect_List_Command extends WPSEO_CLI_Redirect_Base_Command {
 
-	const ALL_FIELDS = 'origin,target,type,format';
+	public const ALL_FIELDS = 'origin,target,type,format';
 
 	/**
 	 * Filter to use for filtering the list of redirects.
@@ -75,14 +77,14 @@ final class WPSEO_CLI_Redirect_List_Command extends WPSEO_CLI_Redirect_Base_Comm
 		 */
 		$assoc_args['format'] = $assoc_args['output'];
 
-		$formatter = new WP_CLI\Formatter(
+		$formatter = new Formatter(
 			$assoc_args,
-			$this->get_fields( $assoc_args )
+			$this->get_fields( $assoc_args ),
 		);
 
 		$redirects = array_filter(
 			$this->get_redirects(),
-			[ $this, 'filter_redirect' ]
+			[ $this, 'filter_redirect' ],
 		);
 
 		$formatter->display_items( $redirects );
@@ -98,7 +100,7 @@ final class WPSEO_CLI_Redirect_List_Command extends WPSEO_CLI_Redirect_Base_Comm
 
 		return array_map(
 			[ $this, 'adapt_redirect_data' ],
-			$redirect_objects
+			$redirect_objects,
 		);
 	}
 

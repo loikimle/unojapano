@@ -1,23 +1,31 @@
 <?php
+/**
+ * UR_Setting_User_login Class
+ *
+ * @package  UserRegistration/Form/Settings
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
- * UR_Setting_User_login Class
- *
- * @package  UserRegistration/Form/Settings
- * @category Abstract Class
- * @author   WPEverest
+ * User Login field setting class.
  */
-class UR_Setting_User_login extends UR_Field_Settings {
+class UR_Setting_User_Login extends UR_Field_Settings {
 
-
+	/**
+	 * Construct.
+	 */
 	public function __construct() {
 		$this->field_id = 'user_login_advance_setting';
 	}
 
+	/**
+	 * Output the field.
+	 *
+	 * @param array $field_data Field Data.
+	 */
 	public function output( $field_data = array() ) {
 
 		$this->field_data = $field_data;
@@ -27,10 +35,13 @@ class UR_Setting_User_login extends UR_Field_Settings {
 		return $field_html;
 	}
 
+	/**
+	 * Register fields.
+	 */
 	public function register_fields() {
 		$fields = array(
 
-			'custom_class' => array(
+			'custom_class'       => array(
 				'label'       => __( 'Custom Class', 'user-registration' ),
 				'data-id'     => $this->field_id . '_custom_class',
 				'name'        => $this->field_id . '[custom_class]',
@@ -39,9 +50,9 @@ class UR_Setting_User_login extends UR_Field_Settings {
 				'required'    => false,
 				'default'     => '',
 				'placeholder' => __( 'Custom Class', 'user-registration' ),
-				'tip'         => __( 'Class name to embed in this field.', 'user-registration' ),
+				'tip'         => __( 'Add a CSS class for custom styling.', 'user-registration' ),
 			),
-			'username_length'          => array(
+			'username_length'    => array(
 				'label'       => __( 'Limit Username Length', 'user-registration' ),
 				'data-id'     => $this->field_id . '_username_length',
 				'name'        => $this->field_id . '[username_length]',
@@ -49,26 +60,31 @@ class UR_Setting_User_login extends UR_Field_Settings {
 				'type'        => 'number',
 				'required'    => false,
 				'default'     => $this->field_id . '_username_length',
-				'placeholder' => __( 'Min Value', 'user-registration' ),
-				'tip'         => __( 'Enter minimum number of length of username.', 'user-registration' ),
+				'placeholder' => __( 'Maximum Value', 'user-registration' ),
+				'tip'         => __( 'Enter maximum number of characters allowed in the username.', 'user-registration' ),
 			),
-			'username_character'          => array(
-				'label'       => __( 'Allow Special Character', 'user-registration' ),
+			'username_character' => array(
+				'label'       => __( 'Allow Special Characters', 'user-registration' ),
 				'data-id'     => $this->field_id . '_username_character',
 				'name'        => $this->field_id . '[username_character]',
 				'class'       => $this->default_class . ' ur-settings-character',
-				'type'        => 'select',
+				'type'        => 'toggle',
 				'required'    => false,
-				'options'     => array(
-				'no'  => __( 'No', 'user-registration' ),
-				'yes' => __( 'Yes', 'user-registration' ),
-			),
 				'default'     => 'yes',
-				'placeholder' =>'',
-				'tip'         => __( 'Check this option to validate the Username for Special Character', 'user-registration' ),
-			)
+				'placeholder' => '',
+				'tip'         => __( 'Check this option if you want to allow special characters (like @, #, $, etc.) in the username.', 'user-registration' ),
+			),
 		);
 
+		/**
+		 * Filter to modify the user login custom advance settings.
+		 *
+		 * @param string $fields Advance Settings Fields.
+		 * @param int field_id Field ID.
+		 * @param class default_class Default Class.
+		 *
+		 * @return string $fields.
+		 */
 		$fields = apply_filters( 'user_login_custom_advance_settings', $fields, $this->field_id, $this->default_class );
 		$this->render_html( $fields );
 	}

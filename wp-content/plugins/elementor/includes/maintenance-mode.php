@@ -41,14 +41,14 @@ class Maintenance_Mode {
 	 * @access public
 	 * @static
 	 *
-	 * @param string $option  Option name. Expected to not be SQL-escaped.
-	 * @param mixed  $default Optional. Default value to return if the option
-	 *                        does not exist. Default is false.
+	 * @param string $option        Option name. Expected to not be SQL-escaped.
+	 * @param mixed  $default_value Optional. Default value to return if the option
+	 *                              does not exist. Default is false.
 	 *
 	 * @return bool False if value was not updated and true if value was updated.
 	 */
-	public static function get( $option, $default = false ) {
-		return get_option( self::OPTION_PREFIX . $option, $default );
+	public static function get( $option, $default_value = false ) {
+		return get_option( self::OPTION_PREFIX . $option, $default_value );
 	}
 
 	/**
@@ -203,7 +203,7 @@ class Maintenance_Mode {
 					'maintenance_mode' => [
 						'callback' => function() {
 							echo '<h2>' . esc_html__( 'Maintenance Mode', 'elementor' ) . '</h2>';
-							echo '<div>' . esc_html__( 'Set your entire website as MAINTENANCE MODE, meaning the site is offline temporarily for maintenance, or set it as COMING SOON mode, meaning the site is offline until it is ready to be launched.', 'elementor' ) . '</div>';
+							echo '<p>' . esc_html__( 'Set your entire website as MAINTENANCE MODE, meaning the site is offline temporarily for maintenance, or set it as COMING SOON mode, meaning the site is offline until it is ready to be launched.', 'elementor' ) . '</p>';
 						},
 						'fields' => [
 							'maintenance_mode_mode' => [

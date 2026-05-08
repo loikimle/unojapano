@@ -4,7 +4,7 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Settings_Page_Transitions extends Tab_Base {
@@ -16,7 +16,7 @@ class Settings_Page_Transitions extends Tab_Base {
 	}
 
 	public function get_title() {
-		return __( 'Page Transitions', 'elementor' );
+		return esc_html__( 'Page Transitions', 'elementor' );
 	}
 
 	public function get_group() {

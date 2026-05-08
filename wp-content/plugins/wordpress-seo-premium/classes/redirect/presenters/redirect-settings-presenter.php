@@ -23,14 +23,14 @@ class WPSEO_Redirect_Settings_Presenter extends WPSEO_Redirect_Tab_Presenter {
 			[
 				'file_path'     => WPSEO_Redirect_File_Util::get_file_path(),
 				'redirect_file' => $this->writable_redirect_file(),
-			]
+			],
 		);
 	}
 
 	/**
 	 * Check if it is possible to write to the files
 	 *
-	 * @return false|string
+	 * @return string|false
 	 */
 	private function writable_redirect_file() {
 		if ( WPSEO_Options::get( 'disable_php_redirect' ) !== 'on' ) {

@@ -55,7 +55,6 @@ class URSC_Network_Linkedin extends URSC_Social_Networks {
 		$response['network'] = 'linkedin';
 
 		$this->set_response( $response );
-
 	}
 
 	/**
@@ -70,7 +69,7 @@ class URSC_Network_Linkedin extends URSC_Social_Networks {
 		try {
 			if ( empty( $this->api_key ) || empty( $this->api_secret ) ) {
 
-				throw  new Exception( __( 'Empty some credintial of linkedin app.', 'user-registration-social-connect' ) );
+				throw new Exception( __( 'Empty some credintial of linkedin app.', 'user-registration-social-connect' ) );
 			}
 
 			if ( $action == 'login' ) {
@@ -87,7 +86,7 @@ class URSC_Network_Linkedin extends URSC_Social_Networks {
 
 			} else { // User Canceled your Request
 
-				throw  new Exception( __( 'Linkedin connection failed. Please contact website admin.', 'user-registration-social-connect' ) );
+				throw new Exception( __( 'Linkedin connection failed. Please contact website admin.', 'user-registration-social-connect' ) );
 
 			}
 		} catch ( Exception $e ) {
@@ -98,7 +97,6 @@ class URSC_Network_Linkedin extends URSC_Social_Networks {
 		}
 
 		return $this->response;
-
 	}
 
 	public function network_login() {
@@ -107,7 +105,7 @@ class URSC_Network_Linkedin extends URSC_Social_Networks {
 
 		user_registration_social_connect_set_session( 'linkedin_state', $state );
 
-		$login_url = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id={$this->api_key}&redirect_uri={$this->redirect_uri}&state={$state}&scope=r_liteprofile r_emailaddress";
+		$login_url = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id={$this->api_key}&redirect_uri={$this->redirect_uri}&state={$state}&scope=openid profile email";
 
 		ursc_custom_redirect( $login_url );
 
@@ -162,7 +160,6 @@ class URSC_Network_Linkedin extends URSC_Social_Networks {
 		ursc_custom_redirect( $this->redirect_uri );
 
 		die();
-
 	}
 
 	/**
@@ -176,11 +173,10 @@ class URSC_Network_Linkedin extends URSC_Social_Networks {
 
 			if ( false === $linkedin_access_token || empty( $linkedin_access_token ) ) {
 
-				throw  new Exception( __( 'Token not found.', 'user-registration-social-connect' ) );
+				throw new Exception( __( 'Token not found.', 'user-registration-social-connect' ) );
 			}
 
-			$profile_url = 'https://api.linkedin.com/v2/me?projection=(id,firstName,lastName,profilePicture(displayImage~:playableStreams))';
-			$email_url   = 'https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))';
+			$profile_url = 'https://api.linkedin.com/v2/userinfo';
 
 			$params = array(
 				'method'   => 'GET',
@@ -195,40 +191,33 @@ class URSC_Network_Linkedin extends URSC_Social_Networks {
 
 			);
 
-			$linkedin_response       = ( wp_remote_get( $profile_url, $params ) ); // Request for access token
-			$linkedin_email_response = ( wp_remote_get( $email_url, $params ) ); // Request for access token
+			$linkedin_response = ( wp_remote_get( $profile_url, $params ) ); // Request for access token
 
-			$user_profile_body = array();
-			$user_email_body   = array();
+			$user_email_body = array();
 
-			if ( isset( $linkedin_response['body'] ) && isset( $linkedin_email_response['body'] ) ) {
+			if ( isset( $linkedin_response['body'] ) ) {
 
 				$user_profile_body = json_decode( $linkedin_response['body'] );
-				$user_email_body   = json_decode( $linkedin_email_response['body'] );
-
-				$user_email_body->elements[0] = (array) $user_email_body->elements[0];
 
 			}
 
-			if ( empty( $user_profile_body ) || empty( $user_email_body ) ) {
+			if ( empty( $user_profile_body ) ) {
 
-				throw  new Exception( __( 'INVALID AUTHORIZATION', 'user-registration-social-connect' ) );
+				throw new Exception( __( 'INVALID AUTHORIZATION', 'user-registration-social-connect' ) );
 			}
-
-			if ( isset( $user_profile_body->id ) && ! empty( $user_profile_body->id ) ) {
+			if ( isset( $user_profile_body->email_verified ) && $user_profile_body->email_verified ) {
 
 				$this->response['status']  = 'SUCCESS';
 				$this->response['message'] = 'Succesfully get data';
-				$profile                   = isset( $user_profile_body->publicProfileUrl ) ? $user_profile_body->publicProfileUrl : '';
-				$email                     = isset( $user_email_body->elements[0]['handle~']->emailAddress ) ? $user_email_body->elements[0]['handle~']->emailAddress : '';
+				$profile                   = isset( $user_profile_body->picture ) ? $user_profile_body->picture : '';
+				$email                     = isset( $user_profile_body->email ) ? $user_profile_body->email : '';
 				$this->response['data']    = array(
 					'email'       => $email,
 					'username'    => ursc_get_username( explode( '@', $email )[0], $email ),
 					'profile'     => $profile,
-					'id'          => $user_profile_body->id,
-					'profile_pic' => isset( $user_profile_body->profilePicture->{'displayImage~'}->elements[0]->identifiers[0]->identifier ) ? $user_profile_body->profilePicture->{'displayImage~'}->elements[0]->identifiers[0]->identifier : "",
-					'first_name'  => isset( $user_profile_body->firstName->localized->en_US ) ? $user_profile_body->firstName->localized->en_US : '',
-					'last_name'   => isset( $user_profile_body->lastName->localized->en_US ) ? $user_profile_body->lastName->localized->en_US : '',
+					'profile_pic' => $profile,
+					'first_name'  => isset( $user_profile_body->given_name ) ? $user_profile_body->given_name : '',
+					'last_name'   => isset( $user_profile_body->family_name ) ? $user_profile_body->family_name : '',
 				);
 
 			} else {
@@ -242,7 +231,5 @@ class URSC_Network_Linkedin extends URSC_Social_Networks {
 			$this->response['message'] = $e->getMessage();
 
 		}
-
 	}
-
 }

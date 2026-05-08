@@ -67,7 +67,7 @@ class Zip extends Base {
 	 *
 	 * @since 3.3.0
 	 *
-	 * @param string $file_path
+	 * @param string     $file_path
 	 * @param array|null $allowed_file_types
 	 * @return array|\WP_Error
 	 */
@@ -117,7 +117,8 @@ class Zip extends Base {
 	 * @since 3.3.0
 	 *
 	 * @param \ZipArchive $zip
-	 * @param array $allowed_file_types
+	 * @param array       $allowed_file_types
+	 *
 	 * @return array
 	 */
 	private function get_allowed_files( $zip, $allowed_file_types ) {
@@ -127,6 +128,11 @@ class Zip extends Base {
 		for ( $i = 0; $i < $zip->numFiles; $i++ ) {
 			$filename = $zip->getNameIndex( $i );
 			$extension = pathinfo( $filename, PATHINFO_EXTENSION );
+
+			// Skip files with transversal paths.
+			if ( strpos( $filename, '..' ) !== false ) {
+				continue;
+			}
 
 			if ( in_array( $extension, $allowed_file_types, true ) ) {
 				$allowed_files[] = $filename;
@@ -160,7 +166,7 @@ class Zip extends Base {
 
 		$possible_file_names = array_diff( scandir( $temp_path ), [ '.', '..' ] );
 
-		// Find nested files in the unzipped path. This happens for example when the user imports a Template Kit.
+		// Find nested files in the unzipped path. This happens for example when the user imports a Website Kit.
 		foreach ( $possible_file_names as $possible_file_name ) {
 			$full_possible_file_name = $temp_path . $possible_file_name;
 			if ( is_dir( $full_possible_file_name ) ) {

@@ -72,7 +72,7 @@ abstract class OAuth_Client {
 				$tokens['expires'],
 				$tokens['has_expired'],
 				$tokens['created_at'],
-				isset( $tokens['error_count'] ) ? $tokens['error_count'] : 0
+				( $tokens['error_count'] ?? 0 ),
 			);
 		}
 	}
@@ -93,7 +93,7 @@ abstract class OAuth_Client {
 					'authorization_code',
 					[
 						'code' => $code,
-					]
+					],
 				);
 
 			$token = OAuth_Token::from_response( $response );
@@ -205,7 +205,7 @@ abstract class OAuth_Client {
 	/**
 	 * Clears the stored token from storage.
 	 *
-	 * @return boolean The stored token.
+	 * @return bool The stored token.
 	 *
 	 * @throws Failed_Storage_Exception Exception thrown if clearing of the token fails.
 	 */
@@ -274,7 +274,7 @@ abstract class OAuth_Client {
 				'refresh_token',
 				[
 					'refresh_token' => $tokens->refresh_token,
-				]
+				],
 			);
 
 			$token_obj = OAuth_Token::from_response( $new_tokens );
@@ -302,7 +302,7 @@ abstract class OAuth_Client {
 
 			throw new Authentication_Failed_Exception( $exception );
 		} finally {
-			delete_transient( $lock_name );
+			\delete_transient( $lock_name );
 		}
 	}
 }

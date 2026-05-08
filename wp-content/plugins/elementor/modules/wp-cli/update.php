@@ -4,7 +4,7 @@ namespace Elementor\Modules\WpCli;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -43,13 +43,12 @@ class Update extends \WP_CLI_Command {
 		$network = ! empty( $assoc_args['network'] ) && is_multisite();
 
 		if ( $network ) {
-			/** @var \WP_Site[] $sites */
-			$sites = get_sites();
+			$blog_ids = get_sites( [
+				'fields' => 'ids',
+				'number' => 0,
+			] );
 
-			foreach ( $sites as $keys => $blog ) {
-				// Cast $blog as an array instead of  object
-				$blog_id = $blog->blog_id;
-
+			foreach ( $blog_ids as $blog_id ) {
 				switch_to_blog( $blog_id );
 
 				\WP_CLI::line( 'Site #' . $blog_id . ' - ' . get_option( 'blogname' ) );

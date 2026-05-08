@@ -1,14 +1,22 @@
 <?php
 /**
  * Inspired by Laravel Collection.
+ *
  * @link https://github.com/illuminate/collections
+ * @package Elementor\Core\Utils
  */
+
 namespace Elementor\Core\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Inspired by Laravel Collection.
+ *
+ * @link https://github.com/illuminate/collections
+ */
 class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * The items contained in the collection.
@@ -22,8 +30,17 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 *
 	 * @param array $items
 	 */
-	public function __construct( array $items ) {
+	public function __construct( array $items = [] ) {
 		$this->items = $items;
+	}
+
+	/**
+	 * @param array $items
+	 *
+	 * @return static
+	 */
+	public static function make( array $items = [] ) {
+		return new static( $items );
 	}
 
 	/**
@@ -31,7 +48,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 *
 	 * @return $this
 	 */
-	public function filter( callable $callback = null ) {
+	public function filter( ?callable $callback = null ) {
 		if ( ! $callback ) {
 			return new static( array_filter( $this->items ) );
 		}
@@ -107,7 +124,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Run a map over each of the items.
 	 *
-	 * @param  callable  $callback
+	 * @param  callable $callback
 	 * @return $this
 	 */
 	public function map( callable $callback ) {
@@ -116,6 +133,22 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		$items = array_map( $callback, $this->items, $keys );
 
 		return new static( array_combine( $keys, $items ) );
+	}
+
+	/**
+	 * Run a callback over each of the items.
+	 *
+	 * @param callable $callback
+	 * @return $this
+	 */
+	public function each( callable $callback ) {
+		foreach ( $this->items as $key => $value ) {
+			if ( false === $callback( $value, $key ) ) {
+				break;
+			}
+		}
+
+		return $this;
 	}
 
 	/**
@@ -132,6 +165,10 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		}
 
 		return $result;
+	}
+
+	public function reverse() {
+		return new static( array_reverse( $this->items ) );
 	}
 
 	/**
@@ -238,13 +275,13 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 * Get specific item from the collection.
 	 *
 	 * @param      $key
-	 * @param null $default
+	 * @param null $fallback
 	 *
 	 * @return mixed|null
 	 */
-	public function get( $key, $default = null ) {
+	public function get( $key, $fallback = null ) {
 		if ( ! array_key_exists( $key, $this->items ) ) {
-			return $default;
+			return $fallback;
 		}
 
 		return $this->items[ $key ];
@@ -253,13 +290,13 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Get the first item.
 	 *
-	 * @param null $default
+	 * @param null $fallback
 	 *
 	 * @return mixed|null
 	 */
-	public function first( $default = null ) {
+	public function first( $fallback = null ) {
 		if ( $this->is_empty() ) {
-			return $default;
+			return $fallback;
 		}
 
 		foreach ( $this->items as $item ) {
@@ -271,18 +308,54 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 * Find an element from the items.
 	 *
 	 * @param callable $callback
-	 * @param null     $default
+	 * @param null     $fallback
 	 *
 	 * @return mixed|null
 	 */
-	public function find( callable $callback, $default = null ) {
+	public function find( callable $callback, $fallback = null ) {
 		foreach ( $this->all() as $key => $item ) {
 			if ( $callback( $item, $key ) ) {
 				return $item;
 			}
 		}
 
-		return $default;
+		return $fallback;
+	}
+
+	/**
+	 * @param callable|string|int $value
+	 *
+	 * @return bool
+	 */
+	public function contains( $value ) {
+		$callback = $value instanceof \Closure
+			? $value
+			: function ( $item ) use ( $value ) {
+				return $item === $value;
+			};
+
+		foreach ( $this->all() as $key => $item ) {
+			if ( $callback( $item, $key ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Run array_diff between the collection and other array or collection.
+	 *
+	 * @param $filter
+	 *
+	 * @return $this
+	 */
+	public function diff( $filter ) {
+		if ( $filter instanceof self ) {
+			$filter = $filter->all();
+		}
+
+		return new static( array_diff( $this->all(), $filter ) );
 	}
 
 	/**
@@ -330,11 +403,8 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		} );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function keys() {
-		return array_keys( $this->items );
+		return new static( array_keys( $this->items ) );
 	}
 
 	/**
@@ -383,8 +453,12 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return new static( $result );
 	}
 
+	public function flip() {
+		return new static( array_flip( $this->items ) );
+	}
+
 	/**
-	 * @param ...$values
+	 * @param array ...$values
 	 *
 	 * @return $this
 	 */
@@ -394,6 +468,32 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		}
 
 		return $this;
+	}
+
+	public function prepend( ...$values ) {
+		$this->items = array_merge( $values, $this->items );
+
+		return $this;
+	}
+
+	public function some( callable $callback ) {
+		foreach ( $this->items as $key => $item ) {
+			if ( $callback( $item, $key ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public function every( callable $callback ) {
+		foreach ( $this->items as $key => $item ) {
+			if ( ! $callback( $item, $key ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -456,12 +556,12 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * @param      $item
 	 * @param      $key
-	 * @param null $default
+	 * @param null $fallback
 	 *
 	 * @return mixed|null
 	 */
-	private function get_item_value( $item, $key, $default = null ) {
-		$value = $default;
+	private function get_item_value( $item, $key, $fallback = null ) {
+		$value = $fallback;
 
 		if ( is_object( $item ) && isset( $item->{$key} ) ) {
 			$value = $item->{$key};

@@ -85,6 +85,10 @@ class Contact_Form_7 extends Widget_Base
         ];
     }
 
+    public function has_widget_inner_wrapper(): bool {
+        return ! Helper::eael_e_optimized_markup();
+    }
+
     public function get_custom_help_url()
     {
         return 'https://essential-addons.com/elementor/docs/contact-form-7/';
@@ -168,7 +172,7 @@ class Contact_Form_7 extends Widget_Base
                         'form_title' => 'yes',
                     ],
                     'ai' => [
-                        'active' => false,
+                        'active' => true,
                     ],
                 ]
             );
@@ -328,7 +332,7 @@ class Contact_Form_7 extends Widget_Base
                 'options' => [
                     'default' => [
                         'title' => __('Default', 'essential-addons-for-elementor-lite'),
-                        'icon' => 'fa fa-ban',
+                        'icon' => 'eicon-text-align-justify',
                     ],
                     'left' => [
                         'title' => esc_html__('Left', 'essential-addons-for-elementor-lite'),
@@ -344,6 +348,9 @@ class Contact_Form_7 extends Widget_Base
                     ],
                 ],
                 'default' => 'default',
+                'selectors' => [
+					'{{WRAPPER}} .eael-contact-form-7-wrapper' => 'text-align: {{VALUE}};',
+				],
             ]
         );
 
@@ -1725,19 +1732,24 @@ class Contact_Form_7 extends Widget_Base
         if ($settings['custom_radio_checkbox'] == 'yes') {
             $this->add_render_attribute('contact-form', 'class', 'eael-custom-radio-checkbox');
         }
-        if ($settings['eael_contact_form_alignment'] == 'left') {
-            $this->add_render_attribute('contact-form', 'class', 'eael-contact-form-align-left');
-        } elseif ($settings['eael_contact_form_alignment'] == 'center') {
-            $this->add_render_attribute('contact-form', 'class', 'eael-contact-form-align-center');
-        } elseif ($settings['eael_contact_form_alignment'] == 'right') {
-            $this->add_render_attribute('contact-form', 'class', 'eael-contact-form-align-right');
-        } else {
-            $this->add_render_attribute('contact-form', 'class', 'eael-contact-form-align-default');
-        }
+
+        // Set the default alignment class
+        $alignment_classes = [
+            'left'   => 'eael-contact-form-align-left',
+            'right'  => 'eael-contact-form-align-right',
+            'center' => 'eael-contact-form-align-center',
+        ];
+
+        $alignment_name = $settings['eael_contact_form_alignment'] ?? 'default';
+
+        $class_name = $alignment_classes[ $alignment_name ] ?? 'eael-contact-form-align-default';
+
+        // Add the class to the contact form render attributes
+        $this->add_render_attribute('contact-form', 'class', $class_name);
 
         if (!empty($settings['contact_form_list'])) {
             echo '<div class="eael-contact-form-7-wrapper">
-                <div ' . $this->get_render_attribute_string('contact-form') . '>';
+                <div '; $this->print_render_attribute_string('contact-form'); echo '>';
             if ($settings['form_title'] == 'yes' || $settings['form_description'] == 'yes') {
                 echo '<div class="eael-contact-form-7-heading">';
                 if ($settings['form_title'] == 'yes' && $settings['form_title_text'] != '') {
@@ -1746,13 +1758,14 @@ class Contact_Form_7 extends Widget_Base
                                 </h3>';
                 }
                 if ($settings['form_description'] == 'yes' && $settings['form_description_text'] != '') {
-                    echo '<div class="eael-contact-form-description eael-contact-form-7-description">
-                                    ' . $this->parse_text_editor($settings['form_description_text']) . '
-                                </div>';
+                    echo '<div class="eael-contact-form-description eael-contact-form-7-description"> ' . 
+                        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped, WordPress.Security.EscapeOutput.OutputNotEscaped
+                        $this->parse_text_editor( wp_kses( $settings['form_description_text'], Helper::eael_allowed_tags() ) ) . '
+                        </div>';
                 }
                 echo '</div>';
             }
-            echo do_shortcode('[contact-form-7 id="' . $settings['contact_form_list'] . '" ]');
+            echo do_shortcode('[contact-form-7 id="' . esc_attr( $settings['contact_form_list'] ) . '" ]');
             echo '</div>
             </div>';
         }

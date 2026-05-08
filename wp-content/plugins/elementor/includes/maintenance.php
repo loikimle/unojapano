@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Kits\Manager;
+use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -24,6 +25,7 @@ class Maintenance {
 	 *
 	 * Fired by `register_activation_hook` when the plugin is activated.
 	 *
+	 * @param bool $network_wide
 	 * @since 1.0.0
 	 * @access public
 	 * @static
@@ -36,15 +38,36 @@ class Maintenance {
 
 		if ( is_multisite() && $network_wide ) {
 			static::create_default_kit(
-				get_sites( [ 'fields' => 'ids' ] )
+				get_sites( [
+					'fields' => 'ids',
+				] )
 			);
 
 			return;
 		}
 
 		static::create_default_kit();
+		static::insert_defaults_options();
 
 		set_transient( 'elementor_activation_redirect', true, MINUTE_IN_SECONDS );
+	}
+
+	public static function insert_defaults_options() {
+		$history = Upgrade_Manager::get_installs_history();
+		if ( empty( $history ) ) {
+			$default_options = [
+				'elementor_font_display' => 'swap',
+			];
+			foreach ( $default_options as $option_name => $option_value ) {
+				if ( \Elementor\Utils::is_empty( get_option( $option_name ) ) ) {
+					add_option( $option_name, $option_value );
+				}
+			}
+		}
+	}
+
+	public static function deactivation() {
+		Api::get_deactivation_data();
 	}
 
 	/**
@@ -60,6 +83,8 @@ class Maintenance {
 	 */
 	public static function uninstall() {
 		wp_clear_scheduled_hook( 'elementor/tracker/send_event' );
+
+		Api::get_uninstalled_data();
 	}
 
 	/**
@@ -73,6 +98,7 @@ class Maintenance {
 	 */
 	public static function init() {
 		register_activation_hook( ELEMENTOR_PLUGIN_BASE, [ __CLASS__, 'activation' ] );
+		register_deactivation_hook( ELEMENTOR_PLUGIN_BASE, [ __CLASS__, 'deactivation' ] );
 		register_uninstall_hook( ELEMENTOR_PLUGIN_BASE, [ __CLASS__, 'uninstall' ] );
 
 		add_action( 'wpmu_new_blog', function ( $site_id ) {
@@ -95,7 +121,7 @@ class Maintenance {
 				Manager::create_default_kit();
 
 				restore_current_blog();
-			};
+			}
 
 			return;
 		}

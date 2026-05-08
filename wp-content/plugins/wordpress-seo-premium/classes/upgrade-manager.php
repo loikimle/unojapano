@@ -5,6 +5,8 @@
  * @package WPSEO\Premium\Classes
  */
 
+use Yoast\WP\SEO\Integrations\Cleanup_Integration;
+
 /**
  * Class WPSEO_Upgrade_Manager
  */
@@ -13,12 +15,14 @@ class WPSEO_Upgrade_Manager {
 	/**
 	 * Option key to save the version of Premium.
 	 */
-	const VERSION_OPTION_KEY = 'wpseo_premium_version';
+	public const VERSION_OPTION_KEY = 'wpseo_premium_version';
 
 	/**
 	 * Run the upgrade routine when it's necessary.
 	 *
 	 * @param string $current_version The current WPSEO version.
+	 *
+	 * @return void
 	 */
 	public function run_upgrade( $current_version ) {
 		if ( wp_doing_ajax() ) {
@@ -40,6 +44,8 @@ class WPSEO_Upgrade_Manager {
 	 * Runs the specific updates when it is necessary.
 	 *
 	 * @param string $version_number The version number that will be compared.
+	 *
+	 * @return void
 	 */
 	public function check_update( $version_number ) {
 		// Get current version.
@@ -114,6 +120,112 @@ class WPSEO_Upgrade_Manager {
 		if ( version_compare( $version_number, '17.7-RC0', '<' ) ) {
 			add_action( 'init', [ $this, 'upgrade_17_7' ], 12 );
 		}
+
+		if ( version_compare( $version_number, '19.3-RC0', '<' ) ) {
+			add_action( 'init', [ $this, 'upgrade_19_3' ], 12 );
+		}
+
+		if ( version_compare( $version_number, '21.6-RC0', '<' ) ) {
+			add_action( 'init', [ $this, 'upgrade_21_6' ], 12 );
+		}
+
+		if ( version_compare( $version_number, '22.6-RC0', '<' ) ) {
+			add_action( 'init', [ $this, 'upgrade_22_6' ], 12 );
+		}
+
+		if ( version_compare( $version_number, '25.3.1-RC0', '<' ) ) {
+			add_action( 'init', [ $this, 'upgrade_25_3_1' ], 12 );
+		}
+
+		if ( version_compare( $version_number, '26.5-RC0', '<' ) ) {
+			add_action( 'init', [ $this, 'upgrade_26_5' ], 12 );
+		}
+	}
+
+	/**
+	 * Enables the feature flag for the Site Kit integration.
+	 *
+	 * @return void
+	 */
+	public function upgrade_26_5() {
+		if ( ! WPSEO_Options::get( 'google_site_kit_feature_enabled', false ) ) {
+			WPSEO_Options::set( 'google_site_kit_feature_enabled', true );
+		}
+	}
+
+	/**
+	 * Enables the AI feature if it was not enabled before.
+	 *
+	 * @return void
+	 */
+	public function upgrade_25_3_1() {
+
+		if ( is_plugin_active( 'classic-editor/classic-editor.php' ) || class_exists( 'WooCommerce' ) ) {
+			$posts = get_posts(
+				[
+					'last_updated' => '2025-05-26',
+					'numberposts'  => '-1',
+					'post_type'    => 'any',
+					'post_status'  => 'any',
+				],
+			);
+
+			foreach ( $posts as $post ) {
+				$to_update = false;
+				$content   = $post->post_content;
+				$tags      = new WP_HTML_Tag_Processor( $content );
+				while ( $tags->next_tag() ) {
+					$class = $tags->get_attribute( 'class' );
+					if ( strpos( $class, 'ai-optimize-' ) !== false ) {
+						// Class found we need to update this post.
+						$to_update = true;
+						$class     = trim( preg_replace( '/\bai-optimize-[^\s]*\b/', '', $class ) );
+						if ( $class === '' ) {
+							$tags->remove_attribute( 'class' );
+						}
+						else {
+							$tags->set_attribute( 'class', $class );
+						}
+					}
+				}
+				if ( $to_update ) {
+					wp_update_post(
+						[
+							'ID'           => $post->ID,
+							'post_content' => $tags->get_updated_html(),
+						],
+					);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Enables the AI feature if it was not enabled before.
+	 *
+	 * @return void
+	 */
+	public function upgrade_21_6() {
+
+		if ( ! empty( WPSEO_Options::get( 'activation_redirect_timestamp' ) ) ) {
+			$is_ai_enabled = WPSEO_Options::get( 'enable_ai_generator' );
+
+			if ( $is_ai_enabled ) {
+				WPSEO_Options::set( 'ai_enabled_pre_default', true );
+
+				return;
+			}
+			WPSEO_Options::set( 'enable_ai_generator', true );
+		}
+	}
+
+	/**
+	 * Removes the inclusive language feature notification from the Notification center.
+	 *
+	 * @return void
+	 */
+	public function upgrade_19_3() {
+		Yoast_Notification_Center::get()->remove_notification_by_id( 'wpseo-inclusive-language-notice' );
 	}
 
 	/**
@@ -150,7 +262,8 @@ class WPSEO_Upgrade_Manager {
 	public function upgrade_17_3() {
 		$workouts_option = WPSEO_Options::get( 'workouts' );
 
-		if ( isset( $workouts_option['orphaned'] )
+		if (
+			isset( $workouts_option['orphaned'] )
 			&& isset( $workouts_option['orphaned']['indexablesByStep'] )
 			&& is_array( $workouts_option['orphaned']['indexablesByStep'] )
 		) {
@@ -175,12 +288,12 @@ class WPSEO_Upgrade_Manager {
 	 */
 	protected function retrigger_cleanup() {
 		// If Yoast SEO hasn't been upgraded to 17.2 the cleanup integration has not been implemented in the current way.
-		if ( ! \defined( '\Yoast\WP\SEO\Integrations\Cleanup_Integration::START_HOOK' ) ) {
+		if ( ! defined( '\Yoast\WP\SEO\Integrations\Cleanup_Integration::START_HOOK' ) ) {
 			return;
 		}
 		// If Yoast SEO premium was upgraded after Yoast SEO, reschedule the task to clean out orphaned prominent words.
-		if ( ! \wp_next_scheduled( \Yoast\WP\SEO\Integrations\Cleanup_Integration::START_HOOK ) ) {
-			\wp_schedule_single_event( ( time() + ( MINUTE_IN_SECONDS * 5 ) ), \Yoast\WP\SEO\Integrations\Cleanup_Integration::START_HOOK );
+		if ( ! wp_next_scheduled( Cleanup_Integration::START_HOOK ) ) {
+			wp_schedule_single_event( ( time() + ( MINUTE_IN_SECONDS * 5 ) ), Cleanup_Integration::START_HOOK );
 		}
 	}
 
@@ -203,8 +316,8 @@ class WPSEO_Upgrade_Manager {
 	 * @return void
 	 */
 	public function upgrade_16_2() {
-		\do_action( 'wpseo_register_capabilities_premium' );
-		\WPSEO_Capability_Manager_Factory::get( 'premium' )->add();
+		do_action( 'wpseo_register_capabilities_premium' );
+		WPSEO_Capability_Manager_Factory::get( 'premium' )->add();
 	}
 
 	/**
@@ -274,6 +387,8 @@ class WPSEO_Upgrade_Manager {
 	 * Validates if the 31 upgrade routine has correctly run and if not retries to run it
 	 *
 	 * @param bool $immediately Whether to do the upgrade immediately when this function is called.
+	 *
+	 * @return void
 	 */
 	public function retry_upgrade_31( $immediately = false ) {
 		/*
@@ -296,6 +411,8 @@ class WPSEO_Upgrade_Manager {
 	 * An update is required, do it
 	 *
 	 * @param string $current_version The current version number of the installation.
+	 *
+	 * @return void
 	 */
 	private function do_update( $current_version ) {
 		// Upgrade to version 1.2.0.
@@ -310,8 +427,29 @@ class WPSEO_Upgrade_Manager {
 
 	/**
 	 * Update the current version code
+	 *
+	 * @return void
 	 */
 	private function update_current_version_code() {
 		update_site_option( WPSEO_Premium::OPTION_CURRENT_VERSION, WPSEO_Premium::PLUGIN_VERSION_CODE );
+	}
+
+	/**
+	 * Performs the 22.6 upgrade routine.
+	 * Schedules another cleanup scheduled action, but starting from the last cleanup action we just added (if there
+	 * aren't any running cleanups already).
+	 *
+	 * @return void
+	 */
+	public function upgrade_22_6() {
+		// If Yoast SEO hasn't been upgraded to 17.2 the cleanup integration has not been implemented in the current way.
+		if ( ! class_exists( Cleanup_Integration::class ) ) {
+			return;
+		}
+
+		if ( get_option( Cleanup_Integration::CURRENT_TASK_OPTION ) === false ) {
+			$cleanup_integration = YoastSEO()->classes->get( Cleanup_Integration::class );
+			$cleanup_integration->start_cron_job( 'clean_selected_empty_usermeta' );
+		}
 	}
 }

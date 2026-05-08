@@ -63,25 +63,64 @@ class URWC_Field_Table_List {
 	 * Display list content.
 	 */
 	public function list_content() {
-		$fields    = urwc_get_form_fields( $this->form_id );
-		$cb_fields = get_option( $this->cb_option_key, array() );
+		$fields      = urwc_get_form_fields( $this->form_id );
+		$cb_fields   = get_option( preg_replace( '/\//', '', $this->cb_option_key ), array() );
+		$form_id     = 'form-' . $this->form_id;
+		$mapped_name = array();
 
 		if ( is_wp_error( $fields ) ) {
-			return sprintf( '<tr><td colspan="4"><h1 align="center">%s</h1></td></tr>', $fields->get_error_message() );
+			return sprintf( '<tr><td colspan="4"><h4 align="center">%s</h4></td></tr>', $fields->get_error_message() );
+		}
+
+		foreach ( $cb_fields as $cb_key => $cb_value ) {
+			if ( $cb_key === $form_id ) {
+				$mapped_name = $cb_value;
+			}
+		}
+
+		$exclude_fields = array(
+			'single_item',
+			'multiple_choice',
+			'quantity_field',
+			'total_field',
+			'stripe_gateway' // phpcs:ignore
+		);
+
+		$screen    = get_current_screen();
+		$screen_id = $screen ? $screen->id : '';
+
+		if ( 'product' == $screen_id ) {
+			$skip_fields = array(
+				'captcha',
+				'file',
+				'profile_picture',
+			);
+			$exclude_fields = array_merge($exclude_fields, $skip_fields );
 		}
 
 		$field_elements = '';
-		if ( $fields ) {
+		$exclude_fields = apply_filters('user_registration_woocommerce_exclude_sync_fields', $exclude_fields, $screen_id );
 
+		if ( $fields ) {
 			foreach ( $fields as $field_name => $field_details ) {
-				$checked         = ( in_array( $field_name, $cb_fields ) ) ? ' checked="checked"' : '';
+				if ( in_array( $field_details['type'], $exclude_fields, true ) ) {
+					continue;
+				}
+				$checked         = ( in_array( $field_name, $mapped_name, true ) ) ? ' checked="checked"' : '';
 				$field_elements .= '<tr>';
-				$field_elements .= sprintf( '<td><input type="checkbox" name="%s[]" value="%s"%s /></td>', $this->cb_option_key, $field_name, $checked );
+				$field_elements .= sprintf( '<td><input type="checkbox" name="%s[]" value="%s"%s /></td>', preg_replace( '/\//', '', $this->cb_option_key ), $field_name, $checked );
 				$field_elements .= sprintf( '<td>%s</td>', $field_details['label'] );
 				$field_elements .= sprintf( '<td>%s</td>', $field_name );
 				$field_elements .= sprintf( '<td>%s</td>', 'User Registration' );
-				$field_elements .= '</td>';
+				$field_elements .= '</tr>';
 			}
+		}
+
+		if ( '' === $field_elements ) {
+			$field_elements = sprintf(
+				'<tr><td colspan="4"><h4>%s</h4></td></tr>',
+				esc_html__( 'No fields found to sync.', 'user-registration-woocommerce' )
+			);
 		}
 
 		return $field_elements;

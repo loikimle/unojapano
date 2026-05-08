@@ -7,6 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
+use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
+use Elementor\Core\Utils\Hints;
+use Elementor\Core\Admin\Admin_Notices;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 /**
  * Elementor heading widget.
@@ -15,7 +19,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
  *
  * @since 1.0.0
  */
-class Widget_Heading extends Widget_Base {
+class Widget_Heading extends Widget_Base implements Sanitizable {
 
 	/**
 	 * Get widget name.
@@ -89,6 +93,75 @@ class Widget_Heading extends Widget_Base {
 		return [ 'heading', 'title', 'text' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-heading' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
+	/**
+	 * Remove data attributes from the html.
+	 *
+	 * @param string $content Heading title.
+	 * @return string
+	 */
+	public function sanitize( $content ): string {
+		$allowed_tags = wp_kses_allowed_html( 'post' );
+		$allowed_tags_for_heading = [];
+		$non_allowed_tags = [ 'img' ];
+
+		foreach ( $allowed_tags as $tag => $attributes ) {
+			if ( in_array( $tag, $non_allowed_tags, true ) ) {
+				continue;
+			}
+
+			$filtered_attributes = array_filter( $attributes, function( $attribute ) {
+				return ! substr( $attribute, 0, 5 ) === 'data-';
+			}, ARRAY_FILTER_USE_KEY );
+
+			$allowed_tags_for_heading[ $tag ] = $filtered_attributes;
+		}
+
+		return wp_kses( $content, $allowed_tags_for_heading );
+	}
+
+	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array Widget promotion data.
+	 */
+	protected function get_upsale_data() {
+		return [
+			'condition' => ! Utils::has_pro(),
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
+			'description' => esc_html__( 'Create captivating headings that rotate with the Animated Headline Widget.', 'elementor' ),
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-heading-widget/' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+		];
+	}
+
 	/**
 	 * Register heading widget controls.
 	 *
@@ -101,7 +174,7 @@ class Widget_Heading extends Widget_Base {
 		$this->start_controls_section(
 			'section_title',
 			[
-				'label' => esc_html__( 'Title', 'elementor' ),
+				'label' => esc_html__( 'Heading', 'elementor' ),
 			]
 		);
 
@@ -110,6 +183,9 @@ class Widget_Heading extends Widget_Base {
 			[
 				'label' => esc_html__( 'Title', 'elementor' ),
 				'type' => Controls_Manager::TEXTAREA,
+				'ai' => [
+					'type' => 'text',
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -129,7 +205,6 @@ class Widget_Heading extends Widget_Base {
 				'default' => [
 					'url' => '',
 				],
-				'separator' => 'before',
 			]
 		);
 
@@ -138,7 +213,6 @@ class Widget_Heading extends Widget_Base {
 			[
 				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
 				'options' => [
 					'default' => esc_html__( 'Default', 'elementor' ),
 					'small' => esc_html__( 'Small', 'elementor' ),
@@ -146,6 +220,10 @@ class Widget_Heading extends Widget_Base {
 					'large' => esc_html__( 'Large', 'elementor' ),
 					'xl' => esc_html__( 'XL', 'elementor' ),
 					'xxl' => esc_html__( 'XXL', 'elementor' ),
+				],
+				'default' => 'default',
+				'condition' => [
+					'size!' => 'default', // a workaround to hide the control, unless it's in use (not default).
 				],
 			]
 		);
@@ -170,22 +248,34 @@ class Widget_Heading extends Widget_Base {
 			]
 		);
 
+		$this->maybe_add_ally_heading_hint();
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_title_style',
+			[
+				'label' => esc_html__( 'Heading', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
 		$this->add_responsive_control(
 			'align',
 			[
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
@@ -193,43 +283,16 @@ class Widget_Heading extends Widget_Base {
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
+				],
 				'default' => '',
 				'selectors' => [
 					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
 				],
-			]
-		);
-
-		$this->add_control(
-			'view',
-			[
-				'label' => esc_html__( 'View', 'elementor' ),
-				'type' => Controls_Manager::HIDDEN,
-				'default' => 'traditional',
-			]
-		);
-
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_title_style',
-			[
-				'label' => esc_html__( 'Title', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_control(
-			'title_color',
-			[
-				'label' => esc_html__( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'global' => [
-					'default' => Global_Colors::COLOR_PRIMARY,
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
-				],
+				'separator' => 'after',
 			]
 		);
 
@@ -267,25 +330,93 @@ class Widget_Heading extends Widget_Base {
 				'type' => Controls_Manager::SELECT,
 				'options' => [
 					'' => esc_html__( 'Normal', 'elementor' ),
-					'multiply' => 'Multiply',
-					'screen' => 'Screen',
-					'overlay' => 'Overlay',
-					'darken' => 'Darken',
-					'lighten' => 'Lighten',
-					'color-dodge' => 'Color Dodge',
-					'saturation' => 'Saturation',
-					'color' => 'Color',
-					'difference' => 'Difference',
-					'exclusion' => 'Exclusion',
-					'hue' => 'Hue',
-					'luminosity' => 'Luminosity',
+					'multiply' => esc_html__( 'Multiply', 'elementor' ),
+					'screen' => esc_html__( 'Screen', 'elementor' ),
+					'overlay' => esc_html__( 'Overlay', 'elementor' ),
+					'darken' => esc_html__( 'Darken', 'elementor' ),
+					'lighten' => esc_html__( 'Lighten', 'elementor' ),
+					'color-dodge' => esc_html__( 'Color Dodge', 'elementor' ),
+					'saturation' => esc_html__( 'Saturation', 'elementor' ),
+					'color' => esc_html__( 'Color', 'elementor' ),
+					'difference' => esc_html__( 'Difference', 'elementor' ),
+					'exclusion' => esc_html__( 'Exclusion', 'elementor' ),
+					'hue' => esc_html__( 'Hue', 'elementor' ),
+					'luminosity' => esc_html__( 'Luminosity', 'elementor' ),
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-heading-title' => 'mix-blend-mode: {{VALUE}}',
 				],
-				'separator' => 'none',
 			]
 		);
+
+		$this->add_control(
+			'separator',
+			[
+				'type' => Controls_Manager::DIVIDER,
+			]
+		);
+
+		$this->start_controls_tabs( 'title_colors' );
+
+		$this->start_controls_tab(
+			'title_colors_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'title_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'title_colors_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'title_hover_color',
+			[
+				'label' => esc_html__( 'Link Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title a:hover, {{WRAPPER}} .elementor-heading-title a:focus' => 'color: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'title_hover_color_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 's',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-heading-title a' => 'transition-duration: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->end_controls_section();
 	}
@@ -309,11 +440,13 @@ class Widget_Heading extends Widget_Base {
 
 		if ( ! empty( $settings['size'] ) ) {
 			$this->add_render_attribute( 'title', 'class', 'elementor-size-' . $settings['size'] );
+		} else {
+			$this->add_render_attribute( 'title', 'class', 'elementor-size-default' );
 		}
 
 		$this->add_inline_editing_attributes( 'title' );
 
-		$title = $settings['title'];
+		$title = wp_kses_post( $settings['title'] );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
 			$this->add_link_attributes( 'url', $settings['link'] );
@@ -327,6 +460,84 @@ class Widget_Heading extends Widget_Base {
 		echo $title_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
+	public function maybe_add_ally_heading_hint() {
+		$notice_id = 'ally_heading_notice';
+		$plugin_slug = 'pojo-accessibility';
+
+		if ( ! Hints::should_display_hint( $notice_id ) ) {
+			return;
+		}
+
+		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
+		$is_installed = Hints::is_plugin_installed( $plugin_slug );
+		$is_active = Hints::is_plugin_active( $plugin_slug );
+
+		if ( $is_active ) {
+			return;
+		}
+
+		if ( $one_subscription ) {
+			if ( ! $is_installed ) {
+				$notice_content = esc_html__( 'Want to ensure this heading is accessible? Your ONE subscription includes Ally. Install it and scan your page.', 'elementor' );
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-scanner-plg-heading-one-install',
+					'source' => 'editor-heading-widget-one-install',
+					'medium' => 'editor-one',
+				];
+			} elseif ( ! $is_active ) {
+				$notice_content = esc_html__( 'Keep your content accessible. Activate Ally, included in ONE, to scan this page.', 'elementor' );
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-scanner-plg-heading-one-activate',
+					'source' => 'editor-heading-widget-one-non-activate',
+					'medium' => 'editor-one',
+				];
+			}
+		} else {
+			$notice_content = esc_html__( 'Make sure your page is structured with accessibility in mind. Ally helps detect and fix common issues across your site.', 'elementor' );
+			if ( ! $is_installed ) {
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+			} elseif ( ! $is_active ) {
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+			}
+			$campaign_data = [
+				'name' => 'elementor_ea11y_campaign',
+				'campaign' => 'acc-scanner-plg-heading',
+				'source' => 'editor-heading-widget',
+				'medium' => 'editor',
+			];
+		}
+
+		$notice_heading = esc_html__( 'Accessible structure matters', 'elementor' );
+
+		$this->add_control(
+			$notice_id,
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => Hints::get_notice_template( [
+					'display' => ! Hints::is_dismissed( $notice_id ),
+					'heading' => $notice_heading,
+					'type' => 'info',
+					'content' => $notice_content,
+					'icon' => true,
+					'dismissible' => $notice_id,
+					'button_text' => $button_text,
+					'button_event' => $notice_id,
+					'button_data' => [
+						'action_url' => Admin_Notices::add_plg_campaign_data( $button_url, $campaign_data ),
+					],
+				], true ),
+			]
+		);
+	}
+
 	/**
 	 * Render heading widget output in the editor.
 	 *
@@ -338,13 +549,19 @@ class Widget_Heading extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
-		var title = settings.title;
+		let title = elementor.helpers.sanitize( settings.title, { ALLOW_DATA_ATTR: false } );
 
-		if ( '' !== settings.link.url ) {
-			title = '<a href="' + settings.link.url + '">' + title + '</a>';
+		if ( '' !== settings.link?.url ) {
+			title = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '">' + title + '</a>';
 		}
 
-		view.addRenderAttribute( 'title', 'class', [ 'elementor-heading-title', 'elementor-size-' + settings.size ] );
+		view.addRenderAttribute( 'title', 'class', [ 'elementor-heading-title' ] );
+
+		if ( '' !== settings.size ) {
+			view.addRenderAttribute( 'title', 'class', [ 'elementor-size-' + settings.size ] );
+		} else {
+			view.addRenderAttribute( 'title', 'class', [ 'elementor-size-default' ] );
+		}
 
 		view.addInlineEditingAttributes( 'title' );
 

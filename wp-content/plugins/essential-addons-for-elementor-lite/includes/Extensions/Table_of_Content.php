@@ -61,7 +61,11 @@ class Table_of_Content
                 'eael_ext_toc_global_warning_text',
                 [
                     'type' => Controls_Manager::RAW_HTML,
-                    'raw' => __('You can modify the Global Table of Contents by <strong><a href="' . get_bloginfo('url') . '/wp-admin/post.php?post=' . $global_settings['eael_ext_table_of_content']['post_id'] . '&action=elementor">Clicking Here</a></strong>', 'essential-addons-for-elementor-lite'),
+                    'raw' => sprintf(
+                        /* translators: %s: Edit link to the Global Table of Contents settings. */
+                        __('You can modify the Global Table of Contents by <strong><a href="%s">Clicking Here</a></strong>', 'essential-addons-for-elementor-lite'),
+                        esc_url( get_bloginfo('url') . '/wp-admin/post.php?post=' . $global_settings['eael_ext_table_of_content']['post_id'] . '&action=elementor' )
+                    ),
                     'content_classes' => 'eael-warning',
                     'condition' => [
                         'eael_ext_table_of_content' => 'yes',
@@ -69,33 +73,48 @@ class Table_of_Content
                 ]
             );
         } else {
-            $element->add_control(
-                'eael_ext_toc_global',
-                [
-                    'label' => __('Enable Table of Contents Globally', 'essential-addons-for-elementor-lite'),
-                    'description' => __('Enabling this option will effect on entire site.', 'essential-addons-for-elementor-lite'),
-                    'type' => Controls_Manager::SWITCHER,
-                    'default' => 'no',
-                    'label_on' => __('Yes', 'essential-addons-for-elementor-lite'),
-                    'label_off' => __('No', 'essential-addons-for-elementor-lite'),
-                    'return_value' => 'yes',
-                    'condition' => [
-                        'eael_ext_table_of_content' => 'yes',
-                    ],
-                ]
-            );
+	        $element->add_control(
+		        'eael_ext_toc_global',
+		        [
+			        'label'        => __( 'Enable Table of Contents Globally', 'essential-addons-for-elementor-lite' ),
+			        'description'  => __( 'Enabling this option will effect on entire site.', 'essential-addons-for-elementor-lite' ),
+			        'type'         => Controls_Manager::SWITCHER,
+			        'default'      => 'no',
+			        'label_on'     => __( 'Yes', 'essential-addons-for-elementor-lite' ),
+			        'label_off'    => __( 'No', 'essential-addons-for-elementor-lite' ),
+			        'return_value' => 'yes',
+			        'condition'    => [
+				        'eael_ext_table_of_content' => 'yes',
+			        ],
+		        ]
+	        );
+	        $supported_posts = get_option( 'elementor_cpt_support' );
+	        $display_on      = [
+		        'all'   => __( 'All', 'essential-addons-for-elementor-lite' ),
+		        'post' => __( 'All Posts', 'essential-addons-for-elementor-lite' ),
+		        'page' => __( 'All Pages', 'essential-addons-for-elementor-lite' ),
+	        ];
 
-            $element->add_control(
+	        if ( ! empty( $supported_posts ) ) {
+		        foreach ( $supported_posts as $post_type ) {
+			        $post_obj = get_post_type_object( $post_type );
+
+			        if ( ! in_array( $post_type, [ 'post', 'page' ] ) && is_a( $post_obj, 'WP_Post_Type' ) && $post_obj->labels ) {
+				        $plural_name = ! empty( $post_obj->labels->name ) ? $post_obj->labels->name : '';
+
+                        // Translators: %s: Post type name.
+				        $display_on[ $post_type ] = sprintf( __( 'All %s', 'essential-addons-for-elementor-lite' ), $plural_name );
+			        }
+		        }
+	        }
+            
+	        $element->add_control(
                 'eael_ext_toc_global_display_condition',
                 [
                     'label' => __('Display On', 'essential-addons-for-elementor-lite'),
                     'type' => Controls_Manager::SELECT,
                     'default' => 'all',
-                    'options' => [
-                        'posts' => __('All Posts', 'essential-addons-for-elementor-lite'),
-                        'pages' => __('All Pages', 'essential-addons-for-elementor-lite'),
-                        'all' => __('All Posts & Pages', 'essential-addons-for-elementor-lite'),
-                    ],
+                    'options' => $display_on,
                     'condition' => [
                         'eael_ext_table_of_content' => 'yes',
                         'eael_ext_toc_global' => 'yes',
@@ -116,10 +135,48 @@ class Table_of_Content
                     'eael_ext_table_of_content' => 'yes',
                 ],
                 'ai' => [
-					'active' => false,
+					'active' => true,
 				],
             ]
         );
+
+	    $element->add_control(
+		    'eael_ext_toc_title_tag',
+		    [
+			    'label' => esc_html__( 'HTML Tag', 'essential-addons-for-elementor-lite' ),
+			    'type' => Controls_Manager::CHOOSE,
+			    'options' => [
+				    'h1' => [
+					    'title' => esc_html__( 'H1', 'essential-addons-for-elementor-lite' ),
+					    'icon' => 'eicon-editor-h1',
+				    ],
+				    'h2' => [
+					    'title' => esc_html__( 'H2', 'essential-addons-for-elementor-lite' ),
+					    'icon' => 'eicon-editor-h2',
+				    ],
+				    'h3' => [
+					    'title' => esc_html__( 'H3', 'essential-addons-for-elementor-lite' ),
+					    'icon' => 'eicon-editor-h3',
+				    ],
+				    'h4' => [
+					    'title' => esc_html__( 'H4', 'essential-addons-for-elementor-lite' ),
+					    'icon' => 'eicon-editor-h4',
+				    ],
+				    'h5' => [
+					    'title' => esc_html__( 'H5', 'essential-addons-for-elementor-lite' ),
+					    'icon' => 'eicon-editor-h5',
+				    ],
+				    'h6' => [
+					    'title' => esc_html__( 'H6', 'essential-addons-for-elementor-lite' ),
+					    'icon' => 'eicon-editor-h6',
+				    ],
+			    ],
+			    'condition' => [
+				    'eael_ext_table_of_content' => 'yes',
+			    ],
+			    'default' => 'h2',
+		    ]
+	    );
 
         $element->start_controls_tabs('eael_toc_include_exclude', ['separator' => 'before']);
 
@@ -173,7 +230,7 @@ class Table_of_Content
                     'eael_ext_table_of_content' => 'yes',
                 ],
                 'ai' => [
-					'active' => false,
+					'active' => true,
 				],
             ]
         );
@@ -202,7 +259,7 @@ class Table_of_Content
                     'eael_ext_table_of_content' => 'yes',
                 ],
                 'ai' => [
-					'active' => false,
+					'active' => true,
 				],
             ]
         );
@@ -466,7 +523,7 @@ class Table_of_Content
             ]
         );
 
-        $element->add_control(
+        $element->add_responsive_control(
             'eael_ext_toc_width',
             [
                 'label' => __('Width', 'essential-addons-for-elementor-lite'),
@@ -506,6 +563,91 @@ class Table_of_Content
                 'separator' => 'before',
                 'condition' => [
                     'eael_ext_table_of_content' => 'yes',
+                ],
+            ]
+        );
+
+        $element->add_control(
+			'eael_ext_toc_position_mobile',
+			[
+				'label'        => esc_html__( 'Position For Mobile Device', 'essential-addons-for-elementor-lite' ),
+				'type'         => \Elementor\Controls_Manager::SWITCHER,
+				'label_on'     => esc_html__( 'Show', 'essential-addons-for-elementor-lite' ),
+				'label_off'    => esc_html__( 'Hide', 'essential-addons-for-elementor-lite' ),
+				'return_value' => 'yes',
+			]
+		);
+
+        $element->add_control(
+            'eael_ext_toc_position_mobile_top_bottom',
+            [
+                'label'       => __('Position', 'essential-addons-for-elementor-lite'),
+                'type'        => Controls_Manager::SELECT,
+                'default'     => 'top',
+                'label_block' => false,
+                'options'     => [
+                    'top'    => __('Top', 'essential-addons-for-elementor-lite'),
+                    'bottom' => __('Bottom', 'essential-addons-for-elementor-lite'),
+                ],
+                'condition' => [
+                    'eael_ext_table_of_content'    => 'yes',
+                    'eael_ext_toc_position_mobile' => 'yes',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'eael_ext_toc_position_mobile_top_offset',
+            [
+                'label' => __('Top Offset', 'essential-addons-for-elementor-lite'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 5,
+                        'max' => 2000,
+                        'step' => 10,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 50,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .eael-toc.eael-toc-top.eael-sticky' => 'top: {{SIZE}}{{UNIT}} !important;',
+                ],
+                'condition' => [
+                    'eael_ext_table_of_content' => 'yes',
+                    'eael_ext_toc_position_mobile_top_bottom' => 'top',
+                    'eael_ext_toc_position_mobile' => 'yes',
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'eael_ext_toc_position_mobile_bottom_offset',
+            [
+                'label' => __('Bottom Offset', 'essential-addons-for-elementor-lite'),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => ['px'],
+                'range' => [
+                    'px' => [
+                        'min' => 5,
+                        'max' => 2000,
+                        'step' => 10,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 50,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .eael-toc.eael-toc-bottom.eael-sticky' => 'bottom: {{SIZE}}{{UNIT}};',
+                ],
+                'condition' => [
+                    'eael_ext_table_of_content' => 'yes',
+                    'eael_ext_toc_position_mobile_top_bottom' => 'bottom',
+                    'eael_ext_toc_position_mobile' => 'yes',
                 ],
             ]
         );
@@ -904,6 +1046,22 @@ class Table_of_Content
                     'none' => __('None', 'essential-addons-for-elementor-lite'),
                     'arrow' => __('Arrow', 'essential-addons-for-elementor-lite'),
                     'bar' => __('Bar', 'essential-addons-for-elementor-lite'),
+                ],
+            ]
+        );
+
+        $element->add_control(
+            'eael_ext_toc_indicator_color',
+            [
+                'label'     => __('Indicator Color', 'essential-addons-for-elementor-lite'),
+                'type'      => Controls_Manager::COLOR,
+                'default'   => '#ff7d50',
+                'selectors' => [
+                    '{{WRAPPER}} .eael-toc .eael-toc-body ul.eael-toc-list.eael-toc-list-bar li.eael-highlight-active > a:after' => 'background-color: {{VALUE}}',
+                    '{{WRAPPER}} .eael-toc .eael-toc-body ul.eael-toc-list.eael-toc-list-arrow li.eael-highlight-active > a:before' => 'border-bottom: 10px solid {{VALUE}}',
+                ],
+                'condition' => [
+                    'eael_ext_table_of_content_list_style' => [ 'arrow', 'bar' ]
                 ],
             ]
         );

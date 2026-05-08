@@ -1,9 +1,10 @@
 === User Registration Social Connect ===
 Contributors: WPEverest
 Tags: user registration, addon, social connect, user registration social connect
-Requires at least: 4.0
-Tested up to: 5.9
-Stable tag: 1.4.0
+Requires at least: 5.2
+Requires PHP: 7.2
+Tested up to: 6.5.3
+Stable tag: 1.4.8
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -13,7 +14,7 @@ Social connect addon for user registration plugin.
 
 Social connect addon for user registration plugin.
 
-Get [free support](https://wpeverest.com/support-forum/)
+Get [free support](https://wpuserregistration.com/support/)
 
 
 ### Features And Options:
@@ -39,6 +40,36 @@ Yes, the plugin is designed to work with any themes that have been coded followi
 == Screenshots ==
 
 == Changelog ==
+
+= 1.4.8    - 31/05/2024 =
+* Fix      - Login with LinkedIn not working.
+
+= 1.4.7    - 15/04/2024 =
+* Tweak    - Addon update check triggered from User Registration Pro.
+
+= 1.4.6    - 05/03/2024 =
+* Enhance  - Addon dependency on User Registration Pro.
+* Fix      - Check Plugin Update once a day.
+
+= 1.4.5    - 12/10/2023 =
+* Refactor - Handle user approval status properly.
+* Tweak    - Changed hook to trigger for checking updates.
+* Fix      - Social Icon position is not working for registration form.
+
+= 1.4.4    - 10/08/2023 =
+* Fix      - Conflict with Google Listing and Ads Plugin.
+
+= 1.4.3    - 31/05/2023 =
+* Enhance  - Changed checkbox option to toggle in global settings.
+* Dev      - Compatibility with search global settings.
+* Tweak    - Compatibility with new global settings design.
+
+= 1.4.2    - 03/05/2023 =
+* Fix      - Function get_sanitize_value() not found.
+
+= 1.4.1    - 01/06/2022 =
+* Enhance  - Social Connect with login options.
+* Fix      - Social widget in dashboard too large in size.
 
 = 1.4.0    - 14/03/2022 =
 * Enhance  - Update Google API Library to make PHP 8.0 Compatibile.

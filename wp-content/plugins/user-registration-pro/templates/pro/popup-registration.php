@@ -13,12 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-$popup_title  = $popup_content->popup_title;
-$popup_type   = $popup_content->popup_type;
-$popup_status = $popup_content->popup_status;
-$popup_header = $popup_content->popup_header;
-$popup_footer = $popup_content->popup_footer;
-$popup_size   = $popup_content->popup_size;
+$popup_title              = $popup_content->popup_title;
+$popup_type               = $popup_content->popup_type;
+$popup_status             = $popup_content->popup_status;
+$popup_header             = $popup_content->popup_header;
+$popup_footer             = $popup_content->popup_footer;
+$popup_size               = $popup_content->popup_size;
 
 $popup_size_class = '';
 
@@ -32,18 +32,18 @@ if ( isset( $attributes['type'] ) && 'button' === $attributes['type'] ) {
 	$display = 'display:none;';
 	?>
 	<button class="user-registration-modal-link user-registration-modal-link-<?php echo esc_attr( $popup_id ); ?> user-registration-popup-button ">
-																						<?php
-																						echo isset( $attributes['button_text'] ) ? sprintf(
-																						/* translators: %s - Popup botton text from shortcode atts */
-																							__( '%s', 'user-registration' ),
-																							$attributes['button_text']
-																						) : sprintf(
-																						/* translators: $s - Popup botton text from popup title.  */
-																							__( 'Open %s', 'user-registration' ),
-																							$popup_title
-																						);
+		<?php
+		echo isset( $attributes['button_text'] ) ? sprintf(
+		/* translators: %s - Popup botton text from shortcode atts */
+			__( '%s', 'user-registration' ),
+			$attributes['button_text']
+		) : sprintf(
+		/* translators: $s - Popup botton text from popup title.  */
+			__( 'Open %s', 'user-registration' ),
+			$popup_title
+		);
 
-																						?>
+		?>
 	</button>
 	<?php
 }
@@ -58,7 +58,7 @@ if ( isset( $attributes['type'] ) && 'button' === $attributes['type'] ) {
 		if ( '' !== $popup_header ) {
 			?>
 			<div class="user-registration-modal__header">
-				<h4 class="user-registration-modal__title"><?php echo esc_html( $popup_header ); ?></h4>
+				<h4 class="user-registration-modal__title"><?php echo wp_kses_post( $popup_header ); ?></h4>
 				<span class="user-registration-modal__close-icon"></span>
 			</div>
 			<?php
@@ -77,7 +77,7 @@ if ( isset( $attributes['type'] ) && 'button' === $attributes['type'] ) {
 		if ( '' !== $popup_header ) {
 			?>
 		<div class="user-registration-modal__footer">
-			<p><?php echo esc_html( $popup_footer ); ?></p>
+			<p><?php echo wp_kses_post( $popup_footer ); ?></p>
 		</div>
 			<?php
 		}

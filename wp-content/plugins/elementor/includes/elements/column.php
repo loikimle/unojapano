@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -74,6 +75,10 @@ class Element_Column extends Element_Base {
 		return 'eicon-column';
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
 	/**
 	 * Get initial config.
 	 *
@@ -115,7 +120,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		// Element Name for the Navigator
+		// Element Name for the Navigator.
 		$this->add_control(
 			'_title',
 			[
@@ -172,15 +177,10 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$is_dome_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
-		$main_selector_element = $is_dome_optimization_active ? 'widget' : 'column';
-		$widget_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-widget-wrap';
-		$column_wrap_child = $is_dome_optimization_active ? '' : ' > .elementor-column-wrap';
-
 		$this->add_responsive_control(
 			'content_position',
 			[
-				'label' => esc_html__( 'Vertical Align', 'elementor' ),
+				'label' => esc_html__( 'Vertical Alignment', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
@@ -197,10 +197,10 @@ class Element_Column extends Element_Base {
 					'bottom' => 'flex-end',
 				],
 				'selectors' => [
-					// TODO: The following line is for BC since 2.7.0
-					'.elementor-bc-flex-widget {{WRAPPER}}.elementor-column .elementor-' . $main_selector_element . '-wrap' => 'align-items: {{VALUE}}',
-					// This specificity is intended to make sure column css overwrites section css on vertical alignment (content_position)
-					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"] > .elementor-' . $main_selector_element . '-wrap.elementor-element-populated' . $widget_wrap_child => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
+					// TODO: The following line is for BC since 2.7.0.
+					'.elementor-bc-flex-widget {{WRAPPER}}.elementor-column .elementor-widget-wrap' => 'align-items: {{VALUE}}',
+					// This specificity is intended to make sure column css overwrites section css on vertical alignment (content_position).
+					'{{WRAPPER}}.elementor-column.elementor-element[data-element_type="column"] > .elementor-widget-wrap.elementor-element-populated' => 'align-content: {{VALUE}}; align-items: {{VALUE}};',
 				],
 			]
 		);
@@ -208,7 +208,7 @@ class Element_Column extends Element_Base {
 		$this->add_responsive_control(
 			'align',
 			[
-				'label' => esc_html__( 'Horizontal Align', 'elementor' ),
+				'label' => esc_html__( 'Horizontal Alignment', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'default' => '',
 				'options' => [
@@ -221,12 +221,15 @@ class Element_Column extends Element_Base {
 					'space-evenly' => esc_html__( 'Space Evenly', 'elementor' ),
 				],
 				'selectors' => [
-					'{{WRAPPER}}.elementor-column' . $column_wrap_child . ' > .elementor-widget-wrap' => 'justify-content: {{VALUE}}',
+					'{{WRAPPER}}.elementor-column > .elementor-widget-wrap' => 'justify-content: {{VALUE}}',
 				],
 			]
 		);
 
-		$space_between_widgets_selector = $is_dome_optimization_active ? '' : '> .elementor-column-wrap ';
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+		$space_between_widgets = $optimized_markup
+			? '--kit-widget-spacing: {{VALUE}}px'
+			: 'margin-block-end: {{VALUE}}px';
 
 		$this->add_responsive_control(
 			'space_between_widgets',
@@ -235,7 +238,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => 20,
 				'selectors' => [
-					'{{WRAPPER}} ' . $space_between_widgets_selector . '> .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => 'margin-bottom: {{VALUE}}px', //Need the full path for exclude the inner section
+					'{{WRAPPER}} > .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => $space_between_widgets, // Need the full path for exclude the inner section.
 				],
 			]
 		);
@@ -289,10 +292,47 @@ class Element_Column extends Element_Base {
 			[
 				'name' => 'background',
 				'types' => [ 'classic', 'gradient', 'slideshow' ],
-				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-' . $main_selector_element . '-wrap, {{WRAPPER}} > .elementor-' . $main_selector_element . '-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
+				'selector' => '{{WRAPPER}}:not(.elementor-motion-effects-element-type-background) > .elementor-widget-wrap, {{WRAPPER}} > .elementor-widget-wrap > .elementor-motion-effects-container > .elementor-motion-effects-layer',
 				'fields_options' => [
 					'background' => [
 						'frontend_available' => true,
+					],
+				],
+			]
+		);
+
+		$this->add_control(
+			'handle_slideshow_asset_loading',
+			[
+				'type' => Controls_Manager::HIDDEN,
+				'assets' => [
+					'styles' => [
+						[
+							'name' => 'e-swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
+					],
+					'scripts' => [
+						[
+							'name' => 'swiper',
+							'conditions' => [
+								'terms' => [
+									[
+										'name' => 'background_background',
+										'operator' => '===',
+										'value' => 'slideshow',
+									],
+								],
+							],
+						],
 					],
 				],
 			]
@@ -318,13 +358,14 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'background_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.3,
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -369,7 +410,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'background_overlay_opacity',
 			[
 				'label' => esc_html__( 'Opacity', 'elementor' ),
@@ -443,7 +484,7 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'background_overlay_hover_opacity',
 			[
 				'label' => esc_html__( 'Opacity', 'elementor' ),
@@ -477,13 +518,14 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'background_overlay_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 0.3,
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -529,7 +571,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated, {{WRAPPER}} > .elementor-element-populated > .elementor-background-overlay, {{WRAPPER}} > .elementor-background-slideshow' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -566,7 +608,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', '%' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}}:hover > .elementor-element-populated, {{WRAPPER}}:hover > .elementor-element-populated > .elementor-background-overlay' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -584,7 +626,7 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'border_hover_transition',
 			[
-				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (s)',
 				'type' => Controls_Manager::SLIDER,
 				'separator' => 'before',
 				'default' => [
@@ -592,6 +634,7 @@ class Element_Column extends Element_Base {
 				],
 				'range' => [
 					'px' => [
+						'min' => 0,
 						'max' => 3,
 						'step' => 0.1,
 					],
@@ -605,7 +648,7 @@ class Element_Column extends Element_Base {
 							'value' => '',
 						],
 						[
-							'name' => 'border_border',
+							'name' => 'border_hover_border',
 							'operator' => '!==',
 							'value' => '',
 						],
@@ -643,7 +686,6 @@ class Element_Column extends Element_Base {
 				'selectors' => [
 					'{{WRAPPER}} .elementor-element-populated .elementor-heading-title' => 'color: {{VALUE}};',
 				],
-				'separator' => 'none',
 			]
 		);
 
@@ -683,28 +725,33 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'text_align',
 			[
 				'label' => esc_html__( 'Text Align', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
+						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'text-align: {{VALUE}};',
@@ -729,7 +776,7 @@ class Element_Column extends Element_Base {
 			[
 				'label' => esc_html__( 'Margin', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} > .elementor-element-populated' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};
 					--e-column-margin-right: {{RIGHT}}{{UNIT}}; --e-column-margin-left: {{LEFT}}{{UNIT}};',
@@ -737,20 +784,14 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		$padding_selector = '{{WRAPPER}} > .elementor-element-populated';
-
-		if ( ! $is_dome_optimization_active ) {
-			$padding_selector .= ' > .elementor-widget-wrap';
-		}
-
 		$this->add_responsive_control(
 			'padding',
 			[
 				'label' => esc_html__( 'Padding', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
-				'size_units' => [ 'px', 'em', '%', 'rem' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					$padding_selector => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+					'{{WRAPPER}} > .elementor-element-populated' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -773,6 +814,9 @@ class Element_Column extends Element_Base {
 				'label' => esc_html__( 'CSS ID', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -788,6 +832,9 @@ class Element_Column extends Element_Base {
 				'label' => esc_html__( 'CSS Classes', 'elementor' ),
 				'type' => Controls_Manager::TEXT,
 				'default' => '',
+				'ai' => [
+					'active' => false,
+				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -797,7 +844,9 @@ class Element_Column extends Element_Base {
 			]
 		);
 
-		// TODO: Backward comparability for deprecated controls
+		Plugin::$instance->controls_manager->add_display_conditions_controls( $this );
+
+		// TODO: Backward comparability for deprecated controls.
 		$this->add_control(
 			'screen_sm',
 			[
@@ -815,7 +864,7 @@ class Element_Column extends Element_Base {
 				'prefix_class' => 'elementor-sm-',
 			]
 		);
-		// END Backward comparability
+		// END Backward comparability.
 
 		$this->end_controls_section();
 
@@ -826,6 +875,8 @@ class Element_Column extends Element_Base {
 				'tab' => Controls_Manager::TAB_ADVANCED,
 			]
 		);
+
+		Plugin::$instance->controls_manager->add_motion_effects_promotion_control( $this );
 
 		$this->add_responsive_control(
 			'animation',
@@ -883,7 +934,12 @@ class Element_Column extends Element_Base {
 		$this->add_control(
 			'responsive_description',
 			[
-				'raw' => esc_html__( 'Responsive visibility will take effect only on preview or live page, and not while editing in Elementor.', 'elementor' ),
+				'raw' => sprintf(
+					/* translators: 1: Link open tag, 2: Link close tag. */
+					esc_html__( 'Responsive visibility will take effect only on %1$s preview mode %2$s or live page, and not while editing in Elementor.', 'elementor' ),
+					'<a href="javascript: $e.run( \'panel/close\' )">',
+					'</a>'
+				),
 				'type' => Controls_Manager::RAW_HTML,
 				'content_classes' => 'elementor-descriptor',
 			]
@@ -907,15 +963,9 @@ class Element_Column extends Element_Base {
 	 * @access protected
 	 */
 	protected function content_template() {
-		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
-		$wrapper_element = $is_dom_optimization_active ? 'widget' : 'column';
-
 		?>
-		<div class="elementor-<?php echo esc_attr( $wrapper_element ); ?>-wrap">
+		<div class="elementor-widget-wrap">
 			<div class="elementor-background-overlay"></div>
-			<?php if ( ! $is_dom_optimization_active ) { ?>
-				<div class="elementor-widget-wrap"></div>
-			<?php } ?>
 		</div>
 		<?php
 	}
@@ -931,24 +981,21 @@ class Element_Column extends Element_Base {
 	public function before_render() {
 		$settings = $this->get_settings_for_display();
 
-		$has_background_overlay = in_array( $settings['background_overlay_background'], [ 'classic', 'gradient' ], true ) ||
-								  in_array( $settings['background_overlay_hover_background'], [ 'classic', 'gradient' ], true );
+		$overlay_background = $settings['background_overlay_background'] ?? '';
+		$overlay_hover_background = $settings['background_overlay_hover_background'] ?? '';
 
-		$is_dom_optimization_active = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
-		$wrapper_attribute_string = $is_dom_optimization_active ? '_widget_wrapper' : '_inner_wrapper';
+		$has_background_overlay = in_array( $overlay_background, [ 'classic', 'gradient' ], true ) ||
+									in_array( $overlay_hover_background, [ 'classic', 'gradient' ], true );
 
-		$column_wrap_classes = $is_dom_optimization_active ? [ 'elementor-widget-wrap' ] : [ 'elementor-column-wrap' ];
+		$column_wrap_classes = [ 'elementor-widget-wrap' ];
 
 		if ( $this->get_children() ) {
 			$column_wrap_classes[] = 'elementor-element-populated';
 		}
 
 		$this->add_render_attribute( [
-			'_inner_wrapper' => [
-				'class' => $column_wrap_classes,
-			],
 			'_widget_wrapper' => [
-				'class' => $is_dom_optimization_active ? $column_wrap_classes : 'elementor-widget-wrap',
+				'class' => $column_wrap_classes,
 			],
 			'_background_overlay' => [
 				'class' => [ 'elementor-background-overlay' ],
@@ -959,12 +1006,9 @@ class Element_Column extends Element_Base {
 		// PHPCS - the method get_html_tag is safe.
 		echo $this->get_html_tag(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
-			<div <?php $this->print_render_attribute_string( $wrapper_attribute_string ); ?>>
+			<div <?php $this->print_render_attribute_string( '_widget_wrapper' ); ?>>
 		<?php if ( $has_background_overlay ) : ?>
 			<div <?php $this->print_render_attribute_string( '_background_overlay' ); ?>></div>
-		<?php endif; ?>
-		<?php if ( ! $is_dom_optimization_active ) : ?>
-			<div <?php $this->print_render_attribute_string( '_widget_wrapper' ); ?>>
 		<?php endif; ?>
 		<?php
 	}
@@ -978,9 +1022,7 @@ class Element_Column extends Element_Base {
 	 * @access public
 	 */
 	public function after_render() {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) { ?>
-				</div>
-		<?php } ?>
+		?>
 			</div>
 		</<?php
 		// PHPCS - the method get_html_tag is safe.

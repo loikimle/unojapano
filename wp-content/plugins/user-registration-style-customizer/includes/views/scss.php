@@ -12,10 +12,27 @@ defined( 'ABSPATH' ) || exit;
 $styles = get_option( 'user_registration_styles' );
 
 // Filter empty values.
-$styles[ $this->form_id ] = array_map( 'array_filter', $styles[ $this->form_id ] );
+$styles[ $this->form_id ] = array_map( function( $styles ) {
+	if ( is_array( $styles ) ) {
+		return array_filter( $styles );
+	} else {
+		return $styles;
+	}
+}, $styles[ $this->form_id ] );
 $styles[ $this->form_id ] = array_filter( $styles[ $this->form_id ] );
 
 $values = array_replace_recursive( $this->defaults, $styles[ $this->form_id ] ); // phpcs:ignore PHPCompatibility.PHP.NewFunctions.array_replace_recursiveFound
+
+// Search for JSON formatted values and convert it to array format.
+foreach ( $values as $key => $styles ) {
+	if ( is_array( $styles ) ) {
+		foreach( $styles as $style => $value ) {
+			if ( is_string( $value ) && ur_is_json( $value ) ) {
+				$values[ $key ][ $style ] = (array) json_decode( $value );
+			}
+		}
+	}
+}
 
 // Font styles.
 $font_styles         = array(
@@ -30,6 +47,21 @@ $font_styles_default = array(
 	'text-decoration' => 'none',
 	'text-transform'  => 'none',
 );
+
+/**
+ * Combine multiple styles to single shorthand style.
+ * Just returns a string combining provided values separted by whitespace.
+ *
+ * @param [array] $style Styles.
+ * @return string
+ */
+function ur_shorthand_style( $style ) {
+	if ( ! ( is_array( $style ) ) ) {
+		return $style;
+	}
+
+	return implode( ' ', $style );
+}
 ?>
 
 // Form Wrapper variables.
@@ -132,9 +164,9 @@ $message_error_font_size : <?php echo ur_clean( $values['messages']['error_font_
 $message_error_font_color : <?php echo ur_clean( $values['messages']['error_font_color'] ); ?>;
 $message_error_alignment : <?php echo ur_clean( $values['messages']['error_alignment'] ); ?>;
 $message_error_border_type : <?php echo ur_clean( $values['messages']['error_border_type'] ); ?>;
-$message_error_border_width : <?php echo ur_clean( $values['messages']['error_border_width'] ); ?>;
+$message_error_border_width : <?php echo ur_shorthand_style( $values['messages']['error_border_width'] ); ?>;
 $message_error_border_color : <?php echo ur_clean( $values['messages']['error_border_color'] ); ?>;
-$message_error_border_radius : <?php echo ur_clean( $values['messages']['error_border_radius'] ); ?>;
+$message_error_border_radius : <?php echo ur_shorthand_style( $values['messages']['error_border_radius'] ); ?>;
 $message_error_line_height : <?php echo ur_clean( $values['messages']['error_line_height'] ); ?>;
 
 // Success Message styles variables.
@@ -142,9 +174,9 @@ $message_success_font_size : <?php echo ur_clean( $values['messages']['success_f
 $message_success_font_color : <?php echo ur_clean( $values['messages']['success_font_color'] ); ?>;
 $message_success_alignment : <?php echo ur_clean( $values['messages']['success_alignment'] ); ?>;
 $message_success_border_type : <?php echo ur_clean( $values['messages']['success_border_type'] ); ?>;
-$message_success_border_width : <?php echo ur_clean( $values['messages']['success_border_width'] ); ?>;
+$message_success_border_width : <?php echo ur_shorthand_style( $values['messages']['success_border_width'] ); ?>;
 $message_success_border_color : <?php echo ur_clean( $values['messages']['success_border_color'] ); ?>;
-$message_success_border_radius : <?php echo ur_clean( $values['messages']['success_border_radius'] ); ?>;
+$message_success_border_radius : <?php echo ur_shorthand_style( $values['messages']['success_border_radius'] ); ?>;
 $message_success_line_height : <?php echo ur_clean( $values['messages']['success_line_height'] ); ?>;
 
 /**

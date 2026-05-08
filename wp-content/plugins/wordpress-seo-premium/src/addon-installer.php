@@ -3,6 +3,12 @@
 namespace Yoast\WP\SEO\Premium;
 
 use Exception;
+use Plugin_Installer_Skin;
+use Plugin_Upgrader;
+use WP_Error;
+use WPSEO_Capability_Manager_Factory;
+use WPSEO_Options;
+use WPSEO_Premium_Option;
 
 /**
  * Class responsible for performing the premium as an addon installer.
@@ -12,12 +18,12 @@ class Addon_Installer {
 	/**
 	 * The option key for tracking the status of the installer.
 	 */
-	const OPTION_KEY = 'yoast_premium_as_an_addon_installer';
+	public const OPTION_KEY = 'yoast_premium_as_an_addon_installer';
 
 	/**
 	 * The minimum Yoast SEO version required.
 	 */
-	const MINIMUM_YOAST_SEO_VERSION = '19.2';
+	public const MINIMUM_YOAST_SEO_VERSION = '27.5';
 
 	/**
 	 * The base directory for the installer.
@@ -58,13 +64,12 @@ class Addon_Installer {
 
 	/**
 	 * Performs the installer if it hasn't been done yet.
-	 * Otherwise attempts to load Yoast SEO from the vendor directory.
 	 *
 	 * A notice will be shown in the admin if the installer failed.
 	 *
 	 * @return void
 	 */
-	public function install_or_load_yoast_seo_from_vendor_directory() {
+	public function install_yoast_seo_from_repository() {
 		\add_action( 'admin_notices', [ $this, 'show_install_yoast_seo_notification' ] );
 		\add_action( 'network_admin_notices', [ $this, 'show_install_yoast_seo_notification' ] );
 		\add_action( 'plugins_loaded', [ $this, 'validate_installation_status' ] );
@@ -72,7 +77,8 @@ class Addon_Installer {
 			try {
 				$this->install();
 			} catch ( Exception $e ) {
-				$this->load_yoast_seo_from_vendor_directory();
+				// Auto installation failed, the notice will be displayed.
+				return;
 			}
 		}
 		elseif ( $this->get_status() === 'started' ) {
@@ -81,10 +87,34 @@ class Addon_Installer {
 			if ( \is_plugin_active( $this->yoast_seo_file ) ) {
 				// Yoast SEO is active so mark installation as successful.
 				\update_option( self::OPTION_KEY, 'completed', true );
-				return;
+				// Enable tracking.
+				if ( \class_exists( WPSEO_Options::class ) ) {
+					WPSEO_Premium_Option::register_option();
+					if ( WPSEO_Options::get( 'toggled_tracking' ) !== true ) {
+						WPSEO_Options::set( 'tracking', true );
+					}
+					WPSEO_Options::set( 'should_redirect_after_install', true );
+				}
+
+				if ( \class_exists( WPSEO_Capability_Manager_Factory::class ) ) {
+					\do_action( 'wpseo_register_capabilities_premium' );
+					WPSEO_Capability_Manager_Factory::get( 'premium' )->add();
+				}
 			}
-			$this->load_yoast_seo_from_vendor_directory();
 		}
+	}
+
+	/**
+	 * Performs the installer if it hasn't been done yet.
+	 * Otherwise attempts to load Yoast SEO from the vendor directory.
+	 *
+	 * @deprecated 21.9
+	 * @codeCoverageIgnore
+	 *
+	 * @return void
+	 */
+	public function install_or_load_yoast_seo_from_vendor_directory() {
+		\_deprecated_function( __METHOD__, 'Yoast SEO Premium 21.9' );
 	}
 
 	/**
@@ -107,20 +137,29 @@ class Addon_Installer {
 		}
 
 		echo (
-			'<div class="error">'
-				. '<p>'
+			'<div class="error yoast-migrated-notice">'
+				. '<h4 class="yoast-notice-migrated-header">'
 					. \sprintf(
-						/* translators: %1$s: Yoast SEO, %2$s: The minimum Yoast SEO version required, %3$s: Yoast SEO Premium. */
-						\esc_html__( '%1$s %2$s must be installed and activated in order to use %3$s.', 'wordpress-seo-premium' ),
+						/* translators: %1$s: Yoast SEO */
+						\esc_html__( 'Install latest %1$s', 'wordpress-seo-premium' ),
 						'Yoast SEO',
-						\esc_html( self::MINIMUM_YOAST_SEO_VERSION ),
-						'Yoast SEO Premium'
 					)
-				. '</p>'
-				. '<p>'
-					// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is escaped above.
-					. $action
-				. '</p>'
+				. '</h4>'
+				. '<div class="notice-yoast-content">'
+					. '<p>'
+						. \sprintf(
+							/* translators: %1$s: Yoast SEO, %2$s: The minimum Yoast SEO version required, %3$s: Yoast SEO Premium. */
+							\esc_html__( '%1$s %2$s must be installed and activated in order to use %3$s.', 'wordpress-seo-premium' ),
+							'Yoast SEO',
+							\esc_html( self::MINIMUM_YOAST_SEO_VERSION ),
+							'Yoast SEO Premium',
+						)
+					. '</p>'
+					. '<p>'
+						// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output is escaped above.
+						. $action
+					. '</p>'
+				. '</div>'
 			. '</div>'
 		);
 	}
@@ -128,7 +167,7 @@ class Addon_Installer {
 	/**
 	 * Returns the notification action to display.
 	 *
-	 * @return false|string The notification action or false if no action should be taken.
+	 * @return string|false The notification action or false if no action should be taken.
 	 */
 	protected function get_notification_action() {
 		$minimum_version_met = \version_compare( $this->yoast_seo_version, self::MINIMUM_YOAST_SEO_VERSION . '-RC0', '>=' );
@@ -179,7 +218,7 @@ class Addon_Installer {
 				\esc_html( $button_content ),
 				'Yoast SEO',
 				'<a class="button" href="' . \esc_url( $url ) . '">',
-				'</a>'
+				'</a>',
 			);
 		}
 
@@ -194,7 +233,7 @@ class Addon_Installer {
 		return \sprintf(
 			\esc_html( $message ),
 			'Yoast SEO',
-			\esc_html( self::MINIMUM_YOAST_SEO_VERSION )
+			\esc_html( self::MINIMUM_YOAST_SEO_VERSION ),
 		);
 	}
 
@@ -215,9 +254,6 @@ class Addon_Installer {
 	public function validate_installation_status() {
 		if ( ! self::is_yoast_seo_up_to_date() ) {
 			\delete_option( self::OPTION_KEY );
-			if ( ! \defined( 'WPSEO_VERSION' ) ) {
-				$this->load_yoast_seo_from_vendor_directory();
-			}
 		}
 	}
 
@@ -227,9 +263,9 @@ class Addon_Installer {
 	 * This uses a separate option from our options framework as it needs to be available
 	 * before Yoast SEO has been loaded.
 	 *
-	 * @return false|string false if the installer hasn't been started.
+	 * @return string|false false if the installer hasn't been started.
 	 *                      "started" if it has but hasn't completed.
-	 *                       "completed" if it has been completed.
+	 *                      "completed" if it has been completed.
 	 */
 	protected function get_status() {
 		return \get_option( self::OPTION_KEY );
@@ -254,32 +290,74 @@ class Addon_Installer {
 		$this->detect_yoast_seo();
 		// Either the plugin is not installed or is installed and too old.
 		if ( \version_compare( $this->yoast_seo_version, self::MINIMUM_YOAST_SEO_VERSION . '-RC0', '<' ) ) {
-			$this->ensure_vendor_directory_exists();
-			$this->clean_target_directory();
-			$this->move_vendor_directory();
-			// We just moved a new file to the plugins directory so clear the plugins cache.
-			\wp_cache_delete( 'plugins', 'plugins' );
-			// If for some weird reason the plugin file was previously renamed make sure we use the actual filename.
-			$this->yoast_seo_file = \dirname( $this->yoast_seo_file ) . '/wp-seo.php';
+			include_once \ABSPATH . 'wp-includes/pluggable.php';
+			include_once \ABSPATH . 'wp-admin/includes/file.php';
+			include_once \ABSPATH . 'wp-admin/includes/misc.php';
+			require_once \ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+
+			// The class is defined inline to avoid problems with the autoloader when extending a WP class.
+			$skin = new class() extends Plugin_Installer_Skin {
+
+				/**
+				 * Suppresses the header.
+				 *
+				 * @return void
+				 */
+				public function header() {
+				}
+
+				/**
+				 * Suppresses the footer.
+				 *
+				 * @return void
+				 */
+				public function footer() {
+				}
+
+				/**
+				 * Suppresses the errors.
+				 *
+				 * @phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable -- Flags unused params which are required via the interface. Invalid.
+				 *
+				 * @param string|WP_Error $errors Errors.
+				 *
+				 * @return void
+				 */
+				public function error( $errors ) {
+				}
+
+				/**
+				 * Suppresses the feedback.
+				 *
+				 * @phpcs:disable VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable -- Flags unused params which are required via the interface. Invalid.
+				 *
+				 * @param string        $feedback Message data.
+				 * @param array<string> ...$args  Optional text replacements.
+				 *
+				 * @return void
+				 */
+				public function feedback( $feedback, ...$args ) {
+				}
+			};
+
+			// Check if the minimum version is available, otherwise we'll download the zip from SVN trunk (which should be the latest RC).
+			$url          = 'https://downloads.wordpress.org/plugin/wordpress-seo.' . self::MINIMUM_YOAST_SEO_VERSION . '.zip';
+			$check_result = \wp_remote_retrieve_response_code( \wp_remote_head( $url ) );
+			if ( $check_result !== 200 ) {
+				$url = 'https://downloads.wordpress.org/plugin/wordpress-seo.zip';
+			}
+
+			$upgrader  = new Plugin_Upgrader( $skin ); // nosemgrep audit.php.wp.security.arbitrary-plugin-install -- Used to pull and install Yoast SEO from the WordPress repository.
+			$installed = $upgrader->install( $url );
+			if ( \is_wp_error( $installed ) || ! $installed ) {
+				throw new Exception( 'Could not automatically install Yoast SEO' );
+			}
 		}
 
 		$this->ensure_yoast_seo_is_activated();
 		$this->transfer_auto_update_settings();
 		// Mark the installer as having been completed.
 		\update_option( self::OPTION_KEY, 'completed', true );
-	}
-
-	/**
-	 * Loads Yoast SEO from the vendor directory.
-	 *
-	 * @return void
-	 */
-	protected function load_yoast_seo_from_vendor_directory() {
-		if ( \file_exists( $this->base_dir . '/vendor/yoast/wordpress-seo/wp-seo.php' ) ) {
-			require_once $this->base_dir . '/vendor/yoast/wordpress-seo/wp-seo.php';
-			\register_activation_hook( \WPSEO_PREMIUM_FILE, 'wpseo_activate' );
-			\register_deactivation_hook( \WPSEO_PREMIUM_FILE, 'wpseo_deactivate' );
-		}
 	}
 
 	/**
@@ -296,83 +374,9 @@ class Addon_Installer {
 				&& isset( $plugin['Name'] ) && $plugin['Name'] === 'Yoast SEO'
 			) {
 				$this->yoast_seo_file    = $file;
-				$this->yoast_seo_version = isset( $plugin['Version'] ) ? $plugin['Version'] : '0';
+				$this->yoast_seo_version = ( $plugin['Version'] ?? '0' );
 				$this->yoast_seo_dir     = \WP_PLUGIN_DIR . '/' . \dirname( $file );
 			}
-		}
-	}
-
-	/**
-	 * Asserts the vendor directory exists.
-	 *
-	 * @return void
-	 *
-	 * @throws Exception If the required vendor directory does not exist.
-	 */
-	protected function ensure_vendor_directory_exists() {
-		// If Yoast SEO no longer exists in the vendor directory then abort.
-		if ( ! \file_exists( $this->base_dir . '/vendor/yoast/wordpress-seo/wp-seo.php' ) ) {
-			throw new Exception( 'Missing Yoast SEO in Yoast SEO Premium vendor.' );
-		}
-	}
-
-	/**
-	 * Cleans the target directory.
-	 *
-	 * @return void
-	 *
-	 * @throws Exception If the target directory could not be cleaned.
-	 */
-	protected function clean_target_directory() {
-		if ( \file_exists( \WP_PLUGIN_DIR . '/' . $this->yoast_seo_file ) ) {
-			if ( \file_exists( $this->yoast_seo_dir . '/.git' ) ) {
-				throw new Exception( 'Existing Yoast SEO installation has a .git directory, refusing to automatically install.' );
-			}
-			if ( ! $this->remove_directory( $this->yoast_seo_dir ) ) {
-				throw new Exception( 'Could not remove old Yoast SEO installation.' );
-			}
-		}
-	}
-
-	/**
-	 * Removes a directory and all it's contents.
-	 *
-	 * @param string $directory The full path to the directory.
-	 *
-	 * @return bool Whether or not the remove was succesfull.
-	 */
-	protected function remove_directory( $directory ) {
-		$items = \scandir( $directory );
-		foreach ( $items as $item ) {
-			if ( $item === '.' || $item === '..' ) {
-				continue;
-			}
-
-			$path = $directory . '/' . $item;
-			if ( \is_dir( $path ) ) {
-				if ( ! $this->remove_directory( $path ) ) {
-					return false;
-				}
-				continue;
-			}
-			if ( ! \unlink( $path ) ) {
-				return false;
-			}
-		}
-		return \rmdir( $directory );
-	}
-
-	/**
-	 * Moves the vendor directory to the target directory.
-	 *
-	 * @return void
-	 *
-	 * @throws Exception If the move failed.
-	 */
-	protected function move_vendor_directory() {
-		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Prevent a potential PHP warning on Windows.
-		if ( ! @\rename( $this->base_dir . '/vendor/yoast/wordpress-seo', $this->yoast_seo_dir ) ) {
-			throw new Exception( 'Could not automatically install Yoast SEO' );
 		}
 	}
 
@@ -394,7 +398,7 @@ class Addon_Installer {
 			// Activate Yoast SEO. If Yoast SEO Premium is network active then make sure Yoast SEO is as well.
 			$activation = \activate_plugin( $this->yoast_seo_file, '', $network_active );
 			if ( \is_wp_error( $activation ) ) {
-				throw new Exception( 'Could not activate Yoast SEO: ' . $activation->get_error_message() );
+				throw new Exception( \esc_html( 'Could not activate Yoast SEO: ' . $activation->get_error_message() ) );
 			}
 		}
 	}
@@ -434,11 +438,12 @@ class Addon_Installer {
 		 * though these action pages do show when upgrading themes or plugins.
 		 */
 		$actions = [ 'do-theme-upgrade', 'do-plugin-upgrade', 'do-core-upgrade', 'do-core-reinstall' ];
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reason: We are not processing form information.
 		if ( isset( $_GET['action'] ) && \in_array( $_GET['action'], $actions, true ) ) {
 			return false;
 		}
 
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Only a strpos is done in the input.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput -- Reason: We are not processing form information, only a strpos is done in the input.
 		if ( $pagenow === 'admin.php' && isset( $_GET['page'] ) && \strpos( $_GET['page'], 'wpseo' ) === 0 ) {
 			return true;
 		}

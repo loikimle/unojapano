@@ -38,12 +38,16 @@ class WPSEO_Redirect_Ajax {
 
 	/**
 	 * Function that handles the AJAX 'wpseo_add_redirect' action.
+	 *
+	 * @return void
 	 */
 	public function ajax_add_redirect() {
 		$this->valid_ajax_check();
+		$redirect = $this->get_redirect_from_post( 'redirect' );
+
+		$this->permission_check_add( $redirect );
 
 		// Save the redirect.
-		$redirect = $this->get_redirect_from_post( 'redirect' );
 		$this->validate( $redirect );
 
 		// The method always returns the added redirect.
@@ -75,10 +79,13 @@ class WPSEO_Redirect_Ajax {
 
 	/**
 	 * Function that handles the AJAX 'wpseo_update_redirect' action.
+	 *
+	 * @return void
 	 */
 	public function ajax_update_redirect() {
 
 		$this->valid_ajax_check();
+		$this->permission_check_update();
 
 		$current_redirect = $this->get_redirect_from_post( 'old_redirect' );
 		$new_redirect     = $this->get_redirect_from_post( 'new_redirect' );
@@ -112,22 +119,27 @@ class WPSEO_Redirect_Ajax {
 	 *
 	 * @param WPSEO_Redirect      $redirect         The redirect to save.
 	 * @param WPSEO_Redirect|null $current_redirect The current redirect.
+	 *
+	 * @return void
 	 */
-	private function validate( WPSEO_Redirect $redirect, WPSEO_Redirect $current_redirect = null ) {
+	private function validate( WPSEO_Redirect $redirect, ?WPSEO_Redirect $current_redirect = null ) {
 		$validator = new WPSEO_Redirect_Validator();
 
 		if ( $validator->validate( $redirect, $current_redirect ) === true ) {
 			return;
 		}
-
-		$ignore_warning = filter_input( INPUT_POST, 'ignore_warning' );
-
+		$ignore_warning = 'false';
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Reason: We are not processing form information and only comparing the variable in a condition.
+		if ( isset( $_POST['ignore_warning'] ) ) {
+			$ignore_warning = wp_unslash( $_POST['ignore_warning'] );
+		}
+		// phpcs:enable
 		$error = $validator->get_error();
 
 		if ( $error->get_type() === 'error' || ( $error->get_type() === 'warning' && $ignore_warning === 'false' ) ) {
 			wp_die(
 				// phpcs:ignore WordPress.Security.EscapeOutput -- WPCS bug/methods can't be whitelisted yet.
-				WPSEO_Utils::format_json_encode( [ 'error' => $error->to_array() ] )
+				WPSEO_Utils::format_json_encode( [ 'error' => $error->to_array() ] ),
 			);
 		}
 	}
@@ -136,6 +148,8 @@ class WPSEO_Redirect_Ajax {
 	 * Setting the AJAX hooks.
 	 *
 	 * @param string $hook_suffix The piece that will be stitched after the hooknames.
+	 *
+	 * @return void
 	 */
 	private function set_hooks( $hook_suffix ) {
 		// Add the new redirect.
@@ -152,20 +166,70 @@ class WPSEO_Redirect_Ajax {
 
 	/**
 	 * Check if the posted nonce is valid and if the user has the needed rights.
+	 *
+	 * @return void
 	 */
 	private function valid_ajax_check() {
 		// Check nonce.
 		check_ajax_referer( 'wpseo-redirects-ajax-security', 'ajax_nonce' );
-
-		$this->permission_check();
 	}
 
 	/**
-	 * Checks whether the current user is allowed to do what he's doing.
+	 * Checks whether the current user is allowed to add a redirect.
+	 *
+	 * User with 'wpseo_manage_redirects' can add any redirect.
+	 * Users with 'edit_posts' can only add 301 and 410 redirects to internal URLs.
+	 *
+	 * @param WPSEO_Redirect $redirect The redirect that will be added.
+	 *
+	 * @return void
 	 */
-	private function permission_check() {
-		if ( ! current_user_can( 'edit_posts' ) ) {
-			wp_die( '0' );
+	private function permission_check_add( WPSEO_Redirect $redirect ) {
+		// phpcs:ignore WordPress.WP.Capabilities.Unknown -- 'wpseo_manage_redirects' is a custom capability added by Yoast SEO.
+		if ( current_user_can( 'wpseo_manage_redirects' ) ) {
+			return;
+		}
+
+		$allowed_types = [ 301, 410 ];
+		$type          = ( $redirect->get_type() ?? '' );
+		$target        = ( $redirect->get_target() ?? '' );
+
+		if ( current_user_can( 'edit_posts' )
+			&& in_array( $type, $allowed_types, true )
+			&& WPSEO_Redirect_Util::is_internal_url( $target ) ) {
+			return;
+		}
+
+		// Set the value error.
+		$error = [
+			'type'    => 'error',
+			'message' => __( 'You don\'t have permission to add the redirect.', 'wordpress-seo-premium' ),
+		];
+
+		$response = [ 'error' => $error ];
+		// Response.
+		// phpcs:ignore WordPress.Security.EscapeOutput -- WPCS bug/methods can't be whitelisted yet.
+		wp_die( WPSEO_Utils::format_json_encode( $response ) );
+	}
+
+	/**
+	 * Checks whether the current user is allowed to update a redirect.
+	 *
+	 * @return void
+	 */
+	private function permission_check_update() {
+		// phpcs:ignore WordPress.WP.Capabilities.Unknown -- 'wpseo_manage_redirects' is a custom capability added by Yoast SEO.
+		if ( ! current_user_can( 'wpseo_manage_redirects' ) ) {
+			// Set the value error.
+			$error = [
+				'type'    => 'error',
+				'message' => __( 'You don\'t have permission to update the redirect.', 'wordpress-seo-premium' ),
+			];
+
+			$response = [ 'error' => $error ];
+			// Response.
+			// phpcs:ignore WordPress.Security.EscapeOutput -- WPCS bug/methods can't be whitelisted yet.
+			wp_die( WPSEO_Utils::format_json_encode( $response ) );
 		}
 	}
 
@@ -177,14 +241,20 @@ class WPSEO_Redirect_Ajax {
 	 * @return WPSEO_Redirect
 	 */
 	private function get_redirect_from_post( $post_value ) {
-		$post_values = filter_input( INPUT_POST, $post_value, FILTER_DEFAULT, FILTER_REQUIRE_ARRAY );
+		// phpcs:ignore WordPress.Security.NonceVerification -- Reason: nonce is verified in ajax_update_redirect and ajax_add_redirect.
+		if ( isset( $_POST[ $post_value ] ) && is_array( $_POST[ $post_value ] ) ) {
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized,WordPress.Security.NonceVerification -- Reason: we want to stick to sanitize_url function, while the nonce has been already checked.
+			$post_values = wp_unslash( $_POST[ $post_value ] );
 
-		return new WPSEO_Redirect(
-			$this->sanitize_url( $post_values['origin'] ),
-			$this->sanitize_url( $post_values['target'] ),
-			urldecode( $post_values['type'] ),
-			$this->redirect_format
-		);
+			return new WPSEO_Redirect(
+				$this->sanitize_url( $post_values['origin'] ),
+				$this->sanitize_url( $post_values['target'] ),
+				urldecode( $post_values['type'] ),
+				$this->redirect_format,
+			);
+		}
+
+		return new WPSEO_Redirect( '', '', '', '' );
 	}
 
 	/**

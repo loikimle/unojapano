@@ -1,6 +1,5 @@
 <?php
 
-// phpcs:ignore Yoast.NamingConventions.NamespaceName.Invalid
 namespace Yoast\WP\SEO\Integrations\Blocks;
 
 use Yoast\WP\SEO\Models\Indexable;
@@ -10,7 +9,7 @@ use Yoast\WP\SEO\Repositories\Indexable_Repository;
 /**
  * Subpages block class
  */
-class Subpages_Block extends Dynamic_Block {
+class Subpages_Block extends Dynamic_Block_V3 {
 
 	/**
 	 * The name of the block.
@@ -40,6 +39,8 @@ class Subpages_Block extends Dynamic_Block {
 	 */
 	public function __construct( Indexable_Repository $indexable_repository ) {
 		$this->indexable_repository = $indexable_repository;
+
+		$this->base_path = \WPSEO_PREMIUM_PATH . 'assets/blocks/dynamic-blocks/';
 	}
 
 	/**
@@ -51,15 +52,14 @@ class Subpages_Block extends Dynamic_Block {
 	 */
 	public function present( $attributes ) {
 		$indexables = $this->indexable_repository->get_subpages_by_post_parent( \get_the_ID() );
-
-		$links = array_map(
-			static function( Indexable $indexable ) {
+		$links      = \array_map(
+			static function ( Indexable $indexable ) {
 				return [
 					'title'     => $indexable->breadcrumb_title,
 					'permalink' => $indexable->permalink,
 				];
 			},
-			$indexables
+			$indexables,
 		);
 
 		if ( empty( $links ) ) {
@@ -71,7 +71,7 @@ class Subpages_Block extends Dynamic_Block {
 			$class_name .= ' ' . \esc_attr( $attributes['className'] );
 		}
 
-		$presenter = new Url_List_Presenter( $links, $class_name );
+		$presenter = new Url_List_Presenter( $links, $class_name, $this->should_link_target_blank() );
 
 		return $presenter->present();
 	}

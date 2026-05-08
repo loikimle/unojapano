@@ -21,6 +21,8 @@ add_filter( 'user_registration_user_profile_field_only', 'ur_exclude_wc_fields_i
 add_filter( 'user_registration_after_register_user_action', 'urwc_copy_billing_address', 10, 3 );
 add_filter( 'user_registration_sanitize_field', 'urwc_sanitize_fields', 10, 2 );
 add_filter( 'user_registration_form_field_address_title', 'user_registration_woocommerce_title_fields_render', 10, 4 );
+add_action( 'user_registration_init', 'urwc_sync_checkout_registration_migration' );
+add_filter( 'user_registration_is_field_required', 'urwc_is_field_required', 10, 3 );
 
 /**
  * Sanitize wooCommerce fields on frontend submit
@@ -70,26 +72,24 @@ function urwc_copy_billing_address( $form_data, $form_id, $user_id ) {
  */
 function urwc_is_compatible() {
 
-	$ur_plugins_path = WP_PLUGIN_DIR . URWC_DS . 'user-registration' . URWC_DS . 'user-registration.php';
 	$ur_pro_plugins_path = WP_PLUGIN_DIR . URWC_DS . 'user-registration-pro' . URWC_DS . 'user-registration.php';
 
-	if ( ! file_exists( $ur_plugins_path ) && ! file_exists( $ur_pro_plugins_path ) ) {
-			return __( 'Please install <code>user-registration-pro</code> plugin to use <code>user-registration-woocommerce</code> addon.', 'user-registration-woocommerce' );
+	if ( ! file_exists( $ur_pro_plugins_path ) ) {
+		return;
 	}
 
-	$ur_plugin_file_path = 'user-registration/user-registration.php';
 	$ur_pro_plugin_file_path = 'user-registration-pro/user-registration.php';
 
 	include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-	if ( ! is_plugin_active( $ur_plugin_file_path ) && ! is_plugin_active( $ur_pro_plugin_file_path ) ) {
-		return __( 'Please activate <code>user-registration-pro</code> plugin to use <code>user-registration-woocommerce</code> addon.', 'user-registration-woocommerce' );
+	if ( ! is_plugin_active( $ur_pro_plugin_file_path ) ) {
+		return;
 	}
 
 	$wc_plugins_path = WP_PLUGIN_DIR . URWC_DS . 'woocommerce' . URWC_DS . 'woocommerce.php';
 
 	if ( ! file_exists( $wc_plugins_path ) ) {
-		return __( 'Please install <code>woocommerce</code> plugin to use <code>user-registration-woocommerce</code> addon.', 'user-registration-woocommerce' );
+		return ;
 	}
 
 	$wc_plugins_path = 'woocommerce/woocommerce.php';
@@ -97,7 +97,7 @@ function urwc_is_compatible() {
 	include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 	if ( ! is_plugin_active( $wc_plugins_path ) ) {
-		return __( 'Please activate <code>woocommerce</code> plugin to use <code>user-registration-woocommerce</code> addon.', 'user-registration-woocommerce' );
+		return;
 	}
 
 	if ( function_exists( 'UR' ) ) {
@@ -106,17 +106,10 @@ function urwc_is_compatible() {
 		$user_registration_version = get_option( 'user_registration_version' );
 	}
 
-	if ( ! is_plugin_active( $ur_pro_plugin_file_path ) ) {
-
-		if ( version_compare( $user_registration_version, '1.4.1', '<' ) ) {
-			return __( 'Please update your <code>user registration</code> plugin to at least 1.4.1 version to use <code>user-registration-woocommerce</code> addon.', 'user-registration-woocommerce' );
-		}
-	} else {
-
-		if ( version_compare( $user_registration_version, '3.0.0', '<' ) ) {
-			return __( 'Please update your <code>user-registration-pro</code> plugin(to at least 3.0.0 version) to use <code>user-registration-woocommerce</code> addon.', 'user-registration-woocommerce' );
-		}
+	if ( version_compare( $user_registration_version, '4.0.0', '<' ) ) {
+		return;
 	}
+
 
 	return 'YES';
 }
@@ -163,6 +156,11 @@ function ur_get_woocommerce_field_keys( $field_type, $field_key ) {
 		case 'shipping_address_title':
 			$field_type = 'address_title';
 			break;
+		case 'billing_phone':
+			if ( is_plugin_active( 'user-registration-advanced-fields/user-registration-advanced-fields.php' ) ) {
+				$field_type = 'phone';
+			}
+			break;
 	}
 
 	return $field_type;
@@ -191,11 +189,14 @@ function user_registration_woocommerce_title_fields_render( $field, $key, $args,
  * @return void
  */
 function user_registration_woocommerce_admin_notice() {
-	$class   = 'notice notice-error';
+	$class = 'error notice is-dismissible';
 	$message = urwc_is_compatible();
-
-	if ( 'YES' !== $message ) {
-		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), ( $message ) );
+	if ( ! is_plugin_active('user-registration-pro/user-registration.php') && ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+		printf( '<div class="' . esc_attr( $class ) . '"><p>' . sprintf( esc_html__( 'User Registration WooCommerce  requires %1s version 4.0.0 or greater and %2s to work', 'user-registration-woocommerce' ), '<a href="https://wpuserregistration.com/" target="_blank">' . esc_html__( 'User Registration Pro', 'user-registration-woocommerce' ) . '</a>','<a href="https://wordpress.org/plugins/woocommerce/" target="_blank">' . esc_html__( 'WooCommerce', 'user-registration-woocommerce' ) . '</a>' ) . '</p></div>' );
+	}elseif ( ! is_plugin_active('user-registration-pro/user-registration.php') && is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+		printf( '<div class="' . esc_attr( $class ) . '"><p>' . sprintf( esc_html__( 'User Registration WooCommerce  requires %1s version 4.0.0 or greater to work', 'user-registration-woocommerce' ), '<a href="https://wpuserregistration.com/" target="_blank">' . esc_html__( 'User Registration Pro', 'user-registration-woocommerce' ) . '</a>' ) . '</p></div>' );
+	}elseif( is_plugin_active('user-registration-pro/user-registration.php') && ! is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
+		printf( '<div class="' . esc_attr( $class ) . '"><p>' . sprintf( esc_html__( 'User Registration WooCommerce  requires %1s to work', 'user-registration-woocommerce' ), '<a href="https://wordpress.org/plugins/woocommerce/" target="_blank">' . esc_html__( 'WooCommerce', 'user-registration-woocommerce' ) . '</a>' ) . '</p></div>' );
 	}
 }
 
@@ -224,13 +225,13 @@ function urwc_woocommerce_settings() {
 	return apply_filters(
 		'user_registration_woocommerce_settings',
 		array(
-			'title' =>  __( 'WooCommerce', 'user-registration-woocommerce' ),
-				'sections' => array (
-					'user_registration_woocommerce_settings' => array(
-						'title' => esc_html__( 'WooCommerce Sync', 'user-registration-woocommerce' ),
-						'type'  => 'card',
-						'desc'  => '',
-						'settings' => array(
+			'title'    => __( 'WooCommerce', 'user-registration-woocommerce' ),
+			'sections' => array(
+				'user_registration_woocommerce_settings' => array(
+					'title'    => esc_html__( 'WooCommerce Sync', 'user-registration-woocommerce' ),
+					'type'     => 'card',
+					'desc'     => '',
+					'settings' => array(
 						array(
 							'title'    => __( 'Select Registration Form', 'user-registration-woocommerce' ),
 							'desc'     => __( 'Choose registration form to sync with WooCommerce.', 'user-registration-woocommerce' ),
@@ -243,34 +244,44 @@ function urwc_woocommerce_settings() {
 							'options'  => $forms,
 						),
 						array(
-							'title'     => __( 'Replace registration page', 'user-registration' ),
-							'desc_tip'  => __( 'Replace default WooCommerce login and registration form with User Registration form and login', 'user-registration' ),
-							'desc'      => __( 'Check this option to replace default WooCommerce\'s login and registration page', 'user-registration' ),
+							'title'     => __( 'Enable Login Options', 'user-registration-woocommerce' ),
+							'desc_tip'  => __( 'Apply user login option on checkout.', 'user-registration-woocommerce' ),
+							'desc'      => __( 'Check this option to apply default user login option during checkout.', 'user-registration-woocommerce' ),
+							'id'        => 'user_registration_woocommrece_settings_login_option',
+							'type'      => 'toggle',
+							'css'       => 'min-width: 350px;',
+							'row_class' => '',
+							'default'   => 'false',
+						),
+						array(
+							'title'     => __( 'Replace registration page', 'user-registration-woocommerce' ),
+							'desc_tip'  => __( 'Replace default WooCommerce login and registration form with User Registration form and login', 'user-registration-woocommerce' ),
+							'desc'      => __( 'Check this option to replace default WooCommerce\'s login and registration page', 'user-registration-woocommerce' ),
 							'id'        => 'user_registration_woocommrece_settings_replace_login_registration',
-							'type'      => 'checkbox',
+							'type'      => 'toggle',
 							'css'       => 'min-width: 350px;',
-							'row_class' => ( get_option( 'user_registration_woocommerce_settings_form', '0' ) === '0' ) ? 'ur-setting-hidden' : '',
-							'default'   => 'no',
+							'row_class' => ur_string_to_bool( get_option( 'user_registration_woocommerce_settings_form', false ) ) ? 'ur-setting-hidden' : '',
+							'default'   => 'false',
 						),
 						array(
-							'title'     => __( 'Replace checkout login', 'user-registration' ),
-							'desc_tip'  => __( 'Replace default WooCommerce login in checkout page with User Registration login', 'user-registration' ),
-							'desc'      => __( 'Check this option to replace default WooCommerce\'s login in checkout page', 'user-registration' ),
+							'title'     => __( 'Replace checkout login', 'user-registration-woocommerce' ),
+							'desc_tip'  => __( 'Replace default WooCommerce login in checkout page with User Registration login', 'user-registration-woocommerce' ),
+							'desc'      => __( 'Check this option to replace default WooCommerce\'s login in checkout page', 'user-registration-woocommerce' ),
 							'id'        => 'user_registration_woocommrece_settings_replace_checkout_login',
-							'type'      => 'checkbox',
+							'type'      => 'toggle',
 							'css'       => 'min-width: 350px;',
 							'row_class' => ( get_option( 'user_registration_woocommerce_settings_form', '0' ) === '0' ) ? 'ur-setting-hidden' : '',
-							'default'   => 'no',
+							'default'   => 'false',
 						),
 						array(
-							'title'             => __( 'Sync checkout registration', 'user-registration' ),
-							'desc_tip'          => __( 'This option lets you select registration form fields to be synced with WooCommerce Checkout page\'s registration form.', 'user-registration' ),
-							'desc'              => __( 'Check this option to sync user registration form with Woocommerce checkout registration', 'user-registration' ),
+							'title'             => __( 'Sync checkout registration', 'user-registration-woocommerce' ),
+							'desc_tip'          => __( 'This option lets you select registration form fields to be synced with WooCommerce Checkout page\'s registration form.', 'user-registration-woocommerce' ),
+							'desc'              => __( 'Check this option to sync user registration form with Woocommerce checkout registration', 'user-registration-woocommerce' ),
 							'id'                => 'user_registration_woocommrece_settings_sync_checkout',
-							'type'              => 'checkbox',
+							'type'              => 'toggle',
 							'css'               => 'min-width: 350px;',
-							'row_class'         => ( get_option( 'user_registration_woocommerce_settings_form', '0' ) === '0' ) ? 'ur-setting-hidden' : '',
-							'default'           => 'no',
+							'row_class'         => ur_string_to_bool( get_option( 'user_registration_woocommerce_settings_form', false ) ) ? 'ur-setting-hidden' : '',
+							'default'           => 'false',
 							'custom_attributes' => array(
 								'data-field_option_key' => 'user_registration_woocommerce_checkout_fields',
 							),
@@ -474,10 +485,17 @@ function urwc_get_form_fields( $form_id ) {
 							$field_key         = isset( $field->field_key ) ? ( $field->field_key ) : '';
 							$field_type        = isset( $field->field_key ) ? ur_get_field_type( $field_key ) : '';
 							$required          = isset( $field->general_setting->required ) ? $field->general_setting->required : '';
-							$required          = 'yes' == $required ? true : false;
-							$enable_cl         = isset( $field->advance_setting->enable_conditional_logic ) && ( '1' === $field->advance_setting->enable_conditional_logic || 'on' === $field->advance_setting->enable_conditional_logic ) ? true : false;
+							$required          = ur_string_to_bool( $required );
+							$enable_cl         = isset( $field->advance_setting->enable_conditional_logic ) && ur_string_to_bool( $field->advance_setting->enable_conditional_logic );
 							$cl_map            = isset( $field->advance_setting->cl_map ) ? $field->advance_setting->cl_map : '';
 							$custom_attributes = isset( $field->general_setting->custom_attributes ) ? $field->general_setting->custom_attributes : array();
+							$default           = '';
+
+							if ( isset( $field->general_setting->default_value ) ) {
+								$default = $field->general_setting->default_value;
+							} elseif ( isset( $field->advance_setting->default_value ) ) {
+								$default = $field->advance_setting->default_value;
+							}
 
 							if ( empty( $field_label ) ) {
 								$field_label_array = explode( '_', $field_name );
@@ -488,6 +506,35 @@ function urwc_get_form_fields( $form_id ) {
 								$extra_params = array();
 
 								switch ( $field_key ) {
+
+									case 'text':
+									case 'textarea':
+									case 'password':
+										if ( isset( $field->advance_setting->limit_length ) && $field->advance_setting->limit_length ) {
+											if ( isset( $field->advance_setting->limit_length_limit_count ) && isset( $field->advance_setting->limit_length_limit_mode ) ) {
+												if ( 'characters' === $field->advance_setting->limit_length_limit_mode ) {
+													$custom_attributes['maxlength'] = $field->advance_setting->limit_length_limit_count;
+												} elseif ( 'words' === $field->advance_setting->limit_length_limit_mode ) {
+													$custom_attributes['max-words'] = $field->advance_setting->limit_length_limit_count;
+												}
+											}
+										}
+
+										if ( isset( $field->advance_setting->minimum_length ) && $field->advance_setting->minimum_length ) {
+											if ( isset( $field->advance_setting->minimum_length_limit_count ) && isset( $field->advance_setting->minimum_length_limit_mode ) ) {
+												if ( 'characters' === $field->advance_setting->minimum_length_limit_mode ) {
+													$custom_attributes['minlength'] = $field->advance_setting->minimum_length_limit_count;
+												} elseif ( 'words' === $field->advance_setting->minimum_length_limit_mode ) {
+													$custom_attributes['data-min-words'] = $field->advance_setting->minimum_length_limit_count;
+												}
+											}
+										}
+
+										if ( isset( $field->advance_setting->size ) ) {
+											$custom_attributes['maxlength'] = $field->advance_setting->size;
+										}
+
+										break;
 
 									case 'radio':
 									case 'select':
@@ -518,7 +565,7 @@ function urwc_get_form_fields( $form_id ) {
 										$enable_date_range = isset( $field->advance_setting->enable_date_range ) ? $field->advance_setting->enable_date_range : '';
 										$extra_params['custom_attributes']['data-date-format'] = $date_format;
 
-										if ( isset( $field->advance_setting->enable_min_max ) && 'true' === $field->advance_setting->enable_min_max ) {
+										if ( isset( $field->advance_setting->enable_min_max ) && ur_string_to_bool( $field->advance_setting->enable_min_max ) ) {
 											$extra_params['custom_attributes']['data-min-date'] = '' !== $min_date ? date_i18n( $date_format, strtotime( $min_date ) ) : '';
 											$extra_params['custom_attributes']['data-max-date'] = '' !== $max_date ? date_i18n( $date_format, strtotime( $max_date ) ) : '';
 										}
@@ -533,17 +580,42 @@ function urwc_get_form_fields( $form_id ) {
 
 									case 'file':
 										$extra_params['max_files'] = isset( $field->general_setting->max_files ) ? $field->general_setting->max_files : '';
+										$extra_params['valid_file_type'] = isset( $field->advance_setting->valid_file_type ) ? $field->advance_setting->valid_file_type : '';
 										break;
 
 									case 'phone':
 										$extra_params['phone_format'] = isset( $field->general_setting->phone_format ) ? $field->general_setting->phone_format : '';
+										break;
+									case 'learndash_course':
+										$extra_params['learndash_field_type'] = isset( $field->general_setting->learndash_field_type ) ? $field->general_setting->learndash_field_type : '';
+										if ( isset( $field->advance_setting->enroll_type ) ) {
+											if ( 'courses' === $field->advance_setting->enroll_type ) {
+												$extra_params['options'] = function_exists( 'get_courses_list' ) ? get_courses_list() : array();
+											} else {
+												$extra_params['options'] = function_exists( 'get_groups_list' ) ? get_groups_list() : array();
+											}
+										}
+										break;
+									case 'number':
+										$custom_attributes['min'] = isset( $field->advance_setting->min ) ? $field->advance_setting->min : '';
+										$custom_attributes['max'] = isset( $field->advance_setting->max ) ? $field->advance_setting->max : '';
+										$custom_attributes['step'] = isset( $field->advance_setting->step ) ? $field->advance_setting->step : '';
+										break;
+
+									case 'range':
+										$extra_params['range_min'] = isset( $field->advance_setting->range_min ) ? $field->advance_setting->range_min : '';
+										$extra_params['range_min'] = ! empty( $extra_params['range_min'] ) ? $extra_params['range_min'] : '0';
+										$extra_params['range_max'] = isset( $field->advance_setting->range_max ) ? $field->advance_setting->range_max : '';
+										$extra_params['range_max'] = ! empty( $extra_params['range_max'] ) ? $extra_params['range_max'] : '10';
+										$extra_params['range_step'] = isset( $field->advance_setting->range_step ) ? $field->advance_setting->range_step : '';
+										$extra_params['range_step'] = ! empty( $extra_params['range_step'] ) ? $extra_params['range_step'] : '1';
 										break;
 
 									default:
 										break;
 								}
 
-								$extra_params['default'] = isset( $all_meta_value[ 'user_registration_' . $field_name ][0] ) ? $all_meta_value[ 'user_registration_' . $field_name ][0] : '';
+								$extra_params['default'] = $default;
 
 								$fields[ 'user_registration_' . $field_name ] = array(
 									'label'       => ur_string_translation( $form_id, 'user_registration_' . $field_name . '_label', $field_label ),
@@ -551,7 +623,10 @@ function urwc_get_form_fields( $form_id ) {
 									'type'        => $field_type,
 									'placeholder' => ur_string_translation( $form_id, 'user_registration_' . $field_name . '_placeholder', $placeholder ),
 									'field_key'   => $field_key,
+									'field_name'   => $field_name,
 									'required'    => $required,
+									'general_setting'    => $field->general_setting,
+									'advance_setting'    => $field->advance_setting,
 								);
 
 								if ( true === $enable_cl ) {
@@ -610,4 +685,172 @@ function urwc_get_excluded_fields() {
 	$excluded_fields = array_merge( $excluded_fields, ur_get_woocommerce_shipping_fields() );
 
 	return apply_filters( 'user_registration_woocommerce_excluded_fields', $excluded_fields );
+}
+
+/**
+ * URWC sync checkout registraton migration
+ */
+
+if ( ! function_exists( 'urwc_sync_checkout_registration_migration' ) ) {
+	/**
+	 *  Update option user_registration_woocommerce_checkout_fields value to key-value pair.
+	 */
+	function urwc_sync_checkout_registration_migration() {
+		$form_id             = get_option( 'user_registration_woocommerce_settings_form', 0 );
+		$fields              = urwc_get_form_fields( $form_id );
+		$saved_form_fields   = get_option( 'user_registration_woocommerce_checkout_fields', array() );
+		$migrate_form_fields = array();
+
+		if ( ! get_option( 'user_registration_woocommerce_checkout_fields_migrated', false ) ) {
+			foreach ( $fields as $field_name => $field_details ) {
+				if ( in_array( $field_name, $saved_form_fields ) ) {
+					$migrate_form_fields[ 'form-' . $form_id ][] = $field_name;
+					update_option( 'user_registration_woocommerce_checkout_fields', $migrate_form_fields );
+				}
+			}
+
+			update_option( 'user_registration_woocommerce_checkout_fields_migrated', true );
+		}
+	}
+}
+
+/**
+ * Map checkout form fields.
+ *
+ * @param array $checkout_form_fields Form Fields.
+ * @param int $form_id  Form ID.
+ * @return array $mapped_checkout_form_fields.
+ */
+if ( ! function_exists( 'map_checkout_form_fields' ) ) {
+
+	function map_checkout_form_fields( $checkout_form_fields, $form_id ) {
+		$saved_checkout_form_id      = 'form-' . $form_id;
+		$mapped_checkout_form_fields = array();
+		foreach ( $checkout_form_fields as $mapped_key => $mapped_field_value ) {
+			if ( $mapped_key == $saved_checkout_form_id ) {
+				$mapped_checkout_form_fields = $mapped_field_value;
+			}
+		}
+		return $mapped_checkout_form_fields;
+	}
+}
+
+
+/**
+ * Make shipping fields non required when separate shipping is disabled.
+ *
+ * @param [bool]   $is_required Is field required.
+ * @param [object] $field field object.
+ * @param [array]  $form_data Form Data.
+ *
+ * @since 1.3.2
+ *
+ * @return bool
+ */
+function urwc_is_field_required( $is_required, $field, $form_data ) {
+	$field_key = $field->field_key;
+
+	if ( 0 === strpos( $field_key, 'shipping_' ) ) {
+
+		foreach ( $form_data as $data ) {
+			if ( 'separate_shipping' === $data->field_name ) {
+				$value = ur_string_to_bool( $data->value );
+				if ( ! $value ) {
+					$is_required = false;
+				}
+
+				break;
+			}
+		}
+	}
+
+	return $is_required;
+}
+
+if ( ! function_exists( 'urwc_format_field_values' ) ) {
+
+	/**
+	 * Get field type by meta key
+	 *
+	 * @param string $field_key Field key.
+	 * @param string $field_value Field's value .
+	 */
+	function urwc_format_field_values( $field_key, $field_value ) {
+		switch ( $field_key ) {
+			case 'checkbox':
+			case 'multi_select2':
+				$field_value = ( is_array( $field_value ) && ! empty( $field_value ) ) ? implode( ', ', $field_value ) : $field_value;
+
+				break;
+			case 'country':
+				$countries = UR_Form_Field_Country::get_instance()->get_country();
+				if ( ! isset( $countries[ $field_value ] ) ) {
+					$key = array_search( $field_value, $countries, true );
+					if ( $key ) {
+						$field_value = $key;
+					}
+				}
+				$field_value = isset( $countries[ $field_value ] ) ? $countries[ $field_value ] : '';
+				break;
+			case 'file':
+				$attachment_ids = is_array( $field_value ) ? $field_value : explode( ',', $field_value );
+				$links          = array();
+
+				$upload_path = apply_filters( 'user_registration_woocommerce_file_upload_url', UR_UPLOAD_PATH . 'file-uploads/' ); /*Get path of upload dir of WordPress*/
+
+				// Checks if the upload directory exists and create one if not.
+				if ( ! file_exists( $upload_path ) ) {
+					wp_mkdir_p( $upload_path );
+				}
+
+				foreach ( $attachment_ids as $attachment_id ) {
+
+					if ( ! is_numeric( $attachment_id ) ) {
+						$upload = maybe_unserialize( crypt_the_string( $attachment_id, 'd' ) );
+
+						if ( isset( $upload['file_name'] ) && isset( $upload['file_path'] ) && isset( $upload['file_extension'] ) ) {
+							$file_name   = wp_unique_filename( $upload_path, $upload['file_name'] );
+							$file_path   = $upload_path . sanitize_file_name( $file_name );
+							// Check the type of file. We'll use this as the 'post_mime_type'.
+							$filetype = wp_check_filetype( basename( $file_name ), null );
+							$moved    = rename( $upload['file_path'], $file_path );
+
+							if ( $moved ) {
+								$file_url = get_home_url() . '/wp-content/uploads/user_registration_uploads/file-uploads/'. $file_name ;
+							}
+
+							$file_href = '<a href="'. $file_url .'" target="_blank">'. $file_name .'</a>';
+
+							array_push( $links, $file_href );
+
+						}
+					} else {
+						$links[] = $attachment_id;
+					}
+				}
+
+				$field_value = implode( ', ', $links );
+
+				break;
+			case 'privacy_policy':
+				if ( ur_string_to_bool( $field_value ) ) {
+					$field_value = 'Checked';
+				} else {
+					$field_value = 'Not Checked';
+				}
+				break;
+			case 'wysiwyg':
+				$field_value = html_entity_decode( $field_value );
+				break;
+			case 'profile_picture':
+				$field_value = '<img class="profile-preview" alt="Profile Picture" width="50px" height="50px" src="' . ( is_numeric( $field_value ) ? esc_url( wp_get_attachment_url( $field_value ) ) : esc_url( $field_value ) ) . '" />';
+				$field_value = wp_kses_post( $field_value );
+				break;
+			default:
+				$field_value = $field_value;
+				break;
+		}
+
+		return $field_value;
+	}
 }

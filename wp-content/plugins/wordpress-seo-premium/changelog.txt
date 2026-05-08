@@ -1,0 +1,6 @@
+*** Yoast SEO premium Changelog ***
+
+
+2026-04-28 - version 27.5
+* update -  Bumps the minimum required version of Yoast SEO to 27.5.
+

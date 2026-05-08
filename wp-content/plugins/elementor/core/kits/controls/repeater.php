@@ -4,7 +4,7 @@ namespace Elementor\Core\Kits\Controls;
 use Elementor\Control_Repeater;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Repeater extends Control_Repeater {
@@ -56,11 +56,12 @@ class Repeater extends Control_Repeater {
 	 */
 	public function content_template() {
 		?>
-		<div class="elementor-repeater-fields-wrapper"></div>
+		<div class="elementor-repeater-fields-wrapper" role="list"></div>
 		<# if ( itemActions.add ) { #>
 			<div class="elementor-button-wrapper">
-				<button class="elementor-button elementor-button-default elementor-repeater-add" type="button">
-					<i class="eicon-plus" aria-hidden="true"></i><span class="elementor-repeater__add-button__text">{{{ addButtonText }}}</span>
+				<button class="elementor-button elementor-repeater-add" type="button">
+					<i class="eicon-plus" aria-hidden="true"></i>
+					<span class="elementor-repeater__add-button__text">{{{ addButtonText }}}</span>
 				</button>
 			</div>
 		<# } #>

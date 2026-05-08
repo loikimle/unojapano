@@ -19,7 +19,7 @@ final class User_Registration_Style_Customizer {
 	 *
 	 * @var string
 	 */
-	const VERSION = '1.0.4';
+	const VERSION = '1.0.8';
 	/**
 	 * Instance of this class.
 	 *
@@ -35,22 +35,42 @@ final class User_Registration_Style_Customizer {
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
 		// Checks if user registration is installed.
-		if ( defined( 'UR_VERSION' ) && version_compare( UR_VERSION, '1.7.0', '>=' ) ) {
-			$this->configs();
-			$this->includes();
+		$ur_pro_plugins_path = WP_PLUGIN_DIR . URSC_DS . 'user-registration-pro' . URSC_DS . 'user-registration.php';
 
-			// Hooks.
-			add_action( 'user_registration_init', array( $this, 'plugin_updater' ) );
-			add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-			add_action( 'user_registration_form_shortcode_scripts', array( $this, 'enqueue_shortcode_scripts' ) );
-			add_action( 'user_registration_before_customer_login_form', array( $this, 'enqueue_login_shortcode_scripts' ) );
-			add_action( 'user_registration_form_builder_wrapper_footer', array( $this, 'output_form_designer' ) );
-			add_action( 'user_registration_admin_field_link', array( $this, 'render_customize_login_button' ) );
-			add_filter( 'user_registration_login_options_settings', array( $this, 'login_option_customizer_button' ) );
+		if ( file_exists( $ur_pro_plugins_path ) ) {
+
+			$ur_pro_plugin_file_path = 'user-registration-pro/user-registration.php';
+			include_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+			if ( is_plugin_active( $ur_pro_plugin_file_path ) ) {
+
+				if ( defined( 'UR_VERSION' ) && version_compare( UR_VERSION, '4.0.0', '>=' ) ) {
+					$this->configs();
+					$this->includes();
+
+					// Hooks.
+					add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+					add_action( 'user_registration_form_shortcode_scripts', array( $this, 'enqueue_shortcode_scripts' ) );
+					add_action( 'user_registration_before_customer_login_form', array( $this, 'enqueue_login_shortcode_scripts' ) );
+					add_action( 'user_registration_form_builder_wrapper_footer', array( $this, 'output_form_designer' ) );
+					add_action( 'user_registration_admin_field_link', array( $this, 'render_customize_login_button' ) );
+					add_filter( 'user_registration_login_options_settings', array( $this, 'login_option_customizer_button' ) );
+					add_action( 'user_registration_after_form_duplication', array( $this, 'user_registration_duplicate_form_styles' ), 10, 2 );
+				} else {
+					add_action( 'admin_notices', array( $this, 'user_registration_missing_notice' ) );
+				}
+			} else {
+
+				add_action( 'admin_notices', array( $this, 'user_registration_missing_notice' ) );
+
+			}
 		} else {
 			add_action( 'admin_notices', array( $this, 'user_registration_missing_notice' ) );
+
 		}
 	}
+
+
 	/**
 	 * Return an instance of this class.
 	 *
@@ -83,30 +103,33 @@ final class User_Registration_Style_Customizer {
 	private function configs() {
 
 		if ( ! isset( $_GET['ur-customize-login'] ) ) {
-			require_once dirname( __FILE__ ) . '/configs/registration/ur-style-customizer-templates-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/registration/ur-style-customizer-form-wrapper-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/registration/ur-style-customizer-field-label-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/registration/ur-style-customizer-field-description-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/registration/ur-style-customizer-field-styles-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/registration/ur-style-customizer-radio-checkbox-styles-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/registration/ur-style-customizer-section-title-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/registration/ur-style-customizer-button-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/registration/ur-style-customizer-messages-configs.php';
+			require_once __DIR__ . '/configs/registration/ur-style-customizer-templates-configs.php';
+			require_once __DIR__ . '/configs/registration/ur-style-customizer-form-wrapper-configs.php';
+			require_once __DIR__ . '/configs/registration/ur-style-customizer-field-label-configs.php';
+			require_once __DIR__ . '/configs/registration/ur-style-customizer-field-description-configs.php';
+			require_once __DIR__ . '/configs/registration/ur-style-customizer-field-styles-configs.php';
+			require_once __DIR__ . '/configs/registration/ur-style-customizer-radio-checkbox-styles-configs.php';
+			require_once __DIR__ . '/configs/registration/ur-style-customizer-section-title-configs.php';
+			require_once __DIR__ . '/configs/registration/ur-style-customizer-button-configs.php';
+			require_once __DIR__ . '/configs/registration/ur-style-customizer-messages-configs.php';
 		} else {
-			require_once dirname( __FILE__ ) . '/configs/login/ur-style-customizer-templates-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/login/ur-style-customizer-form-wrapper-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/login/ur-style-customizer-field-label-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/login/ur-style-customizer-field-styles-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/login/ur-style-customizer-checkbox-styles-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/login/ur-style-customizer-button-configs.php';
-			require_once dirname( __FILE__ ) . '/configs/login/ur-style-customizer-messages-configs.php';
+			require_once __DIR__ . '/configs/login/ur-style-customizer-templates-configs.php';
+			require_once __DIR__ . '/configs/login/ur-style-customizer-form-wrapper-configs.php';
+			require_once __DIR__ . '/configs/login/ur-style-customizer-field-label-configs.php';
+			require_once __DIR__ . '/configs/login/ur-style-customizer-field-styles-configs.php';
+			require_once __DIR__ . '/configs/login/ur-style-customizer-checkbox-styles-configs.php';
+			require_once __DIR__ . '/configs/login/ur-style-customizer-button-configs.php';
+			require_once __DIR__ . '/configs/login/ur-style-customizer-messages-configs.php';
 		}
 	}
 	/**
 	 * Includes.
 	 */
 	private function includes() {
-		require_once dirname( __FILE__ ) . '/class-ur-style-customizer-api.php';
+		require_once __DIR__ . '/functions.php';
+		require_once __DIR__ . '/class-ur-style-customizer-api.php';
+		require_once __DIR__ . '/class-ur-style-customizer-ajax.php';
+		require_once __DIR__ . '/libraries/wptt-webfont-loader.php';
 	}
 	/**
 	 * Get the customizer url.
@@ -161,15 +184,6 @@ final class User_Registration_Style_Customizer {
 	}
 
 	/**
-	 * Plugin Updater.
-	 */
-	public function plugin_updater() {
-		if ( function_exists( 'ur_addon_updater' ) ) {
-			ur_addon_updater( UR_STYLE_CUSTOMIZER_PLUGIN_FILE, 26043, self::VERSION );
-		}
-	}
-
-	/**
 	 * Enqueue scripts.
 	 */
 	public function admin_enqueue_scripts() {
@@ -203,7 +217,10 @@ final class User_Registration_Style_Customizer {
 
 		// Enqueue google fonts styles.
 		if ( isset( $style_options[ $form_id ]['wrapper']['font_family'] ) && '' !== $style_options[ $form_id ]['wrapper']['font_family'] ) {
-			wp_enqueue_style( 'user-registration-google-fonts', 'https://fonts.googleapis.com/css?family=' . ur_clean( $style_options[ $form_id ]['wrapper']['font_family'] ), array(), self::VERSION, 'all' );
+			$load_font_locally = isset( $style_options[ $form_id ]['wrapper']['load_fonts_locally'] ) ? $style_options[ $form_id ]['wrapper']['load_fonts_locally'] : false;
+			$font_family       = $style_options[ $form_id ]['wrapper']['font_family'];
+
+			ursc_enqueue_fonts( $font_family, $load_font_locally );
 		}
 	}
 
@@ -222,7 +239,10 @@ final class User_Registration_Style_Customizer {
 
 		// Enqueue google fonts styles.
 		if ( isset( $style_options['wrapper']['font_family'] ) && '' !== $style_options['wrapper']['font_family'] ) {
-			wp_enqueue_style( 'user-registration-google-fonts', 'https://fonts.googleapis.com/css?family=' . ur_clean( $style_options['wrapper']['font_family'] ), array(), self::VERSION, 'all' );
+			$load_font_locally = isset( $style_options['wrapper']['load_fonts_locally'] ) ? $style_options['wrapper']['load_fonts_locally'] : false;
+			$font_family       = $style_options['wrapper']['font_family'];
+
+			ursc_enqueue_fonts( $font_family, $load_font_locally );
 		}
 	}
 
@@ -276,8 +296,8 @@ final class User_Registration_Style_Customizer {
 	 * @param array $settings Settings.
 	 */
 	public function login_option_customizer_button( $settings ) {
-		$login_options_settings    = array_merge(
-			$settings["sections"]["login_options_settings"]["settings"],
+		$login_options_settings                                     = array_merge(
+			$settings['sections']['login_options_settings']['settings'],
 			array(
 				array(
 					'title'    => __( 'Customize Login Form', 'user-registration-style-customizer' ),
@@ -295,17 +315,19 @@ final class User_Registration_Style_Customizer {
 				),
 			)
 		);
-		$settings["sections"]["login_options_settings"]["settings"] = $login_options_settings;
+		$settings['sections']['login_options_settings']['settings'] = $login_options_settings;
 
 		return $settings;
 	}
 	/**
-	 * User Registration fallback notice.
+	 * User Registration fallback notice .
 	 */
 	public function user_registration_missing_notice() {
 		/* translators: %s: user-registration plugin link */
-		echo '<div class="error notice is-dismissible"><p>' . sprintf( esc_html__( 'User Registration Style Customizer requires %s version 1.7.0 or greater to work!', 'user-registration-style-customizer' ), '<a href="https://wpeverest.com/wordpress-plugins/user-registration/" target="_blank">' . esc_html__( 'User Registration', 'user-registration-style-customizer' ) . '</a>' ) . '</p></div>';
+		echo '<div class="error notice is-dismissible"><p>' . sprintf( esc_html__( 'User Registration Style Customizer requires %s version 4.0.0 or greater to work', 'user-registration-style-customizer' ), '<a href="https://wpuserregistration.com/" target="_blank">' . esc_html__( 'User Registration Pro', 'user-registration-style-customizer' ) . '</a>' ) . '</p></div>';
 	}
+
+
 
 	/**
 	 * Deprecates old plugin missing notice.
@@ -316,5 +338,33 @@ final class User_Registration_Style_Customizer {
 	 */
 	public function user_registation_missing_notice() {
 		ur_deprecated_function( 'User_Registration_Style_Customizer::user_registation_missing_notice', '1.0.2', 'User_Registration_Style_Customizer::user_registration_missing_notice' );
+	}
+
+	/**
+	 * Copy and save the saved styles of a form for duplicated form.
+	 *
+	 * @param int    $current_form_id ID of the current form that has been duplicated.
+	 * @param [type] $duplicated_form_id ID of duplicated form.
+	 */
+	public function user_registration_duplicate_form_styles( $current_form_id, $duplicated_form_id ) {
+
+		if ( file_exists( wp_upload_dir()['basedir'] . '/user_registration_styles/user-registration-' . absint( $current_form_id ) . '.css' ) ) {
+			copy( wp_upload_dir()['basedir'] . '/user_registration_styles/user-registration-' . absint( $current_form_id ) . '.css', wp_upload_dir()['basedir'] . '/user_registration_styles/user-registration-' . absint( $duplicated_form_id ) . '.css' );
+
+			$file_path = wp_upload_dir()['basedir'] . '/user_registration_styles/user-registration-' . absint( $duplicated_form_id ) . '.css';
+
+			$current_form_selector    = 'user-registration-form-' . absint( $current_form_id );
+			$duplicated_form_selector = 'user-registration-form-' . absint( $duplicated_form_id );
+
+			$file_contents = file_get_contents( $file_path );
+
+			if ( strpos( $file_contents, $current_form_selector ) !== false ) {
+				while ( strpos( $file_contents, $current_form_selector ) !== false ) {
+					$file_contents = str_replace( $current_form_selector, $duplicated_form_selector, $file_contents );
+				}
+
+				file_put_contents( $file_path, $file_contents );
+			}
+		}
 	}
 }

@@ -1,6 +1,8 @@
 <?php
 namespace ElementorPro\License;
 
+use ElementorPro\Core\Utils as ProUtils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -24,7 +26,10 @@ class Updater {
 	}
 
 	private function setup_hooks() {
-		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_update' ], 50 );
+		if ( ! $this->is_elementor_pro_rollback() ) {
+			add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_update' ], 50 );
+		}
+
 		add_action( 'delete_site_transient_update_plugins', [ $this, 'delete_transients' ] );
 		add_filter( 'plugins_api', [ $this, 'plugins_api_filter' ], 10, 3 );
 
@@ -123,10 +128,6 @@ class Updater {
 			$_transient_data = new \stdClass();
 		}
 
-		if ( 'plugins.php' === $pagenow && is_multisite() ) {
-			return $_transient_data;
-		}
-
 		return $this->check_transient_data( $_transient_data );
 	}
 
@@ -166,7 +167,7 @@ class Updater {
 				'high' => 'https://ps.w.org/elementor/assets/banner-1544x500.png?rev=1494133',
 				'low' => 'https://ps.w.org/elementor/assets/banner-1544x500.png?rev=1494133',
 			];
-			//$api_request_transient->autoupdate = true;
+			$api_request_transient->autoupdate = true;
 
 			$api_request_transient->sections = unserialize( $api_response['sections'] );
 
@@ -240,5 +241,9 @@ class Updater {
 		$cache_key = API::TRANSIENT_KEY_PREFIX . ELEMENTOR_PRO_VERSION;
 
 		delete_option( $cache_key );
+	}
+
+	protected function is_elementor_pro_rollback(): bool {
+		return 'elementor_pro_rollback' === ProUtils::_unstable_get_super_global_value( $_GET, 'action' );
 	}
 }

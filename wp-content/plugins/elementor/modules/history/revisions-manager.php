@@ -24,7 +24,7 @@ class Revisions_Manager {
 	/**
 	 * Maximum number of revisions to display.
 	 */
-	const MAX_REVISIONS_TO_DISPLAY = 100;
+	const MAX_REVISIONS_TO_DISPLAY = 50;
 
 	/**
 	 * Authors list.
@@ -176,9 +176,9 @@ class Revisions_Manager {
 				'timestamp' => strtotime( $revision->post_modified ),
 				'date' => sprintf(
 					/* translators: 1: Human readable time difference, 2: Date. */
-					__( '%1$s ago (%2$s)', 'elementor' ),
-					$human_time,
-					$date
+					esc_html__( '%1$s ago (%2$s)', 'elementor' ),
+					'<time>' . $human_time . '</time>',
+					'<time>' . $date . '</time>'
 				),
 				'type' => $type,
 				'typeLabel' => $type_label,
@@ -247,29 +247,19 @@ class Revisions_Manager {
 	 * @param $data
 	 *
 	 * @return array
-	 * @throws \Exception
+	 * @throws \Exception If the revision ID is not set.
 	 */
 	public static function ajax_get_revision_data( array $data ) {
 		if ( ! isset( $data['id'] ) ) {
 			throw new \Exception( 'You must set the revision ID.' );
 		}
 
-		$revision = Plugin::$instance->documents->get( $data['id'] );
+		$revision = Plugin::$instance->documents->get_with_permissions( $data['id'] );
 
-		if ( ! $revision ) {
-			throw new \Exception( 'Invalid revision.' );
-		}
-
-		if ( ! current_user_can( 'edit_post', $revision->get_id() ) ) {
-			throw new \Exception( esc_html__( 'Access denied.', 'elementor' ) );
-		}
-
-		$revision_data = [
+		return [
 			'settings' => $revision->get_settings(),
 			'elements' => $revision->get_elements_data(),
 		];
-
-		return $revision_data;
 	}
 
 	/**
@@ -288,7 +278,7 @@ class Revisions_Manager {
 	 * @since 2.0.0
 	 * @access public
 	 * @static
-	 * @param array $return_data
+	 * @param array    $return_data
 	 * @param Document $document
 	 *
 	 * @return array
@@ -356,9 +346,9 @@ class Revisions_Manager {
 	 * Fired by `elementor/editor/editor_settings` filter.
 	 *
 	 * @since 1.7.0
+	 * @deprecated 3.1.0
 	 * @access public
 	 * @static
-	 * @deprecated 3.1.0
 	 */
 	public static function editor_settings() {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
@@ -366,7 +356,12 @@ class Revisions_Manager {
 		return [];
 	}
 
-	public static function ajax_get_revisions() {
+	/**
+	 * @throws \Exception If the user doesn't have permissions or not found.
+	 */
+	public static function ajax_get_revisions( $data ) {
+		Plugin::$instance->documents->check_permissions( $data['editor_post_id'] );
+
 		return self::get_revisions();
 	}
 

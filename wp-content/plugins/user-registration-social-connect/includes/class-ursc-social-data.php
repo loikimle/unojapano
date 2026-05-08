@@ -120,7 +120,13 @@ class URSC_Social_Data {
 		 */
 		if ( '' !== $network_data['profile_pic'] ) {
 			update_user_meta( $user_id, $meta_prefix . $network_name . '_profile_pic', $network_data['profile_pic'] );
-			update_user_meta( $user_id, 'user_registration_profile_pic_url', $network_data['profile_pic'] );
+
+			if ( ! is_numeric( $network_data['profile_pic'] ) ) {
+				$user_registration_profile_pic_attachment = attachment_url_to_postid( $$network_data['profile_pic'] );
+				if ( 0 != $user_registration_profile_pic_attachment ) {
+					update_user_meta( $user_id, 'user_registration_profile_pic_url', absint( $user_registration_profile_pic_attachment ) );
+				}
+			}
 		}
 
 		update_user_meta( $user_id, 'first_name', $network_data['first_name'] );
@@ -163,15 +169,15 @@ class URSC_Social_Data {
 	 */
 	public static function login_user( $user_id ) {
 
-		$login_option = get_option( 'user_registration_general_setting_login_options', '' );
-
+		$form_id      = ur_get_form_id_by_userid( $user_id );
+		$login_option = ur_get_user_login_option( $user_id );
 		if ( 'admin_approval' === $login_option ) {
 
 			$user_status = get_user_meta( $user_id, 'ur_user_status', true );
 
 			if ( $user_status == 0 || $user_status == - 1 ) {
 
-				$message = $user_status == 0 ? __( 'Your account is still pending approval.', 'user-registration-social-connect' ) : __( 'Your account has been denied.', 'user-registration-social-connect' );
+				$message = $user_status == 0 ? __( 'Social registration has been completed but your account is still pending approval.', 'user-registration-social-connect' ) : __( 'Your account has been denied.', 'user-registration-social-connect' );
 
 				return new WP_Error( 'user_registration_admin_approval_prevent', $message );
 			}
@@ -180,6 +186,7 @@ class URSC_Social_Data {
 		ursc_flush_all();
 		wp_clear_auth_cookie();
 		wp_set_auth_cookie( $user_id );
+		do_action( 'user_registration_after_login_succeed', $user_id );
 	}
 
 	/**
@@ -214,7 +221,7 @@ class URSC_Social_Data {
 			'role'       => get_option( 'user_registration_social_setting_default_user_role', 'subscriber' ),
 		);
 
-		if ( 'no' === get_option( 'user_registration_social_setting_enable_social_registration', 'no' ) ) {
+		if ( ! ur_string_to_bool( get_option( 'user_registration_social_setting_enable_social_registration', false ) ) ) {
 
 			return __( 'Could not register user, please contact with site administrator', 'user-registration-social-connect' );
 		}
@@ -277,7 +284,7 @@ class URSC_Social_Data {
 					'field_key' => $single_field_key,
 					'label'     => $single_field_label,
 				);
-				$valid_form_data[ $data->field_name ] = UR_Frontend_Form_Handler::get_sanitize_value( $data );
+				$valid_form_data[ $data->field_name ] = UR_Form_Validation::get_sanitize_value( $data );
 			}
 		}
 		return $valid_form_data;

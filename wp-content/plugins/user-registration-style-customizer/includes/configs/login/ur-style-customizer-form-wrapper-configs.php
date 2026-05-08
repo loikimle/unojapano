@@ -74,6 +74,18 @@ function ur_style_customizer_wrapper_controls( $controls, $customize ) {
 			),
 		),
 
+		'load_fonts_locally'    => array(
+			'setting' => array(
+				'default'           => '',
+				'sanitize_callback' => 'sanitize_text_field',
+			),
+			'control' => array(
+				'label'   => __( 'Load fonts locally', 'user-registration-style-customizer' ),
+				'section' => 'user_registration_wrapper',
+				'type'    => 'UR_Customize_Toggle_Control',
+			),
+		),
+
 		'background_color'      => array(
 			'setting' => array(
 				'default' => '',

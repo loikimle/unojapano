@@ -73,7 +73,7 @@ class URWC_WC_Memberships {
 	 * @param int $current_page
 	 */
 	public function wc_endpoint_content() {
-		wc_memberships()->get_frontend_instance()->get_members_area_instance()->output_members_area();
+		wc_memberships()->get_frontend_instance()->get_my_account_instance()->get_members_area_instance()->output_members_area();
 	}
 
 	/**
@@ -87,7 +87,7 @@ class URWC_WC_Memberships {
 	 */
 	public function get_members_area_navigation_template( $located, $template_name ) {
 
-		if ( 'myaccount/navigation.php' === $template_name && wc_memberships()->get_frontend_instance()->get_members_area_instance()->is_members_area_section() ) {
+		if ( 'myaccount/navigation.php' === $template_name && wc_memberships()->get_frontend_instance()->get_my_account_instance()->get_members_area_instance()->is_members_area_section() ) {
 			$located = wc_locate_template( 'myaccount/my-membership-navigation.php' );
 		}
 

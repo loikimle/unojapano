@@ -8,14 +8,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use \Elementor\Controls_Manager;
-use \Elementor\Frontend;
 use \Elementor\Group_Control_Background;
 use \Elementor\Group_Control_Border;
 use \Elementor\Group_Control_Box_Shadow;
 use \Elementor\Group_Control_Typography;
 use \Elementor\Widget_Base;
-use \Elementor\Icons_Manager;
 use Essential_Addons_Elementor\Traits\Helper;
+use \Essential_Addons_Elementor\Classes\Helper as HelperClass;
 
 class Woo_Checkout extends Widget_Base {
 	
@@ -81,12 +80,16 @@ class Woo_Checkout extends Widget_Base {
         ];
     }
 
+	public function has_widget_inner_wrapper(): bool {
+        return ! HelperClass::eael_e_optimized_markup();
+    }
+
 	public function get_custom_help_url() {
 		return 'https://essential-addons.com/elementor/docs/woo-checkout/';
 	}
 
 	protected function register_controls() {
-		if ( is_admin() && ! empty( $_GET['elementor_updater'] ) ) {
+		if ( is_admin() && ! empty( $_GET['elementor_updater'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
@@ -122,18 +125,34 @@ class Woo_Checkout extends Widget_Base {
 				'label' => esc_html__( 'General Settings', 'essential-addons-for-elementor-lite' ),
 			]
 		);
+
+		$template_list = apply_filters('eael/woo-checkout/layout', [
+			'default'     => esc_html__( 'Default', 'essential-addons-for-elementor-lite' ),
+			'multi-steps' => esc_html__( 'Multi Steps (Pro)', 'essential-addons-for-elementor-lite' ),
+			'split'       => esc_html__( 'Split (Pro)', 'essential-addons-for-elementor-lite' ),
+		]);
+        $layout_options = [];
+
+		if( ! empty( $template_list ) ){
+            $image_path = EAEL_PLUGIN_URL . 'assets/admin/images/layout-previews/woo-checkout-';
+            foreach( $template_list as $key => $label ){
+                $layout_options[ $key ] = [
+                    'title' => $label,
+                    'image' => $image_path . $key . '.png'
+                ];
+            }
+        }
+
 		$this->add_control(
 			'ea_woo_checkout_layout',
 			[
-				'label' => esc_html__( 'Layout', 'essential-addons-for-elementor-lite' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'default',
-				'label_block' => false,
-				'options' => apply_filters('eael/woo-checkout/layout', [
-					'default' => esc_html__( 'Default', 'essential-addons-for-elementor-lite' ),
-					'multi-steps' => esc_html__( 'Multi Steps (Pro)', 'essential-addons-for-elementor-lite' ),
-					'split' => esc_html__( 'Split (Pro)', 'essential-addons-for-elementor-lite' ),
-				]),
+				'label'       => esc_html__( 'Layout', 'essential-addons-for-elementor-lite' ),
+				'type'        => Controls_Manager::CHOOSE,
+				'options'     => $layout_options,
+				'default'     => 'default',
+				'label_block' => true,
+                'toggle'      => false,
+                'image_choose'=> true,
 			]
 		);
 
@@ -174,7 +193,7 @@ class Woo_Checkout extends Widget_Base {
 					'active' => true,
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -216,7 +235,7 @@ class Woo_Checkout extends Widget_Base {
 					'ea_woo_checkout_table_header_text' => 'yes',
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -236,7 +255,7 @@ class Woo_Checkout extends Widget_Base {
 					'ea_woo_checkout_table_header_text' => 'yes',
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -256,7 +275,7 @@ class Woo_Checkout extends Widget_Base {
 					'ea_woo_checkout_table_header_text' => 'yes',
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -273,7 +292,7 @@ class Woo_Checkout extends Widget_Base {
                     'ea_woo_checkout_table_header_text' => 'yes',
                 ],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -290,7 +309,7 @@ class Woo_Checkout extends Widget_Base {
                     'ea_woo_checkout_table_header_text' => 'yes',
                 ],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -307,7 +326,7 @@ class Woo_Checkout extends Widget_Base {
                     'ea_woo_checkout_table_header_text' => 'yes',
                 ],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -338,7 +357,7 @@ class Woo_Checkout extends Widget_Base {
 					'ea_woo_checkout_shop_link' => 'yes',
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -367,7 +386,7 @@ class Woo_Checkout extends Widget_Base {
 		$this->add_control(
 			'ea_woo_checkout_coupon_icon',
 			[
-				'label' => __( 'Icon', 'elementor' ),
+				'label' => __( 'Icon', 'essential-addons-for-elementor-lite' ),
 				'type' => Controls_Manager::ICONS,
 				'default' => [
 					'value' => 'fas fa-percent',
@@ -385,7 +404,7 @@ class Woo_Checkout extends Widget_Base {
 					'active' => true,
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -399,7 +418,7 @@ class Woo_Checkout extends Widget_Base {
 					'active' => true,
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -426,7 +445,7 @@ class Woo_Checkout extends Widget_Base {
 					'active' => true,
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -441,7 +460,7 @@ class Woo_Checkout extends Widget_Base {
 					'active' => true,
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -475,8 +494,11 @@ class Woo_Checkout extends Widget_Base {
                 'ea_section_woo_login_show_warning_text',
                 [
                     'type'            => Controls_Manager::RAW_HTML,
-                    'raw'             => __('Allow customers to log into an existing account during checkout is disabled on your site. Please enable it to use the login form. You can enable it from WooCommerce >> Settings >> Accounts & Privacy >> <a target="_blank" href="'.esc_url(admin_url( 'admin.php?page=wc-settings&tab=account')).'">Guest checkout.</a>',
-                        'essential-addons-for-elementor-lite'),
+					'raw' => sprintf(
+						/* translators: %s: Link to the Guest Checkout settings page. */
+						__('Allow customers to log into an existing account during checkout is disabled on your site. Please enable it to use the login form. You can enable it from WooCommerce >> Settings >> Accounts & Privacy >> %s', 'essential-addons-for-elementor-lite'),
+						'<a target="_blank" href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=account' ) ) . '">Guest checkout</a>'
+					),
                     'content_classes' => 'eael-warning',
                     'condition' => [
                         'ea_section_woo_login_show' => 'yes',
@@ -489,7 +511,7 @@ class Woo_Checkout extends Widget_Base {
 		$this->add_control(
 			'ea_woo_checkout_login_icon',
 			[
-				'label' => __( 'Icon', 'elementor' ),
+				'label' => __( 'Icon', 'essential-addons-for-elementor-lite' ),
 				'type' => Controls_Manager::ICONS,
 				'default' => [
 					'value' => 'fas fa-user',
@@ -507,7 +529,7 @@ class Woo_Checkout extends Widget_Base {
 					'active' => true,
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
     );
@@ -534,7 +556,7 @@ class Woo_Checkout extends Widget_Base {
 					'active' => true,
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -561,7 +583,7 @@ class Woo_Checkout extends Widget_Base {
 					'active' => true,
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -575,7 +597,7 @@ class Woo_Checkout extends Widget_Base {
 					'active' => true,
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -589,7 +611,7 @@ class Woo_Checkout extends Widget_Base {
 					'active' => true,
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -679,7 +701,7 @@ class Woo_Checkout extends Widget_Base {
 				'default' => esc_html__( 'List Title' , 'essential-addons-for-elementor-lite' ),
 				'label_block' => true,
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -703,6 +725,17 @@ class Woo_Checkout extends Widget_Base {
                     'form-row-wide' => __( 'Full Width', 'essential-addons-for-elementor-lite' )
                 ],
 				'label_block' => true,
+			]
+		);
+
+		$repeater->add_control(
+			'field_placeholder', [
+				'label'       => esc_html__( 'Placeholder', 'essential-addons-for-elementor-lite' ),
+				'type'        => Controls_Manager::TEXT,
+				'label_block' => true,
+				'ai'          => [
+					'active' => true,
+				],
 			]
 		);
 
@@ -770,7 +803,7 @@ class Woo_Checkout extends Widget_Base {
 					'active' => true,
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -784,7 +817,7 @@ class Woo_Checkout extends Widget_Base {
 					'active' => true,
 				],
 				'ai' => [
-					'active' => false,
+					'active' => true,
 				],
 			]
 		);
@@ -1035,6 +1068,18 @@ class Woo_Checkout extends Widget_Base {
 				'selector' => '{{WRAPPER}} .ea-woo-checkout-order-review .table-row',
 			]
 		);
+
+		$this->add_group_control(
+			\Elementor\Group_Control_Border::get_type(),
+			[
+				'name'      => 'ea_woo_checkout_order_review_row_border',
+				'selector'  => '{{WRAPPER}} .ea-woo-checkout-order-review .table-row',
+				'condition' => [
+					'ea_woo_checkout_layout' => 'default',
+				],
+			]
+		);
+
 		$this->add_responsive_control(
 			'ea_woo_checkout_order_review_row_border_radius',
 			[
@@ -1222,17 +1267,17 @@ class Woo_Checkout extends Widget_Base {
 
 		$this->end_controls_tabs();
 
-		$this->add_control(
-			'ea_woo_checkout_order_review_footer_border_color',
+		$this->add_group_control(
+			Group_Control_Border::get_type(),
 			[
-				'label' => esc_html__( 'Border Color', 'essential-addons-for-elementor-lite' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '#404040',
-				'selectors' => [
-					'{{WRAPPER}} .ea-woo-checkout-order-review .footer-content > div' => 'border-color: {{VALUE}};',
+				'name'      => 'ea_woo_checkout_order_review_footer_border',
+				'selector'  => '{{WRAPPER}} .ea-woo-checkout-order-review .footer-content',
+				'condition' => [
+					'ea_woo_checkout_layout' => 'default',
 				],
 			]
 		);
+
 		$this->add_responsive_control(
 			'ea_woo_checkout_order_review_footer_border_radius',
 			[
@@ -1441,6 +1486,26 @@ class Woo_Checkout extends Widget_Base {
 				],
 			]
 		);
+
+		$this->add_responsive_control(
+			'ea_woo_checkout_login_icon_position',
+			[
+				'label'              => esc_html__( 'Icon Position', 'essential-addons-for-elementor-lite' ),
+				'type'               => Controls_Manager::DIMENSIONS,
+				'size_units'         => [ 'px', 'em', '%' ],
+				'allowed_dimensions' => [ 'top', 'left' ],
+				'default' 			 => [
+					'top'      => 24,
+					'left'     => 35,
+					'unit'     => 'px',
+					'isLinked' =>  true,
+				],
+				'selectors'          => [
+					'{{WRAPPER}} .ea-woo-checkout .ea-login-icon' => 'top: {{TOP}}{{UNIT}}; left: {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+
 		$this->add_control(
 			'ea_woo_checkout_login_links_color',
 			[
@@ -1479,7 +1544,6 @@ class Woo_Checkout extends Widget_Base {
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
 					'{{WRAPPER}} .woo-checkout-login' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-					'{{WRAPPER}} .ea-woo-checkout .ea-login-icon' => 'top: {{TOP}}{{UNIT}}; left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -1800,6 +1864,26 @@ class Woo_Checkout extends Widget_Base {
                 ],
             ]
         );
+
+		$this->add_responsive_control(
+			'ea_woo_checkout_coupon_icon_position',
+			[
+				'label'              => esc_html__( 'Icon Position', 'essential-addons-for-elementor-lite' ),
+				'type'               => Controls_Manager::DIMENSIONS,
+				'size_units'         => [ 'px', 'em', '%' ],
+				'allowed_dimensions' => [ 'top', 'left' ],
+				'default' 			 => [
+					'top'      => 24,
+					'left'     => 35,
+					'unit'     => 'px',
+					'isLinked' =>  true,
+				],
+				'selectors'          => [
+					'{{WRAPPER}} .ea-woo-checkout .ea-coupon-icon' => 'top: {{TOP}}{{UNIT}}; left: {{LEFT}}{{UNIT}};',
+				],
+			]
+		);
+		
 		$this->add_control(
 			'ea_woo_checkout_coupon_links_color',
 			[
@@ -1875,7 +1959,6 @@ class Woo_Checkout extends Widget_Base {
 				'size_units' => [ 'px', 'em', '%' ],
 				'selectors' => [
 					'{{WRAPPER}} .woo-checkout-coupon' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-					'{{WRAPPER}} .ea-woo-checkout .ea-coupon-icon' => 'top: {{TOP}}{{UNIT}}; left: {{LEFT}}{{UNIT}};',
 				],
 			]
 		);
@@ -2409,10 +2492,30 @@ class Woo_Checkout extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '#443e6d',
 				'selectors' => [
-					'{{WRAPPER}} #customer_details input, {{WRAPPER}} #customer_details select, {{WRAPPER}} #customer_details textarea' => 'color: {{VALUE}};',
+					'{{WRAPPER}} #customer_details .form-row .woocommerce-input-wrapper input' => 'color: {{VALUE}};', 
+					'{{WRAPPER}} #customer_details .form-row .woocommerce-input-wrapper select' => 'color: {{VALUE}};', 
+					'{{WRAPPER}} #customer_details .form-row .woocommerce-input-wrapper textarea' => 'color: {{VALUE}};',
+					'{{WRAPPER}} #customer_details .form-row .woocommerce-input-wrapper .select2-selection span' => 'color: {{VALUE}};',
 				],
 			]
 		);
+
+		$this->add_control(
+			'ea_woo_checkout_customer_details_field_bg_color',
+			[
+				'label' => esc_html__( 'Background Color', 'essential-addons-for-elementor-lite' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '#fff',
+				'selectors' => [
+					'{{WRAPPER}} #customer_details .form-row .woocommerce-input-wrapper input' => 'background: {{VALUE}};',
+					'{{WRAPPER}} #customer_details .form-row .woocommerce-input-wrapper select' => 'background: {{VALUE}};',
+					'{{WRAPPER}} #customer_details .form-row .woocommerce-input-wrapper textarea' => 'background: {{VALUE}};',
+					'{{WRAPPER}} #customer_details .form-row .woocommerce-input-wrapper .select2-selection' => 'background: {{VALUE}};',
+				],
+			]
+		);
+
+
 		$this->start_controls_tabs( 'ea_woo_checkout_customer_details_field_tabs' );
 
 		$this->start_controls_tab( 'ea_woo_checkout_customer_details_field_tab_normal', [ 'label' => esc_html__( 'Normal', 'essential-addons-for-elementor-lite' ) ] );
@@ -2424,7 +2527,11 @@ class Woo_Checkout extends Widget_Base {
 				'type' => Controls_Manager::COLOR,
 				'default' => '#cccccc',
 				'selectors' => [
-					'{{WRAPPER}} #customer_details input, {{WRAPPER}} #customer_details .select, {{WRAPPER}} #customer_details .select2-container--default .select2-selection--single, {{WRAPPER}} #customer_details textarea' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} #customer_details input, 
+					{{WRAPPER}} #customer_details .select, 
+					{{WRAPPER}} .ea-woo-checkout .woocommerce-input-wrapper select, 
+					{{WRAPPER}} #customer_details .select2-container--default .select2-selection--single, 
+					{{WRAPPER}} #customer_details textarea' => 'border-color: {{VALUE}};',
 				],
 			]
 		);
@@ -2513,10 +2620,10 @@ class Woo_Checkout extends Widget_Base {
 			);
 
 			$this->start_controls_tabs('ea_woo_checkout_pickup_point_tabs');
-			$this->start_controls_tab('ea_woo_checkout_pickup_point_tab_normal', ['label' => __('Normal', 'essential-addons-for-elementor')]);
+			$this->start_controls_tab('ea_woo_checkout_pickup_point_tab_normal', ['label' => __('Normal', 'essential-addons-for-elementor-lite')]);
 
 			$this->add_control('ea_woo_checkout_pickup_point_btn_bg_color', [
-				'label' => __('Background Color', 'essential-addons-for-elementor'),
+				'label' => __('Background Color', 'essential-addons-for-elementor-lite'),
 				'type' => Controls_Manager::COLOR,
 				'default' => '#7866ff',
 				'selectors' => [
@@ -2525,7 +2632,7 @@ class Woo_Checkout extends Widget_Base {
 			]);
 
 			$this->add_control('ea_woo_checkout_pickup_point_btn_color', [
-				'label' => __('Color', 'essential-addons-for-elementor'),
+				'label' => __('Color', 'essential-addons-for-elementor-lite'),
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ffffff',
 				'selectors' => [
@@ -2540,10 +2647,10 @@ class Woo_Checkout extends Widget_Base {
 
 			$this->end_controls_tab();
 
-			$this->start_controls_tab('ea_woo_checkout_pickup_point_tab_hover', ['label' => __('Hover', 'essential-addons-for-elementor')]);
+			$this->start_controls_tab('ea_woo_checkout_pickup_point_tab_hover', ['label' => __('Hover', 'essential-addons-for-elementor-lite')]);
 
 			$this->add_control('ea_woo_checkout_pickup_point_btn_bg_color_hover', [
-				'label' => __('Background Color', 'essential-addons-for-elementor'),
+				'label' => __('Background Color', 'essential-addons-for-elementor-lite'),
 				'type' => Controls_Manager::COLOR,
 				'default' => '#7866ff',
 				'selectors' => [
@@ -2552,7 +2659,7 @@ class Woo_Checkout extends Widget_Base {
 			]);
 
 			$this->add_control('ea_woo_checkout_pickup_point_btn_color_hover', [
-				'label' => __('Color', 'essential-addons-for-elementor'),
+				'label' => __('Color', 'essential-addons-for-elementor-lite'),
 				'type' => Controls_Manager::COLOR,
 				'default' => '#ffffff',
 				'selectors' => [
@@ -2561,7 +2668,7 @@ class Woo_Checkout extends Widget_Base {
 			]);
 
 			$this->add_control('ea_woo_checkout_pickup_point_btn_border_color_hover', [
-				'label' => __('Border Color', 'essential-addons-for-elementor'),
+				'label' => __('Border Color', 'essential-addons-for-elementor-lite'),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}} .woo-checkout-payment .carrier-agents-postcode-search .woo-carrier-agents-postcode-input-wrapper #woo-carrier-agents-search-button:hover' => 'border-color: {{VALUE}};',
@@ -2743,6 +2850,14 @@ class Woo_Checkout extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'ea_woo_checkout_payment_methods_typo',
+				'selector' => '.eael-woo-checkout {{WRAPPER}} .woo-checkout-payment .payment_box p',
+			]
+		);
+
 		// Privacy Policy
 		$this->add_control(
 			'ea_woo_checkout_privacy_policy',
@@ -2834,7 +2949,7 @@ class Woo_Checkout extends Widget_Base {
 			[
 				'label' => __( 'Background Color', 'essential-addons-for-elementor-lite' ),
 				'type' => Controls_Manager::COLOR,
-				'default' => '#7866ff',
+				'default' => '#5842FF',
 				'selectors' => [
 					'{{WRAPPER}} #place_order' => 'background-color: {{VALUE}};background: {{VALUE}};',
 				],
@@ -3003,11 +3118,12 @@ class Woo_Checkout extends Widget_Base {
 		$_fields = [];
 		$classes = [ 'form-row-first', 'form-row-last', 'form-row-wide' ];
 		foreach ( $fields as $key => $field_set ) {
-			$field_set_class = is_array( $field_set['class'] ) ? $field_set['class'] : [];
+			$field_set_class = isset( $field_set['class'] ) && is_array( $field_set['class'] ) ? $field_set['class'] : [];
 			$_fields[]       = [
-				'field_label' => $field_set['label'],
-				'field_key'   => $key,
-				'field_class' => implode( '', array_intersect( $classes, $field_set_class ) ),
+				'field_label'       => $field_set['label'],
+				'field_key'         => $key,
+				'field_class'       => implode( '', array_intersect( $classes, $field_set_class ) ),
+				'field_placeholder' => $field_set['placeholder'] ?? ''
 			];
 		}
 
@@ -3053,6 +3169,14 @@ class Woo_Checkout extends Widget_Base {
 	        return;
         }
 
+		$settings = $this->get_settings_for_display();
+		// Please don't print anything above this line otherwise session will not work properly.
+//		$deviceName = \Essential_Addons_Elementor\Classes\Helper::eael_get_current_device_by_screen();
+//		if ( ! \Elementor\Plugin::$instance->editor->is_edit_mode() && ! empty( $settings["hide_{$deviceName}"] ) ) {
+//			echo "<!-- This content is hidden on {$deviceName} devices -->";
+//			return;
+//		}
+
 		/**
 		 * Remove WC Coupon Action From  Neve Theme
 		 */
@@ -3065,7 +3189,6 @@ class Woo_Checkout extends Widget_Base {
 			add_action( 'eael_wc_multistep_checkout_after_shipping', [ $wca, 'add_carrier_agent_field_before_payment' ], 10, 0 );
 		}
 
-        $settings = $this->get_settings_for_display();
         add_filter( 'woocommerce_checkout_fields', [ $this, 'ea_checkout_fields' ], 99999 );
 		do_action( 'eael_woo_checkout_before_render', $settings );
 
@@ -3081,12 +3204,36 @@ class Woo_Checkout extends Widget_Base {
 			$settings['eael_enable_checkout_fields_reorder'] === 'yes' ? 'checkout-reorder-enabled' : ''
 		] );
 
+		$astra_pro = get_option( '_astra_ext_enabled_extensions' );
+
+		if ( !empty( $astra_pro ) && isset( $astra_pro['woocommerce'] ) && $astra_pro['woocommerce'] === 'woocommerce' ) {
+			$this->add_render_attribute( 'container', 'class', 'astra-pro-wc-module-activated' );
+		}
+
 		if ( $settings['eael_enable_checkout_fields_reorder'] === 'yes' ){
+			global $post;
+			$eael_checkout_fields = [];
+			if ( count( $settings['ea_billing_fields_list'] ) > 0 ) {
+				foreach ( $settings['ea_billing_fields_list'] as $item ) {
+					$checkout_field_keys['billing'][ $item['field_key'] ] = $item['field_class'];
+					$eael_checkout_fields['billing'][ $item['field_key'] ] = [
+						'label'       => $item['field_label'],
+						'placeholder' => $item['field_placeholder']
+					];
+				}
+			}
+
+			if ( count( $settings['ea_shipping_fields_list'] ) > 0 ) {
+				foreach ( $settings['ea_shipping_fields_list'] as $item ) {
+					$checkout_field_keys['shipping'][ $item['field_key'] ] = $item['field_class'];
+					$eael_checkout_fields['shipping'][ $item['field_key'] ] = [
+						'label'       => $item['field_label'],
+						'placeholder' => $item['field_placeholder']
+					];
+				}
+			}
+            update_post_meta( $post->ID, '_eael_checkout_fields_settings', $eael_checkout_fields );
 			$fields = WC()->checkout()->get_checkout_fields();
-
-			$checkout_field_keys['billing'] = wp_list_pluck( $settings[ 'ea_billing_fields_list' ], 'field_class', 'field_key' );
-			$checkout_field_keys['shipping'] = wp_list_pluck( $settings[ 'ea_shipping_fields_list' ], 'field_class', 'field_key' );
-
 
 			$extra_billing_fields = array_diff( array_keys($fields['billing']), array_keys($checkout_field_keys['billing']) );
 			if ( count($extra_billing_fields) > 0 ){
@@ -3118,6 +3265,10 @@ class Woo_Checkout extends Widget_Base {
 
 			$this->add_render_attribute( 'container', 'data-checkout_ids', json_encode($checkout_field_keys) );
 		}
+        else{
+	        global $post;
+	        delete_post_meta( $post->ID, '_eael_checkout_fields_settings' );
+        }
 
 		$button_texts = [
 			'place_order' => $settings['ea_woo_checkout_place_order_text']
@@ -3142,7 +3293,7 @@ class Woo_Checkout extends Widget_Base {
         $this->ea_woo_checkout_add_actions($settings);
 
 		?>
-        <div data-checkout="<?php echo htmlspecialchars(json_encode($order_review_change_data), ENT_QUOTES, 'UTF-8'); ?>" <?php echo $this->get_render_attribute_string( 'container' ); ?>>
+        <div data-checkout="<?php echo esc_attr( htmlspecialchars(json_encode($order_review_change_data), ENT_QUOTES, 'UTF-8') ); ?>" <?php $this->print_render_attribute_string( 'container' ); ?>>
             <div type="text/template" id="eael-wc-billing-reordered-fields">
                 <div class="eael-woo-billing-fields"></div>
             </div>
@@ -3152,22 +3303,26 @@ class Woo_Checkout extends Widget_Base {
             <div class="woocommerce">
                 <style>
                     .woocommerce .blockUI.blockOverlay:before {
-                        background-image: url('<?php echo WC_ABSPATH . 'assets/images/icons/loader.svg' ?>') center center !important;
+                        background-image: url('<?php echo esc_url( WC_ABSPATH . 'assets/images/icons/loader.svg' ); ?>') center center !important;
                     }
                 </style>
 				<?php
 
 				// Backwards compatibility with old pay and thanks link arguments.
-				if ( isset( $_GET['order'] ) && isset( $_GET['key'] ) ) { // WPCS: input var ok, CSRF ok.
+				//phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				if ( isset( $_GET['order'] ) && isset( $_GET['key'] ) ) { // WPCS: input var ok.
 					wc_deprecated_argument( __CLASS__ . '->' . __FUNCTION__, '2.1', '"order" is no longer used to pass an order ID. Use the order-pay or order-received endpoint instead.' );
 
 					// Get the order to work out what we are showing.
+					//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 					$order_id = absint( $_GET['order'] ); // WPCS: input var ok.
 					$order    = wc_get_order( $order_id );
 
 					if ( $order && $order->has_status( 'pending' ) ) {
-						$wp->query_vars['order-pay'] = absint( $_GET['order'] ); // WPCS: input var ok.
+						//phpcs:ignore WordPress.Security.NonceVerification.Recommended
+						$wp->query_vars['order-pay'] = absint( $_GET['order'] );// WPCS: input var ok.
 					} else {
+						//phpcs:ignore WordPress.Security.NonceVerification.Recommended
 						$wp->query_vars['order-received'] = absint( $_GET['order'] ); // WPCS: input var ok.
 					}
 				}

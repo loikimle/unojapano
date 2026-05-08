@@ -5,7 +5,6 @@ namespace Essential_Addons_Elementor\Classes;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 } // Exit if accessed directly
-use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Plugin;
 use Essential_Addons_Elementor\Classes\Elements_Manager;
 use Essential_Addons_Elementor\Traits\Library;
@@ -114,7 +113,7 @@ class Asset_Builder {
 	 * @return false|void
 	 */
 	public function frontend_asset_load() {
-		$handle        = 'eael';
+		$handle        = 'eael-general';
 		$this->post_id = get_the_ID();
 
 		$this->elements_manager->get_element_list( $this->post_id );
@@ -124,7 +123,6 @@ class Asset_Builder {
 		if ( ! $this->is_edit() ) {
 			wp_enqueue_script( 'eael-general' );
 			wp_enqueue_style( 'eael-general' );
-			$handle = 'eael-general';
 			$this->load_custom_js( $this->post_id );
 		} else {
 			$elements = $this->get_settings();
@@ -192,8 +190,19 @@ class Asset_Builder {
 
 		foreach ( $locations as $location => $settings ) {
 
-			$documents = \ElementorPro\Modules\ThemeBuilder\Module::instance()->get_conditions_manager()->get_documents_for_location( $location );
+			$documents_module = \ElementorPro\Modules\ThemeBuilder\Module::instance();
+			
+			if( method_exists( $documents_module, 'get_locations_manager' ) && method_exists( $documents_module->get_locations_manager(), 'get_documents_for_location' ) ){
+				$documents = $documents_module->get_locations_manager()->get_documents_for_location( $location );
+			} else {
+				$documents = $documents_module->get_conditions_manager()->get_documents_for_location( $location );
+			}
+
 			foreach ( $documents as $document ) {
+				if ( ! is_object( $document ) ) {
+					continue;
+				}
+				
 				$post_id = $document->get_post()->ID;
 
 				$this->post_id = $post_id;
@@ -261,7 +270,10 @@ class Asset_Builder {
 
 		if ( $this->is_edit_mode() || $this->is_preview_mode() ) {
 			if ( $this->custom_js ) {
+
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				printf( '<script>%1$s</script>', 'var localize =' . wp_json_encode( $this->localize_objects ) );
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				printf( '<script id="eael-inline-js">%s</script>', $this->custom_js );
 			}
 		}
@@ -274,18 +286,20 @@ class Asset_Builder {
 	public function add_inline_css() {
 		if ( $this->is_edit_mode() || $this->is_preview_mode() ) {
 			if ( $this->css_strings ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				printf( '<style id="eael-inline-css">%s</style>', $this->css_strings );
 			}
 		}
 	}
 
 	public function register_script() {
-		$css_deps = [ 'elementor-frontend' ];
-        $js_deps  = [ 'jquery' ];
-		$theme    = wp_get_theme(); // gets the current theme
-		if ( in_array( 'Hello Elementor', [ $theme->name, $theme->parent_theme ] ) ) {
+		$css_deps   = [ 'elementor-frontend' ];
+		$js_deps    = [ 'jquery' ];
+		$theme      = wp_get_theme(); // gets the current theme
+		$theme_data = $theme->parent() ? $theme->parent() : $theme;
+		if ( 'Hello Elementor' === $theme_data->name && version_compare( $theme_data->Version, '2.1.0', '>=' ) && wp_style_is( 'hello-elementor-theme-style', 'registered' ) ) {
 			array_unshift( $css_deps, 'hello-elementor-theme-style' );
-		} elseif ( in_array( 'Astra', [ $theme->name, $theme->parent_theme ] ) ) {
+		} elseif ( in_array( 'Astra', [ $theme->name, $theme->parent_theme ] ) && wp_style_is( 'astra-theme-css', 'registered' ) ) {
 			array_unshift( $css_deps, 'astra-theme-css' );
 		} elseif ( in_array( 'XStore', [ $theme->name, $theme->parent_theme ] ) ) {
 			$js_deps[] = 'etheme';
@@ -369,6 +383,9 @@ class Asset_Builder {
 			[ 'jquery' ],
 			EAEL_PLUGIN_VERSION
 		);
+
+		// register custom cursor assets
+		do_action( 'eael/register_custom_cursor_assets' );
 
 		// localize object
 		$this->localize_objects = apply_filters( 'eael/localize_objects', [

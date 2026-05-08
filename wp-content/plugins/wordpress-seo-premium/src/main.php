@@ -16,8 +16,6 @@ use Yoast\WP\SEO\Surfaces\Classes_Surface;
  */
 class Main extends Abstract_Main {
 
-	// @phpcs:disable Generic.Commenting.DocComment.MissingShort -- Short description is in the inherited comments.
-
 	/**
 	 * @inheritDoc
 	 */
@@ -40,7 +38,7 @@ class Main extends Abstract_Main {
 				__DIR__ . '/generated/container.php',
 				__DIR__ . '/../config/dependency-injection/services.php',
 				__DIR__ . '/../vendor/composer/autoload_classmap.php',
-				'Yoast\WP\SEO\Premium\Generated'
+				'Yoast\WP\SEO\Premium\Generated',
 			);
 		}
 

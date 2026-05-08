@@ -1,0 +1,79 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "urfd/file-downloads",
+  "version": "0.1.0",
+  "title": "File Downloads",
+  "category": "user-registration",
+  "textdomain": "user-registration",
+  "editorScript": "user-registration-file-downloads-blocks",
+  "editorStyle": "user-registration-file-downloads-blocks",
+  "style": "user-registration-file-downloads-blocks-style",
+  "supports": {
+    "anchor": true,
+    "html": false,
+    "align": [
+      "wide",
+      "full"
+    ],
+    "spacing": {
+      "margin": true,
+      "padding": true
+    },
+    "color": {
+      "gradients": true,
+      "link": true,
+      "text": false,
+      "__experimentalDefaultControls": {
+        "background": true,
+        "link": true
+      }
+    },
+    "__experimentalBorder": {
+      "radius": true,
+      "color": true,
+      "width": true,
+      "style": true,
+      "__experimentalDefaultControls": {
+        "radius": true,
+        "color": true,
+        "width": true,
+        "style": true
+      }
+    },
+    "interactivity": true
+  },
+  "attributes": {
+    "fileIds": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "number"
+      }
+    },
+    "categoryIds": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "number"
+      }
+    },
+    "displayMode": {
+      "type": "string",
+      "enum": [
+        "ids",
+        "categories",
+        "both"
+      ],
+      "default": "ids"
+    },
+    "showFileSize": {
+      "type": "boolean",
+      "default": false
+    },
+    "showFileType": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

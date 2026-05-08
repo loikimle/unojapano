@@ -5,12 +5,14 @@
       this.handle_state_country();
       this.handle_separate_shipping();
       this.handle_checkout_page();
+      this.handle_billing_phone();
 
       $(".user-registration-form-login-toggle")
         .parent()
         .find("form.user-registration-form-login")
         .hide();
     },
+
     handle_separate_shipping: function () {
       $(".field-separate_shipping").each(function () {
         var $this = $(this);
@@ -124,6 +126,9 @@
         var $ur_fields = $("form.woocommerce-checkout").find(
           ".user-registration"
         );
+        if (!$('input[type="checkbox"]#createaccount').is(":checked")) {
+          $ur_fields.hide();
+        }
 
         $('input[type="checkbox"]#createaccount').on("change", function () {
           if ($(this).is(":checked")) {
@@ -197,10 +202,15 @@
           placeholder +
           '"></span>';
 
-        $state_field.find("select,input,span").remove();
+        $state_field
+          .find("select,input,span:not('.ur-portal-tooltip')")
+          .remove();
 
         if (current_states && !Array.isArray(current_states)) {
           $state_field.find(".form-row").append(select_state_html);
+		  if(placeholder !== '') {
+			$state_field.find("select").append("<option value='' selected disabled>"+placeholder+"</option>");
+		  }
 
           $.each(current_states, function (key, val) {
             $state_field
@@ -229,6 +239,19 @@
         return true;
       }
       return false;
+    },
+    //Validate billing phone field
+    handle_billing_phone: function () {
+      $("#billing_phone").on("input", function () {
+        var $this = $(this);
+        var inputValue = $this.val();
+        inputValue = inputValue.replace(/[^\+0-9]/g, "");
+        var firstOccurence = inputValue.slice(1);
+        inputValue = inputValue
+          .charAt(0)
+          .concat(firstOccurence.replaceAll("+", ""));
+        $this.val(inputValue);
+      });
     },
   };
 

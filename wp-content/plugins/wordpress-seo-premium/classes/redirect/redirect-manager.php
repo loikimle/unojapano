@@ -56,10 +56,8 @@ class WPSEO_Redirect_Manager {
 	 * @param WPSEO_Redirect_Exporter[]|null $exporters       The exporters used to save redirects in files.
 	 * @param WPSEO_Redirect_Option|null     $option          Model object to handle the redirects.
 	 */
-	public function __construct( $redirect_format = WPSEO_Redirect_Formats::PLAIN, $exporters = null, WPSEO_Redirect_Option $option = null ) {
-		if ( $option === null ) {
-			$option = new WPSEO_Redirect_Option();
-		}
+	public function __construct( $redirect_format = WPSEO_Redirect_Formats::PLAIN, $exporters = null, ?WPSEO_Redirect_Option $option = null ) {
+		$option ??= new WPSEO_Redirect_Option();
 
 		$this->redirect_option = $option;
 		$this->redirect_format = $redirect_format;
@@ -87,6 +85,8 @@ class WPSEO_Redirect_Manager {
 
 	/**
 	 * Export the redirects to the specified sources.
+	 *
+	 * @return void
 	 */
 	public function export_redirects() {
 		$redirects = $this->redirect_option->get_all();
@@ -171,6 +171,8 @@ class WPSEO_Redirect_Manager {
 
 	/**
 	 * This method will save the redirect option and if necessary the redirect file.
+	 *
+	 * @return void
 	 */
 	public function save_redirects() {
 		// Update the database option.

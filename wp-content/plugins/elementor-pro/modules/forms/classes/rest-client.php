@@ -144,19 +144,19 @@ class Rest_Client {
 			$this->request_cache[ $cache_key ]['parsed'];
 		}
 
-		$response = wp_remote_request( $request_url, $api_request_args );
+		$response = wp_safe_remote_request( $request_url, $api_request_args );
 		$response_code = (int) wp_remote_retrieve_response_code( $response );
 
 		$this->request_cache[ $cache_key ]['raw'] = $response;
 
 		if ( is_wp_error( $response ) || $valid_response_code !== $response_code ) {
-			throw new \Exception( 'Rest Client Error: response code ' . $response_code );
+			throw new \Exception( "Rest Client Error: response code {$response_code}." );
 		}
 
 		$response_body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( ! is_array( $response_body ) ) {
-			throw new \Exception( 'Rest Client Error: unexpected response type' );
+			throw new \Exception( 'Rest Client Error: unexpected response type.' );
 		}
 
 		$return = [

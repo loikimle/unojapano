@@ -88,8 +88,8 @@ class WPSEO_Premium_Prominent_Words_Unindexed_Post_Query {
 					AND post_type IN( ' . implode( ',', array_fill( 0, count( $post_types ), '%s' ) ) . ' )
 				GROUP BY post_type
 				',
-				$replacements
-			)
+				$replacements,
+			),
 		);
 
 		$totals = [];
@@ -111,7 +111,7 @@ class WPSEO_Premium_Prominent_Words_Unindexed_Post_Query {
 	protected function determine_rest_endpoint_for_post_type( $post_type ) {
 		$post_type_object = get_post_type_object( $post_type );
 
-		if ( is_null( $post_type_object ) ) {
+		if ( $post_type_object === null ) {
 			return '';
 		}
 
@@ -168,9 +168,9 @@ class WPSEO_Premium_Prominent_Words_Unindexed_Post_Query {
 					AND post_status IN( "future", "draft", "pending", "private", "publish" )
 					AND post_type IN( ' . implode( ',', array_fill( 0, count( $post_types ), '%s' ) ) . ' )
 				LIMIT %d',
-				$replacements
+				$replacements,
 			),
-			ARRAY_A
+			ARRAY_A,
 		);
 
 		// Make sure we return a list of IDs.

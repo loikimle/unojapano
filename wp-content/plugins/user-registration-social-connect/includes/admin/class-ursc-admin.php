@@ -102,17 +102,17 @@ class URSC_Admin {
 	 * Add social connect option in form user registration form settings
 	 */
 
-	 public function add_social_connect_in_form_setting($arguments) {
+	public function add_social_connect_in_form_setting( $arguments ) {
 
 		$social_networks = user_registration_social_networks();
-		$options = array();
+		$options         = array();
 		foreach ( $social_networks as $network_key => $network_data ) {
-			if ( 'yes' === get_option( $network_data['enable_id'] ) ) {
-				$options[ ucfirst( $network_key ) ] = __( ucfirst($network_key), 'user-registration-social-connect' );
+			if ( ur_string_to_bool( get_option( $network_data['enable_id'] ) ) ) {
+				$options[ ucfirst( $network_key ) ] = __( ucfirst( $network_key ), 'user-registration-social-connect' );
 			}
 		}
 
-		 $social_btn = array(
+		$social_btn = array(
 			'type'              => 'multiselect',
 			'label'             => __( 'Social Connect Option', 'user-registration-social-connect' ),
 			'description'       => '',
@@ -122,14 +122,14 @@ class URSC_Admin {
 			'input_class'       => array(),
 			'options'           => $options,
 			'custom_attributes' => array(),
-			'default'           => ur_get_single_post_meta( $arguments['form_id'], 'user_registration_social_connect_btn',$options ),
+			'default'           => ur_get_single_post_meta( $arguments['form_id'], 'user_registration_social_connect_btn', $options ),
 			'tip'               => __( 'Choose social connect to use.', 'user-registration-social-connect' ),
 		);
 
-		array_push( $arguments['setting_data'],$social_btn );
+		array_push( $arguments['setting_data'], $social_btn );
 		return $arguments;
 
-	 }
+	}
 }
 
 return new URSC_Admin();

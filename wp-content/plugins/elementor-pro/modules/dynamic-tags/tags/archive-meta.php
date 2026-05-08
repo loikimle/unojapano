@@ -1,14 +1,14 @@
 <?php
 namespace ElementorPro\Modules\DynamicTags\Tags;
 
-use ElementorPro\Modules\DynamicTags\Tags\Base\Tag;
+use ElementorPro\Modules\DynamicTags\Tags\Base\Pro_Tag;
 use ElementorPro\Modules\DynamicTags\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Archive_Meta extends Tag {
+class Archive_Meta extends Pro_Tag {
 
 	public function get_name() {
 		return 'archive-meta';
@@ -57,6 +57,9 @@ class Archive_Meta extends Tag {
 			'key',
 			[
 				'label' => esc_html__( 'Meta Key', 'elementor-pro' ),
+				'ai' => [
+					'active' => false,
+				],
 			]
 		);
 	}

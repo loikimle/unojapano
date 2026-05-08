@@ -54,6 +54,12 @@ class UR_AddOn_Updater {
 	 * @var bool
 	 */
 	private $wp_override = false;
+	/**
+	 * Beta.
+	 *
+	 * @var bool
+	 */
+	private $beta = false;
 
 	/**
 	 * Cache Key.
@@ -80,6 +86,11 @@ class UR_AddOn_Updater {
 	 * @param array  $_api_data    Optional data to send with API calls.
 	 */
 	public function __construct( $_api_url, $_plugin_file, $_api_data = null ) {
+		if ( function_exists( 'wp_get_current_user' ) ) {
+			if ( ! current_user_can( 'manage_options' ) ) {
+				return false;
+			}
+		}
 
 		global $edd_plugin_data;
 		$this->api_url  = trailingslashit( $_api_url );
@@ -109,7 +120,6 @@ class UR_AddOn_Updater {
 
 		// Set up hooks.
 		$this->init();
-
 	}
 
 	/**
@@ -126,7 +136,6 @@ class UR_AddOn_Updater {
 		remove_action( 'after_plugin_row_' . $this->name, 'wp_plugin_update_row', 10 );
 		add_action( 'after_plugin_row_' . $this->name, array( $this, 'show_update_notification' ), 10, 2 );
 		add_action( 'admin_init', array( $this, 'show_changelog' ) );
-
 	}
 
 	/**
@@ -303,7 +312,7 @@ class UR_AddOn_Updater {
 					/* translators: 1: Plugin Name, 2: Changelog Link, 3: New Version, 4: Link Close */
 					esc_html__( 'There is a new version of %1$s available. %2$sView version %3$s details%4$s.', 'user-registration' ),
 					esc_html( $version_info->name ),
-					'<a target="_blank" class="thickbox" href="' . esc_url( $changelog_link ) . '">',
+					'<a rel="noreferrer noopener" target="_blank" class="thickbox" href="' . esc_url( $changelog_link ) . '">',
 					esc_html( $version_info->new_version ),
 					'</a>'
 				);
@@ -312,7 +321,7 @@ class UR_AddOn_Updater {
 					/* translators: 1: Plugin Name, 2: Changelog Link, 3: New Version, 4: Link Close, 5: Upgrade Plugin Link, 6: Link Close */
 					esc_html__( 'There is a new version of %1$s available. %2$sView version %3$s details%4$s or %5$supdate now%6$s.', 'user-registration' ),
 					esc_html( $version_info->name ),
-					'<a target="_blank" class="thickbox" href="' . esc_url( $changelog_link ) . '">',
+					'<a rel="noreferrer noopener" target="_blank" class="thickbox" href="' . esc_url( $changelog_link ) . '">',
 					esc_html( $version_info->new_version ),
 					'</a>',
 					'<a href="' . esc_url( wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' ) . $this->name, 'upgrade-plugin_' . $this->name ) ) . '">',
@@ -320,6 +329,14 @@ class UR_AddOn_Updater {
 				);
 			}
 
+			/**
+			 * Fires PLugin Update Message based on File.
+			 *
+			 * @since 2.2.0
+			 *
+			 * @param array $plugin Array of Plugin data.
+			 * @param array $version_info Version info of Plugin.
+			 */
 			do_action( "in_plugin_update_message_{$file}", $plugin, $version_info );
 
 			echo '</div></td></tr>';
@@ -446,7 +463,6 @@ class UR_AddOn_Updater {
 			$args['sslverify'] = $verify_ssl;
 		}
 		return $args;
-
 	}
 
 	/**
@@ -478,11 +494,11 @@ class UR_AddOn_Updater {
 			if ( empty( $host ) ) {
 				$edd_plugin_url_available[ $store_hash ] = false;
 			} else {
-				$test_url = $scheme . '://' . $host . $port;
-				$response = wp_remote_get(
+				$test_url                                = $scheme . '://' . $host . $port;
+				$response                                = wp_remote_get(
 					$test_url,
 					array(
-						'timeout' => $this->health_check_timeout,
+						'timeout'   => $this->health_check_timeout,
 						'sslverify' => $verify_ssl,
 					)
 				);
@@ -516,12 +532,12 @@ class UR_AddOn_Updater {
 			'beta'       => ! empty( $data['beta'] ),
 		);
 
-		$request    = wp_remote_post(
+		$request = wp_remote_post(
 			$this->api_url,
 			array(
-				'timeout' => 15,
+				'timeout'   => 15,
 				'sslverify' => $verify_ssl,
-				'body' => $api_params,
+				'body'      => $api_params,
 			)
 		);
 
@@ -530,17 +546,17 @@ class UR_AddOn_Updater {
 		}
 
 		if ( $request && isset( $request->sections ) ) {
-			$request->sections = maybe_unserialize( $request->sections );
+			$request->sections = ur_maybe_unserialize( $request->sections );
 		} else {
 			$request = false;
 		}
 
 		if ( $request && isset( $request->banners ) ) {
-			$request->banners = maybe_unserialize( $request->banners );
+			$request->banners = ur_maybe_unserialize( $request->banners );
 		}
 
 		if ( $request && isset( $request->icons ) ) {
-			$request->icons = maybe_unserialize( $request->icons );
+			$request->icons = ur_maybe_unserialize( $request->icons );
 		}
 
 		if ( ! empty( $request->sections ) ) {
@@ -559,15 +575,15 @@ class UR_AddOn_Updater {
 
 		global $edd_plugin_data;
 
-		if ( empty( $_REQUEST['edd_sl_action'] ) || 'view_plugin_changelog' != $_REQUEST['edd_sl_action'] ) {
+		if ( empty( $_REQUEST['edd_sl_action'] ) || 'view_plugin_changelog' != $_REQUEST['edd_sl_action'] ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
-		if ( empty( $_REQUEST['plugin'] ) ) {
+		if ( empty( $_REQUEST['plugin'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
-		if ( empty( $_REQUEST['slug'] ) ) {
+		if ( empty( $_REQUEST['slug'] ) ) { //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 
@@ -575,9 +591,9 @@ class UR_AddOn_Updater {
 			wp_die( esc_html__( 'You do not have permission to install plugin updates', 'user-registration' ), esc_html__( 'Error', 'user-registration' ), array( 'response' => 403 ) );
 		}
 
-		$data         = $edd_plugin_data[ sanitize_key( wp_unslash( $_REQUEST['slug'] ) ) ];
+		$data         = $edd_plugin_data[ sanitize_key( wp_unslash( $_REQUEST['slug'] ) ) ]; //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$beta         = ! empty( $data['beta'] ) ? true : false;
-		$cache_key    = md5( 'edd_plugin_' . sanitize_key( $_REQUEST['plugin'] ) . '_' . $beta . '_version_info' );
+		$cache_key    = md5( 'edd_plugin_' . sanitize_key( $_REQUEST['plugin'] ) . '_' . $beta . '_version_info' ); //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$version_info = $this->get_cached_version_info( $cache_key );
 
 		if ( false === $version_info ) {
@@ -586,7 +602,7 @@ class UR_AddOn_Updater {
 				'edd_action' => 'get_version',
 				'item_name'  => isset( $data['item_name'] ) ? $data['item_name'] : false,
 				'item_id'    => isset( $data['item_id'] ) ? $data['item_id'] : false,
-				'slug'       => isset( $_REQUEST['slug'] ) ? sanitize_key( wp_unslash( $_REQUEST['slug'] ) ) : '',
+				'slug'       => isset( $_REQUEST['slug'] ) ? sanitize_key( wp_unslash( $_REQUEST['slug'] ) ) : '', //phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				'author'     => $data['author'],
 				'url'        => home_url(),
 				'beta'       => ! empty( $data['beta'] ),
@@ -653,7 +669,6 @@ class UR_AddOn_Updater {
 		}
 
 		return $cache['value'];
-
 	}
 
 	/**
@@ -674,7 +689,6 @@ class UR_AddOn_Updater {
 		);
 
 		update_option( $cache_key, $data, 'no' );
-
 	}
 
 	/**
@@ -684,6 +698,12 @@ class UR_AddOn_Updater {
 	 * @return bool
 	 */
 	private function verify_ssl() {
+		/**
+		 * Filter to verify SSL of EED_SL_API_REQUEST.
+		 *
+		 * @param class Addon Updater Class.
+		 * @param boolean Verify or not.
+		 */
 		return (bool) apply_filters( 'edd_sl_api_request_verify_ssl', true, $this );
 	}
 }

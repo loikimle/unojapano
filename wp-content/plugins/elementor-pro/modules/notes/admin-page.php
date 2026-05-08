@@ -2,12 +2,15 @@
 
 namespace ElementorPro\Modules\Notes;
 
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Settings;
+use ElementorPro\Base\Editor_One_Trait;
 use ElementorPro\Modules\Notes\Database\Models\Note;
+use ElementorPro\Modules\Notes\EditorOneMenuItems\Editor_One_Notes_Proxy_Menu_Item;
 use ElementorPro\Modules\Notes\User\Capabilities;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
 /**
@@ -16,18 +19,23 @@ if ( ! defined( 'ABSPATH' ) ) {
  * before accessing a Note (since Notes aren't available for unauthorized users).
  */
 class Admin_Page {
+	use Editor_One_Trait;
 
 	const PAGE_ID = 'elementor-pro-notes-proxy';
 
-	/**
-	 * Register actions and hooks.
-	 *
-	 * @return void
-	 */
+	const PRIORITY_AFTER_ELEMENTOR = 206;
+
 	public function register() {
+		if ( $this->is_editor_one_active() ) {
+			add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+				$menu_data_provider->register_menu( new Editor_One_Notes_Proxy_Menu_Item( $this ) );
+			} );
+			return;
+		}
+
 		add_action( 'admin_menu', function () {
 			$this->register_admin_menu();
-		}, 206 ); // After Elementor.
+		}, static::PRIORITY_AFTER_ELEMENTOR );
 
 		add_action( 'admin_head', function () {
 			$this->hide_menu_item();
@@ -81,7 +89,7 @@ class Admin_Page {
 		$note = Note::query()->find( (int) $_GET['note-id'] ); // phpcs:ignore: WordPress.Security.NonceVerification.Recommended
 
 		if ( ! $note ) {
-			$message = esc_html__( 'Oops, the note you are looking for cannot be found.', 'elementor-pro' );
+			$message = esc_html__( 'The note you are looking for was not found.', 'elementor-pro' );
 
 			$go_to_dashboard = '<a href="' . esc_url( get_admin_url() ) . '">' . esc_html__( 'Go to WP Dashboard', 'elementor-pro' ) . '</a>';
 			$view_site = '<a href="' . esc_url( get_site_url() ) . '">' . esc_html__( 'View Site', 'elementor-pro' ) . '</a>';

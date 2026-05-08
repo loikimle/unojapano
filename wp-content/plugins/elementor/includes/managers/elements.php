@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Experiments\Manager;
 use Elementor\Includes\Elements\Container;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,6 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 1.0.0
  */
 class Elements_Manager {
+
+	const CATEGORY_ATOMIC_ELEMENTS = 'v4-elements';
+	const CATEGORY_ATOMIC_FORM = 'atomic-form';
+	const CATEGORY_FAVORITES = 'favorites';
+	const CATEGORY_ANGIE_WIDGETS = 'angie-widgets';
 
 	/**
 	 * Element types.
@@ -36,7 +40,7 @@ class Elements_Manager {
 	 *
 	 * @access private
 	 *
-	 * @var
+	 * @var $categories
 	 */
 	private $categories;
 
@@ -68,13 +72,9 @@ class Elements_Manager {
 	 * @return Element_Base|null Element instance if element created, or null
 	 *                           otherwise.
 	 */
-	public function create_element_instance( array $element_data, array $element_args = [], Element_Base $element_type = null ) {
+	public function create_element_instance( array $element_data, array $element_args = [], ?Element_Base $element_type = null ) {
 		if ( null === $element_type ) {
-			if ( 'widget' === $element_data['elType'] ) {
-				$element_type = Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
-			} else {
-				$element_type = $this->get_element_types( $element_data['elType'] );
-			}
+			$element_type = $this->get_element( $element_data['elType'], isset( $element_data['widgetType'] ) ? $element_data['widgetType'] : null );
 		}
 
 		if ( ! $element_type ) {
@@ -89,6 +89,18 @@ class Elements_Manager {
 			$element = new $element_class( $element_data, $args );
 		} catch ( \Exception $e ) {
 			return null;
+		}
+
+		return $element;
+	}
+
+	public function get_element( string $el_type, ?string $widget_type = null ) {
+		$element = null;
+
+		if ( 'widget' === $el_type ) {
+			$element = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
+		} else {
+			$element = $this->get_element_types( $el_type );
 		}
 
 		return $element;
@@ -277,38 +289,84 @@ class Elements_Manager {
 	 */
 	private function init_categories() {
 		$this->categories = [
+			self::CATEGORY_ATOMIC_ELEMENTS => [
+				'title' => esc_html__( 'Atomic Elements', 'elementor' ),
+				'hideIfEmpty' => true,
+			],
+			'layout' => [
+				'title' => esc_html__( 'Layout', 'elementor' ),
+				'hideIfEmpty' => true,
+			],
 			'basic' => [
 				'title' => esc_html__( 'Basic', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
 			'pro-elements' => [
 				'title' => esc_html__( 'Pro', 'elementor' ),
+				'promotion' => [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
+				],
+			],
+			'helloplus' => [
+				'title' => esc_html__( 'Hello+', 'elementor' ),
+				'hideIfEmpty' => true,
 			],
 			'general' => [
 				'title' => esc_html__( 'General', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
+			'link-in-bio' => [
+				'title' => esc_html__( 'Link In Bio', 'elementor' ),
+				'hideIfEmpty' => true,
+			],
 			'theme-elements' => [
 				'title' => esc_html__( 'Site', 'elementor' ),
 				'active' => false,
+				'promotion' => [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-site-widget-panel/' ),
+				],
 			],
 			'woocommerce-elements' => [
 				'title' => esc_html__( 'WooCommerce', 'elementor' ),
 				'active' => false,
+				'promotion' => [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-woocommerce-widget-panel/' ),
+				],
 			],
 		];
 
-		// Not using the `add_category` because it doesn't allow 3rd party to inject a category on top the others.
-		if ( Plugin::instance()->experiments->is_feature_active( 'favorite-widgets' ) ) {
-			$this->categories = array_merge_recursive( [
-				'favorites' => [
-					'title' => esc_html__( 'Favorites', 'elementor' ),
-					'icon' => 'eicon-heart',
-					'sort' => 'a-z',
-					'hideIfEmpty' => false,
-				],
-			], $this->categories );
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' ) ) {
+			$atomic_form_category = [
+				'title' => esc_html__( 'Atomic Form', 'elementor' ),
+			];
+
+			if ( Utils::has_pro() && Plugin::$instance->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
+				$atomic_form_category['hideIfEmpty'] = true;
+			} elseif ( ! Utils::has_pro() ) {
+				$atomic_form_category['hideIfEmpty'] = false;
+				$atomic_form_category['promotion'] = [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-atomic-form-section/' ),
+				];
+			} else {
+				$atomic_form_category['hideIfEmpty'] = true;
+			}
+
+			$this->categories = array_merge(
+				[ self::CATEGORY_ATOMIC_ELEMENTS => $this->categories[ self::CATEGORY_ATOMIC_ELEMENTS ] ],
+				[ self::CATEGORY_ATOMIC_FORM => $atomic_form_category ],
+				array_diff_key( $this->categories, [ self::CATEGORY_ATOMIC_ELEMENTS => true ] )
+			);
 		}
+
+		// Not using the `add_category` because it doesn't allow 3rd party to inject a category on top the others.
+		$this->categories = array_merge_recursive( [
+			self::CATEGORY_FAVORITES => [
+				'title' => esc_html__( 'Favorites', 'elementor' ),
+				'icon' => 'eicon-heart',
+				'sort' => 'a-z',
+				'hideIfEmpty' => false,
+			],
+		], $this->categories );
 
 		/**
 		 * When categories are registered.
@@ -325,16 +383,60 @@ class Elements_Manager {
 		 */
 		do_action( 'elementor/elements/categories_registered', $this );
 
-		$this->categories['pojo'] = [
-			'title' => esc_html__( 'Pojo Themes', 'elementor' ),
-			'icon' => 'eicon-pojome',
-		];
+		$this->promote_category_after( self::CATEGORY_ANGIE_WIDGETS, [ self::CATEGORY_ATOMIC_FORM, self::CATEGORY_ATOMIC_ELEMENTS ] );
 
 		$this->categories['wordpress'] = [
 			'title' => esc_html__( 'WordPress', 'elementor' ),
 			'icon' => 'eicon-wordpress',
 			'active' => false,
 		];
+	}
+
+	public function enqueue_elements_styles() {
+		foreach ( $this->get_element_types() as $element ) {
+			$element->enqueue_styles();
+		}
+	}
+
+	public function enqueue_elements_scripts() {
+		foreach ( $this->get_element_types() as $element ) {
+			$element->enqueue_scripts();
+		}
+	}
+
+	public function register_frontend_handlers() {
+		foreach ( $this->get_element_types() as $element ) {
+			$element->register_frontend_handlers();
+		}
+	}
+
+	private function promote_category_after( string $category_name, array $after_candidates ): void {
+		if ( ! isset( $this->categories[ $category_name ] ) ) {
+			return;
+		}
+
+		$after = null;
+
+		foreach ( $after_candidates as $candidate ) {
+			if ( isset( $this->categories[ $candidate ] ) ) {
+				$after = $candidate;
+				break;
+			}
+		}
+
+		if ( ! $after ) {
+			return;
+		}
+
+		$category = $this->categories[ $category_name ];
+		unset( $this->categories[ $category_name ] );
+
+		$position = array_search( $after, array_keys( $this->categories ), true ) + 1;
+		$this->categories = array_merge(
+			array_slice( $this->categories, 0, $position, true ),
+			[ $category_name => $category ],
+			array_slice( $this->categories, $position, null, true )
+		);
 	}
 
 	/**

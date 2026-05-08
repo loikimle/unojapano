@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name: User Registration Style Customizer
- * Plugin URI: https://wpeverest.com/wordpress-plugins/user-registration/style-customizer
+ * Plugin URI: https://wpuserregistration.com/features/style-customizer
  * Description: Customize your User Registration elements with the WordPress Customizer.
- * Version: 1.0.4
+ * Version: 1.0.8
  * Author: WPEverest
- * UR requires at least: 1.7.0
- * UR tested up to: 2.0.0
+ * UR Pro requires at least: 4.0.0
+ * UR Pro tested up to: 4.2.0
  * Copyright: © 2017 WPEverest.
- * Author URI: https://wpeverest.com
+ * Author URI: https://wpuserregistration.com
  * Text Domain: user-registration-style-customizer
  * Domain Path: /languages/
  *
@@ -22,9 +22,17 @@ if ( ! defined( 'UR_STYLE_CUSTOMIZER_PLUGIN_FILE' ) ) {
 	define( 'UR_STYLE_CUSTOMIZER_PLUGIN_FILE', __FILE__ );
 }
 
+// Define UR_STYLE_CUSTOMIZER_VERSION.
+if ( ! defined( 'UR_STYLE_CUSTOMIZER_VERSION' ) ) {
+	define( 'UR_STYLE_CUSTOMIZER_VERSION', '1.0.8' );
+}
+
 // Include the main User_Registration_Two_Factor_Auth_Totp class.
 if ( ! class_exists( 'User_Registration_Style_Customizer' ) ) {
-	include_once dirname( __FILE__ ) . '/includes/class-user-registration-style-customizer.php';
+	include_once __DIR__ . '/includes/class-user-registration-style-customizer.php';
+}
+if ( ! defined( 'URSC_DS' ) ) {
+	define( 'URSC_DS', DIRECTORY_SEPARATOR );
 }
 
 // Initialize the plugin.

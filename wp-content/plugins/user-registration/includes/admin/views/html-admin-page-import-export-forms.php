@@ -10,12 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<h3 class="ur-settings-section-header main_header"></h3>
 <div class="ur-export-users-page">
 	<div class="nav-tab-content">
 		<div class="nav-tab-inside">
 				<div class="postbox">
-					<h3 class="hndle"><?php esc_html_e( 'EXPORT FORMS WITH SETTINGS', 'user-registration' ); ?></h3>
+					<h3 class="hndle"><?php esc_html_e( 'Export Forms With Settings', 'user-registration' ); ?></h3>
 
 					<div class="inside">
 						<p class="help">
@@ -23,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</p>
 
 						<p>
-							<select name="formid" class="ur-input forms-list">
+							<select name="formid[]" id="selected-export-forms" class="ur-input forms-list ur-select2-multiple" multiple>
 								<?php
 								foreach ( $all_forms as $form_id => $form ) {
 									echo '<option value ="' . esc_attr( $form_id ) . '">' . esc_html( $form ) . '</option>';
@@ -32,12 +31,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 							</select>
 						</p>
 
-						<input type="submit" class="button button-primary" name="user_registration_export_form" value="<?php esc_html_e( 'Export Forms', 'user-registration' ); ?>">
+						<input type="button" class="button button-primary ur_export_form_action_button" name="user_registration_export_form" value="<?php esc_html_e( 'Export Forms', 'user-registration' ); ?>">
 
 					</div>
 				</div><!-- .postbox -->
 				<div class="postbox">
-					<h3 class="hndle"><?php esc_html_e( 'IMPORT FORMS WITH SETTINGS', 'user-registration' ); ?></h3>
+					<h3 class="hndle"><?php esc_html_e( 'Import Forms With Settings', 'user-registration' ); ?></h3>
 
 					<div class="inside">
 						<p class="help">

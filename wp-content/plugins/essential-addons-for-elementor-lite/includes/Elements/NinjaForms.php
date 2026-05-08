@@ -54,6 +54,10 @@ class NinjaForms extends Widget_Base
         ];
     }
 
+    public function has_widget_inner_wrapper(): bool {
+        return ! Helper::eael_e_optimized_markup();
+    }
+
     public function get_custom_help_url()
     {
         return 'https://essential-addons.com/elementor/docs/ninja-forms/';
@@ -147,7 +151,7 @@ class NinjaForms extends Widget_Base
                         'custom_title_description'   => 'yes',
                     ],
                     'ai' => [
-                        'active' => false,
+                        'active' => true,
                     ],
                 ]
             );
@@ -1745,7 +1749,7 @@ class NinjaForms extends Widget_Base
         }
 
         if (!empty($settings['contact_form_list'])) {?>
-            <div <?php echo $this->get_render_attribute_string('contact-form'); ?>>
+            <div <?php $this->print_render_attribute_string('contact-form'); ?>>
                 <?php if ($settings['custom_title_description'] == 'yes') {?>
                     <div class="eael-ninja-form-heading">
                         <?php if ($settings['form_title_custom'] != '') {?>
@@ -1755,12 +1759,24 @@ class NinjaForms extends Widget_Base
                         <?php }?>
                         <?php if ($settings['form_description_custom'] != '') {?>
                             <div class="eael-contact-form-description eael-ninja-form-description">
-                                <?php echo $this->parse_text_editor($settings['form_description_custom']); ?>
+                                <?php
+                                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                                echo $this->parse_text_editor( wp_kses( $settings['form_description_custom'], Helper::eael_allowed_tags() ) ); ?>
                             </div>
                         <?php }?>
                     </div>
                 <?php }?>
-                <?php echo Ninja_Forms()->display($settings['contact_form_list']); ?>
+                <?php 
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                // Fix for Required Field span tag is getting escaped for more than one form in a single page
+                ob_start();
+                Ninja_Forms()->display($settings['contact_form_list']);
+                $form_html = ob_get_clean();
+
+                $form_html = preg_replace( '/&lt;span\s+class=(?:&quot;|"|\'|&#039;)ninja-forms-req-symbol(?:&quot;|"|\'|&#039;)\s*&gt;\*&lt;(?:\\\\)?\/span&gt;/', '<span class=\"ninja-forms-req-symbol\">*</span>', $form_html );
+                
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                echo $form_html; ?>
             </div>
             <?php
         }

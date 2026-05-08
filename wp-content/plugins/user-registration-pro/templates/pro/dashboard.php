@@ -15,11 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $all_forms = ur_get_all_user_registration_form();
 ?>
+<hr class="wp-header-end">
+<?php echo user_registration_plugin_main_header(); ?>
+
 <div class="wrap user-registration-pro-dashboard">
 	<div class="ur-container-full">
 		<div class="user-registration-pro-dashboard__header">
 			<div class="ur-d-flex ur-align-items-center ur-mb-2">
-				<h3 class="wp-heading-inline">User Registration Overview</h3>
+				<h3 class="wp-heading-inline urm-analytics-heading">User Registration Overview</h3>
 				<div class="major-publishing-actions wp-clearfix ur-ml-auto">
 					<div class="publishing-action">
 						<select class="user-registration-pro-dashboard-select-form">
@@ -50,7 +53,11 @@ $all_forms = ur_get_all_user_registration_form();
 			</div>
 		</div>
 		<div class="user-registration-pro-dashboard__body">
+			<?php
+			echo user_registration_pro_analytics_body(); //phpcs:ignore
+			?>
 		</div>
+
 		<div class="user-registration-pro-dashboard__footer">
 		</div>
 	</div>

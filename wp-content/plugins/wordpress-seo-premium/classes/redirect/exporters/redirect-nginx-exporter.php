@@ -43,7 +43,7 @@ class WPSEO_Redirect_Nginx_Exporter extends WPSEO_Redirect_File_Exporter {
 			$redirect->get_origin(),
 			$redirect->get_target(),
 			$redirect->get_type(),
-			$this->add_x_redirect_header()
+			$this->add_x_redirect_header(),
 		);
 	}
 
@@ -61,7 +61,7 @@ class WPSEO_Redirect_Nginx_Exporter extends WPSEO_Redirect_File_Exporter {
 		 *
 		 * @since 12.9.0
 		 *
-		 * @api bool
+		 * @param bool $add_xredirect
 		 */
 		if ( apply_filters( 'Yoast\WP\SEO\add_x_redirect', true ) === true ) {
 			return 'add_header X-Redirect-By "Yoast SEO Premium";';

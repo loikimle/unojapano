@@ -119,14 +119,11 @@ class Manager {
 	/**
 	 * Get class path for default settings managers.
 	 *
-	 * @param $manager_name
-	 *
 	 * @return string
 	 * @since  3.0.0
 	 * @access private
 	 * @static
 	 */
-
 	private static function get_manager_class( $manager_name ) {
 		return __NAMESPACE__ . '\\' . ucfirst( $manager_name ) . '\Manager';
 	}
