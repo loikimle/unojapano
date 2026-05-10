@@ -1,0 +1,933 @@
+body.user-registration-membership_page_user-registration-login-forms #user-registration:not(.user-registration-MyAccount) .ur-button-container .ur-submit-button,
+body.user-registration-membership_page_user-registration-login-forms .user-registration:not(.user-registration-MyAccount) .ur-button-container .ur-submit-button,
+body.user-registration-page #user-registration:not(.user-registration-MyAccount) .ur-button-container .ur-submit-button,
+body.user-registration-page .user-registration:not(.user-registration-MyAccount) .ur-button-container .ur-submit-button {
+    border: 1px solid var(--ur-button-background-normal-color, #dd3333);
+    background: var(--ur-button-background-normal-color, #dd3333);
+}
+
+body.user-registration-membership_page_user-registration-login-forms #user-registration:not(.user-registration-MyAccount) .ur-button-container .ur-submit-button:hover,
+body.user-registration-membership_page_user-registration-login-forms .user-registration:not(.user-registration-MyAccount) .ur-button-container .ur-submit-button:hover,
+body.user-registration-page #user-registration:not(.user-registration-MyAccount) .ur-button-container .ur-submit-button:hover,
+body.user-registration-page .user-registration:not(.user-registration-MyAccount) .ur-button-container .ur-submit-button:hover {
+    background: var(--ur-button-background-normal-color, #ab0101);
+    border: 1px solid var(--ur-button-background-normal-color, #ab0101);
+}
+
+/* Unified "primary" submit look for User Registration forms.
+   Covers:
+   - Sign Up:        button.btn.button.ur-submit-button
+   - AJAX profile:   button.user-registration-submit-Button.btn.button
+   - Edit profile:   input.user-registration-Button.button[name=save_account_details]
+   - Change password:input.user-registration-Button.button[name=save_change_password]
+   - Reset password: input.user-registration-Button.button.ur-reset-password-btn
+   - Login:          .user-registration-Button.button.ur-submit-button (already styled in main.css)
+*/
+#user-registration .ur-button-container .ur-submit-button,
+#user-registration .ur-frontend-form .ur-button-container .btn.button.ur-submit-button,
+.user-registration .ur-button-container .ur-submit-button,
+.user-registration .ur-frontend-form .ur-button-container .btn.button.ur-submit-button,
+#user-registration button.user-registration-submit-Button.btn.button,
+.user-registration button.user-registration-submit-Button.btn.button,
+form.user-registration-EditProfileForm button.user-registration-submit-Button.btn.button,
+#user-registration input.user-registration-Button.button,
+#user-registration button.user-registration-Button.button,
+.user-registration input.user-registration-Button.button,
+.user-registration button.user-registration-Button.button,
+.ur-frontend-form input.user-registration-Button.button,
+.ur-frontend-form button.user-registration-Button.button,
+form.user-registration-ResetPassword input.user-registration-Button.button,
+input.user-registration-Button.button[name="save_account_details"],
+input.user-registration-Button.button[name="save_change_password"] {
+    border: 1px solid var(--ur-button-background-normal-color, #dd3333) !important;
+    background: var(--ur-button-background-normal-color, #dd3333) !important;
+    color: var(--ur-button-text-normal-color, #fff) !important;
+    border-radius: 4px !important;
+    padding: 15px 40px !important;
+    line-height: 1.25 !important;
+    box-sizing: border-box !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    transition: background-color .2s ease, border-color .2s ease;
+}
+
+#user-registration .ur-button-container .ur-submit-button:hover,
+#user-registration .ur-frontend-form .ur-button-container .btn.button.ur-submit-button:hover,
+.user-registration .ur-button-container .ur-submit-button:hover,
+.user-registration .ur-frontend-form .ur-button-container .btn.button.ur-submit-button:hover,
+#user-registration button.user-registration-submit-Button.btn.button:hover,
+.user-registration button.user-registration-submit-Button.btn.button:hover,
+form.user-registration-EditProfileForm button.user-registration-submit-Button.btn.button:hover,
+#user-registration input.user-registration-Button.button:hover,
+#user-registration button.user-registration-Button.button:hover,
+.user-registration input.user-registration-Button.button:hover,
+.user-registration button.user-registration-Button.button:hover,
+.ur-frontend-form input.user-registration-Button.button:hover,
+.ur-frontend-form button.user-registration-Button.button:hover,
+form.user-registration-ResetPassword input.user-registration-Button.button:hover,
+input.user-registration-Button.button[name="save_account_details"]:hover,
+input.user-registration-Button.button[name="save_change_password"]:hover {
+    background: var(--ur-button-background-normal-color, #ab0101) !important;
+    border-color: var(--ur-button-background-normal-color, #ab0101) !important;
+    color: var(--ur-button-text-normal-color, #fff) !important;
+}
+
+/* Login button: 47% width, centered */
+#user-registration .ur-frontend-form .user-registration-form-login .ur-form-row .ur-form-grid>div:not(#ur-recaptcha-node) .user-registration-Button {
+    display: block !important;
+    width: 47% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    float: none !important;
+    margin: 0 auto !important;
+}
+
+#user-registration .ur-frontend-form .user-registration-form-login .ur-form-row .ur-form-grid>div[data-field="login-button"] {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+    float: none !important;
+    margin: 15px 0 !important;
+    padding: 0 !important;
+}
+
+/* Reset password button: 47% width, centered */
+.ur-frontend-form .user-registration-Button.button.ur-reset-password-btn,
+.ur-frontend-form.login .user-registration-Button.button.ur-reset-password-btn,
+input.user-registration-Button.button.ur-reset-password-btn {
+    display: block !important;
+    width: 47% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    float: none !important;
+    margin: 15px auto !important;
+    padding: 10px 24px !important;
+}
+
+/* Sign Up (registration) button: 47% width, centered — same as Login */
+.user-registration .ur-frontend-form .ur-button-container>.ur-submit-button,
+.user-registration .ur-frontend-form .ur-button-container>button.ur-submit-button,
+.ur-frontend-form .ur-button-container .btn.button.ur-submit-button {
+    display: block !important;
+    width: 47% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    float: none !important;
+    margin: 15px auto !important;
+}
+
+.ur-frontend-form .ur-button-container {
+    width: 100% !important;
+    text-align: center !important;
+}
+
+/* "Save changes" buttons (Change Password & Edit Profile): center only the
+   button's wrapping <p>, not the field rows above it. */
+form.user-registration-EditAccountForm.edit-password p:not(.user-registration-form-row):not(.form-row),
+form.user-registration-EditProfileForm.edit-profile p:not(.user-registration-form-row):not(.form-row),
+form.user-registration-EditAccountForm.edit-password p:has(> input[type="submit"]),
+form.user-registration-EditProfileForm.edit-profile p:has(> input[type="submit"]),
+form.user-registration-EditAccountForm.edit-password .ur-button-container,
+form.user-registration-EditProfileForm.edit-profile .ur-button-container {
+    text-align: center !important;
+}
+
+form.user-registration-EditAccountForm.edit-password input.user-registration-Button[name="save_change_password"],
+form.user-registration-EditProfileForm.edit-profile input.user-registration-Button[name="save_account_details"],
+form.user-registration-EditProfileForm.edit-profile button.user-registration-submit-Button[name="save_account_details"],
+input.user-registration-Button[name="save_change_password"],
+input.user-registration-Button[name="save_account_details"] {
+    display: inline-block !important;
+    float: none !important;
+    margin: 15px auto !important;
+}
+
+/* Lost password & "Register" link colors: brand red instead of plugin blue */
+body.user-registration-membership_page_user-registration-login-forms #user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-before-login-btn .user-registration-LostPassword a,
+body.user-registration-membership_page_user-registration-login-forms .user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-before-login-btn .user-registration-LostPassword a,
+body.user-registration-page #user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-before-login-btn .user-registration-LostPassword a,
+body.user-registration-page .user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-before-login-btn .user-registration-LostPassword a,
+body.user-registration-membership_page_user-registration-login-forms #user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-register a,
+body.user-registration-membership_page_user-registration-login-forms .user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-register a,
+body.user-registration-page #user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-register a,
+body.user-registration-page .user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-register a,
+body .user-registration-LostPassword a,
+body .user-registration-register a {
+    color: #dd3333 !important;
+}
+
+body.user-registration-membership_page_user-registration-login-forms #user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-before-login-btn .user-registration-LostPassword a:hover,
+body.user-registration-membership_page_user-registration-login-forms .user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-before-login-btn .user-registration-LostPassword a:hover,
+body.user-registration-page #user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-before-login-btn .user-registration-LostPassword a:hover,
+body.user-registration-page .user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-before-login-btn .user-registration-LostPassword a:hover,
+body.user-registration-membership_page_user-registration-login-forms #user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-register a:hover,
+body.user-registration-membership_page_user-registration-login-forms .user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-register a:hover,
+body.user-registration-page #user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-register a:hover,
+body.user-registration-page .user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-register a:hover,
+body .user-registration-LostPassword a:hover,
+body .user-registration-register a:hover {
+    color: #ab0101 !important;
+}
+
+/* Social login (Google/Facebook/etc.) button: auto width instead of 47% */
+body .user-registration-social-connect-networks .ursc-network-lists.ursc_theme_4 .ursc-login-media,
+body.user-registration-membership_page_user-registration-login-forms #user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-social-connect-networks .ursc-network-lists.ursc_theme_4 .ursc-login-media,
+body.user-registration-membership_page_user-registration-login-forms .user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-social-connect-networks .ursc-network-lists.ursc_theme_4 .ursc-login-media,
+body.user-registration-page #user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-social-connect-networks .ursc-network-lists.ursc_theme_4 .ursc-login-media,
+body.user-registration-page .user-registration:not(.user-registration-MyAccount) .ur-frontend-form .user-registration-form .ur-form-row .ur-form-grid .user-registration-social-connect-networks .ursc-network-lists.ursc_theme_4 .ursc-login-media {
+    width: auto !important;
+}
+
+
+#main-content-row .entry-content .learndash-wrapper {
+    padding-top: 0;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    min-height: 950px
+}
+
+
+.log-message,
+.lost_password,
+.lost_password a,
+.lost_reset_password p:not(.form-row),
+.woocommerce-orders-table thead th,
+.woocommerce-Reviews .comment-notes,
+form.track_order p:not(.form-row) {
+    font-size: 13px
+}
+
+@media (max-width:767px) {
+    .fb_dialog_content>iframe {
+        margin: 0 0 60px !important
+    }
+}
+
+@media (min-width:768px) {
+    .fb_dialog_content>iframe {
+        margin: 0 0 30px !important
+    }
+}
+
+@media (max-width:480px) {
+    .uj-home-banner-desktop {
+        display: none
+    }
+
+    .uj-home-banner-mobile {
+        display: block
+    }
+}
+
+@media (min-width:480px) {
+    .uj-home-banner-desktop {
+        display: block
+    }
+
+    .uj-home-banner-mobile {
+        display: none
+    }
+}
+
+#mobile-menu li a,
+.header-menu .menu .sub-menu a,
+.main-menu .menu>li>a,
+.main-menu .menu ul a {
+    text-decoration: none !important
+}
+
+.topbar-wrapper div {
+    margin: auto
+}
+
+.topbar-wrapper ul {
+    margin: 10px
+}
+
+.entry-title,
+.page-title,
+.post-title,
+.post-title.entry-title {
+    color: #d33
+}
+
+@media (max-width:991px) {
+    #theme-header.has-normal-width-logo #logo {
+        margin: 5px !important
+    }
+
+    .jts-banner-desktop {
+        display: none !important
+    }
+
+    .jts-banner-mobile {
+        display: block !important
+    }
+}
+
+@media (min-width:992px) {
+    .theme-header .fixed-nav:not(.just-before-sticky) {
+        line-height: 70px !important
+    }
+
+    .main-nav-dark .main-menu .menu>li a {
+        font-size: 14px
+    }
+
+    .jts-banner-desktop {
+        display: block !important
+    }
+
+    .jts-banner-mobile {
+        display: none !important
+    }
+}
+
+.side-aside::-webkit-scrollbar {
+    display: none
+}
+
+.side-aside {
+    -ms-overflow-style: none;
+    scrollbar-width: none
+}
+
+.wpml-ls-menu-item .wpml-ls-flag+span,
+.wpml-ls-native {
+    margin-left: .5em !important
+}
+
+.tidio-135wcf7 {
+    display: none !important
+}
+
+.wpml-ls-legacy-dropdown-click {
+    width: auto;
+    padding-top: 3px
+}
+
+#mobile-header-components-area_2 .components li.custom-menu-link>a {
+    margin-left: 5px
+}
+
+.wpml-ls-legacy-dropdown-click .wpml-ls-current-language:hover>a,
+.wpml-ls-legacy-dropdown-click a,
+.wpml-ls-legacy-dropdown-click a:focus,
+.wpml-ls-legacy-dropdown-click a:hover {
+    background-color: unset;
+    border: none
+}
+
+@media (max-width:479px) {
+
+    .boxed-slider-wrapper .slide,
+    .wide-slider-wrapper .slide {
+        height: 500px
+    }
+
+    #tie-block_865,
+    #tie-block_906,
+    #tie-block_1984,
+    #tie-block_2601 {
+        display: block
+    }
+
+    #tie-block_360,
+    #tie-block_499,
+    #tie-block_1284,
+    #tie-block_1784 {
+        display: none
+    }
+}
+
+@media (min-width:480px) {
+
+    #tie-block_865,
+    #tie-block_906,
+    #tie-block_1984,
+    #tie-block_2601 {
+        display: none
+    }
+
+    #tie-block_360,
+    #tie-block_499,
+    #tie-block_1284,
+    #tie-block_1784 {
+        display: block
+    }
+}
+
+.is-slider-overlay-disabled .thumb-overlay,
+.wide-slider-wrapper .thumb-overlay {
+    display: none
+}
+
+#ur-frontend-form form.user-registration-form.user-registration-form-login.login label,
+#uj_accept_terms_field span.description {
+    color: #222 !important;
+}
+
+#user-registration-form-2925,
+#user-registration.user-registration #ur-frontend-form {
+    border-radius: 10px;
+    max-width: 520px;
+    margin: auto;
+}
+
+.ur-button-container {
+    width: 100% !important;
+}
+
+.ur-submit-button {
+    margin: auto !important;
+}
+
+#ur-frontend-form form.user-registration-ResetPassword.lost_reset_password div.ur-form-row input[type=submit],
+#ur-frontend-form form.user-registration-ResetPassword.lost_reset_password input[type=submit] {
+    float: none !important;
+}
+
+.ur-frontend-form button,
+.ur-frontend-form button[type=submit],
+.ur-frontend-form input[type=submit] {
+    float: none !important;
+}
+
+.user-registration-profile-header {
+    display: none !important;
+}
+
+#ur-frontend-form form.user-registration-ResetPassword.lost_reset_password,
+#ur-frontend-form form.user-registration-ResetPassword.lost_reset_password div.ur-form-row {
+    width: 100%
+}
+
+.ur-form-row {
+    margin-bottom: 0;
+}
+
+#user-registration .user-registration-MyAccount-content .ur-frontend-form .user-registration-EditProfileForm .user-registration-profile-fields>p {
+    float: none !important;
+}
+
+#user-registration.horizontal .user-registration-MyAccount-navigation-link.is-active a {
+    border-bottom: 3px solid #dd3333 !important;
+    color: #dd3333 !important;
+}
+
+#user-registration.horizontal .user-registration-MyAccount-navigation-link a:hover {
+    color: #dd3333 !important;
+}
+
+#user-registration .ur-frontend-form .user-registration-form-login .ur-form-row .ur-form-grid>div:not(#ur-recaptcha-node) .user-registration-Button {
+    display: block !important;
+    width: 47% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    float: none !important;
+    margin: 0 auto !important;
+}
+
+#user-registration .ur-frontend-form .user-registration-form-login .ur-form-row .ur-form-grid>div[data-field="login-button"] {
+    display: block !important;
+    width: 100% !important;
+    text-align: center !important;
+    float: none !important;
+    margin: 15px 0 !important;
+    padding: 0 !important;
+}
+
+/*
+
+
+input#rememberme {
+    margin: 0 12px
+}
+
+.ur-frontend-form .ur-form-row .ur-form-grid label,
+.ur-frontend-form .ur-form-row .ur-form-grid legend,
+.user-registration #ur-recaptcha-node {
+    margin: 20px 0
+}
+
+p.lost_password a,
+p.user-registration-register.register a {
+    text-decoration: none
+}
+
+p.lost_password a {
+    font-size: 14px
+}
+
+.ur-frontend-form .ur-form-row .ur-form-grid label.ur-label,
+.ur-frontend-form .ur-form-row .ur-form-grid legend.ur-label {
+    font-weight: 400
+}
+
+#uj_accept_terms_field .description {
+    padding: 0 10px
+}
+
+#user-registration {
+    background: none
+}
+
+#user-registration a {
+    text-decoration: none
+}
+
+#user-registration fieldset {
+    border: none
+}
+
+.user-registration-error li,
+.user-registration-error ul,
+.user-registration-info li,
+.user-registration-info ul,
+.user-registration-message li,
+.user-registration-message ul {
+    display: inline
+}
+
+#uj_accept_terms_field .description a,
+#uj_log_in_html a {
+    text-decoration: none
+}
+
+.ur-frontend-form .ur-button-container .ur-submit-button {
+    margin: 15px 0;
+    font-weight: 700
+}
+
+.ur-frontend-form .ur-form-row .ur-form-grid .ur-label.checkbox {
+    padding: 0 20px
+}
+
+#uj_accept_terms,
+#uj_mailchimp,
+#user_registration_uj_accept_terms {
+    margin: 6px 0 0 -20px
+}
+
+@media screen and (min-width:600px) {
+    .swal2-show {
+        width: 50vw
+    }
+
+    #crop_container,
+    .user-registration-page .jcrop-holder,
+    .user-registration-page .jcrop-holder>div:first-child {
+        max-width: 45vw !important;
+        max-height: 45vh !important
+    }
+
+    .user-registration-page .jcrop-holder>div:first-child img,
+    .user-registration-page .jcrop-holder img {
+        max-height: 45vh !important
+    }
+
+    .user-registration-page .jcrop-holder img {
+        -o-object-fit: contain;
+        object-fit: contain;
+        max-width: 45vw !important;
+        max-height: 45vh !important
+    }
+
+    .user-registration-page .jcrop-tracker {
+        max-width: 45vw !important
+    }
+}
+
+@media screen and (max-width:600px) {
+
+    #crop_container,
+    .user-registration-page .jcrop-holder,
+    .user-registration-page .jcrop-holder>div:first-child {
+        max-width: 80vw !important;
+        max-height: 50vh !important
+    }
+
+    .user-registration-page .jcrop-holder>div:first-child img,
+    .user-registration-page .jcrop-holder img {
+        max-height: 50vh !important
+    }
+
+    .user-registration-page .jcrop-holder img {
+        -o-object-fit: contain;
+        object-fit: contain;
+        max-width: 80vw !important;
+        max-height: 50vh !important
+    }
+
+    .user-registration-page .jcrop-tracker {
+        max-width: 80vw !important
+    }
+}
+
+@media screen and (min-width:991px) {
+
+    #ur-frontend-form form.user-registration-form.user-registration-form-login.login,
+    #user-registration-form-2925 form.register {
+        width: 70%;
+        margin: auto
+    }
+
+    #user-registration-form-2925,
+    #user-registration.user-registration #ur-frontend-form {
+        padding: 50px
+    }
+}
+
+.ur-frontend-form.ur-frontend-form--flat form .ur-form-row .ur-form-grid label {
+    color: #5f9ea0;
+    font-size: 14px;
+    font-weight: 700
+}
+
+#resend-email {
+    display: block;
+    margin: 15px;
+    font-weight: bolder
+}
+
+.user-registration-MyAccount-content p {
+    color: inherit !important
+}
+
+p input.user-registration-Button {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 50px 0;
+    font-weight: 700
+}
+
+.user-registration-EditAccountForm.edit-password input.user-registration-Button,
+.user-registration-profile-fields p input.user-registration-Button {
+    margin-top: 70px
+}
+
+#user-registration.horizontal .user-registration-MyAccount-content .edit-password,
+#user-registration.horizontal .user-registration-MyAccount-content .edit-profile {
+    padding-top: 30px
+}
+
+#user-registration .user-registration-MyAccount-content .edit-password legend,
+#user-registration .user-registration-MyAccount-content h2 {
+    border-bottom: none
+}
+
+#user-registration input {
+    border-radius: 30px
+} */
+
+@media screen and (max-width:480px) {
+    .dwqa-question-filter .dwqa-sort-by {
+        float: none
+    }
+
+    .dwqa-questions-list {
+        margin-top: 10px
+    }
+
+    .dwqa-question-item .dwqa-question-meta {
+        margin-top: 20px
+    }
+}
+
+.dwqa-comment-hide input {
+    padding: 10px 30px
+}
+
+.dwqa-answers .dt-btn,
+.dwqa-answers .dt-btn-m,
+.dwqa-container .dt-btn,
+.dwqa-container .dt-btn-m {
+    width: 133px;
+    float: left;
+    margin: 1em 0
+}
+
+.dwqa-comment-form .comment-form p:last-child {
+    display: none
+}
+
+.dwqa-ask-question a,
+.dwqa-questions-footer .dwqa-ask-question a {
+    padding: 10px 20px;
+    border-radius: 4px;
+    background-color: #d33;
+    color: #fff !important
+}
+
+.dwqa-questions-footer {
+    text-align: center
+}
+
+.dwqa-ask-question a:hover {
+    color: #fff !important;
+    background-color: #ab0101
+}
+
+button,
+input[type=button],
+input[type=reset],
+input[type=submit] {
+    border: none
+}
+
+.dwqa-answer-form form {
+    text-align: center
+}
+
+.dwqa-answer-form form input.dwqa-btn.dwqa-btn-primary {
+    width: 130px;
+    font-weight: 500;
+    padding: 10px
+}
+
+form.dwqa-content-ask-form input.dwqa-btn.dwqa-btn-primary {
+    width: 130px;
+    margin: 30px 0;
+    padding: 10px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 500
+}
+
+.dwqa-question-filter .dwqa-sort-by {
+    height: 32px
+}
+
+.dwqa-answer-form-title {
+    border-top: none;
+    margin: 30px 0;
+    font-weight: 700
+}
+
+.dwqa-container #wp-dwqa-answer-content-editor-tools .wp-editor-tabs,
+.dwqa-container #wp-question-content-editor-tools .wp-editor-tabs {
+    display: none
+}
+
+.dwqa-user-profile a {
+    text-decoration: none
+}
+
+div.dwqa-question-filter a {
+    border-radius: 10px
+}
+
+div.dwqa-question-filter a.active {
+    color: #fff !important
+}
+
+.dwqa-question-filter a.open {
+    color: #f7733c !important
+}
+
+.dwqa-question-filter a.resolved {
+    color: #2bc69e !important
+}
+
+.dwqa-question-filter a.closed {
+    color: #666 !important
+}
+
+.dwqa-question-filter a.unanswered {
+    color: #cb2027 !important
+}
+
+.dwqa-question-filter a.my-questions {
+    color: #3b5998 !important
+}
+
+.dwqa-select {
+    margin: 20px 0
+}
+
+.dwqa-question-filter a.my-subscribes {
+    color: #0f52ba
+}
+
+#dwqa-attachments-add-button-upload {
+    color: inherit
+}
+
+#dwqa-attachments-add-button-upload:hover {
+    text-decoration: none;
+    color: #ab0101
+}
+
+div.dwqa-questions-list .dwqa-question-item {
+    background-color: rgba(144, 212, 237, .2);
+    border-radius: 10px
+}
+
+.dwqa-question-item .dwqa-question-title a {
+    font-size: 1.5rem;
+    color: inherit !important
+}
+
+.dwqa-answers-login {
+    background-color: rgba(144, 212, 237, .2);
+    border-radius: 10px;
+    margin-top: 10px
+}
+
+.dwqa-answers-login .login-submit #wp-submit {
+    padding: 10px 20px
+}
+
+.dwqa-answers-login #loginform #user_login,
+.dwqa-answers-login #loginform #user_pass {
+    width: 200px
+}
+
+.dwqa-container .dwqa-question-item {
+    border-radius: 10px
+}
+
+.dwqa-comments .dwqa-comment-form,
+.dwqa-comments .dwqa-comments-list {
+    background-color: unset
+}
+
+.dwqa-comments .dwqa-comments-list .dwqa-comment {
+    border-bottom: none
+}
+
+@media (max-width:480px) {
+
+    .single-dwqa-question .dwqa-answer-item .dwqa-answer-meta,
+    .single-dwqa-question .dwqa-question-item .dwqa-question-meta {
+        background-color: unset
+    }
+}
+
+@media screen and (max-width:767px) {
+    .learndash-wrapper .ld-quiz-actions {
+        display: grid
+    }
+}
+
+.learndash-wrapper .wpProQuiz_content a#quiz_continue_link {
+    padding: 14px;
+    font-size: 14px;
+    min-width: 150px;
+    max-width: 250px;
+    font-weight: 500;
+    border-radius: 4px;
+    background-color: #d33;
+    text-transform: capitalize;
+    margin: 0
+}
+
+.learndash-wrapper .wpProQuiz_content .wpProQuiz_button,
+.learndash-wrapper .wpProQuiz_content .wpProQuiz_text div {
+    text-align: -webkit-center;
+    padding: 1em
+}
+
+.learndash-wrapper #quiz_continue_link,
+.learndash-wrapper #quiz_continue_link:hover,
+.learndash-wrapper .wpProQuiz_content .wpProQuiz_button_reShowQuestion:hover,
+.learndash-wrapper .wpProQuiz_content .wpProQuiz_button_restartQuiz:hover,
+.learndash-wrapper .wpProQuiz_content a#quiz_continue_link,
+.learndash-wrapper .wpProQuiz_content a#quiz_continue_link:hover {
+    background-color: #d33
+}
+
+#wpProQuiz_user_content table.wp-list-table tbody tr th,
+#wpProQuiz_user_content table.wp-list-table tbody tr th p,
+#wpProQuiz_user_content table.wp-list-table tfoot tr th,
+.learndash-wrapper .wpProQuiz_reviewDiv .wpProQuiz_reviewQuestion li,
+.wpProQuiz_content .wpProQuiz_reviewQuestion li {
+    color: #000
+}
+
+.learndash-wrapper .wpProQuiz_content .wpProQuiz_time_limit .time {
+    color: #d33
+}
+
+.sticky-timer {
+    position: fixed !important;
+    top: 80px;
+    min-width: 40%;
+    margin: 0;
+    z-index: 9999;
+    left: 50%;
+    transform: translate(-50%)
+}
+
+@media (min-width:992px) {
+    .sticky-timer {
+        max-width: 780px
+    }
+}
+
+@media (max-width:991px) {
+    .sticky-timer {
+        min-width: 70%
+    }
+}
+
+div.ld-quiz-progress-content-container p {
+    background-color: rgba(144, 212, 237, .2);
+    border-radius: 10px;
+    padding: 20px
+}
+
+#wpProQuiz_overlay_close {
+    position: static !important;
+    max-width: 180px;
+    border-radius: 4px
+}
+
+#wpProQuiz_user_content h2 {
+    color: #ab0101
+}
+
+.learndash-wrapper .wpProQuiz_content .wpProQuiz_button,
+.learndash-wrapper .wpProQuiz_content .wpProQuiz_button2,
+.wpProQuiz_button.wpProQuiz_button_reShowQuestion,
+.wpProQuiz_button.wpProQuiz_button_restartQuiz {
+    font-size: 14px !important;
+    padding: 14px;
+    font-weight: 500;
+    border-radius: 4px;
+    background-color: #004268;
+    float: none !important;
+    margin: auto;
+    min-width: 150px;
+    max-width: 250px;
+    text-transform: capitalize
+}
+
+.learndash-wrapper .ld-quiz-actions input[name=reShowQuestion],
+.learndash-wrapper .ld-quiz-actions input[name=restartQuiz] {
+    padding: 14px;
+    font-size: 14px !important;
+    text-transform: capitalize
+}
+
+.learndash-wrapper .wpProQuiz_content .wpProQuiz_button2:hover,
+.learndash-wrapper .wpProQuiz_content .wpProQuiz_button:hover {
+    background-color: #004268
+}
+
+.uj-quiz-signin p {
+    font-size: 16px
+}
+
+.uj-quiz-signin a {
+    background: #004268;
+    padding: 15px 30px;
+    border-radius: 4px;
+    color: #fff !important;
+    margin: 10px
+}

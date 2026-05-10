@@ -9,10 +9,17 @@ add_action( 'wp_enqueue_scripts', 'ujEnqueueStyles', 9999 );
  * Enqueue Uno Japano main stylesheet and script
  */
 function ujEnqueueStyles() {
-	$uno_japano_main_style  = 'uno-japano-main-style';
-	$uno_japano_main_script = 'uno-japano-main-script';
+	$uno_japano_main_style   = 'uno-japano-main-style';
+	$uno_japano_custom_style = 'uno-japano-custom-style';
+	$uno_japano_main_script  = 'uno-japano-main-script';
+	$main_css_path           = get_stylesheet_directory() . '/assets/dist/css/main.css';
+	$custom_css_path         = get_stylesheet_directory() . '/assets/custom.css';
+	$main_css_ver            = file_exists( $main_css_path ) ? filemtime( $main_css_path ) : '1.1.0';
+	$custom_css_ver          = file_exists( $custom_css_path ) ? filemtime( $custom_css_path ) : '1.1.0';
 	wp_enqueue_style( $uno_japano_main_style, get_stylesheet_directory_uri() . '/assets/dist/css/main.css', '',
-		'1.1.0' );
+		$main_css_ver );
+	wp_enqueue_style( $uno_japano_custom_style, get_stylesheet_directory_uri() . '/assets/custom.css', array( $uno_japano_main_style ),
+		$custom_css_ver );
 	wp_enqueue_script( $uno_japano_main_script, get_stylesheet_directory_uri() . '/assets/dist/js/main.js',
 		[ 'jquery' ], '',
 		true );
@@ -38,6 +45,88 @@ function ujEnqueueStyles() {
 
 	}
 }
+
+/**
+ * After core lost-password POST, wp-login.php redirects using redirect_to or a
+ * relative default `wp-login.php?checkemail=confirm` (see wp-login.php ~841–844).
+ * That relative URL is resolved against the current path (e.g. /lost-password/) and 404s.
+ * The `lostpassword_redirect` filter only affects the hidden field on GET, not that redirect.
+ *
+ * We send users to WooCommerce's `lost-password` endpoint on the My Account page.
+ */
+function uj_get_lost_password_redirect_url() {
+	if ( function_exists( 'wc_lostpassword_url' ) ) {
+		$wc_url = wc_lostpassword_url();
+		if ( is_string( $wc_url ) && $wc_url !== '' ) {
+			return add_query_arg( 'reset-link-sent', 'true', $wc_url );
+		}
+	}
+	if ( function_exists( 'wc_get_endpoint_url' ) && function_exists( 'wc_get_page_permalink' ) ) {
+		$endpoint = get_option( 'woocommerce_myaccount_lost_password_endpoint', 'lost-password' );
+		$base     = wc_get_page_permalink( 'myaccount' );
+		if ( $base ) {
+			return add_query_arg( 'reset-link-sent', 'true', wc_get_endpoint_url( $endpoint, '', $base ) );
+		}
+	}
+	return add_query_arg( 'reset-link-sent', 'true', home_url( '/my-account/lost-password/' ) );
+}
+
+add_filter(
+	'lostpassword_redirect',
+	function () {
+		return uj_get_lost_password_redirect_url();
+	},
+	20
+);
+
+/**
+ * Ensure POST to wp-login.php?action=lostpassword always sends an absolute redirect_to,
+ * so core never falls back to the relative checkemail URL.
+ */
+add_action( 'login_init', 'uj_fix_core_lostpassword_post_redirect', 0 );
+function uj_fix_core_lostpassword_post_redirect() {
+	if ( 'POST' !== ( $_SERVER['REQUEST_METHOD'] ?? '' ) ) {
+		return;
+	}
+	if ( empty( $_REQUEST['action'] ) || ! is_string( $_REQUEST['action'] ) ) {
+		return;
+	}
+	$action = sanitize_text_field( wp_unslash( $_REQUEST['action'] ) );
+	if ( ! in_array( $action, array( 'lostpassword', 'retrievepassword' ), true ) ) {
+		return;
+	}
+	$existing = '';
+	if ( ! empty( $_POST['redirect_to'] ) && is_string( $_POST['redirect_to'] ) ) {
+		$existing = wp_unslash( $_POST['redirect_to'] );
+	}
+	if ( $existing && wp_parse_url( $existing, PHP_URL_SCHEME ) ) {
+		return;
+	}
+	$url                     = uj_get_lost_password_redirect_url();
+	$_POST['redirect_to']    = $url;
+	$_REQUEST['redirect_to'] = $url;
+}
+
+/**
+ * Final safety net: intercept any wp_redirect to the relative
+ * `wp-login.php?checkemail=confirm` (or registered) and rewrite it to
+ * the WooCommerce lost-password page. This catches the case where the
+ * `login_init` filter above couldn't run early enough (e.g. when the form
+ * is submitted via a rewritten URL outside the wp-login.php flow).
+ */
+add_filter(
+	'wp_redirect',
+	function ( $location ) {
+		if ( ! is_string( $location ) || $location === '' ) {
+			return $location;
+		}
+		if ( strpos( $location, 'wp-login.php?checkemail=confirm' ) !== false ) {
+			return uj_get_lost_password_redirect_url();
+		}
+		return $location;
+	},
+	1
+);
 
 function uno_japano_enqueue_admin_styles() {
     $uno_japano_admin_style = 'uno-japano-admin-style';
