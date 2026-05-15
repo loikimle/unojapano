@@ -42,7 +42,7 @@ if ( ! isset($view)) {
                                 </div>
                                 <div class="col-sm-8 p-0 input-group">
                                     <input type="text" class="form-control " name="hmwp_disable_name" value="<?php echo esc_attr(HMWP_Classes_Tools::getOption('hmwp_disable_name')) ?>" placeholder="<?php echo esc_attr(HMWP_Classes_Tools::getOption('hmwp_disable_name')) ?>"/>
-                                    <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/rollback-settings/#ghost-how-to-customize-the-safe-url-in-wp-ghost' ) ?>" target="_blank" class="position-absolute float-right" style="right: 7px;top: 20%;"><i class="dashicons dashicons-editor-help"></i></a>
+                                    <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/rollback-settings/#ghost-customize-safe-url' ) ?>" target="_blank" class="position-absolute float-right" style="right: 7px;top: 20%;"><i class="dashicons dashicons-editor-help"></i></a>
                                 </div>
                                 <div class="col-sm-12 py-3">
                                     <div class="small text-black-50 text-center my-2"><?php echo esc_html__("The Safe URL will deactivate all the custom paths. Use it only if you can't login.", 'hide-my-wp'); ?></div>
@@ -56,7 +56,7 @@ if ( ! isset($view)) {
                                         <input type="hidden" name="prevent_slow_loading" value="0"/>
                                         <input type="checkbox" id="prevent_slow_loading" name="prevent_slow_loading" class="switch" <?php echo(HMWP_Classes_Tools::getOption('prevent_slow_loading') ? 'checked="checked"' : '') ?> value="1"/>
                                         <label for="prevent_slow_loading"><?php echo esc_html__('Prevent Broken Website Layout', 'hide-my-wp'); ?>
-                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/rollback-settings/#ghost-prevent-broken-website-layout' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/rollback-settings/#ghost-prevent-broken-layout' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                         </label>
                                         <div class="text-black-50 ml-5"><?php echo esc_html__("If the rewrite rules are not loading correctly in the config file, do not load the plugin and do not change the paths.", 'hide-my-wp'); ?></div>
                                     </div>

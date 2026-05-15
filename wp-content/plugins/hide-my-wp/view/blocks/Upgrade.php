@@ -74,11 +74,9 @@
                     </div>
 
                     <div style="padding: 0 2rem 1.5rem; text-align: center;">
-                        <div id="cta-btn" style="background: #f97316; color: white; border-radius: 50px; padding: 15px 32px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s; box-shadow: 0 4px 18px rgba(239,139,26,0.35); letter-spacing: 0.3px;" onmouseenter="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 24px rgba(239,139,26,0.45)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 18px rgba(239,139,26,0.35)'" onmousedown="this.style.transform='scale(0.97)'">
-                            <a href="https://wpghost.com/pricing/?coupon=HIDEMYWP70&utm_source=social&utm_medium=banner&utm_campaign=free&utm_id=offer#price" style="color: #fff" target="_blank">
-                                Secure My Site Now
-                            </a>
-                        </div>
+                        <a id="cta-btn" href="https://wpghost.com/pricing/?coupon=HIDEMYWP70&utm_source=social&utm_medium=banner&utm_campaign=free&utm_id=offer#price" target="_blank" style="display: inline-block; background: #f97316; color: #fff; text-decoration: none; border-radius: 50px; padding: 15px 32px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s; box-shadow: 0 4px 18px rgba(239,139,26,0.35); letter-spacing: 0.3px; width: 300px;" onmouseenter="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 24px rgba(239,139,26,0.45)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 18px rgba(239,139,26,0.35)'" onmousedown="this.style.transform='scale(0.97)'">
+                            Secure My Site Now
+                        </a>
                     </div>
 
                     <div style="text-align: center; padding: 10px 2rem 14px;">

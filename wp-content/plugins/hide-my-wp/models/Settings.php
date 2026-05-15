@@ -337,7 +337,7 @@ class HMWP_Models_Settings {
 						if ( ! HMWP_Classes_Tools::getOption( 'hmwp_mapping_file' ) ) {
 							if ( in_array( $hmwp_text_mapping_from[ $index ], array( 'elementor', 'wp-block', 'woocommerce', 'bricks' ) ) ) {
 								/* translators: 1: Global class name wrapped in <strong> tags, 2: Opening <a> tag with article link, 3: Closing </a> tag. */
-								HMWP_Classes_Error::setNotification( wp_kses_post( sprintf( __( 'Global class name detected: %1$s. Read this article first: %2$sHiding plugins like WooCommerce and Elementor%3$s', 'hide-my-wp' ), '<strong>' . esc_html( $hmwp_text_mapping_from[ $index ] ) . '</strong>', '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/hiding-plugins-like-woocommerce-and-elementor/' ) . '" target="_blank">', '</a>' ) ) );
+								HMWP_Classes_Error::setNotification( wp_kses_post( sprintf( __( 'Global class name detected: %1$s. Read this article first: %2$sHiding plugins like WooCommerce and Elementor%3$s', 'hide-my-wp' ), '<strong>' . esc_html( $hmwp_text_mapping_from[ $index ] ) . '</strong>', '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/hide-plugins-like-woocommerce-and-elementor/' ) . '" target="_blank">', '</a>' ) ) );
 							}
 						}
 

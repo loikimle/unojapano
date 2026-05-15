@@ -81,9 +81,6 @@ class Notice {
 	 */
 	public static function get_hellobar_config() {
 		return array(
-			'ultp_helloBar_spring_sale_2026_1' => Xpo::get_transient_without_cache( 'ultp_helloBar_spring_sale_2026_1' ),
-			'ultp_helloBar_spring_sale_2026_2' => Xpo::get_transient_without_cache( 'ultp_helloBar_spring_sale_2026_2' ),
-			'ultp_helloBar_spring_sale_2026_3' => Xpo::get_transient_without_cache( 'ultp_helloBar_spring_sale_2026_3' ),
 			// Flash sale
 			'ultp_helloBar_flash_sale_2026_4' => Xpo::get_transient_without_cache( 'ultp_helloBar_flash_sale_2026_4' ),
 			// Surprise sale
@@ -185,67 +182,6 @@ class Notice {
 	public function ultp_dashboard_banner_notice() {
 		$ultp_db_nonce  = wp_create_nonce( 'ultp-nonce' );
 		$banner_notices = array(
-			array(
-				'key'                => 'ultp_flash_sale_2026_1',
-				'start'              => '2026-02-19 00:00 Asia/Dhaka',
-				'end'                => '2026-02-23 23:59 Asia/Dhaka', // format YY-MM-DD always set time 23:59 and zone Asia/Dhaka.
-				'countdown_duration' => 259200, // Duration in seconds.
-				'brand_color'        => '#0322ff',
-
-				'left_image'         => ULTP_URL . 'assets/img/dashboard_banner/2026_flash_sale_logo.png',
-				'right_image'        => ULTP_URL . 'assets/img/dashboard_banner/2026_final_hours_and_flash_sale_right_btn.png',
-				'bg_image'           => ULTP_URL . 'assets/img/dashboard_banner/2026_spring_sale_bg.png',
-				'text'               => 'Hurry Before It Ends!',
-				'countdown_color'    => '#3CF357',
-				'url'                => Xpo::generate_utm_link(
-					array(
-						'utmKey' => 'flash_sale',
-					)
-				),
-
-				'visibility'         => ! Xpo::is_lc_active(),
-			),
-			array(
-				'key'                => 'ultp_final_hour_sale_2026_1',
-				'start'              => '2026-02-25 00:00 Asia/Dhaka',
-				'end'                => '2026-03-01 23:59 Asia/Dhaka', // format YY-MM-DD always set time 23:59 and zone Asia/Dhaka.
-				'brand_color'        => '#0322ff',
-				'left_image'         => ULTP_URL . 'assets/img/dashboard_banner/2026_final_hours_sale_logo.png',
-				'right_image'        => ULTP_URL . 'assets/img/dashboard_banner/2026_final_hours_and_flash_sale_right_btn.png',
-				'bg_image'           => ULTP_URL . 'assets/img/dashboard_banner/2026_final_hours_and_flash_sale_bg.png',
-				'text'               => 'Hurry Before It Ends!',
-				'countdown_duration' => 172800, // Duration in seconds.
-				'countdown_color'    => '#0322ff',
-				'url'                => Xpo::generate_utm_link(
-					array(
-						'utmKey' => 'final_hour',
-					)
-				),
-
-				'visibility'         => ! Xpo::is_lc_active(),
-			),
-			array(
-				'key'                => 'ultp_banner_spring_sale_2026_1',
-				'start'              => '2026-04-05 00:00 Asia/Dhaka',
-				'end'                => '2026-04-14 23:59 Asia/Dhaka', // format YY-MM-DD always set time 23:59 and zone Asia/Dhaka.
-
-				'brand_color'        => '#0322ff',
-
-				'left_image'         => ULTP_URL . 'assets/img/dashboard_banner/spring_sale/2026_spring_sale_offer.png',
-				'right_image'        => ULTP_URL . 'assets/img/dashboard_banner/spring_sale/2026_spring_sale_button.png',
-				'bg_image'           => ULTP_URL . 'assets/img/dashboard_banner/spring_sale/2026_spring_sale_bg.png',
-				'text'               => 'Hurry Before It Ends!',
-				'countdown_duration' => 259200, // Duration in seconds.
-				// 'countdown_color'    => '#0322ff',
-				'countdown_color'    => '#000',
-				'url'                => Xpo::generate_utm_link(
-					array(
-						'utmKey' => 'spring_sale',
-					)
-				),
-
-				'visibility'         => ! Xpo::is_lc_active(),
-			),
 			// FLash sale
 			array(
 				'key'                => 'ultp_banner_flash_sale_2026_1',
@@ -263,7 +199,7 @@ class Notice {
 				'countdown_color'    => '#3CF357',
 				'url'                => Xpo::generate_utm_link(
 					array(
-						'utmKey' => 'flash_sale',
+						'utmKey' => 'flash_sale_content',
 					)
 				), 
 
@@ -286,7 +222,7 @@ class Notice {
 				'countdown_color'    => '#3CF357',
 				'url'                => Xpo::generate_utm_link(
 					array(
-						'utmKey' => 'surprise_sale',
+						'utmKey' => 'surprise_sale_content',
 					)
 				),
 
@@ -309,7 +245,7 @@ class Notice {
 				'countdown_color'    => '#3CF357',
 				'url'                => Xpo::generate_utm_link(
 					array(
-						'utmKey' => 'massive_sale',
+						'utmKey' => 'massive_sale_content',
 					)
 				),
 
@@ -332,7 +268,7 @@ class Notice {
 				'countdown_color'    => '#3CF357',
 				'url'                => Xpo::generate_utm_link(
 					array(
-						'utmKey' => 'final_hours_sale',
+						'utmKey' => 'final_hours_content',
 					)
 				),
 				'visibility'         => ! Xpo::is_lc_active(),
@@ -590,7 +526,7 @@ class Notice {
 		<style>
 				.ultp-consent-box {
 					width: 656px;
-					padding: 16px;
+					padding: 16px !important;
 					border: 1px solid #070707;
 					border-left-width: 4px;
 					border-radius: 4px;
@@ -697,53 +633,14 @@ class Notice {
 	 */
 	public function ultp_dashboard_content_notice() {
 		$content_notices = array(
-			array(
-				'key'                => 'ultp_dashboard_content_notice_spring_sale_v1',
-				'start'              => '2026-03-16 00:00 Asia/Dhaka',
-				'end'                => '2026-03-25 23:59 Asia/Dhaka',
-				'url'                => Xpo::generate_utm_link(
-					array(
-						'utmKey' => 'content_notice',
-					)
-				),
-				'visibility'         => ! Xpo::is_lc_active(),
-				'content_heading'    => __( 'Spring Sale:', 'ultimate-post' ),
-				'content_subheading' => __( 'PostX offers are live - Enjoy %s off on PostX Pro.', 'ultimate-post' ),
-				'discount_content'   => ' up to 50% OFF',
-				'brand_color'        => '#0322ff',
-				'icon'               => ULTP_URL . 'assets/img/dashboard_banner/spring_sale/2026_spring_sale_brand_logo.png',
-				'button_text'        => __( 'Claim Your Discount!', 'ultimate-post' ),
-				'is_discount_logo'   => true,
-				'border_color'       => '#0322ff',
-			),
-			array(
-				'key'                => 'ultp_dashboard_content_notice_spring_sale_v2',
-				'start'              => '2026-03-26 00:00 Asia/Dhaka',
-				'end'                => '2026-04-04 23:59 Asia/Dhaka',
-				'url'                => Xpo::generate_utm_link(
-					array(
-						'utmKey' => 'content_notice',
-					)
-				),
-				'visibility'         => ! Xpo::is_lc_active(),
-				'content_heading'    => __( 'Spring Sale:', 'ultimate-post' ),
-				'content_subheading' => __( 'PostX offers are live - Enjoy %s off on PostX Pro.', 'ultimate-post' ),
-				'discount_content'   => ' up to 50% OFF',
-				'brand_color'        => '#0322ff',
-				'icon'               => ULTP_URL . 'assets/img/dashboard_banner/spring_sale/2026_spring_discount_logo.png',
-				'button_text'        => __( 'Claim Your Discount!', 'ultimate-post' ),
-				'is_discount_logo'   => true,
-				'border_color'       => '#0322ff',
-			),
-
 			// Flash sale 
 			array(
-				'key'                => 'ultp_dashboard_content_notice_flash_sale_brand_logo',
+				'key'                => 'ultp_dashboard_content_notice_flash_sale_brand_logos',
 				'start'              => '2026-05-07 00:00 Asia/Dhaka',
 				'end'                => '2026-05-12 23:59 Asia/Dhaka',
 				'url'                => Xpo::generate_utm_link(
 					array(
-						'utmKey' => 'flash_sale_content',
+						'utmKey' => 'flash_sale',
 					)
 				),
 				'visibility'         => ! Xpo::is_lc_active(),
@@ -751,7 +648,7 @@ class Notice {
 				'content_subheading' => __( 'Enjoy %s on PostX Pro.', 'ultimate-post' ),
 				'discount_content'   => ' up to 45% Off',
 				'brand_color'        => '#0322ff',
-				'icon'               => ULTP_URL . 'assets/img/dashboard_banner/brand_logo.svg',
+				'icon'               => ULTP_URL . 'assets/img/dashboard_banner/brand_logo_round.svg',
 				'button_text'        => __( 'Claim Your Discount!', 'ultimate-post' ),
 				'is_discount_logo'   => true,
 				'border_color'       => '#0322ff',
@@ -762,7 +659,7 @@ class Notice {
 				'end'                => '2026-05-17 23:59 Asia/Dhaka',
 				'url'                => Xpo::generate_utm_link(
 					array(
-						'utmKey' => 'flash_sale_content',
+						'utmKey' => 'flash_sale',
 					)
 				),
 				'visibility'         => ! Xpo::is_lc_active(),
@@ -783,7 +680,7 @@ class Notice {
 				'end'                => '2026-05-25 23:59 Asia/Dhaka',
 				'url'                => Xpo::generate_utm_link(
 					array(
-						'utmKey' => 'surprise_sale_content',
+						'utmKey' => 'surprise_sale',
 					)
 				),
 				'visibility'         => ! Xpo::is_lc_active(),
@@ -791,7 +688,7 @@ class Notice {
 				'content_subheading' => __( 'Enjoy %s on PostX Pro.', 'ultimate-post' ),
 				'discount_content'   => ' up to 50% Off',
 				'brand_color'        => '#0322ff',
-				'icon'               => ULTP_URL . 'assets/img/dashboard_banner/brand_logo.svg',
+				'icon'               => ULTP_URL . 'assets/img/dashboard_banner/brand_logo_round.svg',
 				'button_text'        => __( 'Claim Your Discount!', 'ultimate-post' ),
 				'is_discount_logo'   => true,
 				'border_color'       => '#0322ff',
@@ -802,7 +699,7 @@ class Notice {
 				'end'                => '2026-05-28 23:59 Asia/Dhaka',
 				'url'                => Xpo::generate_utm_link(
 					array(
-						'utmKey' => 'surprise_sale_content',
+						'utmKey' => 'surprise_sale',
 					)
 				),
 				'visibility'         => ! Xpo::is_lc_active(),
@@ -823,7 +720,7 @@ class Notice {
 				'end'                => '2026-06-10 23:59 Asia/Dhaka',
 				'url'                => Xpo::generate_utm_link(
 					array(
-						'utmKey' => 'massive_sale_content',
+						'utmKey' => 'massive_sale',
 					)
 				),
 				'visibility'         => ! Xpo::is_lc_active(),
@@ -831,7 +728,7 @@ class Notice {
 				'content_subheading' => __( 'Enjoy %s on PostX Pro.', 'ultimate-post' ),
 				'discount_content'   => ' up to 50% Off',
 				'brand_color'        => '#0322ff',
-				'icon'               => ULTP_URL . 'assets/img/dashboard_banner/brand_logo.svg',
+				'icon'               => ULTP_URL . 'assets/img/dashboard_banner/brand_logo_round.svg',
 				'button_text'        => __( 'Claim Your Discount!', 'ultimate-post' ),
 				'is_discount_logo'   => true,
 				'border_color'       => '#0322ff',
@@ -842,7 +739,7 @@ class Notice {
 				'end'                => '2026-06-16 23:59 Asia/Dhaka',
 				'url'                => Xpo::generate_utm_link(
 					array(
-						'utmKey' => 'massive_sale_content',
+						'utmKey' => 'massive_sale',
 					)
 				),
 				'visibility'         => ! Xpo::is_lc_active(),
@@ -863,7 +760,7 @@ class Notice {
 				'end'                => '2026-06-24 23:59 Asia/Dhaka',
 				'url'                => Xpo::generate_utm_link(
 					array(
-						'utmKey' => 'final_hour_content',
+						'utmKey' => 'final_hour',
 					)
 				),
 				'visibility'         => ! Xpo::is_lc_active(),
@@ -871,7 +768,7 @@ class Notice {
 				'content_subheading' => __( 'Enjoy %s on PostX Pro.', 'ultimate-post' ),
 				'discount_content'   => ' up to 50% Off',
 				'brand_color'        => '#0322ff',
-				'icon'               => ULTP_URL . 'assets/img/dashboard_banner/brand_logo.svg',
+				'icon'               => ULTP_URL . 'assets/img/dashboard_banner/brand_logo_round.svg',
 				'button_text'        => __( 'Claim Your Discount!', 'ultimate-post' ),
 				'is_discount_logo'   => true,
 				'border_color'       => '#0322ff',
@@ -882,7 +779,7 @@ class Notice {
 				'end'                => '2026-06-27 23:59 Asia/Dhaka',
 				'url'                => Xpo::generate_utm_link(
 					array(
-						'utmKey' => 'final_hour_content',
+						'utmKey' => 'final_hour',
 					)
 				),
 				'visibility'         => ! Xpo::is_lc_active(),

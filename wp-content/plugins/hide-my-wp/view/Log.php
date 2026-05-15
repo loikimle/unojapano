@@ -56,7 +56,7 @@ if ( ! isset( $view ) ) {
                 <div class="card col-sm-12 p-0 m-0">
                     <h3 class="card-title hmwp_header p-2 m-0 mb-3">
                         <?php echo esc_html__( 'Events Log', 'hide-my-wp' ); ?>
-                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/events-log-report/#ghost-events-log-report-on-wordpress-dashboard' ) ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
+                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/events-log-report/#ghost-reading-report' ) ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
                     </h3>
 
                     <div class="card-body p-2 m-0">
@@ -101,7 +101,7 @@ if ( ! isset( $view ) ) {
                 <div id="settings" style="<?php echo ( $current_tab === 'settings' ? '' : 'display:none;' ); ?>" class="col-sm-12 p-0 m-0 tab-panel" >
                     <div class="card col-sm-12 p-0 m-0">
                         <h3 class="card-title hmwp_header p-2 m-0"><?php echo esc_html__( 'Logs Settings', 'hide-my-wp' ); ?>
-                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/events-log-report/#ghost-activate-events-log' ) ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
+                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/events-log-report/#ghost-how-to-activate' ) ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
                     </h3>
                         <div class="card-body">
 
@@ -110,7 +110,7 @@ if ( ! isset( $view ) ) {
                                     <div class="col-sm-12 p-0 switch switch-sm">
                                         <input type="checkbox" id="hmwp_activity_log" name="hmwp_activity_log" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_activity_log' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                         <label for="hmwp_activity_log"><?php echo esc_html__( 'Log Users Events', 'hide-my-wp' ); ?>
-                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/events-log-report/#ghost-activate-events-log' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/events-log-report/#ghost-how-to-activate' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                         </label>
                                         <div class="text-black-50 ml-5"><?php echo esc_html__( 'Track and log events that happen on your WordPress site.', 'hide-my-wp' ); ?></div>
                                     </div>
@@ -151,7 +151,7 @@ if ( ! isset( $view ) ) {
                                     <div class="col-sm-12 p-0 switch switch-sm">
                                         <input type="checkbox" id="hmwp_threats_log" name="hmwp_threats_log" class="switch" <?php echo ( HMWP_Classes_Tools::getOption( 'hmwp_threats_log' ) ? 'checked="checked"' : '' ); ?> value="1"/>
                                         <label for="hmwp_threats_log"><?php echo esc_html__( 'Log Security Threats', 'hide-my-wp' ); ?>
-                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/security-threats-log/#ghost-activate-security-threats-log' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/security-threats-log/#ghost-how-to-activate' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                         </label>
                                         <div class="text-black-50 ml-5"><?php echo esc_html__( 'Log only suspicious frontend requests that match known attack patterns.', 'hide-my-wp' ); ?></div>
                                     </div>

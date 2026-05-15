@@ -236,114 +236,76 @@ class Xpo {
 				'medium'   => 'upgrade-pro',
 				'campaign' => 'postx-dashboard',
 			),
-			'final_hour_sale'    => array(
-				'source'   => 'db-postx-notice-logo',
-				'medium'   => 'final-hour-sale',
-				'campaign' => 'postx-dashboard',
-			),
-			// 'flash_sale'         => array(
-			// 'source'   => 'db-postx-notice-logo',
-			// 'medium'   => 'flash-sale',
-			// 'campaign' => 'postx-dashboard',
-			// ),
-			'new_year_sale'      => array(
-				'source'   => 'db-postx-notice-text',
-				'medium'   => 'new-year-sale',
-				'campaign' => 'postx-dashboard',
-			),
-			'spring_sale'        => array(
-				'source'   => 'db-postx-notice',
-				'medium'   => 'spring-sale',
-				'campaign' => 'postx-dashboard',
-			),
-			'exclusive_deals'    => array(
-				'source'   => 'db-postx-notice-logo',
-				'medium'   => 'exclusive-deals',
-				'campaign' => 'postx-dashboard',
-			),
 			'content_notice'     => array(
 				'source'   => 'db-postx-notice',
 				'medium'   => 'spring-sale',
 				'campaign' => 'postx-dashboard',
 			),
-			'spring_sale_meta'   => array(
-				'source'   => 'db-postx-plugin-meta',
-				'medium'   => 'spring-sale',
-				'campaign' => 'postx-dashboard',
-			),
 
 			// Flash sale.
-			'flash_sale'        => array(
-				'source'   => 'db-postx-notice',
-				'medium'   => 'spring-sale',
-				'campaign' => 'postx-dashboard',
-			),
-			'flash_sale_text'         => array(
-				'source'   => 'db-postx-notice',
-				'medium'   => 'flash-sale-text',
-				'campaign' => 'postx-dashboard',
-			),
-			'flash_sale_content'         => array(
+			'flash_sale_content'        => array(
 				'source'   => 'db-postx-notice-content',
-				'medium'   => 'flash-sale',
+				'medium'   => 'summer-flash-sale',
+				'campaign' => 'postx-dashboard',
+			),
+			'flash_sale'         => array(
+				'source'   => 'db-postx-notice',
+				'medium'   => 'summer-flash-sale',
 				'campaign' => 'postx-dashboard',
 			),
 			'flash_sale_meta'    => array(
 				'source'   => 'db-postx-plugin-meta',
-				'medium'   => 'flash-sale',
+				'medium'   => 'summer-flash-sale',
 				'campaign' => 'postx-dashboard',
 			),
 			// Massive Sale  
-			'massive_sale'        => array(
-				'source'   => 'db-postx-notice',
-				'medium'   => 'massive-sale',
+			'massive_sale_content'        => array(
+				'source'   => 'db-postx-notice-content',
+				'medium'   => 'summer-massive-sale',
 				'campaign' => 'postx-dashboard',
 			),
-			'massive_sale_content'       => array(
-				'source'   => 'db-postx-notice-content',
-				'medium'   => 'massive-sale',
+			'massive_sale'       => array(
+				'source'   => 'db-postx-notice',
+				'medium'   => 'summer-massive-sale',
 				'campaign' => 'postx-dashboard',
 			),
 			'massive_sale_meta'       => array(
 				'source'   => 'db-postx-plugin-meta',
-				'medium'   => 'massive-sale',
+				'medium'   => 'summer-massive-sale',
 				'campaign' => 'postx-dashboard',
 			),
 			// Surprise Sale
-			'surprise_sale'        => array(
-				'source'   => 'db-postx-notice',
-				'medium'   => 'surprise-sale',
-				'campaign' => 'postx-dashboard',
-			),
 			'surprise_sale_content'        => array(
 				'source'   => 'db-postx-notice-content',
-				'medium'   => 'surprise-sale',
+				'medium'   => 'summer-surprise-sale',
+				'campaign' => 'postx-dashboard',
+			),
+			'surprise_sale'        => array(
+				'source'   => 'db-postx-notice',
+				'medium'   => 'summer-surprise-sale',
 				'campaign' => 'postx-dashboard',
 			),
 			'surprise_sale_meta'        => array(
 				'source'   => 'db-postx-plugin-meta',
-				'medium'   => 'surprise-sale',
+				'medium'   => 'summer-surprise-sale',
 				'campaign' => 'postx-dashboard',
 			),
-
 			// Final Hours Sale
-			'final_hours_sale'        => array(
-				'source'   => 'db-postx-notice',
-				'medium'   => 'final-hour-sale',
+			'final_hours_content'        => array(
+				'source'   => 'db-postx-notice-content',
+				'medium'   => 'summer-final-sale',
 				'campaign' => 'postx-dashboard',
 			),
-			'final_hour_content'         => array(
-				'source'   => 'db-postx-notice-content',
-				'medium'   => 'final-hour-sale',
+			'final_hour'         => array(
+				'source'   => 'db-postx-notice',
+				'medium'   => 'summer-final-sale',
 				'campaign' => 'postx-dashboard',
 			),
 			'final_hour_meta'    => array(
 				'source'   => 'db-postx-plugin-meta',
-				'medium'   => 'final-hour-sale',
+				'medium'   => 'summer-final-sale',
 				'campaign' => 'postx-dashboard',
 			),
-
-			
 		);
 
 		// Step 1: Get parameters

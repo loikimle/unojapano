@@ -680,7 +680,7 @@ class HMWP_Models_Compatibility {
 
 				if ( isset( $_SERVER['REQUEST_URI'] ) && admin_url( 'options-general.php?page=cdn_enabler', 'relative' ) == $_SERVER['REQUEST_URI'] ) {
 					/* translators: 1: Plugin name, 2: Opening <a> tag to CDN Enabler tutorial URL, 3: Closing </a> tag. */
-					HMWP_Classes_Error::setNotification( wp_kses_post( sprintf( __( 'CDN Enabler detected! Learn how to configure it with %1$s %2$sClick here%3$s', 'hide-my-wp' ), esc_html( HMWP_Classes_Tools::getOption( 'hmwp_plugin_name' ) ), '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/hide-my-wp-and-cdn-enabler/' ) . '" target="_blank">', '</a>' ) ) );
+					HMWP_Classes_Error::setNotification( wp_kses_post( sprintf( __( 'CDN Enabler detected! Learn how to configure it with %1$s %2$sClick here%3$s', 'hide-my-wp' ), esc_html( HMWP_Classes_Tools::getOption( 'hmwp_plugin_name' ) ), '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/wp-ghost-and-cdn-enabler/' ) . '" target="_blank">', '</a>' ) ) );
 				}
 			}
 
@@ -728,17 +728,17 @@ class HMWP_Models_Compatibility {
 			//Inmotion server detected
 			if ( HMWP_Classes_Tools::isInmotion() && HMWP_Classes_Tools::isNginx() ) {
 				/* translators: 1: Opening <a> tag to Inmotion tutorial URL, 2: Closing </a> tag. */
-				HMWP_Classes_Error::setNotification( wp_kses_post( sprintf( __( 'Inmotion detected. %1$sPlease read how to make the plugin compatible with Inmotion Nginx Cache%2$s', 'hide-my-wp' ), '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/hide-my-wp-pro-compatible-with-inmotion-wordpress-hosting/' ) . '" target="_blank">', '</a>' ) ) );
+				HMWP_Classes_Error::setNotification( wp_kses_post( sprintf( __( 'Inmotion detected. %1$sPlease read how to make the plugin compatible with Inmotion Nginx Cache%2$s', 'hide-my-wp' ), '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/inmotion-wordpress-hosting-wp-ghost-setup/' ) . '" target="_blank">', '</a>' ) ) );
 			}
 
 			if ( HMWP_Classes_Tools::isAWS() ) {
 				/* translators: 1: Opening <a> tag to Bitnami tutorial URL, 2: Closing </a> tag. */
-				HMWP_Classes_Error::setNotification( wp_kses_post( sprintf( __( 'Bitnami detected. %1$sPlease read how to make the plugin compatible with AWS hosting%2$s', 'hide-my-wp' ), '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/how-to-set-hide-my-wp-for-bitnami-servers/' ) . '" target="_blank">', '</a>' ) ) );
+				HMWP_Classes_Error::setNotification( wp_kses_post( sprintf( __( 'Bitnami detected. %1$sPlease read how to make the plugin compatible with AWS hosting%2$s', 'hide-my-wp' ), '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/bitnami-servers-wp-ghost-setup/' ) . '" target="_blank">', '</a>' ) ) );
 			}
 
 			if ( HMWP_Classes_Tools::isCloudPanel() ) {
 				/* translators: 1: Opening <a> tag to Cloud Panel tutorial URL, 2: Closing </a> tag. */
-				HMWP_Classes_Error::setNotification( wp_kses_post( sprintf( __( 'Cloud Panel detected. %1$sPlease read how to make the plugin compatible with Cloud Panel hosting%2$s', 'hide-my-wp' ), '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/setup-hide-my-wp-ghost-on-cloud-panel-server/' ) . '" target="_blank">', '</a>' ) ) );
+				HMWP_Classes_Error::setNotification( wp_kses_post( sprintf( __( 'Cloud Panel detected. %1$sPlease read how to make the plugin compatible with Cloud Panel hosting%2$s', 'hide-my-wp' ), '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/cloud-panel-server-wp-ghost-setup/' ) . '" target="_blank">', '</a>' ) ) );
 			}
 
 			//The login path is changed by other plugins and may affect the functionality
@@ -790,7 +790,7 @@ class HMWP_Models_Compatibility {
 
 			if ( HMWP_Classes_Tools::isGodaddy() ) {
 				/* translators: 1: Opening <strong><a> tag with GoDaddy instructions link, 2: Closing </a></strong> tag. */
-				HMWP_Classes_Error::setNotification( wp_kses_post( sprintf( __( 'Godaddy detected! To avoid CSS errors, make sure you switch off the CDN from %1$sGodaddy > Managed WordPress > Overview%2$s', 'hide-my-wp' ), '<strong><a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/how-to-use-hide-my-wp-with-godaddy/' ) . '" target="_blank">', '</a></strong>' ) ) );
+				HMWP_Classes_Error::setNotification( wp_kses_post( sprintf( __( 'Godaddy detected! To avoid CSS errors, make sure you switch off the CDN from %1$sGodaddy > Managed WordPress > Overview%2$s', 'hide-my-wp' ), '<strong><a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/godaddy-hosting-wp-ghost-setup/' ) . '" target="_blank">', '</a></strong>' ) ) );
 			}
 
 			if ( HMWP_Classes_Tools::isPluginActive( 'bulletproof-security/bulletproof-security.php' ) ) {

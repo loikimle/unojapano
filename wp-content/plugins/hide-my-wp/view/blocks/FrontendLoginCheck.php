@@ -47,30 +47,30 @@
                             <a href="<?php echo esc_url( HMWP_Classes_Tools::getSettingsUrl( 'hmwp_advanced&tab=compatibility', true ) ) ?>" target="_blank">Select Server Type</a>
                         </div>
                         <div class="mb-2">
-                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/how-to-setup-hide-my-wp-on-nginx-server/' ) ?>" target="_blank">Setup The Plugin On Nginx Server</a>
+                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/setup-wp-ghost-on-nginx-server/' ) ?>" target="_blank">Setup The Plugin On Nginx Server</a>
                         </div>
                         <div class="mb-2">
-                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/how-to-configure-hide-my-wp-on-nginx-web-server-with-virtual-private-server/' ) ?>" target="_blank">Setup The Plugin On Nginx Server with Virtual Private Server</a>
+                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/setup-wp-ghost-on-nginx-web-server-with-virtual-private-server/' ) ?>" target="_blank">Setup The Plugin On Nginx Server with Virtual Private Server</a>
                         </div>
                     <?php } ?>
                     <?php if ( HMWP_Classes_Tools::isWpengine() ) { ?>
                         <div class="mb-2">
-                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/hide-my-wp-pro-compatible-with-wp-engine/' ) ?>" target="_blank">Setup The Plugin On WP Engine</a>
+                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/wp-engine-wp-ghost-setup/' ) ?>" target="_blank">Setup The Plugin On WP Engine</a>
                         </div>
                     <?php } ?>
                     <?php if ( HMWP_Classes_Tools::isGodaddy() ) { ?>
                         <div class="mb-2">
-                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/how-to-use-hide-my-wp-with-godaddy/' ) ?>" target="_blank">Setup The Plugin On Godaddy</a>
+                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/godaddy-hosting-wp-ghost-setup/' ) ?>" target="_blank">Setup The Plugin On Godaddy</a>
                         </div>
                     <?php } ?>
                     <?php if ( HMWP_Classes_Tools::isIIS() ) { ?>
                         <div class="mb-2">
-                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/setup-hide-my-wp-on-windows-iis-server/' ) ?>" target="_blank">Setup The Plugin On Windows IIS Server</a>
+                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/setup-wp-ghost-on-windows-iis-server/' ) ?>" target="_blank">Setup The Plugin On Windows IIS Server</a>
                         </div>
                     <?php } ?>
                     <?php if ( HMWP_Classes_Tools::isInmotion() ) { ?>
                         <div class="mb-2">
-                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/hide-my-wp-pro-compatible-with-inmotion-wordpress-hosting/' ) ?>" target="_blank">Setup The Plugin On Inmotion Server</a>
+                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/inmotion-wordpress-hosting-wp-ghost-setup/' ) ?>" target="_blank">Setup The Plugin On Inmotion Server</a>
                         </div>
                     <?php } ?>
                 </div>

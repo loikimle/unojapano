@@ -97,7 +97,7 @@ class HMWP_Controllers_Overview extends HMWP_Classes_FrontController {
                 'connection'  => false,
                 'logo'        => 'fa fa-file-word-o',
                 'link'        => HMWP_Classes_Tools::getSettingsUrl( 'hmwp_permalinks&tab=core', true ),
-                'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/hide-wordpress-common-paths-and-files/#ghost-hide-wordpress-common-paths',
+                'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/hide-wordpress-common-paths-and-files/#ghost-hide-common-paths',
                 'show'        => true,
             ),
             array(
@@ -110,7 +110,7 @@ class HMWP_Controllers_Overview extends HMWP_Classes_FrontController {
                 'connection'  => false,
                 'logo'        => 'fa fa-file-word-o',
                 'link'        => HMWP_Classes_Tools::getSettingsUrl( 'hmwp_permalinks&tab=core', true ),
-                'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/hide-wordpress-common-paths-and-files/#ghost-hide-wordpress-common-files',
+                'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/hide-wordpress-common-paths-and-files/#ghost-hide-common-files',
                 'show'        => true,
             ),
 			//--
@@ -151,7 +151,7 @@ class HMWP_Controllers_Overview extends HMWP_Classes_FrontController {
                 'connection'  => false,
                 'logo'        => 'fa fa-ban',
                 'link'        => HMWP_Classes_Tools::getSettingsUrl( 'hmwp_brute&tab=brute', true ),
-                'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/brute-force-attack-protection/#ghost-woocommerce-protection',
+                'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/brute-force-attack-protection/#ghost-protected-forms',
                 'show'        => ( HMWP_Classes_Tools::isPluginActive( 'woocommerce/woocommerce.php' ) && HMWP_Classes_Tools::getOption( 'hmwp_bruteforce' ) ),
             ),
 
@@ -271,7 +271,7 @@ class HMWP_Controllers_Overview extends HMWP_Classes_FrontController {
 				'connection'  => false,
 				'logo'        => 'dashicons dashicons-privacy',
 				'link'        => HMWP_Classes_Tools::getSettingsUrl( 'hmwp_log&tab=threats', true ),
-				'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/security_threats-log/',
+				'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/security-threats-log/',
 				'show'        => true,
 			),
 			array(
@@ -310,7 +310,7 @@ class HMWP_Controllers_Overview extends HMWP_Classes_FrontController {
 				'connection'  => false,
 				'logo'        => 'fa fa-code-fork',
 				'link'        => HMWP_Classes_Tools::getSettingsUrl( 'hmwp_tweaks&tab=redirects', true ),
-				'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-login-redirect-url-amp-logout-redirect-url',
+				'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-login-logout-redirects',
 				'show'        => true,
 			),
 
@@ -337,7 +337,7 @@ class HMWP_Controllers_Overview extends HMWP_Classes_FrontController {
 				'connection'  => false,
 				'logo'        => 'fa fa-sitemap',
 				'link'        => HMWP_Classes_Tools::getSettingsUrl( 'hmwp_tweaks&tab=sitemap', true ),
-				'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/feed-sitemap-and-robots/#ghost-change-paths-in-rss-feed',
+				'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/sitemap-feed-and-robots/#ghost-change-rss-feed',
 				'show'        => true,
 			),
 			array(
@@ -350,7 +350,7 @@ class HMWP_Controllers_Overview extends HMWP_Classes_FrontController {
 				'connection'  => false,
 				'logo'        => 'fa fa-sitemap',
 				'link'        => HMWP_Classes_Tools::getSettingsUrl( 'hmwp_tweaks&tab=sitemap', true ),
-				'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/feed-sitemap-and-robots/#ghost-change-paths-in-sitemap-xml',
+				'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/sitemap-feed-and-robots/#ghost-change-sitemap',
 				'show'        => true,
 			),
 			array(
@@ -363,7 +363,7 @@ class HMWP_Controllers_Overview extends HMWP_Classes_FrontController {
 				'connection'  => false,
 				'logo'        => 'fa fa-android',
 				'link'        => HMWP_Classes_Tools::getSettingsUrl( 'hmwp_tweaks&tab=changes', true ),
-				'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/feed-sitemap-and-robots/#ghost-change-paths-in-robots-txt',
+				'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/sitemap-feed-and-robots/#ghost-change-robots',
 				'show'        => true,
 			),
 			array(
@@ -402,7 +402,7 @@ class HMWP_Controllers_Overview extends HMWP_Classes_FrontController {
 				'connection'  => false,
 				'logo'        => 'fa fa-keyboard-o',
 				'link'        => HMWP_Classes_Tools::getSettingsUrl( 'hmwp_tweaks&tab=disable', true ),
-				'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/disable-right-click-and-keys/#ghost-disable-copy-and-paste',
+				'details'     => HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/disable-right-click-and-keys/#ghost-disable-copy-paste',
 				'show'        => true,
 			),
 

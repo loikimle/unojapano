@@ -4,7 +4,7 @@ Tags: security,firewall,brute force,login,hide my wp
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 7.0.01
+Stable tag: 7.0.02
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,12 @@ For advanced server configurations or detailed walkthroughs, please visit our co
 20. **Source Code Proof**: Core WordPress paths transformed and secured to neutralize bot scans.
 
 == Changelog ==
+= 7.0.02 (11 May 2026) =
+* Fix - Compatibility with WPML and Polylang: static asset URLs (wp-content, wp-includes) no longer get the language prefix prepended (e.g. /en/wp-content/...) when "Change Relative URLs to Absolute URLs" is enabled
+* Fix - Password-protected pages (built-in WordPress post password) now submit correctly on Nginx and other servers without server-level rewrites when the login URL is customized
+* Fix - Refreshed knowledge base links across admin notices to point to the new documentation
+* Fix - Minor bugs and typos
+
 = 7.0.01 (15 April 2026) =
 * Update - Added the option to roll back to the last stable version in the Backup/Restore page
 * Fix - Corrected the colors in the dark mode style

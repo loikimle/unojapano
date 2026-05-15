@@ -85,7 +85,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                             <input type="hidden" name="hmwp_do_redirects" value="0"/>
                                             <input type="checkbox" id="hmwp_do_redirects" name="hmwp_do_redirects" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_do_redirects' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                             <label for="hmwp_do_redirects"><?php echo esc_html__( 'Do Login & Logout Redirects', 'hide-my-wp' ); ?>
-                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-login-redirect-url-amp-logout-redirect-url' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-login-logout-redirects' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                             </label>
                                             <div class="text-black-50 ml-5"><?php echo esc_html__( "Add redirects for the logged users based on user roles.", 'hide-my-wp' ); ?></div>
                                         </div>
@@ -118,7 +118,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                                 </div>
                                                 <div class="col-sm-8 p-0 input-group ">
                                                     <input type="text" class="form-control  mt-2" name="hmwp_url_redirects[default][login]" value="<?php echo( isset( $urlRedirects['default']['login'] ) ? esc_url( $urlRedirects['default']['login'] ) : '' ) ?>"/>
-                                                    <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-login-redirect-url-amp-logout-redirect-url' ) ?>" target="_blank" class="position-absolute float-right" style="right: 7px;top: 30%;"><i class="dashicons dashicons-editor-help"></i></a>
+                                                    <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-login-logout-redirects' ) ?>" target="_blank" class="position-absolute float-right" style="right: 7px;top: 30%;"><i class="dashicons dashicons-editor-help"></i></a>
                                                 </div>
                                             </div>
 
@@ -129,7 +129,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                                 </div>
                                                 <div class="col-sm-8 p-0 input-group">
                                                     <input type="text" class="form-control  mt-2" name="hmwp_url_redirects[default][logout]" value="<?php echo( isset( $urlRedirects['default']['logout'] ) ? esc_url( $urlRedirects['default']['logout'] ) : '' ) ?>"/>
-                                                    <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-login-redirect-url-amp-logout-redirect-url' ) ?>" target="_blank" class="position-absolute float-right" style="right: 7px;top: 30%;"><i class="dashicons dashicons-editor-help"></i></a>
+                                                    <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-login-logout-redirects' ) ?>" target="_blank" class="position-absolute float-right" style="right: 7px;top: 30%;"><i class="dashicons dashicons-editor-help"></i></a>
                                                 </div>
                                             </div>
 
@@ -148,7 +148,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                                         </div>
                                                         <div class="col-sm-8 p-0 input-group">
                                                             <input type="text" class="form-control  mt-2" name="hmwp_url_redirects[<?php echo esc_attr( $role ) ?>][login]" value="<?php echo( isset( $urlRedirects[ $role ]['login'] ) ? esc_url( $urlRedirects[ $role ]['login'] ) : '' ) ?>"/>
-                                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-login-redirect-url-amp-logout-redirect-url' ) ?>" target="_blank" class="position-absolute float-right" style="right: 7px;top: 30%;"><i class="dashicons dashicons-editor-help"></i></a>
+                                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-login-logout-redirects' ) ?>" target="_blank" class="position-absolute float-right" style="right: 7px;top: 30%;"><i class="dashicons dashicons-editor-help"></i></a>
                                                         </div>
                                                     </div>
 
@@ -159,7 +159,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                                         </div>
                                                         <div class="col-sm-8 p-0 input-group">
                                                             <input type="text" class="form-control  mt-2" name="hmwp_url_redirects[<?php echo esc_attr( $role ) ?>][logout]" value="<?php echo( isset( $urlRedirects[ $role ]['logout'] ) ? esc_url( $urlRedirects[ $role ]['logout'] ) : '' ) ?>"/>
-                                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-login-redirect-url-amp-logout-redirect-url' ) ?>" target="_blank" class="position-absolute float-right" style="right: 7px;top: 30%;"><i class="dashicons dashicons-editor-help"></i></a>
+                                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-login-logout-redirects' ) ?>" target="_blank" class="position-absolute float-right" style="right: 7px;top: 30%;"><i class="dashicons dashicons-editor-help"></i></a>
                                                         </div>
                                                     </div>
 
@@ -178,7 +178,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                             <input type="hidden" name="hmwp_logged_users_redirect" value="0"/>
                                             <input type="checkbox" id="hmwp_logged_users_redirect" name="hmwp_logged_users_redirect" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_logged_users_redirect' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                             <label for="hmwp_logged_users_redirect"><?php echo esc_html__( 'Redirect Logged Users To Dashboard', 'hide-my-wp' ); ?>
-                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-redirect-logged-users-to-dashboard' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/redirects/#ghost-redirect-to-dashboard' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                             </label>
                                             <div class="text-black-50 ml-5"><?php echo esc_html__( "Automatically redirect the logged in users to the admin dashboard.", 'hide-my-wp' ); ?></div>
                                         </div>
@@ -192,7 +192,7 @@ if ( function_exists( 'wp_roles' ) ) {
                 <div id="sitemap" style="<?php echo ( $current_tab === 'sitemap' ? '' : 'display:none;' ); ?>" class="col-sm-12 p-0 m-0 tab-panel">
                     <div class="card col-sm-12 p-0 m-0">
                         <h3 class="card-title hmwp_header p-2 m-0"><?php echo esc_html__( 'Feed & Sitemap', 'hide-my-wp' ); ?>
-                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/feed-sitemap-and-robots/' ) ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
+                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/sitemap-feed-and-robots/' ) ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
                         </h3>
                         <?php if ( HMWP_Classes_Tools::getOption( 'hmwp_mode' ) == 'default' ) { ?>
                             <div class="card-body">
@@ -209,7 +209,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                             <input type="hidden" name="hmwp_hide_feed" value="0"/>
                                             <input type="checkbox" id="hmwp_hide_feed" name="hmwp_hide_feed" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_hide_feed' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                             <label for="hmwp_hide_feed"><?php echo esc_html__( 'Hide Feed & Sitemap Link Tags', 'hide-my-wp' ); ?>
-                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/feed-sitemap-and-robots/#ghost-hide-feed-and-sitemap-link-tags' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/sitemap-feed-and-robots/#ghost-hide-link-tags' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                             </label>
                                             <div class="text-black-50 ml-5"><?php echo esc_html__( 'Hide the /feed and /sitemap.xml link Tags.', 'hide-my-wp' ); ?></div>
                                         </div>
@@ -221,7 +221,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                             <input type="hidden" name="hmwp_hide_in_feed" value="0"/>
                                             <input type="checkbox" id="hmwp_hide_in_feed" name="hmwp_hide_in_feed" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_hide_in_feed' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                             <label for="hmwp_hide_in_feed"><?php echo esc_html__( 'Change Paths in RSS feed', 'hide-my-wp' ); ?>
-                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/feed-sitemap-and-robots/#ghost-change-paths-in-rss-feed' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/sitemap-feed-and-robots/#ghost-change-rss-feed' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                             </label>
                                             <div class="text-black-50 ml-5"><?php /* translators: 1: Opening <a><strong> tag to RSS feed URL, 2: Closing </strong></a> tag */
                                                 echo wp_kses_post( sprintf( __( 'Check the %1$s RSS feed %2$s and make sure the image paths are changed.', 'hide-my-wp' ), '<a href="' . esc_url( site_url() . '/rss' )  . '" target="_blank"><strong>', '</strong></a>' ) ); ?></div>                                        </div>
@@ -233,7 +233,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                             <input type="hidden" name="hmwp_hide_in_sitemap" value="0"/>
                                             <input type="checkbox" id="hmwp_hide_in_sitemap" name="hmwp_hide_in_sitemap" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_hide_in_sitemap' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                             <label for="hmwp_hide_in_sitemap"><?php echo esc_html__( 'Change Paths in Sitemaps XML', 'hide-my-wp' ); ?>
-                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/feed-sitemap-and-robots/#ghost-change-paths-in-sitemap-xml' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/sitemap-feed-and-robots/#ghost-change-sitemap' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                             </label>
                                             <div class="text-black-50 ml-5"><?php /* translators: 1: Opening <a><strong> tag to sitemap.xml URL, 2: Closing </strong></a> tag */
                                                 echo wp_kses_post( sprintf( __( 'Check the %1$s Sitemap XML %2$s and make sure the image paths are changed.', 'hide-my-wp' ), '<a href="' . esc_url( site_url() . '/sitemap.xml' ) . '" target="_blank"><strong>', '</strong></a>' ) ); ?></div>                                        </div>
@@ -245,7 +245,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                             <input type="hidden" name="hmwp_hide_author_in_sitemap" value="0"/>
                                             <input type="checkbox" id="hmwp_hide_author_in_sitemap" name="hmwp_hide_author_in_sitemap" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_hide_author_in_sitemap' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                             <label for="hmwp_hide_author_in_sitemap"><?php echo esc_html__( 'Remove Plugins Authors & Style in Sitemap XML', 'hide-my-wp' ); ?>
-                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/feed-sitemap-and-robots/#ghost-change-paths-in-sitemap-xml' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/sitemap-feed-and-robots/#ghost-change-sitemap' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                             </label>
                                             <div class="text-black-50 ml-5"><?php echo esc_html__( "To improve your website's security, consider removing authors and styles that point to WordPress in your sitemap XML.", 'hide-my-wp' ); ?></div>
                                         </div>
@@ -257,7 +257,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                             <input type="hidden" name="hmwp_robots" value="0"/>
                                             <input type="checkbox" id="hmwp_robots" name="hmwp_robots" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_robots' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                             <label for="hmwp_robots"><?php echo esc_html__( 'Hide Paths in Robots.txt', 'hide-my-wp' ); ?>
-                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/feed-sitemap-and-robots/#ghost-change-paths-in-robots-txt' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/sitemap-feed-and-robots/#ghost-change-robots' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                             </label>
                                             <div class="text-black-50 ml-5"><?php /* translators: 1: Opening <a><strong> tag to robots.txt URL, 2: Closing </strong></a> tag */
                                                 echo wp_kses_post( sprintf( __( 'Hide WordPress common paths from %1$s Robots.txt %2$s file.', 'hide-my-wp' ), '<a href="' . esc_url( site_url() . '/robots.txt' ) . '" target="_blank"><strong>', '</strong></a>' ) ); ?></div>                                        </div>
@@ -392,7 +392,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                             <input type="hidden" name="hmwp_hide_version_random" value="0"/>
                                             <input type="checkbox" id="hmwp_hide_version_random" name="hmwp_hide_version_random" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_hide_version_random' ) ? 'checked="checked"' : '' ) ?> value="<?php echo esc_attr(wp_rand( 11111, 99999 )) ?>"/>
                                             <label for="hmwp_hide_version_random"><?php echo esc_html__( 'Random Static Number', 'hide-my-wp' ); ?>
-                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/hide-wordpress-version/#ghost-random-static-number' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/hide-wordpress-version/' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                                 <span class="text-black-50 small">(<?php echo esc_html__( "recommended", 'hide-my-wp' ); ?>)</span>
                                             </label>
                                             <div class="text-black-50 ml-5"><?php echo esc_html__( "Add a random static number to prevent frontend caching while the user is logged in.", 'hide-my-wp' ); ?></div>
@@ -697,7 +697,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                         <input type="hidden" name="hmwp_disable_copy_paste" value="0"/>
                                         <input type="checkbox" id="hmwp_disable_copy_paste" name="hmwp_disable_copy_paste" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_disable_copy_paste' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                         <label for="hmwp_disable_copy_paste"><?php echo esc_html__( 'Disable Copy', 'hide-my-wp' ); ?>
-                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/disable-right-click-and-keys/#ghost-disable-copy-and-paste' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/disable-right-click-and-keys/#ghost-disable-copy-paste' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                         </label>
                                         <div class="text-black-50 ml-5"><?php echo esc_html__( "Disable copy function on your website.", 'hide-my-wp' ); ?></div>
                                     </div>
@@ -761,7 +761,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                         <input type="hidden" name="hmwp_disable_drag_drop" value="0"/>
                                         <input type="checkbox" id="hmwp_disable_drag_drop" name="hmwp_disable_drag_drop" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_disable_drag_drop' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                         <label for="hmwp_disable_drag_drop"><?php echo esc_html__( 'Disable Drag/Drop Images', 'hide-my-wp' ); ?>
-                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/disable-right-click-and-keys/#ghost-disable-drag-drop-images' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/disable-right-click-and-keys/#ghost-disable-drag-drop' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                         </label>
                                         <div class="text-black-50 ml-5"><?php echo esc_html__( "Disable image drag & drop on your website.", 'hide-my-wp' ); ?></div>
                                     </div>
@@ -827,7 +827,7 @@ if ( function_exists( 'wp_roles' ) ) {
                                         <input type="hidden" name="hmwp_login_page" value="0"/>
                                         <input type="checkbox" id="hmwp_login_page" name="hmwp_login_page" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_login_page' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                         <label for="hmwp_login_page"><?php echo esc_html__( 'Use Login Page Design', 'hide-my-wp' ); ?>
-                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/login-page-design-customization/#ghost-how-to-activate-login-page-design' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/login-page-design-customization/#ghost-how-to-activate' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                         </label>
                                         <div class="text-black-50 ml-5"><?php echo esc_html__( 'Customize your login page design while keeping it aligned with your secured login path and branding.', 'hide-my-wp' ); ?></div>
                                     </div>

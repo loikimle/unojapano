@@ -646,84 +646,80 @@ class HMWP_Models_Files {
 	public function handleLogin( $url ) {
 		$url = rawurldecode( $url );
 
-		if ( ! ( HMWP_Classes_Tools::getvalue( 'action' ) === 'postpass' && HMWP_Classes_Tools::getIsset( 'post_password' ) ) ) {
+		//If it's the login page
+		if ( strpos( $url, '/' . HMWP_Classes_Tools::getOption( 'hmwp_login_url' ) ) || strpos( $url, '/' . HMWP_Classes_Tools::getDefault( 'hmwp_login_url' ) ) || ( HMWP_Classes_Tools::getOption( 'hmwp_lostpassword_url' ) && strpos( $url, '/' . HMWP_Classes_Tools::getOption( 'hmwp_lostpassword_url' ) ) ) || ( HMWP_Classes_Tools::getOption( 'hmwp_register_url' ) && strpos( $url, '/' . HMWP_Classes_Tools::getOption( 'hmwp_register_url' ) ) ) ) {
 
-			//If it's the login page
-			if ( strpos( $url, '/' . HMWP_Classes_Tools::getOption( 'hmwp_login_url' ) ) || strpos( $url, '/' . HMWP_Classes_Tools::getDefault( 'hmwp_login_url' ) ) || ( HMWP_Classes_Tools::getOption( 'hmwp_lostpassword_url' ) && strpos( $url, '/' . HMWP_Classes_Tools::getOption( 'hmwp_lostpassword_url' ) ) ) || ( HMWP_Classes_Tools::getOption( 'hmwp_register_url' ) && strpos( $url, '/' . HMWP_Classes_Tools::getOption( 'hmwp_register_url' ) ) ) ) {
+			do_action( 'hmwp_files_handle_login', $url );
 
-				do_action( 'hmwp_files_handle_login', $url );
-
-				//Get the action if exists in params
-				$params = array();
-				$query  = wp_parse_url( $url, PHP_URL_QUERY );
-				if ( $query <> '' ) {
-					parse_str( $query, $params );
-				}
-
-				if ( isset( $params['action'] ) ) {
-					$actions            = array(
-						'postpass',
-						'logout',
-						'lostpassword',
-						'retrievepassword',
-						'resetpass',
-						'rp',
-						'register',
-						'login',
-						'confirmaction',
-						'validate_2fa',
-						'itsec-2fa',
-					);
-					$_REQUEST['action'] = $this->strposa( $params['action'], $actions );
-				}
-
-				$urled_redirect_to = HMWP_Classes_Tools::getValue( 'redirect_to', '' );
-
-				//if user is logged in
-				if ( HMWP_Classes_Tools::isLoggedInUser() ) {
-					if ( HMWP_Classes_Tools::getOption( 'hmwp_logged_users_redirect' ) ) {
-						/** @var HMWP_Models_Rewrite $rewriteModel */
-						$rewriteModel = HMWP_Classes_ObjController::getClass( 'HMWP_Models_Rewrite' );
-						$rewriteModel->dashboard_redirect();
-					}
-				}
-
-				global $wp_query, $error, $interim_login, $action, $user_login;
-
-				$wp_query->is_404 = false;
-				if ( ! empty( $error ) ) {
-					$error = false;
-				}
-
-				require_once ABSPATH . 'wp-login.php';
-				die();
-
-			} elseif ( HMWP_Classes_Tools::getOption( 'hmwp_logout_url' ) <> '' && strpos( $url, '/' . HMWP_Classes_Tools::getOption( 'hmwp_logout_url' ) ) ) {
-
-				check_admin_referer( 'log-out' );
-
-				do_action( 'hmwp_files_handle_logout', $url );
-
-				$user = wp_get_current_user();
-
-				wp_logout();
-
-				$redirect_to = $requested_redirect_to = HMWP_Classes_Tools::getValue( 'redirect_to' );
-
-				if ( ! $redirect_to ) {
-					$redirect_to           = add_query_arg( array(
-						'loggedout' => 'true',
-						'wp_lang'   => get_user_locale( $user ),
-					), wp_login_url() );
-					$requested_redirect_to = '';
-				}
-
-				$redirect_to = apply_filters( 'logout_redirect', $redirect_to, $requested_redirect_to, $user );
-
-				wp_safe_redirect( $redirect_to );
-				exit;
+			//Get the action if exists in params
+			$params = array();
+			$query  = wp_parse_url( $url, PHP_URL_QUERY );
+			if ( $query <> '' ) {
+				parse_str( $query, $params );
 			}
 
+			if ( isset( $params['action'] ) ) {
+				$actions            = array(
+					'postpass',
+					'logout',
+					'lostpassword',
+					'retrievepassword',
+					'resetpass',
+					'rp',
+					'register',
+					'login',
+					'confirmaction',
+					'validate_2fa',
+					'itsec-2fa',
+				);
+				$_REQUEST['action'] = $this->strposa( $params['action'], $actions );
+			}
+
+			$urled_redirect_to = HMWP_Classes_Tools::getValue( 'redirect_to', '' );
+
+			//if user is logged in
+			if ( HMWP_Classes_Tools::isLoggedInUser() ) {
+				if ( HMWP_Classes_Tools::getOption( 'hmwp_logged_users_redirect' ) ) {
+					/** @var HMWP_Models_Rewrite $rewriteModel */
+					$rewriteModel = HMWP_Classes_ObjController::getClass( 'HMWP_Models_Rewrite' );
+					$rewriteModel->dashboard_redirect();
+				}
+			}
+
+			global $wp_query, $error, $interim_login, $action, $user_login;
+
+			$wp_query->is_404 = false;
+			if ( ! empty( $error ) ) {
+				$error = false;
+			}
+
+			require_once ABSPATH . 'wp-login.php';
+			die();
+
+		} elseif ( HMWP_Classes_Tools::getOption( 'hmwp_logout_url' ) <> '' && strpos( $url, '/' . HMWP_Classes_Tools::getOption( 'hmwp_logout_url' ) ) ) {
+
+			check_admin_referer( 'log-out' );
+
+			do_action( 'hmwp_files_handle_logout', $url );
+
+			$user = wp_get_current_user();
+
+			wp_logout();
+
+			$redirect_to = $requested_redirect_to = HMWP_Classes_Tools::getValue( 'redirect_to' );
+
+			if ( ! $redirect_to ) {
+				$redirect_to           = add_query_arg( array(
+					'loggedout' => 'true',
+					'wp_lang'   => get_user_locale( $user ),
+				), wp_login_url() );
+				$requested_redirect_to = '';
+			}
+
+			$redirect_to = apply_filters( 'logout_redirect', $redirect_to, $requested_redirect_to, $user );
+
+			wp_safe_redirect( $redirect_to );
+			exit;
 		}
 
 	}

@@ -8,8 +8,6 @@ if (!defined('ABSPATH')) {
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Color;
-use \Elementor\Core\Schemes\Typography;
 
 class EAEL_Tooltip_Section
 {
@@ -222,7 +220,6 @@ class EAEL_Tooltip_Section
             [
                 'name' => 'eael_tooltip_section_typography',
                 'selector' => '.tippy-popper[data-tippy-popper-id="{{ID}}"] .tippy-tooltip',
-                'scheme' => Typography::TYPOGRAPHY_3,
                 'separator' => 'after',
                 'condition' => [
                     'eael_tooltip_section_enable!' => '',

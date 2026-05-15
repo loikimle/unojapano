@@ -643,10 +643,11 @@ class Blocks {
 
 					if ( $filter_attributes['isAdv'] ) {
 						$filter_attributes['queryAuthor']  = $adv_filter_data['author'];
-						$filter_attributes['queryOrderBy'] = ! empty( $adv_filter_data['orderby'] ) ? $adv_filter_data['orderby'] : $value['attrs']['queryOrderBy'];
 						$filter_attributes['queryOrder']   = $adv_filter_data['order'];
 						$filter_attributes['querySearch']  = $adv_filter_data['search'];
 						$filter_attributes['queryQuick']   = $adv_filter_data['adv_sort'];
+						$filter_attributes['queryOrderBy'] = 
+						! empty( $adv_filter_data['orderby'] ) ? $adv_filter_data['orderby'] : ( $value['attrs']['queryOrderBy'] ?? '' );
 					}
 
 					$toReturn = array(

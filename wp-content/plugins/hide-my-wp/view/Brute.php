@@ -56,7 +56,7 @@ if ( ! isset( $view ) ) {
                                         <input type="hidden" name="hmwp_bruteforce" value="0"/>
                                         <input type="checkbox" id="hmwp_bruteforce" name="hmwp_bruteforce" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_bruteforce' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                         <label for="hmwp_bruteforce"><?php echo esc_html__( 'Use Brute Force Protection', 'hide-my-wp' ); ?>
-                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/brute-force-attack-protection/#ghost-activate-brute-force-protection' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/brute-force-attack-protection/#ghost-activate' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                         </label>
                                         <div class="text-black-50 ml-5"><?php echo esc_html__( 'Stop repeated login attempts and block bots trying to guess usernames and passwords.', 'hide-my-wp' ); ?></div>
                                     </div>
@@ -496,7 +496,7 @@ if ( ! isset( $view ) ) {
                     <div id="woocommerce" style="<?php echo ( $current_tab === 'woocommerce' ? '' : 'display:none;' ); ?>" class="col-sm-12 p-0 m-0 tab-panel ">
                         <div class="card col-sm-12 p-0 m-0">
                             <h3 class="card-title hmwp_header p-2 m-0"><?php echo esc_html__( 'WooCommerce', 'hide-my-wp' ); ?>
-                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/brute-force-attack-protection/#ghost-woocommerce-protection' ) ?>" target="_blank" class="d-inline-block float-right mr-2"><i class="dashicons dashicons-editor-help"></i></a>
+                                <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/brute-force-attack-protection/#ghost-protected-forms' ) ?>" target="_blank" class="d-inline-block float-right mr-2"><i class="dashicons dashicons-editor-help"></i></a>
                             </h3>
 
                             <?php if ( HMWP_Classes_Tools::getOption( 'hmwp_mode' ) == 'default' ) { ?>

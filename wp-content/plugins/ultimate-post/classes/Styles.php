@@ -463,6 +463,7 @@ class Styles {
 		}
 		if ( wp_is_block_theme() ) {
 			$this->handle_old_fse_css();
+			$this->handle_fse_template_parts_css();
 		}
 		$css     = '';
 		$post_id = ultimate_post()->get_ID();
@@ -565,6 +566,29 @@ class Styles {
 		}
 		if ( ! is_admin() &&
 			isset( $block['blockName'] ) &&
+			$block['blockName'] === 'core/block' &&
+			! empty( $block['attrs']['ref'] )
+		) {
+			// Validate ref_id is a positive integer
+			$ref_id = absint( $block['attrs']['ref'] );
+			if ( $ref_id < 1 ) {
+				return $block_content;
+			}
+			
+			if ( get_post_type( $ref_id ) === 'wp_block' &&
+				get_post_meta( $ref_id, '_ultp_active', true ) === 'yes'
+			) {
+				do_action(
+					'ultp_enqueue_postx_block_css',
+					array(
+						'post_id' => $ref_id,
+						'css'     => '',
+					)
+				);
+			}
+		}
+		if ( ! is_admin() &&
+			isset( $block['blockName'] ) &&
 			strpos( $block['blockName'], 'ultimate-post/' ) === 0
 			&& ! empty( $block['attrs']['currentPostId'] )
 		) {
@@ -617,6 +641,56 @@ class Styles {
 				wp_register_style( "ultp-post-{$post_id}", false );
 				wp_enqueue_style( "ultp-post-{$post_id}" );
 				wp_add_inline_style( "ultp-post-{$post_id}", $css );
+			}
+		}
+	}
+
+	/**
+	 * Enqueue CSS for FSE template parts (header, footer, etc.) that contain PostX blocks.
+	 * Must run during wp_enqueue_scripts (before wp_head) so styles land in <head>.
+	 *
+	 * @since v.4.1.8
+	 * @return void
+	 */
+	public function handle_fse_template_parts_css() {
+		$parts = get_posts(
+			array(
+				'post_type'      => 'wp_template_part',
+				'meta_query'     => array(
+					array(
+						'key'   => '_ultp_active',
+						'value' => 'yes',
+					),
+				),
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
+		
+		if ( empty( $parts ) ) {
+			return;
+		}
+		
+		$upload_dir = wp_upload_dir();
+		$dir        = trailingslashit( $upload_dir['basedir'] ) . 'ultimate-post/';
+		
+		foreach ( $parts as $part_id ) {
+			// Validate post ID is numeric
+			$part_id = absint( $part_id );
+			if ( $part_id < 1 ) {
+				continue;
+			}
+			
+			$css_file = $dir . "ultp-css-{$part_id}.css";
+			
+			if ( file_exists( $css_file ) ) {
+				do_action(
+					'ultp_enqueue_postx_block_css',
+					array(
+						'post_id' => $part_id,
+						'css'     => '',
+					)
+				);
 			}
 		}
 	}

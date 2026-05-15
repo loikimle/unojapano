@@ -11,7 +11,6 @@ use \Elementor\Group_Control_Border;
 use \Elementor\Group_Control_Box_Shadow;
 use \Elementor\Group_Control_Typography;
 use \Elementor\Plugin;
-use \Elementor\Core\Schemes\Typography;
 use \Essential_Addons_Elementor\Pro\Classes\Helper;
 use http\Message\Body;
 
@@ -265,7 +264,6 @@ class Content_Protection {
 			Group_Control_Typography::get_type(),
 			[
 				'name'      => 'eael_ext_content_protection_message_text_typography',
-				'scheme'    => Typography::TYPOGRAPHY_2,
 				'selector'  => '{{WRAPPER}} .eael-protected-content-message',
 				'condition' => [
 					'eael_ext_content_protection_message_type' => 'text',
@@ -347,7 +345,6 @@ class Content_Protection {
             Group_Control_Typography::get_type(),
             [
                 'name' => 'eael_ext_content_protection_error_message_text_typography',
-                'scheme' => Typography::TYPOGRAPHY_2,
                 'selector' => '{{WRAPPER}} .protected-content-error-msg',
                 'condition' => [
                     'eael_ext_content_protection_message_type' => 'text',

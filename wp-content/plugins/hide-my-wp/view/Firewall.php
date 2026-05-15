@@ -42,7 +42,7 @@ if ( ! isset( $view ) ) {
                                     <input type="hidden" name="hmwp_sqlinjection" value="0"/>
                                     <input type="checkbox" id="hmwp_sqlinjection" name="hmwp_sqlinjection" class="switch"<?php echo( HMWP_Classes_Tools::getOption( 'hmwp_sqlinjection' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                     <label for="hmwp_sqlinjection"><?php echo esc_html__( 'Firewall Against Script Injection', 'hide-my-wp' ); ?>
-                                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/firewall-security/#ghost-activate-firewall-against-injections' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/firewall-security/#ghost-activate-firewall' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                     </label>
                                     <div class="text-black-50 ml-5"><?php echo esc_html__( 'Intelligent rules that block exploit attempts and malicious bots while keeping search engines and AI crawlers accessible.', 'hide-my-wp' ); ?></div>
                                     <div class="text-black-50 font-italic ml-5"><?php echo esc_html__( 'Designed to stop attacks without impacting SEO or AI indexing.', 'hide-my-wp' ); ?></div>
@@ -219,7 +219,7 @@ if ( ! isset( $view ) ) {
                                     <input type="hidden" name="block_ai_bots" value="0"/>
                                     <input type="checkbox" id="block_ai_bots" name="block_ai_bots" class="switch"<?php echo( HMWP_Classes_Tools::getOption( 'block_ai_bots' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                     <label for="block_ai_bots"><?php echo esc_html__( 'Block AI Crawler Bots', 'hide-my-wp' ); ?>
-                                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/firewall-security/#ghost-block-ai-crawler-bots' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/firewall-security/#ghost-block-ai-crawlers' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                     </label>
                                     <div class="text-black-50 ml-5"><?php echo esc_html__( 'Block AI training and scraping bots at the firewall level and add them to robots.txt automatically.', 'hide-my-wp' ); ?></div>
                                     <div class="text-black-50 font-italic ml-5"><?php echo esc_html__( 'Covers GPTBot, ClaudeBot, PerplexityBot, CCBot, Bytespider, and 30+ other known AI crawlers.', 'hide-my-wp' ); ?></div>
@@ -252,7 +252,7 @@ if ( ! isset( $view ) ) {
                                     <input type="hidden" name="hmwp_security_header" value="0"/>
                                     <input type="checkbox" id="hmwp_security_header" name="hmwp_security_header" class="switch"<?php echo( HMWP_Classes_Tools::getOption( 'hmwp_security_header' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                     <label for="hmwp_security_header"><?php echo esc_html__( 'Add Security Headers against XSS and Injection Attacks', 'hide-my-wp' ); ?>
-                                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/header-security/#ghost-activate-header-security' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/header-security/#ghost-how-to-enable' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                     </label>
                                 </div>
                                 <div class="text-black-50 col-sm-12 p-0 ml-5"><?php echo esc_html__( "Add Strict-Transport-Security header", 'hide-my-wp' ); ?>
@@ -443,7 +443,7 @@ if ( ! isset( $view ) ) {
                                     <input type="hidden" name="hmwp_geoblock" value="0"/>
                                     <input type="checkbox" id="hmwp_geoblock" name="hmwp_geoblock" class="switch"<?php echo( HMWP_Classes_Tools::getOption( 'hmwp_geoblock' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                     <label for="hmwp_geoblock"><?php echo esc_html__( 'Country Blocking', 'hide-my-wp' ); ?>
-                                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/geo-security-country-blocking/#ghost-activate-country-blocking' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/geo-security-country-blocking/#ghost-activate' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                     </label>
                                     <div class="text-black-50 ml-5"><?php echo esc_html__( 'Block traffic from high-risk countries to reduce hacking attempts, spam, and unwanted access.', 'hide-my-wp' ); ?></div>
                                 </div>

@@ -931,3 +931,37 @@ div.ld-quiz-progress-content-container p {
     color: #fff !important;
     margin: 10px
 }
+
+/* Tie/JNews-style UI: 4px radius on buttons, fields, tags, and small nav chrome */
+body a.go-to-top-button,
+body .button,
+body [type="submit"],
+body .generic-button a,
+body .generic-button button,
+body textarea,
+body input:not([type="checkbox"]):not([type="radio"]),
+body .post-bottom-meta-title,
+body .post-bottom-meta a,
+body .post-cat,
+body .more-link,
+body .mag-box .breaking,
+body .social-icons-widget .social-icons-item .social-link,
+body .widget_product_tag_cloud a,
+body .widget_tag_cloud a,
+body .post-tags a,
+body .widget_layered_nav_filters a,
+body .show-more-button,
+body #instagram-link.is-expanded .follow-button,
+body .cat-counter a + span,
+body .mag-box-options .slider-arrow-nav a,
+body .main-menu .cats-horizontal li a,
+body #instagram-link.is-compact,
+body .pages-numbers a,
+body .pages-nav-item,
+body .bp-pagination-links .page-numbers,
+body .fullwidth-area .widget_tag_cloud .tagcloud a,
+body .header-layout-1 #main-nav .components #search-input,
+body ul.breaking-news-nav li.jnt-prev,
+body ul.breaking-news-nav li.jnt-next {
+    border-radius: 4px;
+}

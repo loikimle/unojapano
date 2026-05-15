@@ -109,7 +109,7 @@ class HMWP_Controllers_Menu extends HMWP_Classes_FrontController {
 			} elseif ( strpos( HMWP_Classes_Tools::getValue( 'page' ), 'hmwp_' ) !== false && apply_filters('hmwp_showaccount', true) ) {
 				add_filter('hmwp_getview', function ($view){
 					//phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
-					$style = '<script src="https://storage.googleapis.com/contentlook/agent/widget.min.js?key=f07f616c-e167-49fd-94f1-81b42cd874b7&ver=1.0.1"></script>';
+					$style = '<script src="https://cdn.crawlbrain.com/v1/widget.min.js" data-key="2543bc36-041a-4675-bc41-b22d72132205" data-mode="floating" async ></script>';
 					return $style . $view;
 				}, 11, 1);
 			}

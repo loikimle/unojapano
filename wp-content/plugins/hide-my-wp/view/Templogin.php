@@ -57,7 +57,7 @@ global $wp_roles;
                 <div id="settings" style="<?php echo ( $current_tab === 'settings' ? '' : 'display:none;' ); ?>" class="col-sm-12 p-0 m-0 tab-panel ">
                     <div class="card col-sm-12 p-0 m-0">
                         <h3 class="card-title hmwp_header p-2 m-0"><?php echo esc_html__( 'Temporary Login Settings', 'hide-my-wp' ); ?>
-                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/temporary-logins/#ghost-activate-temporary-logins' ) ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
+                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/temporary-logins/#ghost-activate' ) ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
                         </h3>
                         <div class="card-body">
                         <div class="col-sm-12 row mb-1 ml-1 p-2">
@@ -66,7 +66,7 @@ global $wp_roles;
                                     <input type="hidden" name="hmwp_templogin" value="0"/>
                                     <input type="checkbox" id="hmwp_templogin" name="hmwp_templogin" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_templogin' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                     <label for="hmwp_templogin"><?php echo esc_html__( 'Use Temporary Logins', 'hide-my-wp' ); ?>
-                                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/temporary-logins/#ghost-temporary-login-settings' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                        <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/temporary-logins/#ghost-default-settings' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                     </label>
                                     <div class="text-black-50 ml-5"><?php echo esc_html__( 'Create secure, time-limited access links without sharing usernames or passwords for a limited period of time.', 'hide-my-wp' ); ?></div>
                                 </div>

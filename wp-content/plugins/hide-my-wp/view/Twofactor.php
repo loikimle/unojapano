@@ -52,7 +52,7 @@ if ( ! isset( $view ) ) {
                 <div id="settings" style="<?php echo ( $current_tab === 'settings' ? '' : 'display:none;' ); ?>" class="col-sm-12 p-0 m-0 tab-panel ">
                     <div class="card col-sm-12 p-0 m-0 mb-3">
                         <h3 class="card-title hmwp_header p-2 m-0"><?php echo esc_html__( 'Two-factor Authentication Settings', 'hide-my-wp' ); ?>
-                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/two-factor-authentication/#ghost-how-to-use-two-factor-with-wp-ghost' ) ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
+                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/two-factor-authentication/#ghost-how-to-enable' ) ?>" target="_blank" class="d-inline-block float-right mr-2" style="color: white"><i class="dashicons dashicons-editor-help"></i></a>
                         </h3>
                         <div class="card-body">
                             <div class="col-sm-12 row mb-1 ml-1 p-2">
@@ -61,7 +61,7 @@ if ( ! isset( $view ) ) {
                                         <input type="hidden" name="hmwp_2falogin" value="0"/>
                                         <input type="checkbox" id="hmwp_2falogin" name="hmwp_2falogin" class="switch" <?php echo( HMWP_Classes_Tools::getOption( 'hmwp_2falogin' ) ? 'checked="checked"' : '' ) ?> value="1"/>
                                         <label for="hmwp_2falogin"><?php echo esc_html__( 'Use 2FA Authentication', 'hide-my-wp' ); ?>
-                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/two-factor-authentication/#ghost-activate-two-factor-authenticator-feature' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
+                                            <a href="<?php echo esc_url( HMWP_Classes_Tools::getOption('hmwp_plugin_website') . '/kb/two-factor-authentication/#ghost-activate' ) ?>" target="_blank" class="d-inline ml-1"><i class="dashicons dashicons-editor-help d-inline"></i></a>
                                         </label>
                                         <div class="text-black-50 ml-5"><?php echo esc_html__( "Add a second verification step via authenticator app, email code, or passkey (Face ID, Touch ID), so a stolen password alone can't unlock your site.", 'hide-my-wp' ); ?></div>
                                     </div>

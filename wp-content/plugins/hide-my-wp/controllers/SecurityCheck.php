@@ -273,7 +273,7 @@ class HMWP_Controllers_SecurityCheck extends HMWP_Classes_FrontController {
 				'warning'  => false,
 				'message'  => wp_kses_post( __( "Your admin dashboard is not served over HTTPS. Without SSL/TLS encryption, login credentials and session data are transmitted in plain text, making them vulnerable to interception. <br /><br />An SSL certificate is essential for securing all admin communications.", 'hide-my-wp' ) ),
 				/* translators: 1: Opening <strong> tag before "Settings", 2: Closing </strong> tag after "General", 3: Opening anchor tag to HTTPS guide article, 4: Closing anchor tag. */
-				'solution' => wp_kses_post( sprintf( __( 'Go to %1$s > %2$s and make sure <strong>WordPress Address</strong> starts with <strong>https://</strong>. %3$sRead the guide%4$s', 'hide-my-wp' ), '<strong>' . esc_html__( 'Settings' ), esc_html__( 'General' ) . '</strong>', '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/how-to-move-wordpress-from-http-to-https/' )  . '" target="_blank">', '</a>' ) ), //phpcs:ignore
+				'solution' => wp_kses_post( sprintf( __( 'Go to %1$s > %2$s and make sure <strong>WordPress Address</strong> starts with <strong>https://</strong>. %3$sRead the guide%4$s', 'hide-my-wp' ), '<strong>' . esc_html__( 'Settings' ), esc_html__( 'General' ) . '</strong>', '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/move-wordpress-from-http-to-https/' )  . '" target="_blank">', '</a>' ) ), //phpcs:ignore
 			),
 			'checkAdminUsers'       => array(
 				'name'       => esc_html__( "User 'admin' or 'administrator' as Administrator", 'hide-my-wp' ),
@@ -325,7 +325,7 @@ class HMWP_Controllers_SecurityCheck extends HMWP_Classes_FrontController {
 				'warning'    => false,
 				'message'    => wp_kses_post( __( "Your database is using the default <strong>wp_</strong> table prefix. Automated SQL injection attacks commonly target this default prefix. Using a custom prefix adds an additional barrier against mass-targeted attacks that assume standard WordPress table names.", 'hide-my-wp' ) ),
 				/* translators: 1: Plugin name, 2: Opening <a> tag to database prefix article, 3: Closing </a> tag. */
-				'solution'   => wp_kses_post( sprintf( __( '%1$s protects your website from most SQL injections, but using a custom database prefix adds an extra layer of defense. %2$sLearn how to change it%3$s', 'hide-my-wp' ), esc_html( HMWP_Classes_Tools::getOption( 'hmwp_plugin_name' ) ), '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/how-to-change-database-prefix-in-wordpress/' )  . '" target="_blank">', '</a>' ) ),
+				'solution'   => wp_kses_post( sprintf( __( '%1$s protects your website from most SQL injections, but using a custom database prefix adds an extra layer of defense. %2$sLearn how to change it%3$s', 'hide-my-wp' ), esc_html( HMWP_Classes_Tools::getOption( 'hmwp_plugin_name' ) ), '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/change-database-prefix-in-wordpress/' )  . '" target="_blank">', '</a>' ) ),
 				'javascript' => "pro",
 			),
 			'checkFilePermissions'  => array(
@@ -752,7 +752,7 @@ class HMWP_Controllers_SecurityCheck extends HMWP_Classes_FrontController {
 				}
 
 				if ( ! empty( $error ) && HMWP_Classes_Tools::isNginx() ) {
-					$error[] = '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/how-to-setup-hide-my-wp-on-nginx-server/' ) . '" target="_blank" style="word-break: break-word;line-height: 35px;font-weight: 700;">' . esc_html__( "Don't forget to reload the Nginx service.", 'hide-my-wp' ) . '</a>';
+					$error[] = '<a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/setup-wp-ghost-on-nginx-server/' ) . '" target="_blank" style="word-break: break-word;line-height: 35px;font-weight: 700;">' . esc_html__( "Don't forget to reload the Nginx service.", 'hide-my-wp' ) . '</a>';
 				}
 
 				if ( HMWP_Classes_Tools::isAjax() ) {
@@ -831,7 +831,7 @@ class HMWP_Controllers_SecurityCheck extends HMWP_Classes_FrontController {
 
 							$message = esc_html__( 'Saved! You can run the test again.', 'hide-my-wp' );
 							if ( HMWP_Classes_Tools::isNginx() || HMWP_Classes_Tools::isCloudPanel() ) {
-								$message .= '<br />' . esc_html__( "Don't forget to reload the Nginx service.", 'hide-my-wp' ) . ' ' . '<strong><a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/how-to-setup-hide-my-wp-on-nginx-server/' ) . '" target="_blank" style="color: red">' . esc_html__( "Learn How", 'hide-my-wp' ) . '</a></strong>';
+								$message .= '<br />' . esc_html__( "Don't forget to reload the Nginx service.", 'hide-my-wp' ) . ' ' . '<strong><a href="' . esc_url( HMWP_Classes_Tools::getOption( 'hmwp_plugin_website' ) . '/kb/setup-wp-ghost-on-nginx-server/' ) . '" target="_blank" style="color: red">' . esc_html__( "Learn How", 'hide-my-wp' ) . '</a></strong>';
 							}
 
 						}

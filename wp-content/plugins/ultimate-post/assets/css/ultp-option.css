@@ -491,9 +491,11 @@ z-index: 9999;
 
 .ultp-templatekit-list-container .ultp-templatekit-col2 {
 	grid-template-columns: repeat(2, 1fr);
+	column-count: 2;
 }
 .ultp-templatekit-list-container .ultp-templatekit-col3 {
 	grid-template-columns: repeat(3, 1fr);
+	column-count: 3;
 }
 .ultp-item-list img {
 	max-width: 100%;

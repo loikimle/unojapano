@@ -798,7 +798,7 @@ class Advanced_Filter {
 					placeholder="<?php echo esc_attr( $attr['placeholder'] ); ?>"
 				/>
 				<span class="ultp-filter-search-input-icon">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 47.05 47.05"><path stroke="rgba(0,0,0,0)" strokeMiterlimit="10" d="m43.051 45.948-9.618-9.616a20.183 20.183 0 1 1 2.9-2.9l9.617 9.616a2.05 2.05 0 1 1-2.9 2.9Zm-22.367-9.179A16.084 16.084 0 1 0 4.6 20.684a16.1 16.1 0 0 0 16.084 16.085Z"/></svg>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 47.05 47.05" fill="currentColor"><path stroke="currentColor" strokeMiterlimit="10" d="m43.051 45.948-9.618-9.616a20.183 20.183 0 1 1 2.9-2.9l9.617 9.616a2.05 2.05 0 1 1-2.9 2.9Zm-22.367-9.179A16.084 16.084 0 1 0 4.6 20.684a16.1 16.1 0 0 0 16.084 16.085Z"/></svg>
 				</span>
 			</div>
 		</div>

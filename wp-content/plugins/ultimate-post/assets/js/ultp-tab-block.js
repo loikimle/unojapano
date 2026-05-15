@@ -1,9 +1,15 @@
 (function ($) {
 	("use strict");
-	handleTabBlock();
-	$(window).on("resize", function () {
+	const isFront = $("body.postx-admin-page").length == 0;
+
+	if (isFront && $(".wp-block-ultimate-post-tabs").length) {
 		handleTabBlock();
-	});
+		$(window).on("resize", function () {
+			if ($(".wp-block-ultimate-post-tabs").length) {
+				handleTabBlock();
+			}
+		});
+	}
 	// Tab Block Function
 	function handleTabBlock() {
 		const rootTabSelector = (element) =>
@@ -36,7 +42,7 @@
 			if (
 				tab.width() < 600 &&
 				tab.data("responsive") == "accordion" &&
-				!tab.hasClass(".ultp-tab-accordion-active")
+				!tab.hasClass("ultp-tab-accordion-active")
 			) {
 				tab.addClass("ultp-tab-accordion-active");
 				tab.find(".ultp-tabs-nav-element").each(function (i) {
@@ -61,14 +67,20 @@
 					.css("display", "contents");
 			}
 
-			// initial active
-			tabContent.each(function (idx) {
-				if (
-					rootTabSelector($(this)).data("activetab") == $(this).data("tabindex")
-				) {
-					$(this).addClass("active");
-				}
-			});
+			// initial active - Clear all active states first
+			if (tabContent.filter(".active").length === 0) {
+				const activeTabIndex = tab.data("activetab");
+				tabContent.each(function () {
+					if ($(this).data("tabindex") == activeTabIndex) {
+						$(this).addClass("active");
+						tab.find(".ultp-tabs-nav-element").each(function () {
+							if ($(this).data("tabindex") == activeTabIndex) {
+								$(this).addClass("ultp-tab-active");
+							}
+						});
+					}
+				});
+			}
 
 			const tabNavContainer = tab.find(".ultp-tabs-nav-wrapper");
 			const leftArrow = tab.find(".ultp-tab-left-arrow").first();
@@ -91,14 +103,15 @@
 				? tabNavContainer.height()
 				: tabNavContainer.width();
 
-			let shitValue = 0;
-			let SlideshitValue = singleElementWidth;
+			let shiftValue = 0;
+			// let SlideshitValue = singleElementWidth;
 
 			// on Click/Hover Element Show
-			$(".ultp-tabs-nav-element")
+			tab
+				.find(".ultp-tabs-nav-element")
 				.off(tabevent)
 				.on(tabevent, function (event) {
-					event.stopPropagation;
+					event.stopPropagation();
 
 					const navContent = $(this);
 
@@ -137,7 +150,7 @@
 
 			// Left Right Arrow Slide
 			function handleTabArrowControl() {
-				if (shitValue == 0) {
+				if (shiftValue == 0) {
 					rightArrow.addClass("ultp-arrow-active");
 				}
 				rightArrow.off("click").on("click", function (event) {
@@ -156,26 +169,26 @@
 						size / $(this).siblings().find(".ultp-tabs-nav")?.children().length;
 
 					if (
-						shiftValueLimit > shitValue &&
-						shiftValueLimit - shitValue > singleWidth
+						shiftValueLimit > shiftValue &&
+						shiftValueLimit - shiftValue > singleWidth
 					) {
-						shitValue = shitValue + singleWidth;
+						shiftValue = shiftValue + singleWidth;
 					}
 
-					if (shiftValueLimit - shitValue < singleWidth + 1) {
-						shitValue = shitValue + (shiftValueLimit - shitValue);
+					if (shiftValueLimit - shiftValue < singleWidth + 1) {
+						shiftValue = shiftValue + (shiftValueLimit - shiftValue);
 						$(this).removeClass("ultp-arrow-active");
 					}
 
-					if (shitValue > 0) {
+					if (shiftValue > 0) {
 						$(this)
 							.siblings(".ultp-tab-left-arrow")
 							.addClass("ultp-arrow-active");
 					}
 
 					let transformStyle = isTabVertical
-						? `translate(0px, -${shitValue}px)`
-						: `translate(-${shitValue}px, 0px)`;
+						? `translate(0px, -${shiftValue}px)`
+						: `translate(-${shiftValue}px, 0px)`;
 
 					$(this)
 						.siblings()
@@ -191,13 +204,13 @@
 					const singleWidth =
 						size / $(this).siblings().find(".ultp-tabs-nav")?.children().length;
 
-					if (shitValue > singleWidth) {
-						shitValue = shitValue - singleWidth;
+					if (shiftValue > singleWidth) {
+						shiftValue = shiftValue - singleWidth;
 					} else {
-						shitValue = 0;
+						shiftValue = 0;
 					}
 
-					if (shitValue > 0) {
+					if (shiftValue > 0) {
 						$(this)
 							.siblings(".ultp-tab-right-arrow")
 							.addClass("ultp-arrow-active");
@@ -206,8 +219,8 @@
 					}
 
 					let transformStyle = isTabVertical
-						? `translate(0px, -${shitValue}px)`
-						: `translate(-${shitValue}px, 0px)`;
+						? `translate(0px, -${shiftValue}px)`
+						: `translate(-${shiftValue}px, 0px)`;
 
 					$(this)
 						.siblings()
@@ -233,7 +246,7 @@
 						? tabNavContainer.height()
 						: tabNavContainer.width();
 					const navContent = tabNavMain.find(".ultp-tabs-nav-element");
-					SlideshitValue = SlideshitValue + singleElementWidth;
+					// SlideshitValue = SlideshitValue + singleElementWidth;
 
 					if (slideIndex * singleElementWidth < navParenTContainer) {
 						tabNavMain.css({ transform: `translate(0px, 0px)` });
@@ -251,10 +264,10 @@
 						let transformStyle = isTabVertical
 							? `translate(0px, ${
 									navParenTContainer - slideIndex * singleElementWidth
-							  }px)`
+								}px)`
 							: `translate(${
 									navParenTContainer - slideIndex * singleElementWidth
-							  }px, 0px)`;
+								}px, 0px)`;
 						tabNavMain.css({ transform: transformStyle });
 					}
 
@@ -300,17 +313,17 @@
 			if ($(this).data("tabevent") == "autoplay") {
 				let tabSlider = setInterval(
 					() => handleTabSlider(tab, tabContent, tabNavMain),
-					duration
+					duration,
 				);
 
-				tab.on("mouseleave", function () {
+				tab.off("mouseleave").on("mouseleave", function () {
 					tabSlider = setInterval(
 						() => handleTabSlider(tab, tabContent, tabNavMain),
-						duration
+						duration,
 					);
 				});
 
-				tab.on("mouseenter", function () {
+				tab.off("mouseenter").on("mouseenter", function () {
 					clearInterval(tabSlider);
 				});
 			}
